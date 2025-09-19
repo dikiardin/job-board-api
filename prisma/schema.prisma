@@ -88,7 +88,7 @@ model User {
   applications        Application[]
   preselectionResults PreselectionResult[]
   skillResults        SkillResult[]
-  skillAssessments    SkillAssessment[]
+  createdAssessments  SkillAssessment[]    @relation("SkillAssessmentCreator")
   userBadges          UserBadge[]
   generatedCvs        GeneratedCV[]
   subscriptions       Subscription[]
@@ -255,7 +255,7 @@ model SkillAssessment {
   createdBy   Int
   createdAt   DateTime @default(now())
 
-  creator   User            @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+  creator   User            @relation("SkillAssessmentCreator", fields: [createdBy], references: [id], onDelete: Restrict)
   questions SkillQuestion[]
   results   SkillResult[]
 }
