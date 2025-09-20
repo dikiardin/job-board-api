@@ -15,11 +15,9 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ========================= Enums =========================
-
 enum UserRole {
   USER
-  ADMIN // company admin
+  ADMIN 
   DEVELOPER
 }
 
@@ -59,12 +57,9 @@ enum SharePlatform {
 
 enum ProviderType {
   GOOGLE
-  FACEBOOK
-  TWITTER
-  GITHUB
+  APPLE
+  MICROSOFT
 }
-
-// ========================= Models =========================
 
 model User {
   id             Int       @id @default(autoincrement())

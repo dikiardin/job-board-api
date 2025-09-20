@@ -75,4 +75,18 @@ export class AuthController {
       next(error);
     }
   }
+
+  public static async socialLogin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { provider, token } = req.body;
+      const result = await AuthService.socialLogin(provider, token);
+      res.status(200).json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  }
 }

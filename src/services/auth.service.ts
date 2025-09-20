@@ -6,6 +6,10 @@ import { CustomError } from "../utils/customError";
 import { decodeToken } from "../utils/decodeToken";
 import { transport } from "../config/nodemailer";
 import { buildVerificationEmail } from "../utils/emailTemplates";
+import { UserProviderRepo } from "../repositories/userProvider.repository";
+import { verifyGoogleToken } from "./social/google";
+import { verifyAppleToken } from "./social/apple";
+import { verifyMicrosoftToken } from "./social/microsoft";
 
 export class AuthService {
   public static async register(
@@ -103,5 +107,35 @@ export class AuthService {
       isVerified: user.isVerified,
       token: newToken,
     };
+  }
+
+  public static async socialLogin(
+    provider: "GOOGLE" | "APPLE" | "MICROSOFT",
+    token: string
+  ) {
+    let profile;
+    if (provider === "GOOGLE") profile = await verifyGoogleToken(token);
+    if (provider === "APPLE") profile = await verifyAppleToken(token);
+    if (provider === "MICROSOFT") profile = await verifyMicrosoftToken(token);
+
+    let userProvider = await UserProviderRepo.findByProvider(
+      provider,
+      profile.providerId
+    );
+    let user;
+
+    if (!userProvider) {
+      user = await UserProviderRepo.createUserWithProvider({
+        name: profile.name,
+        email: profile.email,
+        provider,
+        providerId: profile.providerId,
+      });
+    } else {
+      user = userProvider.user;
+    }
+
+    const jwtToken = createToken({ userId: user.id, role: user.role }, "7d");
+    return { ...user, token: jwtToken };
   }
 }

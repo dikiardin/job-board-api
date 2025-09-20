@@ -38,6 +38,8 @@ class AuthRouter {
       this.authController.login
     );
 
+    this.route.post("/social", AuthController.socialLogin);
+
     this.route.get("/verify/:token", this.authController.verifyEmail);
 
     this.route.get("/keep", verifyToken, this.authController.keepLogin);
