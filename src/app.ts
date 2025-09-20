@@ -3,6 +3,7 @@ dotenv.config();
 import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import AuthRouter from "./routers/auth.router";
+import SubscriptionRouter from "./routers/subscription.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -37,6 +38,9 @@ class App {
 
     const authRouter: AuthRouter = new AuthRouter();
     this.app.use("/auth", authRouter.getRouter());
+
+    const subscriptionRouter: SubscriptionRouter = new SubscriptionRouter();
+    this.app.use("/subscription", subscriptionRouter.getRouter());
   }
 
   private errorHandling(): void {
@@ -58,13 +62,11 @@ class App {
 
         if (error.status) {
           return res.status(error.status).json({
-            success: false,
             message: error.message,
           });
         }
 
         res.status(500).json({
-          success: false,
           message: "Internal server error",
         });
       }
