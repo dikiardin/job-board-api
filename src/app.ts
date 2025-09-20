@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
+import AuthRouter from "./routers/auth.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -34,9 +35,8 @@ class App {
       res.status(200).send("<h1>Job Board API</h1>");
     });
 
-    // Example to add routers later (uncomment when available)
-    // const authRouter = new AuthRouter();
-    // this.app.use("/auth", authRouter.getRouter());
+    const authRouter: AuthRouter = new AuthRouter();
+    this.app.use("/auth", authRouter.getRouter());
   }
 
   private errorHandling(): void {
