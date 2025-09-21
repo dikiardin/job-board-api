@@ -1,4 +1,4 @@
-import { prisma } from "../config/prisma";
+import { prisma } from "../../config/prisma";
 export class UserProviderRepo {
   static async findByProvider(
     provider: "GOOGLE" | "APPLE" | "MICROSOFT",

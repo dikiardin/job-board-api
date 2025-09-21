@@ -1,28 +1,26 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthService } from "../services/auth.service";
+import { BasicAuthService } from "../../services/auth/basicAuth.service";
 
-export class AuthController {
+export class BasicAuthController {
   public static async register(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const { role, name, email, password, phone } = req.body;
-
-      // validate role strictly
+      const { role, name, email, password, phone, companyId } = req.body;
       if (role !== "USER" && role !== "ADMIN") {
         return res.status(400).json({ message: "Invalid role" });
       }
 
-      const result = await AuthService.register(
+      const result = await BasicAuthService.register(
         role,
         name,
         email,
         password,
-        phone
+        phone,
+        companyId
       );
-
       res.status(201).json(result);
     } catch (error) {
       next(error);
@@ -40,7 +38,7 @@ export class AuthController {
         return res.status(400).json({ error: "Token missing" });
       }
 
-      const result = await AuthService.verifyEmail(token);
+      const result = await BasicAuthService.verifyEmail(token);
       res.status(200).json(result);
     } catch (error) {
       next(error);
@@ -54,39 +52,10 @@ export class AuthController {
         return res.status(400).json({ error: "Missing email or password" });
       }
 
-      const result = await AuthService.login(email, password);
+      const result = await BasicAuthService.login(email, password);
       res.status(200).json(result);
     } catch (error) {
       next(error);
-    }
-  }
-
-  public static async keepLogin(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const userId = parseInt(res.locals.decrypt.userId);
-      const result = await AuthService.keepLogin(userId);
-
-      res.status(200).json({ success: true, data: result });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  public static async socialLogin(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const { provider, token } = req.body;
-      const result = await AuthService.socialLogin(provider, token);
-      res.status(200).json({ success: true, data: result });
-    } catch (err) {
-      next(err);
     }
   }
 }

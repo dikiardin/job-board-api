@@ -19,7 +19,7 @@ export const verifyAppleToken = (idToken: string) => {
       resolve({
         providerId: decoded.sub,
         email: decoded.email,
-        name: decoded.email.split("@")[0], // Apple doesn't provide full name by default
+        name: decoded.email.split("@")[0], 
       });
     });
   });
