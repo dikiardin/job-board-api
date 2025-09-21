@@ -1,9 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config();
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import AuthRouter from "./routers/auth.router";
 import SubscriptionRouter from "./routers/subscription.router";
+import { startSubscriptionJobs } from "./jobs/subscriptionJobs";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -26,7 +27,7 @@ class App {
         allowedHeaders: ["Content-Type", "Authorization", "Accept"],
         exposedHeaders: ["Content-Type", "Authorization"],
         optionsSuccessStatus: 200,
-      })
+      } as CorsOptions)
     );
     this.app.use(express.json());
   }
@@ -76,7 +77,7 @@ class App {
   public start(): void {
     this.app.listen(PORT, () => {
       console.log(`API Running: http://localhost:${PORT}`);
-      // start background jobs here when available
+      startSubscriptionJobs();
     });
   }
 }

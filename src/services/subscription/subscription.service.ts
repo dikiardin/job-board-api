@@ -39,17 +39,16 @@ export class SubscriptionService {
       throw new CustomError("User already has an active subscription", 400);
     }
 
-    // Calculate dates
-    const startDate = new Date();
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 1); // 1 month subscription
+    // Set dates to a far future date initially (will be updated when payment approved)
+    const farFutureDate = new Date();
+    farFutureDate.setMonth(farFutureDate.getMonth() + 1); // 1 month from now (placeholder)
 
-    // Create subscription
+    // Create subscription with placeholder dates
     const subscription = await SubscriptionRepo.createSubscription({
       userId,
       subscriptionPlanId: planId,
-      startDate,
-      endDate,
+      startDate: farFutureDate, // Placeholder - will be updated when payment approved
+      endDate: farFutureDate, // Placeholder - will be updated when payment approved
     });
 
     // Create payment record
