@@ -1,5 +1,7 @@
 import { Router } from "express";
-import { AuthController } from "../controllers/auth.controller";
+import { BasicAuthController } from "../controllers/auth/basicAuth.controller";
+import { SocialAuthController } from "../controllers/auth/socialAuth.controller";
+import { KeepLoginController } from "../controllers/auth/keepLogin.controller";
 import {
   userRegisterValidation,
   companyRegisterValidation,
@@ -9,11 +11,15 @@ import { verifyToken } from "../middlewares/verifyToken";
 
 class AuthRouter {
   private route: Router;
-  private authController: typeof AuthController;
+  private basicAuthController: typeof BasicAuthController;
+  private socialAuthController: typeof SocialAuthController;
+  private keepLoginController: typeof KeepLoginController;
 
   constructor() {
     this.route = Router();
-    this.authController = AuthController;
+    this.basicAuthController = BasicAuthController;
+    this.socialAuthController = SocialAuthController;
+    this.keepLoginController = KeepLoginController;
     this.initializeRoutes();
   }
 
@@ -22,28 +28,18 @@ class AuthRouter {
       "/signup/user",
       userRegisterValidation,
       validateRequest,
-      this.authController.register
+      this.basicAuthController.register
     );
-
     this.route.post(
       "/signup/company",
       companyRegisterValidation,
       validateRequest,
-      this.authController.register
+      this.basicAuthController.register
     );
-
-    this.route.post(
-      "/signin",
-      validateRequest,
-      this.authController.login
-    );
-
-    this.route.post("/social", AuthController.socialLogin);
-
-    this.route.get("/verify/:token", this.authController.verifyEmail);
-
-    this.route.get("/keep", verifyToken, this.authController.keepLogin);
-
+    this.route.post("/signin", validateRequest, this.basicAuthController.login);
+    this.route.get("/verify/:token", this.basicAuthController.verifyEmail);
+    this.route.get("/keep", verifyToken, this.keepLoginController.keepLogin);
+    this.route.post("/social", this.socialAuthController.socialLogin);
   }
 
   public getRouter(): Router {

@@ -353,14 +353,14 @@ model Payment {
 model Employment {
   id         Int       @id @default(autoincrement())
   userId     Int
-  companyId  Int
+  companyId  Int?
   isVerified Boolean   @default(false)
   startDate  DateTime?
   endDate    DateTime?
   createdAt  DateTime  @default(now())
 
   user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  company Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   reviews CompanyReview[]
 
   @@unique([userId, companyId])
