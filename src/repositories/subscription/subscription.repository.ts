@@ -93,4 +93,73 @@ export class SubscriptionRepo {
       },
     });
   }
+
+  // Get subscriptions expiring tomorrow (H-1)
+  public static async getSubscriptionsExpiringTomorrow() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(tomorrow);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    return prisma.subscription.findMany({
+      where: {
+        isActive: true,
+        endDate: {
+          gte: tomorrow,
+          lt: nextDay,
+        },
+      },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true },
+        },
+        plan: true,
+      },
+    });
+  }
+
+  // Get subscriptions expiring in X minutes (for testing)
+  public static async getSubscriptionsExpiringInMinutes(minutes: number) {
+    const now = new Date();
+    const targetTime = new Date(now.getTime() + minutes * 60 * 1000);
+    const nextMinute = new Date(targetTime.getTime() + 1 * 60 * 1000);
+
+    return prisma.subscription.findMany({
+      where: {
+        isActive: true,
+        endDate: {
+          gte: targetTime,
+          lt: nextMinute,
+        },
+      },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true },
+        },
+        plan: true,
+      },
+    });
+  }
+
+  // Get expired subscriptions
+  public static async getExpiredSubscriptions() {
+    const now = new Date(); // Use current time, not start of day
+
+    return prisma.subscription.findMany({
+      where: {
+        isActive: true,
+        endDate: {
+          lt: now, // Check if endDate is less than current time
+        },
+      },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true },
+        },
+        plan: true,
+      },
+    });
+  }
 }
