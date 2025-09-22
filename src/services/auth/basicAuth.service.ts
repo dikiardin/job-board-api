@@ -36,10 +36,10 @@ export class BasicAuthService {
 
     if (role === "ADMIN") {
       if (!companyId) {
-        throw {
-          status: 400,
-          message: "Company ID is required for ADMIN registration",
-        };
+        throw new CustomError(
+          "Company ID is required for ADMIN registration",
+          400
+        );
       }
       await CreateAdminService.createForNewAdmin(user.id, companyId);
     }
@@ -86,13 +86,13 @@ export class BasicAuthService {
 
   public static async login(email: string, password: string) {
     const user = await UserRepo.findByEmail(email);
-    if (!user) throw new Error("Invalid credentials");
+    if (!user) throw new CustomError("Invalid credentials", 400);
 
     const isMatch = await comparePassword(password, user.passwordHash);
-    if (!isMatch) throw new Error("Invalid credentials");
+    if (!isMatch) throw new CustomError("Invalid credentials", 400);
 
     if (!user.isVerified) {
-      throw new Error("Please verify your email before logging in");
+      throw new CustomError("Please verify your email before logging in", 400);
     }
 
     const token = createToken({ userId: user.id, role: user.role }, "7d");

@@ -31,7 +31,7 @@ class AuthRouter {
       this.basicAuthController.register
     );
     this.route.post(
-      "/signup/company",
+      "/signup/admin",
       companyRegisterValidation,
       validateRequest,
       this.basicAuthController.register
@@ -39,7 +39,8 @@ class AuthRouter {
     this.route.post("/signin", validateRequest, this.basicAuthController.login);
     this.route.get("/verify/:token", this.basicAuthController.verifyEmail);
     this.route.get("/keep", verifyToken, this.keepLoginController.keepLogin);
-    this.route.post("/social", this.socialAuthController.socialLogin);
+    this.route.post("/social/user", SocialAuthController.socialUser);
+    this.route.post("/social/admin", SocialAuthController.socialAdmin);
   }
 
   public getRouter(): Router {
