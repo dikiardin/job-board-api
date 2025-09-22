@@ -57,8 +57,7 @@ enum SharePlatform {
 
 enum ProviderType {
   GOOGLE
-  APPLE
-  MICROSOFT
+  FACEBOOK
 }
 
 model User {
