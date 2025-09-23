@@ -30,9 +30,9 @@ exports.companyRegisterValidation = [
     (0, express_validator_1.body)("name")
         .notEmpty()
         .withMessage("Company name is required."),
-    (0, express_validator_1.body)("phone")
-        .notEmpty()
-        .withMessage("Phone number is required."),
+    // body("phone")
+    //   .notEmpty()
+    //   .withMessage("Phone number is required."),
     (0, express_validator_1.body)("email")
         .notEmpty()
         .withMessage("Email is required.")

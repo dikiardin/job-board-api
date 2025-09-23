@@ -1,7 +1,9 @@
 import { Router } from "express";
 declare class AuthRouter {
     private route;
-    private authController;
+    private basicAuthController;
+    private socialAuthController;
+    private keepLoginController;
     constructor();
     private initializeRoutes;
     getRouter(): Router;

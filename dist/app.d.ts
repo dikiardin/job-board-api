@@ -5,7 +5,6 @@ declare class App {
     private configure;
     private route;
     private errorHandling;
-    private startBackgroundJobs;
     start(): void;
 }
 export default App;

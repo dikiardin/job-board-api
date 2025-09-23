@@ -5,6 +5,8 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import AuthRouter from "./routers/auth.router";
 import SubscriptionRouter from "./routers/subscription.router";
 import { startSubscriptionJobs } from "./jobs/subscriptionJobs";
+import PreselectionRouter from "./routers/preselection.router";
+import ApplicationRouter from "./routers/application.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -42,6 +44,14 @@ class App {
 
     const subscriptionRouter: SubscriptionRouter = new SubscriptionRouter();
     this.app.use("/subscription", subscriptionRouter.getRouter());
+
+    // Preselection Test Routes
+    const preselectionRouter: PreselectionRouter = new PreselectionRouter();
+    this.app.use("/", preselectionRouter.getRouter());
+
+    // Application Routes
+    const applicationRouter: ApplicationRouter = new ApplicationRouter();
+    this.app.use("/", applicationRouter.getRouter());
   }
 
   private errorHandling(): void {

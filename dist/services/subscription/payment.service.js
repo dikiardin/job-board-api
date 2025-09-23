@@ -38,7 +38,7 @@ class PaymentService {
         // Set subscription dates based on payment approval date
         const paymentDate = new Date();
         const endDate = new Date(paymentDate);
-        endDate.setMinutes(endDate.getMinutes() + 15); // 15 minutes from payment approval date (for testing)
+        endDate.setMinutes(endDate.getMinutes() + 5); // 5 minutes from payment approval date (for testing)
         // Activate subscription with correct dates
         await subscription_repository_1.SubscriptionRepo.updateSubscription(payment.subscriptionId, {
             isActive: true,

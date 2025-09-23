@@ -10,6 +10,8 @@ const express_1 = __importDefault(require("express"));
 const auth_router_1 = __importDefault(require("./routers/auth.router"));
 const subscription_router_1 = __importDefault(require("./routers/subscription.router"));
 const subscriptionJobs_1 = require("./jobs/subscriptionJobs");
+const preselection_router_1 = __importDefault(require("./routers/preselection.router"));
+const application_router_1 = __importDefault(require("./routers/application.router"));
 const PORT = process.env.PORT || "5000";
 class App {
     constructor() {
@@ -17,7 +19,6 @@ class App {
         this.configure();
         this.route();
         this.errorHandling();
-        this.startBackgroundJobs();
     }
     configure() {
         this.app.use((0, cors_1.default)({
@@ -38,6 +39,12 @@ class App {
         this.app.use("/auth", authRouter.getRouter());
         const subscriptionRouter = new subscription_router_1.default();
         this.app.use("/subscription", subscriptionRouter.getRouter());
+        // Preselection Test Routes
+        const preselectionRouter = new preselection_router_1.default();
+        this.app.use("/", preselectionRouter.getRouter());
+        // Application Routes
+        const applicationRouter = new application_router_1.default();
+        this.app.use("/", applicationRouter.getRouter());
     }
     errorHandling() {
         this.app.use((error, req, res, next) => {
@@ -62,12 +69,10 @@ class App {
             });
         });
     }
-    startBackgroundJobs() {
-        subscriptionJobs_1.SubscriptionJobs.startAllJobs();
-    }
     start() {
         this.app.listen(PORT, () => {
             console.log(`API Running: http://localhost:${PORT}`);
+            (0, subscriptionJobs_1.startSubscriptionJobs)();
         });
     }
 }

@@ -26,10 +26,10 @@ export declare class SubscriptionRepo {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     })[]>;
     static getSubscriptionById(id: number): Promise<({
@@ -59,10 +59,10 @@ export declare class SubscriptionRepo {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     }) | null>;
     static getUserSubscriptions(userId: number): Promise<({
@@ -87,10 +87,10 @@ export declare class SubscriptionRepo {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     })[]>;
     static getUserActiveSubscription(userId: number): Promise<({
@@ -103,10 +103,10 @@ export declare class SubscriptionRepo {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     }) | null>;
     static createSubscription(data: {
@@ -124,10 +124,10 @@ export declare class SubscriptionRepo {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     }>;
     static updateSubscription(id: number, data: {
@@ -144,10 +144,10 @@ export declare class SubscriptionRepo {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     }>;
     static getSubscriptionsExpiringTomorrow(): Promise<({
@@ -165,10 +165,10 @@ export declare class SubscriptionRepo {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     })[]>;
     static getSubscriptionsExpiringInMinutes(minutes: number): Promise<({
@@ -186,10 +186,10 @@ export declare class SubscriptionRepo {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     })[]>;
     static getExpiredSubscriptions(): Promise<({
@@ -207,10 +207,10 @@ export declare class SubscriptionRepo {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     })[]>;
 }
