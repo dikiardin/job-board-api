@@ -1,7 +1,7 @@
 import { prisma } from "../../config/prisma";
 export class UserProviderRepo {
   static async findByProvider(
-    provider: "GOOGLE" | "FACEBOOK",
+    provider: "GOOGLE",
     providerId: string
   ) {
     return prisma.userProvider.findUnique({
@@ -13,7 +13,7 @@ export class UserProviderRepo {
   static async createUserWithProvider(data: {
     name: string;
     email: string;
-    provider: "GOOGLE" | "FACEBOOK";
+    provider: "GOOGLE";
     providerId: string;
     role: "USER" | "ADMIN";
   }) {

@@ -6,7 +6,6 @@ export class CreateEmploymentRepo {
       data: {
         userId,
         companyId: null,
-        isVerified: false,
         startDate: null,
         endDate: null,
       },

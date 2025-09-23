@@ -7,7 +7,7 @@ import { decodeToken } from "../../utils/decodeToken";
 import { transport } from "../../config/nodemailer";
 import { buildVerificationEmail } from "../../utils/emailTemplates";
 import { CreateEmploymentService } from "../employment/createEmployment.service";
-import { CreateAdminService } from "../company-admin/createAdmin.service";
+import { CreateCompanyService } from "../company/createCompany.service";
 
 export class BasicAuthService {
   public static async register(
@@ -15,9 +15,7 @@ export class BasicAuthService {
     name: string,
     email: string,
     password: string,
-    companyId?: number 
   ) {
-    
     const existing = await UserRepo.findByEmail(email);
     if (existing) {
       throw new CustomError("Email already in use", 409);
@@ -29,17 +27,11 @@ export class BasicAuthService {
       name,
       email,
       passwordHash,
-      role
+      role,
     });
 
     if (role === "ADMIN") {
-      if (!companyId) {
-        throw new CustomError(
-          "Company ID is required for ADMIN registration",
-          400
-        );
-      }
-      await CreateAdminService.createForNewAdmin(user.id, companyId);
+      await CreateCompanyService.createCompanyForAdmin(user.id, name, email);
     }
 
     if (role === "USER") {
