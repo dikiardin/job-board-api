@@ -1,0 +1,108 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.JobController = void 0;
+const job_service_1 = require("../../services/job/job.service");
+class JobController {
+    static async create(req, res, next) {
+        try {
+            const companyId = Number(req.params.companyId);
+            const requester = res.locals.decrypt;
+            const job = await job_service_1.JobService.createJob({
+                companyId,
+                requesterId: requester.userId,
+                requesterRole: requester.role,
+                body: req.body,
+            });
+            res.status(201).json({ success: true, data: job });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    static async list(req, res, next) {
+        try {
+            const companyId = Number(req.params.companyId);
+            const requester = res.locals.decrypt;
+            const { title, category, sortBy, sortOrder, limit, offset } = req.query;
+            const query = {};
+            if (typeof title === "string")
+                query.title = title;
+            if (typeof category === "string")
+                query.category = category;
+            if (sortBy === "createdAt" || sortBy === "deadline")
+                query.sortBy = sortBy;
+            if (sortOrder === "asc" || sortOrder === "desc")
+                query.sortOrder = sortOrder;
+            if (typeof limit === "string" && limit.trim() !== "")
+                query.limit = Number(limit);
+            if (typeof offset === "string" && offset.trim() !== "")
+                query.offset = Number(offset);
+            const data = await job_service_1.JobService.listJobs({
+                companyId,
+                requesterId: requester.userId,
+                requesterRole: requester.role,
+                query,
+            });
+            res.status(200).json({ success: true, data });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    static async detail(req, res, next) {
+        try {
+            const companyId = Number(req.params.companyId);
+            const jobId = Number(req.params.jobId);
+            const requester = res.locals.decrypt;
+            const data = await job_service_1.JobService.jobDetail({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role });
+            res.status(200).json({ success: true, data });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    static async update(req, res, next) {
+        try {
+            const companyId = Number(req.params.companyId);
+            const jobId = Number(req.params.jobId);
+            const requester = res.locals.decrypt;
+            const job = await job_service_1.JobService.updateJob({
+                companyId,
+                jobId,
+                requesterId: requester.userId,
+                requesterRole: requester.role,
+                body: req.body,
+            });
+            res.status(200).json({ success: true, data: job });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    static async togglePublish(req, res, next) {
+        try {
+            const companyId = Number(req.params.companyId);
+            const jobId = Number(req.params.jobId);
+            const requester = res.locals.decrypt;
+            const updated = await job_service_1.JobService.togglePublish({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role });
+            res.status(200).json({ success: true, data: updated });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    static async remove(req, res, next) {
+        try {
+            const companyId = Number(req.params.companyId);
+            const jobId = Number(req.params.jobId);
+            const requester = res.locals.decrypt;
+            const result = await job_service_1.JobService.deleteJob({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role });
+            res.status(200).json({ success: true, data: result });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+}
+exports.JobController = JobController;
+//# sourceMappingURL=job.controller.js.map

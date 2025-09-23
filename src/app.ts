@@ -7,6 +7,7 @@ import SubscriptionRouter from "./routers/subscription.router";
 import { startSubscriptionJobs } from "./jobs/subscriptionJobs";
 import PreselectionRouter from "./routers/preselection.router";
 import ApplicationRouter from "./routers/application.router";
+import JobRouter from "./routers/job.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -52,6 +53,10 @@ class App {
     // Application Routes
     const applicationRouter: ApplicationRouter = new ApplicationRouter();
     this.app.use("/", applicationRouter.getRouter());
+
+    // Job Management Routes
+    const jobRouter: JobRouter = new JobRouter();
+    this.app.use("/", jobRouter.getRouter());
   }
 
   private errorHandling(): void {
