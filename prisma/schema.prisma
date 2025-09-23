@@ -196,6 +196,8 @@ model Interview {
 model PreselectionTest {
   id        Int      @id @default(autoincrement())
   jobId     Int      @unique
+  isActive  Boolean  @default(true)
+  passingScore Int?
   createdAt DateTime @default(now())
 
   job       Job                    @relation(fields: [jobId], references: [id], onDelete: Cascade)
@@ -211,6 +213,7 @@ model PreselectionQuestion {
   answer   String
 
   test PreselectionTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  answers ApplicantAnswer[]
 
   @@index([testId])
 }
@@ -224,9 +227,24 @@ model PreselectionResult {
 
   user User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   test PreselectionTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  answers ApplicantAnswer[]
 
   @@unique([userId, testId])
   @@index([testId])
+}
+
+model ApplicantAnswer {
+  id         Int                  @id @default(autoincrement())
+  resultId   Int
+  questionId Int
+  selected   String
+  isCorrect  Boolean
+
+  result   PreselectionResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  question PreselectionQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([resultId, questionId])
+  @@index([questionId])
 }
 
 model SkillAssessment {

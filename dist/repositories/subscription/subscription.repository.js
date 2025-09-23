@@ -124,13 +124,12 @@ class SubscriptionRepo {
     }
     // Get expired subscriptions
     static async getExpiredSubscriptions() {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const now = new Date(); // Use current time, not start of day
         return prisma_1.prisma.subscription.findMany({
             where: {
                 isActive: true,
                 endDate: {
-                    lt: today,
+                    lt: now, // Check if endDate is less than current time
                 },
             },
             include: {

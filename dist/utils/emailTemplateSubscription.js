@@ -13,9 +13,9 @@ const buildSubscriptionExpirationEmail = (name, planName, expirationDate) => {
         <tr>
           <td>
             <h2 style="color: #333;">Hi ${name},</h2>
-            <p style="color: #555; font-size: 16px; line-height: 1.5;">
-              Your <strong>${planName}</strong> subscription will expire on <strong>${formattedDate}</strong> (5 minutes from now).
-            </p>
+                   <p style="color: #555; font-size: 16px; line-height: 1.5;">
+                     Your <strong>${planName}</strong> subscription will expire on <strong>${formattedDate}</strong> (2 minutes from now).
+                   </p>
             <p style="color: #555; font-size: 16px; line-height: 1.5;">
               To continue accessing premium features, please renew your subscription now.
             </p>

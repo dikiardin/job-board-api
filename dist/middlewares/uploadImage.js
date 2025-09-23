@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadPaymentProof = void 0;
+exports.uploadFields = exports.uploadMultiple = exports.uploadSingle = void 0;
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 // Configure memory storage for Cloudinary
@@ -25,8 +25,14 @@ const upload = (0, multer_1.default)({
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB limit
+        fileSize: 1 * 1024 * 1024, // 1MB limit
     },
 });
-exports.uploadPaymentProof = upload.single("paymentProof");
+// Generic upload middleware functions that can be used in any route
+const uploadSingle = (fieldName) => upload.single(fieldName);
+exports.uploadSingle = uploadSingle;
+const uploadMultiple = (fieldName, maxCount = 5) => upload.array(fieldName, maxCount);
+exports.uploadMultiple = uploadMultiple;
+const uploadFields = (fields) => upload.fields(fields);
+exports.uploadFields = uploadFields;
 //# sourceMappingURL=uploadImage.js.map

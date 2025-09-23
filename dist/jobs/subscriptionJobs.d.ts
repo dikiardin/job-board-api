@@ -1,6 +1,2 @@
-export declare class SubscriptionJobs {
-    static startExpirationReminderJob(): void;
-    static startExpirationJob(): void;
-    static startAllJobs(): void;
-}
+export declare function startSubscriptionJobs(): void;
 //# sourceMappingURL=subscriptionJobs.d.ts.map

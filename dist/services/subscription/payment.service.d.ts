@@ -15,10 +15,10 @@ export declare class PaymentService {
         } & {
             createdAt: Date;
             id: number;
-            userId: number;
-            subscriptionPlanId: number;
             startDate: Date;
             endDate: Date;
+            userId: number;
+            subscriptionPlanId: number;
             isActive: boolean;
         };
     } & {
@@ -49,10 +49,10 @@ export declare class PaymentService {
         } & {
             createdAt: Date;
             id: number;
-            userId: number;
-            subscriptionPlanId: number;
             startDate: Date;
             endDate: Date;
+            userId: number;
+            subscriptionPlanId: number;
             isActive: boolean;
         };
     } & {
@@ -95,10 +95,10 @@ export declare class PaymentService {
         } & {
             createdAt: Date;
             id: number;
-            userId: number;
-            subscriptionPlanId: number;
             startDate: Date;
             endDate: Date;
+            userId: number;
+            subscriptionPlanId: number;
             isActive: boolean;
         };
     } & {
@@ -129,10 +129,10 @@ export declare class PaymentService {
         } & {
             createdAt: Date;
             id: number;
-            userId: number;
-            subscriptionPlanId: number;
             startDate: Date;
             endDate: Date;
+            userId: number;
+            subscriptionPlanId: number;
             isActive: boolean;
         };
     } & {

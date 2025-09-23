@@ -26,10 +26,10 @@ export declare class SubscriptionService {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     })[]>;
     static getSubscriptionById(id: number): Promise<{
@@ -59,10 +59,10 @@ export declare class SubscriptionService {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     }>;
     static getUserSubscriptions(userId: number): Promise<({
@@ -87,10 +87,10 @@ export declare class SubscriptionService {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     })[]>;
     static getUserActiveSubscription(userId: number): Promise<({
@@ -103,10 +103,10 @@ export declare class SubscriptionService {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     }) | null>;
     static subscribeUser(userId: number, planId: number): Promise<{
@@ -120,10 +120,10 @@ export declare class SubscriptionService {
         } & {
             createdAt: Date;
             id: number;
-            userId: number;
-            subscriptionPlanId: number;
             startDate: Date;
             endDate: Date;
+            userId: number;
+            subscriptionPlanId: number;
             isActive: boolean;
         };
         payment: {
@@ -137,10 +137,10 @@ export declare class SubscriptionService {
             } & {
                 createdAt: Date;
                 id: number;
-                userId: number;
-                subscriptionPlanId: number;
                 startDate: Date;
                 endDate: Date;
+                userId: number;
+                subscriptionPlanId: number;
                 isActive: boolean;
             };
         } & {
@@ -170,10 +170,10 @@ export declare class SubscriptionService {
     } & {
         createdAt: Date;
         id: number;
-        userId: number;
-        subscriptionPlanId: number;
         startDate: Date;
         endDate: Date;
+        userId: number;
+        subscriptionPlanId: number;
         isActive: boolean;
     }>;
 }
