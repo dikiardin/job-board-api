@@ -1,0 +1,208 @@
+import { UserRole } from "../../generated/prisma";
+import { JobRepository } from "../../repositories/job/job.repository";
+
+export class JobService {
+  static async assertCompanyOwnership(companyId: number, requesterId: number) {
+    const company = await JobRepository.getCompany(companyId);
+    if (!company) throw { status: 404, message: "Company not found" };
+    if (company.adminId !== requesterId) throw { status: 403, message: "You don't own this company" };
+    return company;
+  }
+
+  static validateJobPayload(payload: any, isUpdate = false) {
+    const errors: string[] = [];
+
+    if (!isUpdate) {
+      if (!payload?.title || typeof payload.title !== "string") errors.push("title is required");
+      if (!payload?.description || typeof payload.description !== "string") errors.push("description is required");
+      if (!payload?.category || typeof payload.category !== "string") errors.push("category is required");
+      if (!payload?.city || typeof payload.city !== "string") errors.push("city is required");
+    }
+
+    if (payload?.deadline) {
+      const d = new Date(payload.deadline);
+      if (isNaN(d.getTime())) errors.push("deadline must be a valid date");
+      else if (d.getTime() < Date.now()) errors.push("deadline cannot be in the past");
+    }
+
+    if (payload?.tags && !Array.isArray(payload.tags)) errors.push("tags must be an array of strings");
+
+    if (errors.length) throw { status: 400, message: errors.join(", ") };
+  }
+
+  static async createJob(params: {
+    companyId: number;
+    requesterId: number;
+    requesterRole: UserRole;
+    body: {
+      title: string;
+      description: string;
+      banner?: string | null;
+      category: string;
+      city: string;
+      salaryMin?: number | null;
+      salaryMax?: number | null;
+      tags?: string[];
+      deadline?: string | Date | null;
+      isPublished?: boolean;
+    };
+  }) {
+    const { companyId, requesterId, requesterRole, body } = params;
+    if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can create jobs" };
+    await this.assertCompanyOwnership(companyId, requesterId);
+    this.validateJobPayload(body);
+
+    const job = await JobRepository.createJob(companyId, {
+      title: body.title,
+      description: body.description,
+      banner: body.banner ?? null,
+      category: body.category,
+      city: body.city,
+      salaryMin: body.salaryMin ?? null,
+      salaryMax: body.salaryMax ?? null,
+      tags: body.tags ?? [],
+      deadline: body.deadline ? new Date(body.deadline) : null,
+      isPublished: body.isPublished ?? false,
+    });
+    return job;
+  }
+
+  static async updateJob(params: {
+    companyId: number;
+    jobId: number;
+    requesterId: number;
+    requesterRole: UserRole;
+    body: any;
+  }) {
+    const { companyId, jobId, requesterId, requesterRole, body } = params;
+    if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can update jobs" };
+    await this.assertCompanyOwnership(companyId, requesterId);
+    this.validateJobPayload(body, true);
+
+    const updateData: any = { ...body };
+    if (typeof body?.deadline !== "undefined") updateData.deadline = body.deadline ? new Date(body.deadline) : null;
+
+    const job = await JobRepository.updateJob(companyId, jobId, updateData);
+    return job;
+  }
+
+  static async togglePublish(params: { companyId: number; jobId: number; requesterId: number; requesterRole: UserRole }) {
+    const { companyId, jobId, requesterId, requesterRole } = params;
+    if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can publish/unpublish jobs" };
+    await this.assertCompanyOwnership(companyId, requesterId);
+
+    // Fetch current job
+    const detail = await JobRepository.getJobById(companyId, jobId);
+    if (!detail) throw { status: 404, message: "Job not found" };
+
+    const updated = await JobRepository.togglePublish(jobId, !detail.isPublished);
+    return updated;
+  }
+
+  static async deleteJob(params: { companyId: number; jobId: number; requesterId: number; requesterRole: UserRole }) {
+    const { companyId, jobId, requesterId, requesterRole } = params;
+    if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can delete jobs" };
+    await this.assertCompanyOwnership(companyId, requesterId);
+
+    await JobRepository.deleteJob(companyId, jobId);
+    return { success: true };
+  }
+
+  static async listJobs(params: {
+    companyId: number;
+    requesterId: number;
+    requesterRole: UserRole;
+    query: { title?: string; category?: string; sortBy?: "createdAt" | "deadline"; sortOrder?: "asc" | "desc"; limit?: number; offset?: number };
+  }) {
+    const { companyId, requesterId, requesterRole, query } = params;
+    if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can list their jobs" };
+    await this.assertCompanyOwnership(companyId, requesterId);
+
+    const repoQuery: {
+      companyId: number;
+      title?: string;
+      category?: string;
+      sortBy?: "createdAt" | "deadline";
+      sortOrder?: "asc" | "desc";
+      limit?: number;
+      offset?: number;
+    } = { companyId };
+
+    if (typeof query.title === "string") repoQuery.title = query.title;
+    if (typeof query.category === "string") repoQuery.category = query.category;
+    if (query.sortBy === "createdAt" || query.sortBy === "deadline") repoQuery.sortBy = query.sortBy;
+    if (query.sortOrder === "asc" || query.sortOrder === "desc") repoQuery.sortOrder = query.sortOrder;
+    if (typeof query.limit === "number") repoQuery.limit = query.limit;
+    if (typeof query.offset === "number") repoQuery.offset = query.offset;
+
+    const result = await JobRepository.listJobs(repoQuery);
+
+    // Map to include applicant count nicely
+    return {
+      total: result.total,
+      limit: result.limit,
+      offset: result.offset,
+      items: result.items.map((j) => ({
+        id: j.id,
+        title: j.title,
+        category: j.category,
+        city: j.city,
+        isPublished: j.isPublished,
+        deadline: j.deadline,
+        createdAt: j.createdAt,
+        applicantsCount: (j as any)._count?.applications ?? 0,
+      })),
+    };
+  }
+
+  static async jobDetail(params: { companyId: number; jobId: number; requesterId: number; requesterRole: UserRole }) {
+    const { companyId, jobId, requesterId, requesterRole } = params;
+    if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can view job detail" };
+    await this.assertCompanyOwnership(companyId, requesterId);
+
+    const job = await JobRepository.getJobById(companyId, jobId);
+    if (!job) throw { status: 404, message: "Job not found" };
+
+    const test = job.preselectionTests?.[0];
+    const passingScore = test?.passingScore ?? null;
+
+    const applicants = job.applications.map((a) => {
+      let preselectionPassed: boolean | undefined = undefined;
+      if (test) {
+        const result = test.results.find((r) => r.userId === a.userId);
+        if (result) {
+          preselectionPassed = passingScore != null ? result.score >= passingScore : true;
+        } else {
+          preselectionPassed = false;
+        }
+      }
+      return {
+        applicationId: a.id,
+        userId: a.userId,
+        userName: (a as any).user?.name,
+        userEmail: (a as any).user?.email,
+        score: test ? test.results.find((r) => r.userId === a.userId)?.score ?? null : null,
+        preselectionPassed,
+        status: a.status,
+        appliedAt: a.createdAt,
+      };
+    });
+
+    return {
+      id: job.id,
+      title: job.title,
+      description: job.description,
+      banner: job.banner,
+      category: job.category,
+      city: job.city,
+      salaryMin: job.salaryMin,
+      salaryMax: job.salaryMax,
+      tags: job.tags,
+      applicationDeadline: job.deadline,
+      isPublished: job.isPublished,
+      createdAt: job.createdAt,
+      applicantsCount: (job as any)._count?.applications ?? job.applications.length,
+      applicants,
+    };
+  }
+}
