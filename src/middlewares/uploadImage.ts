@@ -28,8 +28,12 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 1 * 1024 * 1024, // 1MB limit
   },
 });
 
-export const uploadPaymentProof = upload.single("paymentProof");
+// Generic upload middleware functions that can be used in any route
+export const uploadSingle = (fieldName: string) => upload.single(fieldName);
+export const uploadMultiple = (fieldName: string, maxCount: number = 5) => upload.array(fieldName, maxCount);
+export const uploadFields = (fields: { name: string; maxCount?: number }[]) => upload.fields(fields);
+
