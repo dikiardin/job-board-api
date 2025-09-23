@@ -22,8 +22,8 @@ export class SocialAuthController {
     next: NextFunction
   ) {
     try {
-      const { provider, token, companyId } = req.body;
-      const result = await SocialAuthService.socialLogin(provider, token, "ADMIN", companyId);
+      const { provider, token } = req.body;
+      const result = await SocialAuthService.socialLogin(provider, token, "ADMIN");
       res.status(200).json({ success: true, data: result });
     } catch (err) {
       next(err);
