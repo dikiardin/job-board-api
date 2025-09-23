@@ -15,7 +15,6 @@ export class BasicAuthService {
     name: string,
     email: string,
     password: string,
-    phone?: string,
     companyId?: number 
   ) {
     
@@ -30,8 +29,7 @@ export class BasicAuthService {
       name,
       email,
       passwordHash,
-      role,
-      ...(phone ? { phone } : {}),
+      role
     });
 
     if (role === "ADMIN") {

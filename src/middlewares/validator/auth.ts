@@ -34,9 +34,9 @@ export const companyRegisterValidation = [
     .notEmpty()
     .withMessage("Company name is required."),
 
-  body("phone")
-    .notEmpty()
-    .withMessage("Phone number is required."),
+  // body("phone")
+  //   .notEmpty()
+  //   .withMessage("Phone number is required."),
 
   body("email")
     .notEmpty()
