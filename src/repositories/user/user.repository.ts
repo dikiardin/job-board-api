@@ -6,6 +6,7 @@ export class UserRepo {
     email: string;
     passwordHash: string;
     role: "USER" | "ADMIN";
+    phone?: string;
   }) {
     return prisma.user.create({
       data,
