@@ -77,7 +77,7 @@ model User {
   updatedAt      DateTime  @updatedAt
 
   providers           UserProvider[]
-  companyAdmins       CompanyAdmin[]
+  adminOf          Company?         @relation("CompanyAdmin")
   employments         Employment[]
   applications        Application[]
   preselectionResults PreselectionResult[]
@@ -116,25 +116,12 @@ model Company {
   logo        String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  admins      CompanyAdmin[]
+  adminId     Int?     @unique
+  admin       User?    @relation("CompanyAdmin", fields: [adminId], references: [id], onDelete: SetNull)
   jobs        Job[]
   employments Employment[]
 }
 
-model CompanyAdmin {
-  id        Int      @id @default(autoincrement())
-  companyId Int
-  userId    Int
-  adminRole String?
-  createdAt DateTime @default(now())
-
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([companyId, userId])
-  @@index([userId])
-}
 
 model Job {
   id          Int       @id @default(autoincrement())
@@ -353,7 +340,6 @@ model Employment {
   id         Int       @id @default(autoincrement())
   userId     Int
   companyId  Int?
-  isVerified Boolean   @default(false)
   startDate  DateTime?
   endDate    DateTime?
   createdAt  DateTime  @default(now())
