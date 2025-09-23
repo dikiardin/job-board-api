@@ -8,7 +8,7 @@ export class BasicAuthController {
     next: NextFunction
   ) {
     try {
-      const { role, name, email, password, phone, companyId } = req.body;
+      const { role, name, email, password, companyId } = req.body;
       if (role !== "USER" && role !== "ADMIN") {
         return res.status(400).json({ message: "Invalid role" });
       }
@@ -18,7 +18,6 @@ export class BasicAuthController {
         name,
         email,
         password,
-        phone,
         companyId
       );
       res.status(201).json(result);
