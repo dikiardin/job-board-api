@@ -184,9 +184,11 @@ model Interview {
   applicationId  Int
   scheduleDate   DateTime
   locationOrLink String?
+  notes          String?
   status         InterviewStatus @default(SCHEDULED)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+  reminderSentAt DateTime?
 
   application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 

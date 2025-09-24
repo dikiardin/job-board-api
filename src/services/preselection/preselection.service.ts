@@ -21,7 +21,7 @@ export class PreselectionService {
     }
 
     if (!Array.isArray(questions) || questions.length === 0) throw { status: 400, message: "Questions are required" };
-    if (questions.length > 25) throw { status: 400, message: "Max 25 questions" };
+    if (questions.length !== 25) throw { status: 400, message: "Preselection test must contain exactly 25 questions" };
 
     for (const [idx, q] of questions.entries()) {
       if (!q.question || !Array.isArray(q.options) || q.options.length !== 4) {

@@ -13,6 +13,9 @@ const subscriptionJobs_1 = require("./jobs/subscriptionJobs");
 const preselection_router_1 = __importDefault(require("./routers/preselection.router"));
 const application_router_1 = __importDefault(require("./routers/application.router"));
 const job_router_1 = __importDefault(require("./routers/job.router"));
+const interview_router_1 = __importDefault(require("./routers/interview.router"));
+const interviewJobs_1 = require("./jobs/interviewJobs");
+const analytics_router_1 = __importDefault(require("./routers/analytics.router"));
 const PORT = process.env.PORT || "5000";
 class App {
     constructor() {
@@ -49,6 +52,12 @@ class App {
         // Job Management Routes
         const jobRouter = new job_router_1.default();
         this.app.use("/", jobRouter.getRouter());
+        // Interview Scheduling Routes
+        const interviewRouter = new interview_router_1.default();
+        this.app.use("/", interviewRouter.getRouter());
+        // Analytics Routes
+        const analyticsRouter = new analytics_router_1.default();
+        this.app.use("/", analyticsRouter.getRouter());
     }
     errorHandling() {
         this.app.use((error, req, res, next) => {
@@ -77,6 +86,7 @@ class App {
         this.app.listen(PORT, () => {
             console.log(`API Running: http://localhost:${PORT}`);
             (0, subscriptionJobs_1.startSubscriptionJobs)();
+            (0, interviewJobs_1.startInterviewJobs)();
         });
     }
 }

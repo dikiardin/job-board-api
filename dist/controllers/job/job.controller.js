@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JobController = void 0;
 const job_service_1 = require("../../services/job/job.service");
+const job_applicants_service_1 = require("../../services/job/job.applicants.service");
 class JobController {
     static async create(req, res, next) {
         try {
@@ -98,6 +99,60 @@ class JobController {
             const requester = res.locals.decrypt;
             const result = await job_service_1.JobService.deleteJob({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role });
             res.status(200).json({ success: true, data: result });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    static async applicantsList(req, res, next) {
+        try {
+            const companyId = Number(req.params.companyId);
+            const jobId = Number(req.params.jobId);
+            const requester = res.locals.decrypt;
+            const { name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy, sortOrder, limit, offset } = req.query;
+            const query = {};
+            if (typeof name === "string")
+                query.name = name;
+            if (typeof education === "string")
+                query.education = education;
+            if (typeof ageMin === "string" && ageMin.trim() !== "")
+                query.ageMin = Number(ageMin);
+            if (typeof ageMax === "string" && ageMax.trim() !== "")
+                query.ageMax = Number(ageMax);
+            if (typeof expectedSalaryMin === "string" && expectedSalaryMin.trim() !== "")
+                query.expectedSalaryMin = Number(expectedSalaryMin);
+            if (typeof expectedSalaryMax === "string" && expectedSalaryMax.trim() !== "")
+                query.expectedSalaryMax = Number(expectedSalaryMax);
+            if (sortBy === "appliedAt" || sortBy === "expectedSalary" || sortBy === "age")
+                query.sortBy = sortBy;
+            if (sortOrder === "asc" || sortOrder === "desc")
+                query.sortOrder = sortOrder;
+            if (typeof limit === "string" && limit.trim() !== "")
+                query.limit = Number(limit);
+            if (typeof offset === "string" && offset.trim() !== "")
+                query.offset = Number(offset);
+            const data = await job_applicants_service_1.JobApplicantsService.listApplicants({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role, query });
+            res.status(200).json({ success: true, data });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    static async updateApplicantStatus(req, res, next) {
+        try {
+            const companyId = Number(req.params.companyId);
+            const jobId = Number(req.params.jobId);
+            const applicationId = Number(req.params.applicationId);
+            const requester = res.locals.decrypt;
+            const data = await job_applicants_service_1.JobApplicantsService.updateApplicantStatus({
+                companyId,
+                jobId,
+                applicationId,
+                requesterId: requester.userId,
+                requesterRole: requester.role,
+                body: req.body,
+            });
+            res.status(200).json({ success: true, data });
         }
         catch (error) {
             next(error);
