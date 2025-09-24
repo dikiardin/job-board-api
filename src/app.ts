@@ -8,6 +8,7 @@ import { startSubscriptionJobs } from "./jobs/subscriptionJobs";
 import PreselectionRouter from "./routers/preselection.router";
 import ApplicationRouter from "./routers/application.router";
 import JobRouter from "./routers/job.router";
+import cvRoutes from "./routers/cv.router";
 import InterviewRouter from "./routers/interview.router";
 import { startInterviewJobs } from "./jobs/interviewJobs";
 import AnalyticsRouter from "./routers/analytics.router";
@@ -50,13 +51,18 @@ class App {
     const jobRouter: JobRouter = new JobRouter();
     const interviewRouter: InterviewRouter = new InterviewRouter();
     const analyticsRouter: AnalyticsRouter = new AnalyticsRouter();
+    
     this.app.use("/auth", authRouter.getRouter());
     this.app.use("/subscription", subscriptionRouter.getRouter());
     this.app.use("/preselection", preselectionRouter.getRouter());
-    this.app.use("/application", applicationRouter.getRouter())
+    this.app.use("/application", applicationRouter.getRouter());
     this.app.use("/job", jobRouter.getRouter());
+    
+    // CV Generator Routes
+    this.app.use("/cv", cvRoutes);
+    
     this.app.use("/interview", interviewRouter.getRouter());
-    this.app.use("/analitycs", analyticsRouter.getRouter());
+    this.app.use("/analytics", analyticsRouter.getRouter());
   }
 
   private errorHandling(): void {

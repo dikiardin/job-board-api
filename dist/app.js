@@ -13,6 +13,7 @@ const subscriptionJobs_1 = require("./jobs/subscriptionJobs");
 const preselection_router_1 = __importDefault(require("./routers/preselection.router"));
 const application_router_1 = __importDefault(require("./routers/application.router"));
 const job_router_1 = __importDefault(require("./routers/job.router"));
+const cv_router_1 = __importDefault(require("./routers/cv.router"));
 const interview_router_1 = __importDefault(require("./routers/interview.router"));
 const interviewJobs_1 = require("./jobs/interviewJobs");
 const analytics_router_1 = __importDefault(require("./routers/analytics.router"));
@@ -52,6 +53,8 @@ class App {
         // Job Management Routes
         const jobRouter = new job_router_1.default();
         this.app.use("/", jobRouter.getRouter());
+        // CV Generator Routes
+        this.app.use("/cv", cv_router_1.default);
         // Interview Scheduling Routes
         const interviewRouter = new interview_router_1.default();
         this.app.use("/", interviewRouter.getRouter());
