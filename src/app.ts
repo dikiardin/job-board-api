@@ -9,6 +9,9 @@ import PreselectionRouter from "./routers/preselection.router";
 import ApplicationRouter from "./routers/application.router";
 import JobRouter from "./routers/job.router";
 import cvRoutes from "./routers/cv.router";
+import InterviewRouter from "./routers/interview.router";
+import { startInterviewJobs } from "./jobs/interviewJobs";
+import AnalyticsRouter from "./routers/analytics.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -42,25 +45,24 @@ class App {
     });
 
     const authRouter: AuthRouter = new AuthRouter();
-    this.app.use("/auth", authRouter.getRouter());
-
     const subscriptionRouter: SubscriptionRouter = new SubscriptionRouter();
-    this.app.use("/subscription", subscriptionRouter.getRouter());
-
-    // Preselection Test Routes
     const preselectionRouter: PreselectionRouter = new PreselectionRouter();
-    this.app.use("/", preselectionRouter.getRouter());
-
-    // Application Routes
     const applicationRouter: ApplicationRouter = new ApplicationRouter();
-    this.app.use("/", applicationRouter.getRouter());
-
-    // Job Management Routes
     const jobRouter: JobRouter = new JobRouter();
-    this.app.use("/", jobRouter.getRouter());
-
+    const interviewRouter: InterviewRouter = new InterviewRouter();
+    const analyticsRouter: AnalyticsRouter = new AnalyticsRouter();
+    
+    this.app.use("/auth", authRouter.getRouter());
+    this.app.use("/subscription", subscriptionRouter.getRouter());
+    this.app.use("/preselection", preselectionRouter.getRouter());
+    this.app.use("/application", applicationRouter.getRouter());
+    this.app.use("/job", jobRouter.getRouter());
+    
     // CV Generator Routes
     this.app.use("/cv", cvRoutes);
+    
+    this.app.use("/interview", interviewRouter.getRouter());
+    this.app.use("/analytics", analyticsRouter.getRouter());
   }
 
   private errorHandling(): void {
@@ -97,6 +99,7 @@ class App {
     this.app.listen(PORT, () => {
       console.log(`API Running: http://localhost:${PORT}`);
       startSubscriptionJobs();
+      startInterviewJobs();
     });
   }
 }

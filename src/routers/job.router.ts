@@ -55,6 +55,22 @@ class JobRouter {
       verifyRole([UserRole.ADMIN]),
       JobController.remove
     );
+
+    // Applicants list with server-side pagination/filter/sort
+    this.route.get(
+      "/companies/:companyId/jobs/:jobId/applicants",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      JobController.applicantsList
+    );
+
+    // Update applicant status (IN_REVIEW / INTERVIEW / ACCEPTED / REJECTED)
+    this.route.put(
+      "/companies/:companyId/jobs/:jobId/applications/:applicationId/status",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      JobController.updateApplicantStatus
+    );
   }
 
   public getRouter(): Router {

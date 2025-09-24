@@ -11,22 +11,18 @@ export class JobService {
 
   static validateJobPayload(payload: any, isUpdate = false) {
     const errors: string[] = [];
-
     if (!isUpdate) {
       if (!payload?.title || typeof payload.title !== "string") errors.push("title is required");
       if (!payload?.description || typeof payload.description !== "string") errors.push("description is required");
       if (!payload?.category || typeof payload.category !== "string") errors.push("category is required");
       if (!payload?.city || typeof payload.city !== "string") errors.push("city is required");
     }
-
     if (payload?.deadline) {
       const d = new Date(payload.deadline);
       if (isNaN(d.getTime())) errors.push("deadline must be a valid date");
       else if (d.getTime() < Date.now()) errors.push("deadline cannot be in the past");
     }
-
     if (payload?.tags && !Array.isArray(payload.tags)) errors.push("tags must be an array of strings");
-
     if (errors.length) throw { status: 400, message: errors.join(", ") };
   }
 
@@ -78,10 +74,8 @@ export class JobService {
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can update jobs" };
     await this.assertCompanyOwnership(companyId, requesterId);
     this.validateJobPayload(body, true);
-
     const updateData: any = { ...body };
     if (typeof body?.deadline !== "undefined") updateData.deadline = body.deadline ? new Date(body.deadline) : null;
-
     const job = await JobRepository.updateJob(companyId, jobId, updateData);
     return job;
   }
@@ -90,11 +84,8 @@ export class JobService {
     const { companyId, jobId, requesterId, requesterRole } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can publish/unpublish jobs" };
     await this.assertCompanyOwnership(companyId, requesterId);
-
-    // Fetch current job
     const detail = await JobRepository.getJobById(companyId, jobId);
     if (!detail) throw { status: 404, message: "Job not found" };
-
     const updated = await JobRepository.togglePublish(jobId, !detail.isPublished);
     return updated;
   }
@@ -103,7 +94,6 @@ export class JobService {
     const { companyId, jobId, requesterId, requesterRole } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can delete jobs" };
     await this.assertCompanyOwnership(companyId, requesterId);
-
     await JobRepository.deleteJob(companyId, jobId);
     return { success: true };
   }
@@ -134,10 +124,7 @@ export class JobService {
     if (query.sortOrder === "asc" || query.sortOrder === "desc") repoQuery.sortOrder = query.sortOrder;
     if (typeof query.limit === "number") repoQuery.limit = query.limit;
     if (typeof query.offset === "number") repoQuery.offset = query.offset;
-
     const result = await JobRepository.listJobs(repoQuery);
-
-    // Map to include applicant count nicely
     return {
       total: result.total,
       limit: result.limit,
@@ -159,13 +146,10 @@ export class JobService {
     const { companyId, jobId, requesterId, requesterRole } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can view job detail" };
     await this.assertCompanyOwnership(companyId, requesterId);
-
     const job = await JobRepository.getJobById(companyId, jobId);
     if (!job) throw { status: 404, message: "Job not found" };
-
     const test = job.preselectionTests?.[0];
     const passingScore = test?.passingScore ?? null;
-
     const applicants = job.applications.map((a) => {
       let preselectionPassed: boolean | undefined = undefined;
       if (test) {
