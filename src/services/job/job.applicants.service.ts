@@ -1,6 +1,6 @@
 import { UserRole, ApplicationStatus } from "../../generated/prisma";
 import { JobRepository } from "../../repositories/job/job.repository";
-import { ApplicationRepository } from "../../repositories/application/application.repository";
+import { ApplicationRepo } from "../../repositories/application/application.repository";
 
 async function assertCompanyOwnership(companyId: number, requesterId: number) {
   const company = await JobRepository.getCompany(companyId);
@@ -22,7 +22,7 @@ export class JobApplicantsService {
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can update applicant status" };
     await assertCompanyOwnership(companyId, requesterId);
 
-    const app = await ApplicationRepository.getApplicationWithOwnership(applicationId);
+    const app = await ApplicationRepo.getApplicationWithOwnership(applicationId);
     if (!app || app.jobId !== jobId || (app as any).job.companyId !== companyId) throw { status: 404, message: "Application not found" };
 
     const allowed: ApplicationStatus[] = [
@@ -33,7 +33,7 @@ export class JobApplicantsService {
     ];
     if (!allowed.includes(body.status)) throw { status: 400, message: "Invalid status transition" };
 
-    const updated = await ApplicationRepository.updateApplicationStatus(applicationId, body.status as any, body.reviewNote ?? null);
+    const updated = await ApplicationRepo.updateApplicationStatus(applicationId, body.status as any, body.reviewNote ?? null);
     return { id: updated.id, status: updated.status, reviewNote: updated.reviewNote, updatedAt: updated.updatedAt };
   }
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ApplicationController } from "../controllers/application/application.controller";
 import { verifyToken } from "../middlewares/verifyToken";
+import { uploadSingleFile } from "../middlewares/uploadFile";
 import { verifyRole } from "../middlewares/verifyRole";
 import { UserRole } from "../generated/prisma";
 
@@ -13,12 +14,12 @@ class ApplicationRouter {
   }
 
   private initializeRoutes(): void {
-    // Create application for a job (Applicant only)
     this.route.post(
-      "/jobs/:jobId/applications",
+      "/:jobId",
       verifyToken,
       verifyRole([UserRole.USER]),
-      ApplicationController.create
+      uploadSingleFile("cvFile"),
+      ApplicationController.applyJob
     );
   }
 
