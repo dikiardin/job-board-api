@@ -44,30 +44,19 @@ class App {
     });
 
     const authRouter: AuthRouter = new AuthRouter();
-    this.app.use("/auth", authRouter.getRouter());
-
     const subscriptionRouter: SubscriptionRouter = new SubscriptionRouter();
-    this.app.use("/subscription", subscriptionRouter.getRouter());
-
-    // Preselection Test Routes
     const preselectionRouter: PreselectionRouter = new PreselectionRouter();
-    this.app.use("/", preselectionRouter.getRouter());
-
-    // Application Routes
     const applicationRouter: ApplicationRouter = new ApplicationRouter();
-    this.app.use("/", applicationRouter.getRouter());
-
-    // Job Management Routes
     const jobRouter: JobRouter = new JobRouter();
-    this.app.use("/", jobRouter.getRouter());
-
-    // Interview Scheduling Routes
     const interviewRouter: InterviewRouter = new InterviewRouter();
-    this.app.use("/", interviewRouter.getRouter());
-
-    // Analytics Routes
     const analyticsRouter: AnalyticsRouter = new AnalyticsRouter();
-    this.app.use("/", analyticsRouter.getRouter());
+    this.app.use("/auth", authRouter.getRouter());
+    this.app.use("/subscription", subscriptionRouter.getRouter());
+    this.app.use("/preselection", preselectionRouter.getRouter());
+    this.app.use("/application", applicationRouter.getRouter())
+    this.app.use("/job", jobRouter.getRouter());
+    this.app.use("/interview", interviewRouter.getRouter());
+    this.app.use("/analitycs", analyticsRouter.getRouter());
   }
 
   private errorHandling(): void {
