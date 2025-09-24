@@ -6,5 +6,7 @@ export declare class JobController {
     static update(req: Request, res: Response, next: NextFunction): Promise<void>;
     static togglePublish(req: Request, res: Response, next: NextFunction): Promise<void>;
     static remove(req: Request, res: Response, next: NextFunction): Promise<void>;
+    static applicantsList(req: Request, res: Response, next: NextFunction): Promise<void>;
+    static updateApplicantStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 //# sourceMappingURL=job.controller.d.ts.map

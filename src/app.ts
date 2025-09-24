@@ -8,6 +8,9 @@ import { startSubscriptionJobs } from "./jobs/subscriptionJobs";
 import PreselectionRouter from "./routers/preselection.router";
 import ApplicationRouter from "./routers/application.router";
 import JobRouter from "./routers/job.router";
+import InterviewRouter from "./routers/interview.router";
+import { startInterviewJobs } from "./jobs/interviewJobs";
+import AnalyticsRouter from "./routers/analytics.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -57,6 +60,14 @@ class App {
     // Job Management Routes
     const jobRouter: JobRouter = new JobRouter();
     this.app.use("/", jobRouter.getRouter());
+
+    // Interview Scheduling Routes
+    const interviewRouter: InterviewRouter = new InterviewRouter();
+    this.app.use("/", interviewRouter.getRouter());
+
+    // Analytics Routes
+    const analyticsRouter: AnalyticsRouter = new AnalyticsRouter();
+    this.app.use("/", analyticsRouter.getRouter());
   }
 
   private errorHandling(): void {
@@ -93,6 +104,7 @@ class App {
     this.app.listen(PORT, () => {
       console.log(`API Running: http://localhost:${PORT}`);
       startSubscriptionJobs();
+      startInterviewJobs();
     });
   }
 }

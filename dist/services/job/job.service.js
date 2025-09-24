@@ -73,7 +73,6 @@ class JobService {
         if (requesterRole !== prisma_1.UserRole.ADMIN)
             throw { status: 401, message: "Only company admin can publish/unpublish jobs" };
         await this.assertCompanyOwnership(companyId, requesterId);
-        // Fetch current job
         const detail = await job_repository_1.JobRepository.getJobById(companyId, jobId);
         if (!detail)
             throw { status: 404, message: "Job not found" };
@@ -107,7 +106,6 @@ class JobService {
         if (typeof query.offset === "number")
             repoQuery.offset = query.offset;
         const result = await job_repository_1.JobRepository.listJobs(repoQuery);
-        // Map to include applicant count nicely
         return {
             total: result.total,
             limit: result.limit,
