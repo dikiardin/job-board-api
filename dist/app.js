@@ -13,6 +13,7 @@ const subscriptionJobs_1 = require("./jobs/subscriptionJobs");
 const preselection_router_1 = __importDefault(require("./routers/preselection.router"));
 const application_router_1 = __importDefault(require("./routers/application.router"));
 const job_router_1 = __importDefault(require("./routers/job.router"));
+const cv_router_1 = __importDefault(require("./routers/cv.router"));
 const PORT = process.env.PORT || "5000";
 class App {
     constructor() {
@@ -49,6 +50,8 @@ class App {
         // Job Management Routes
         const jobRouter = new job_router_1.default();
         this.app.use("/", jobRouter.getRouter());
+        // CV Generator Routes
+        this.app.use("/cv", cv_router_1.default);
     }
     errorHandling() {
         this.app.use((error, req, res, next) => {
