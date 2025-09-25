@@ -7,9 +7,13 @@ const storage = multer.memoryStorage();
 // File filter for images only
 const fileFilter = (
   req: any,
-  file: Express.Multer.File,
+  file: Express.Multer.File | undefined,
   cb: multer.FileFilterCallback
 ) => {
+  if (!file) {
+    return cb(null, false);
+  }
+
   const allowedTypes = /jpeg|jpg|png|gif|webp/;
   const extname = allowedTypes.test(
     path.extname(file.originalname).toLowerCase()
@@ -17,7 +21,7 @@ const fileFilter = (
   const mimetype = allowedTypes.test(file.mimetype);
 
   if (mimetype && extname) {
-    return cb(null, true);
+    cb(null, true);
   } else {
     cb(new Error("Only image files (JPEG, JPG, PNG, GIF, WEBP) are allowed"));
   }
@@ -34,6 +38,7 @@ const upload = multer({
 
 // Generic upload middleware functions that can be used in any route
 export const uploadSingle = (fieldName: string) => upload.single(fieldName);
-export const uploadMultiple = (fieldName: string, maxCount: number = 5) => upload.array(fieldName, maxCount);
-export const uploadFields = (fields: { name: string; maxCount?: number }[]) => upload.fields(fields);
-
+export const uploadMultiple = (fieldName: string, maxCount: number = 5) =>
+  upload.array(fieldName, maxCount);
+export const uploadFields = (fields: { name: string; maxCount?: number }[]) =>
+  upload.fields(fields);
