@@ -26,16 +26,19 @@ class App {
   }
 
   private configure(): void {
+    this.app.use((req, res, next) => {
+      console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}`);
+      next();
+    });
+
     this.app.use(
       cors({
         origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        credentials: false,
-        allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-        exposedHeaders: ["Content-Type", "Authorization"],
-        optionsSuccessStatus: 200,
+        credentials: true,
       } as CorsOptions)
     );
+
     this.app.use(express.json());
   }
 
