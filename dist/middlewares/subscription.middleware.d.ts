@@ -1,5 +1,5 @@
-import { Response, NextFunction } from 'express';
-import { AuthRequest } from './auth.middleware';
+import { Response, NextFunction } from "express";
+import { AuthRequest } from "./auth.middleware";
 export interface SubscriptionLimits {
     cvGenerationLimit: number;
     templatesAccess: string[];

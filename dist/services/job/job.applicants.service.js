@@ -18,7 +18,7 @@ class JobApplicantsService {
         if (requesterRole !== prisma_1.UserRole.ADMIN)
             throw { status: 401, message: "Only company admin can update applicant status" };
         await assertCompanyOwnership(companyId, requesterId);
-        const app = await application_repository_1.ApplicationRepository.getApplicationWithOwnership(applicationId);
+        const app = await application_repository_1.ApplicationRepo.getApplicationWithOwnership(applicationId);
         if (!app || app.jobId !== jobId || app.job.companyId !== companyId)
             throw { status: 404, message: "Application not found" };
         const allowed = [
@@ -29,7 +29,7 @@ class JobApplicantsService {
         ];
         if (!allowed.includes(body.status))
             throw { status: 400, message: "Invalid status transition" };
-        const updated = await application_repository_1.ApplicationRepository.updateApplicationStatus(applicationId, body.status, body.reviewNote ?? null);
+        const updated = await application_repository_1.ApplicationRepo.updateApplicationStatus(applicationId, body.status, body.reviewNote ?? null);
         return { id: updated.id, status: updated.status, reviewNote: updated.reviewNote, updatedAt: updated.updatedAt };
     }
     static async listApplicants(params) {

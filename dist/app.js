@@ -41,26 +41,20 @@ class App {
             res.status(200).send("<h1>Job Board API</h1>");
         });
         const authRouter = new auth_router_1.default();
-        this.app.use("/auth", authRouter.getRouter());
         const subscriptionRouter = new subscription_router_1.default();
-        this.app.use("/subscription", subscriptionRouter.getRouter());
-        // Preselection Test Routes
         const preselectionRouter = new preselection_router_1.default();
-        this.app.use("/", preselectionRouter.getRouter());
-        // Application Routes
         const applicationRouter = new application_router_1.default();
-        this.app.use("/", applicationRouter.getRouter());
-        // Job Management Routes
         const jobRouter = new job_router_1.default();
-        this.app.use("/", jobRouter.getRouter());
-        // CV Generator Routes
-        this.app.use("/cv", cv_router_1.default);
-        // Interview Scheduling Routes
         const interviewRouter = new interview_router_1.default();
-        this.app.use("/", interviewRouter.getRouter());
-        // Analytics Routes
         const analyticsRouter = new analytics_router_1.default();
-        this.app.use("/", analyticsRouter.getRouter());
+        this.app.use("/auth", authRouter.getRouter());
+        this.app.use("/subscription", subscriptionRouter.getRouter());
+        this.app.use("/preselection", preselectionRouter.getRouter());
+        this.app.use("/application", applicationRouter.getRouter());
+        this.app.use("/job", jobRouter.getRouter());
+        this.app.use("/cv", cv_router_1.default);
+        this.app.use("/interview", interviewRouter.getRouter());
+        this.app.use("/analytics", analyticsRouter.getRouter());
     }
     errorHandling() {
         this.app.use((error, req, res, next) => {

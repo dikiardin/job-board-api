@@ -1,12 +1,5 @@
-import { UserRole } from "../../generated/prisma";
 export declare class ApplicationService {
-    static createApplication(params: {
-        requesterId: number;
-        requesterRole: UserRole;
-        jobId: number;
-        cvFile: string;
-        expectedSalary?: number;
-    }): Promise<{
+    static submitApplication(userId: number, jobId: number, file: Express.Multer.File, expectedSalary?: number): Promise<{
         createdAt: Date;
         updatedAt: Date;
         id: number;
