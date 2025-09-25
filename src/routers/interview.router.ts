@@ -18,6 +18,7 @@ class InterviewRouter {
       "/companies/:companyId/jobs/:jobId/interviews",
       verifyToken,
       verifyRole([UserRole.ADMIN]),
+      require("../middlewares/validator/interview.validator").validateCreateManyInterviews,
       InterviewController.createMany
     );
 
@@ -41,6 +42,7 @@ class InterviewRouter {
       "/companies/:companyId/interviews/:id",
       verifyToken,
       verifyRole([UserRole.ADMIN]),
+      require("../middlewares/validator/interview.validator").validateUpdateInterview,
       InterviewController.update
     );
 

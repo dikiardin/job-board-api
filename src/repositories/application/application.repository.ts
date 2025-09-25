@@ -48,7 +48,14 @@ export class ApplicationRepo {
     cvFile: string;
     expectedSalary?: number;
   }) {
-    return prisma.application.create({ data });
+    return prisma.application.create({
+      data: {
+        userId: data.userId,
+        jobId: data.jobId,
+        cvFile: data.cvFile,
+        expectedSalary: typeof data.expectedSalary === "number" ? data.expectedSalary : null,
+      },
+    });
   }
   
   static async findExisting(userId: number, jobId: number) {
