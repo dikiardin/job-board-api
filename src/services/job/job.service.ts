@@ -142,6 +142,46 @@ export class JobService {
     };
   }
 
+  static async listPublishedJobs(params: {
+    query: { title?: string; category?: string; city?: string; sortBy?: "createdAt" | "deadline"; sortOrder?: "asc" | "desc"; limit?: number; offset?: number };
+  }) {
+    const { query } = params;
+    const repoQuery: {
+      title?: string;
+      category?: string;
+      city?: string;
+      sortBy?: "createdAt" | "deadline";
+      sortOrder?: "asc" | "desc";
+      limit?: number;
+      offset?: number;
+    } = {};
+
+    if (typeof query.title === "string") repoQuery.title = query.title;
+    if (typeof query.category === "string") repoQuery.category = query.category;
+    if (typeof query.city === "string") repoQuery.city = query.city;
+    if (query.sortBy === "createdAt" || query.sortBy === "deadline") repoQuery.sortBy = query.sortBy;
+    if (query.sortOrder === "asc" || query.sortOrder === "desc") repoQuery.sortOrder = query.sortOrder;
+    if (typeof query.limit === "number") repoQuery.limit = query.limit;
+    if (typeof query.offset === "number") repoQuery.offset = query.offset;
+
+    const result = await JobRepository.listPublishedJobs(repoQuery);
+    return {
+      total: result.total,
+      limit: result.limit,
+      offset: result.offset,
+      items: result.items.map((j: any) => ({
+        id: j.id,
+        title: j.title,
+        category: j.category,
+        city: j.city,
+        deadline: j.deadline,
+        createdAt: j.createdAt,
+        companyId: j.companyId,
+        companyName: j.company?.name,
+      })),
+    };
+  }
+
   static async jobDetail(params: { companyId: number; jobId: number; requesterId: number; requesterRole: UserRole }) {
     const { companyId, jobId, requesterId, requesterRole } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can view job detail" };

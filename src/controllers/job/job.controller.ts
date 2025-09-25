@@ -49,6 +49,25 @@ export class JobController {
     }
   }
 
+  static async listPublic(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { title, category, city, sortBy, sortOrder, limit, offset } = req.query as Record<string, any>;
+      const query: { title?: string; category?: string; city?: string; sortBy?: "createdAt" | "deadline"; sortOrder?: "asc" | "desc"; limit?: number; offset?: number } = {};
+      if (typeof title === "string") query.title = title;
+      if (typeof category === "string") query.category = category;
+      if (typeof city === "string") query.city = city;
+      if (sortBy === "createdAt" || sortBy === "deadline") query.sortBy = sortBy;
+      if (sortOrder === "asc" || sortOrder === "desc") query.sortOrder = sortOrder;
+      if (typeof limit === "string" && limit.trim() !== "") query.limit = Number(limit);
+      if (typeof offset === "string" && offset.trim() !== "") query.offset = Number(offset);
+
+      const data = await JobService.listPublishedJobs({ query });
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async detail(req: Request, res: Response, next: NextFunction) {
     try {
       const companyId = Number(req.params.companyId);
