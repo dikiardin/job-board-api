@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cvMainController = exports.CVMainController = void 0;
-const cv_service_1 = require("../../services/cv/cv.service");
+const cv_service_1 = require("../../services/cv/core/cv.service");
 class CVMainController {
     // Generate CV from user profile
     async generateCV(req, res) {

@@ -32,9 +32,13 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cloudinaryUpload = void 0;
 const cloudinary_1 = require("cloudinary");
+const path_1 = __importDefault(require("path"));
 const streamifier = __importStar(require("streamifier"));
 cloudinary_1.v2.config({
     api_key: "331288569242839",
@@ -43,12 +47,28 @@ cloudinary_1.v2.config({
 });
 const cloudinaryUpload = (file) => {
     return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary_1.v2.uploader.upload_stream((err, result) => {
+        const ext = path_1.default.extname(file.originalname).toLowerCase();
+        const docTypes = [".pdf", ".doc", ".docx"];
+        const isDoc = docTypes.includes(ext);
+        const resourceType = isDoc ? "raw" : "image";
+        const baseName = path_1.default.parse(file.originalname).name;
+        const publicId = `${baseName}${ext}`;
+        const uploadStream = cloudinary_1.v2.uploader.upload_stream({
+            resource_type: resourceType,
+            use_filename: true,
+            unique_filename: false,
+            public_id: publicId,
+            format: "pdf",
+            type: "upload",
+        }, (err, result) => {
             if (err) {
                 reject(err);
             }
-            else {
+            else if (result) {
                 resolve(result);
+            }
+            else {
+                reject(new Error("Upload failed: no result returned"));
             }
         });
         streamifier.createReadStream(file.buffer).pipe(uploadStream);

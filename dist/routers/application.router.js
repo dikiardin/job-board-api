@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const application_controller_1 = require("../controllers/application/application.controller");
 const verifyToken_1 = require("../middlewares/verifyToken");
+const uploadFile_1 = require("../middlewares/uploadFile");
 const verifyRole_1 = require("../middlewares/verifyRole");
 const prisma_1 = require("../generated/prisma");
 class ApplicationRouter {
@@ -11,8 +12,7 @@ class ApplicationRouter {
         this.initializeRoutes();
     }
     initializeRoutes() {
-        // Create application for a job (Applicant only)
-        this.route.post("/jobs/:jobId/applications", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), application_controller_1.ApplicationController.create);
+        this.route.post("/:jobId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), (0, uploadFile_1.uploadSingleFile)("cvFile"), application_controller_1.ApplicationController.applyJob);
     }
     getRouter() {
         return this.route;

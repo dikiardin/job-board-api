@@ -1,7 +1,7 @@
 const PDFDocument = require("pdfkit");
-import { pdfHeaderService } from "./pdf.header.service";
-import { pdfWorkService } from "./pdf.work.service";
-import { pdfSectionsService } from "./pdf.sections.service";
+import { pdfHeaderService } from "../legacy/pdf.header.service";
+import { pdfWorkService } from "../legacy/pdf.work.service";
+import { pdfSectionsService } from "../legacy/pdf.sections.service";
 
 export class PDFTemplateService {
   // Generate ATS-friendly CV template

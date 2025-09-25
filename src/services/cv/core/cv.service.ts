@@ -1,6 +1,7 @@
-import { prisma } from '../../config/prisma';
-import { PDFService } from './pdf.service';
-import { uploadToCloudinary } from '../../utils/uploadBuffer';
+import { prisma } from '../../../config/prisma';
+import { PDFService } from '../pdf/pdf.service';
+import { uploadToCloudinary } from '../../../utils/uploadBuffer';
+import { CVRepo } from '../../../repositories/cv/cv.repository';
 import { Readable } from 'stream';
 
 // CV Data Types
@@ -139,14 +140,12 @@ class CVService {
         throw new Error('Failed to generate and upload CV');
       }
 
-      // Save to database
-      const generatedCV = await prisma.generatedCV.create({
-        data: {
-          userId,
-          fileUrl,
-          templateUsed: templateType,
-          additionalInfo: additionalInfo as any
-        }
+      // Save to database using repository
+      const generatedCV = await CVRepo.create({
+        userId,
+        fileUrl,
+        templateUsed: templateType,
+        additionalInfo
       });
 
       return {
