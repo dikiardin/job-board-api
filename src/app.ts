@@ -51,16 +51,13 @@ class App {
     const jobRouter: JobRouter = new JobRouter();
     const interviewRouter: InterviewRouter = new InterviewRouter();
     const analyticsRouter: AnalyticsRouter = new AnalyticsRouter();
-    
+
     this.app.use("/auth", authRouter.getRouter());
     this.app.use("/subscription", subscriptionRouter.getRouter());
     this.app.use("/preselection", preselectionRouter.getRouter());
     this.app.use("/application", applicationRouter.getRouter());
     this.app.use("/job", jobRouter.getRouter());
-    
-    // CV Generator Routes
     this.app.use("/cv", cvRoutes);
-    
     this.app.use("/interview", interviewRouter.getRouter());
     this.app.use("/analytics", analyticsRouter.getRouter());
   }
