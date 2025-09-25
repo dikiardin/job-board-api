@@ -42,17 +42,6 @@ export class PDFTemplateService {
     console.log("===============================");
   }
 
-  // Generate Modern template (placeholder for future implementation)
-  generateModernTemplate(doc: any, cvData: any) {
-    // For now, use ATS template as base
-    this.generateATSTemplate(doc, cvData);
-  }
-
-  // Generate Creative template (placeholder for future implementation)
-  generateCreativeTemplate(doc: any, cvData: any) {
-    // For now, use ATS template as base
-    this.generateATSTemplate(doc, cvData);
-  }
 
   // Add section header helper (shared utility)
   addSectionHeader(
