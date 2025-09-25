@@ -4,6 +4,7 @@ import Joi from "joi";
 const listJobsQuerySchema = Joi.object({
   title: Joi.string().trim().optional(),
   category: Joi.string().trim().optional(),
+  city: Joi.string().trim().optional(),
   sortBy: Joi.string().valid("createdAt", "deadline").optional(),
   sortOrder: Joi.string().valid("asc", "desc").optional(),
   limit: Joi.number().integer().min(1).max(100).optional(),

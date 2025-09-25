@@ -116,6 +116,42 @@ export class JobRepository {
     return { items, total, limit, offset };
   }
 
+  static async listPublishedJobs(params: {
+    title?: string;
+    category?: string;
+    city?: string;
+    sortBy?: "createdAt" | "deadline";
+    sortOrder?: "asc" | "desc";
+    limit?: number;
+    offset?: number;
+  }) {
+    const { title, category, city, sortBy = "createdAt", sortOrder = "desc", limit = 10, offset = 0 } = params;
+
+    const now = new Date();
+    const where: Prisma.JobWhereInput = {
+      isPublished: true,
+      ...(title ? { title: { contains: title, mode: "insensitive" } } : {}),
+      ...(category ? { category: { equals: category } } : {}),
+      ...(city ? { city: { contains: city, mode: "insensitive" } } : {}),
+      // Optional: exclude expired by deadline if provided
+      OR: [
+        { deadline: null },
+        { deadline: { gte: now } },
+      ],
+    };
+
+    const [items, total] = await Promise.all([
+      prisma.job.findMany({
+        where,
+        orderBy: sortBy === "deadline" ? { deadline: sortOrder } : { createdAt: sortOrder },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.job.count({ where }),
+    ]);
+
+    return { items, total, limit, offset };
+  }
   static async listApplicantsForJob(params: {
     companyId: number;
     jobId: number;

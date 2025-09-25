@@ -13,6 +13,12 @@ class JobRouter {
   }
 
   private initializeRoutes(): void {
+    // Public jobs listing (published jobs)
+    this.route.get(
+      "/public/jobs",
+      require("../middlewares/validator/job.validator").validateListJobs,
+      JobController.listPublic
+    );
     // All job management endpoints require ADMIN role and JWT
     this.route.post(
       "/companies/:companyId/jobs",
