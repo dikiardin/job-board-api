@@ -60,18 +60,6 @@ export class CVManagementService {
         name: 'ATS-Friendly Template',
         description: 'Clean, professional template optimized for Applicant Tracking Systems',
         preview: '/templates/ats-preview.png'
-      },
-      {
-        id: 'modern',
-        name: 'Modern Template',
-        description: 'Contemporary design with visual elements and modern typography',
-        preview: '/templates/modern-preview.png'
-      },
-      {
-        id: 'creative',
-        name: 'Creative Template',
-        description: 'Unique design for creative professionals with visual flair',
-        preview: '/templates/creative-preview.png'
       }
     ];
   }
