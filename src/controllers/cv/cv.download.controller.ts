@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../../middlewares/auth.middleware";
 import { prisma } from "../../config/prisma";
-import { cvService } from "../../services/cv/cv.service";
+import { cvService } from "../../services/cv/core/cv.service";
 
 export class CVDownloadController {
   // Download CV (Auth Required)

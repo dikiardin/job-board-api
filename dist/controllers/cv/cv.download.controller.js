@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cvDownloadController = exports.CVDownloadController = void 0;
 const prisma_1 = require("../../config/prisma");
-const cv_service_1 = require("../../services/cv/cv.service");
+const cv_service_1 = require("../../services/cv/core/cv.service");
 class CVDownloadController {
     // Download CV (Auth Required)
     async downloadCV(req, res) {

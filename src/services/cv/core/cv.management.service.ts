@@ -1,29 +1,16 @@
-import { prisma } from '../../config/prisma';
-import { deleteFromCloudinary } from '../../utils/uploadBuffer';
+import { prisma } from '../../../config/prisma';
+import { deleteFromCloudinary } from '../../../utils/uploadBuffer';
+import { CVRepo } from '../../../repositories/cv/cv.repository';
 
 export class CVManagementService {
   // Get user's generated CVs
   async getUserCVs(userId: number) {
-    return await prisma.generatedCV.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        fileUrl: true,
-        templateUsed: true,
-        createdAt: true,
-      }
-    });
+    return await CVRepo.findByUserId(userId);
   }
 
   // Get specific CV by ID
   async getCVById(cvId: number, userId: number): Promise<any> {
-    const cv = await prisma.generatedCV.findFirst({
-      where: {
-        id: cvId,
-        userId: userId
-      }
-    });
+    const cv = await CVRepo.findByIdAndUserId(cvId, userId);
     
     if (cv) {
       // Create API-based download URLs
@@ -45,12 +32,7 @@ export class CVManagementService {
 
   // Delete CV
   async deleteCV(cvId: number, userId: number) {
-    const cv = await prisma.generatedCV.findFirst({
-      where: {
-        id: cvId,
-        userId
-      }
-    });
+    const cv = await CVRepo.findByIdAndUserId(cvId, userId);
 
     if (!cv) {
       throw new Error('CV not found');
@@ -64,10 +46,8 @@ export class CVManagementService {
       // Continue with database deletion even if Cloudinary deletion fails
     }
 
-    // Delete from database
-    await prisma.generatedCV.delete({
-      where: { id: cvId }
-    });
+    // Delete from database using repository
+    await CVRepo.deleteByIdAndUserId(cvId, userId);
 
     return { message: 'CV deleted successfully' };
   }

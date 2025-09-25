@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { cvService } from "../../services/cv/cv.service";
+import { cvService } from "../../services/cv/core/cv.service";
 import { AuthRequest } from "../../middlewares/auth.middleware";
 
 export class CVMainController {
