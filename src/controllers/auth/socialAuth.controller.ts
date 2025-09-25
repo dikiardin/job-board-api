@@ -1,29 +1,22 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { SocialAuthService } from "../../services/auth/socialAuth.service";
 
 export class SocialAuthController {
-  public static async socialUser(
+  public static async socialLogin(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const { provider, token } = req.body;
-      const result = await SocialAuthService.socialLogin(provider, token, "USER");
-      res.status(200).json({ success: true, data: result });
-    } catch (err) {
-      next(err);
-    }
-  }
+      const { provider, token, role } = req.body;
 
-  public static async socialAdmin(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const { provider, token } = req.body;
-      const result = await SocialAuthService.socialLogin(provider, token, "ADMIN");
+      if (!["USER", "ADMIN"].includes(role)) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid role" });
+      }
+
+      const result = await SocialAuthService.socialLogin(provider, token, role);
       res.status(200).json({ success: true, data: result });
     } catch (err) {
       next(err);
