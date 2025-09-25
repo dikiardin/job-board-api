@@ -7,9 +7,9 @@ import path from "path";
 import * as streamifier from "streamifier";
 
 cloudinary.config({
-  api_key: "331288569242839",
-  api_secret: "0LLOBjRjjmBPWYbaECxd_dP5O34",
-  cloud_name: "dluqjnhcm",
+  api_key: process.env.CLOUDINARY_API_KEY as string,
+  api_secret: process.env.CLOUDINARY_API_SECRET as string,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME as string,
 });
 
 export const cloudinaryUpload = (

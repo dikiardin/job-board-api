@@ -25,6 +25,7 @@ class JobRouter {
       "/companies/:companyId/jobs",
       verifyToken,
       verifyRole([UserRole.ADMIN]),
+      require("../middlewares/validator/job.validator").validateListJobs,
       JobController.list
     );
 
@@ -61,6 +62,7 @@ class JobRouter {
       "/companies/:companyId/jobs/:jobId/applicants",
       verifyToken,
       verifyRole([UserRole.ADMIN]),
+      require("../middlewares/validator/job.validator").validateApplicantsList,
       JobController.applicantsList
     );
 
@@ -69,6 +71,7 @@ class JobRouter {
       "/companies/:companyId/jobs/:jobId/applications/:applicationId/status",
       verifyToken,
       verifyRole([UserRole.ADMIN]),
+      require("../middlewares/validator/job.validator").validateUpdateApplicantStatus,
       JobController.updateApplicantStatus
     );
   }
