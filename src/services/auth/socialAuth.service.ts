@@ -5,7 +5,12 @@ import { CreateCompanyService } from "../company/createCompany.service";
 import { CreateEmploymentService } from "../employment/createEmployment.service";
 import { UserRepo } from "../../repositories/user/user.repository";
 
-type SocialProfile = { providerId: string; email: string; name: string };
+type SocialProfile = {
+  providerId: string;
+  email: string;
+  name: string;
+  picture?: string | null | undefined;
+};
 
 export class SocialAuthService {
   public static async socialLogin(
@@ -34,11 +39,23 @@ export class SocialAuthService {
 
     if (userProvider) {
       user = userProvider.user;
+      if (!user.profilePicture && profile.picture) {
+        user = await UserProviderRepo.updateProfilePicture(
+          user.id,
+          profile.picture
+        );
+      }
     } else {
       const existing = await UserRepo.findByEmail(profile.email);
 
       if (existing) {
         user = existing;
+        if (!user.profilePicture && profile.picture) {
+          user = await UserProviderRepo.updateProfilePicture(
+            user.id,
+            profile.picture
+          );
+        }
       } else {
         user = await UserProviderRepo.createUserWithProvider({
           name: profile.name,
@@ -46,13 +63,14 @@ export class SocialAuthService {
           provider,
           providerId: profile.providerId,
           role,
+          profilePicture: profile.picture ?? null,
         });
 
         if (role === "ADMIN") {
           await CreateCompanyService.createCompanyForAdmin(
             user.id,
-            profile.name, 
-            profile.email 
+            profile.name,
+            profile.email
           );
         }
 
