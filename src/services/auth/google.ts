@@ -17,5 +17,6 @@ export const verifyGoogleToken = async (tokenId: string) => {
     providerId: payload.sub,
     email: payload.email!,
     name: payload.name!,
+    picture: payload.picture,
   };
 };
