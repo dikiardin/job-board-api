@@ -37,6 +37,9 @@ export interface CVAdditionalInfo {
   portfolio?: string; // Portfolio website URL
   workExperience?: Array<{
     company: string;
+    position: string;
+    startDate: string;
+    endDate: string;
     responsibilities: string[];
   }>;
   educationDetails?: Array<{

@@ -21,6 +21,9 @@ const cvGenerationSchema = Joi.object({
     workExperience: Joi.array().items(
       Joi.object({
         company: Joi.string().max(100).required(),
+        position: Joi.string().max(100).required(),
+        startDate: Joi.string().max(20).required(),
+        endDate: Joi.string().max(20).required(),
         responsibilities: Joi.array().items(Joi.string().max(300)).max(10).required()
       })
     ).max(10).optional(),

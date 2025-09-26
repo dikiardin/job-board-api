@@ -40,6 +40,7 @@ class BasicAuthService {
             });
         }
         catch (err) {
+            console.error("Nodemailer Error:", err);
             throw new customError_1.CustomError("Failed to send verification email", 500);
         }
         return { message: "Registered successfully, please verify your email." };

@@ -17,9 +17,16 @@ class PDFSectionsHelperService {
                 console.log(`Adding work experience ${index + 1}:`, workExp.company);
                 // Check if we need a new page
                 yPosition = pdf_core_service_1.pdfCoreService.checkNewPage(doc, yPosition, 700);
-                // Company Name (Bold, 11pt)
-                doc.fontSize(11).font('Helvetica-Bold').text(workExp.company, margin, yPosition);
+                // Company Name and Position (Bold, 11pt)
+                const companyPositionText = workExp.position ? `${workExp.company} - ${workExp.position}` : workExp.company;
+                doc.fontSize(11).font('Helvetica-Bold').text(companyPositionText, margin, yPosition);
                 yPosition += 12;
+                // Date Range (10pt, italic)
+                if (workExp.startDate && workExp.endDate) {
+                    const dateRange = `${workExp.startDate} - ${workExp.endDate}`;
+                    doc.fontSize(10).font('Helvetica-Oblique').text(dateRange, margin, yPosition);
+                    yPosition += 12;
+                }
                 // Add responsibilities
                 if (workExp.responsibilities && workExp.responsibilities.length > 0) {
                     workExp.responsibilities.forEach((responsibility) => {

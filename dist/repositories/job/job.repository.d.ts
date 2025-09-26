@@ -194,6 +194,35 @@ export declare class JobRepository {
         limit: number;
         offset: number;
     }>;
+    static listPublishedJobs(params: {
+        title?: string;
+        category?: string;
+        city?: string;
+        sortBy?: "createdAt" | "deadline";
+        sortOrder?: "asc" | "desc";
+        limit?: number;
+        offset?: number;
+    }): Promise<{
+        items: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            companyId: number;
+            description: string;
+            title: string;
+            category: string;
+            city: string;
+            salaryMin: number | null;
+            salaryMax: number | null;
+            tags: string[];
+            banner: string | null;
+            deadline: Date | null;
+            isPublished: boolean;
+        }[];
+        total: number;
+        limit: number;
+        offset: number;
+    }>;
     static listApplicantsForJob(params: {
         companyId: number;
         jobId: number;

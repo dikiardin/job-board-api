@@ -17,6 +17,7 @@ class KeepLoginService {
             role: user.role,
             isVerified: user.isVerified,
             token: newToken,
+            profilePicture: user.profilePicture,
         };
     }
 }

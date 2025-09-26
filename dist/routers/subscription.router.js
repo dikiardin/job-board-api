@@ -44,7 +44,7 @@ class SubscriptionRouter {
         // Get payment by ID (Developer only)
         this.route.get("/payments/:id", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), this.paymentController.getPaymentById);
         // Upload payment proof (Developer + User)
-        this.route.post("/payments/:paymentId/upload-proof", verifyToken_1.verifyToken, (0, uploadImage_1.uploadSingle)("paymentProof"), this.paymentController.uploadPaymentProof);
+        this.route.post("/payments/:paymentId/upload-proof", verifyToken_1.verifyToken, (0, uploadImage_1.uploadPaymentProofSingle)("paymentProof"), this.paymentController.uploadPaymentProof);
         // Approve payment (Developer only)
         this.route.patch("/payments/:id/approve", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), this.paymentController.approvePayment);
         // Reject payment (Developer only)

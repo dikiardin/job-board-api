@@ -6,12 +6,12 @@ const prisma_1 = require("../config/prisma");
 const SUBSCRIPTION_LIMITS = {
     Standard: {
         cvGenerationLimit: 5, // 5 CV per month
-        templatesAccess: ["ats"], // Only ATS template
+        templatesAccess: ["ats"], // ATS template only
         additionalFeatures: ["basic_download"],
     },
     Professional: {
         cvGenerationLimit: -1, // Unlimited
-        templatesAccess: ["ats", "modern", "creative"], // All templates
+        templatesAccess: ["ats"], // ATS template only (same as Standard now)
         additionalFeatures: ["basic_download", "premium_templates", "analytics"],
     },
 };

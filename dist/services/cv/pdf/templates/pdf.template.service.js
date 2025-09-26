@@ -36,16 +36,6 @@ class PDFTemplateService {
         console.log("Final yPosition:", yPosition);
         console.log("===============================");
     }
-    // Generate Modern template (placeholder for future implementation)
-    generateModernTemplate(doc, cvData) {
-        // For now, use ATS template as base
-        this.generateATSTemplate(doc, cvData);
-    }
-    // Generate Creative template (placeholder for future implementation)
-    generateCreativeTemplate(doc, cvData) {
-        // For now, use ATS template as base
-        this.generateATSTemplate(doc, cvData);
-    }
     // Add section header helper (shared utility)
     addSectionHeader(doc, title, yPosition, margin, contentWidth) {
         doc.fontSize(12).font("Helvetica-Bold").text(title, margin, yPosition);

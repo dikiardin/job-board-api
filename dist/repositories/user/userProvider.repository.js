@@ -17,11 +17,21 @@ class UserProviderRepo {
                 passwordHash: "",
                 role: data.role,
                 isVerified: true,
+                profilePicture: data.profilePicture ?? null,
                 providers: {
-                    create: { provider: data.provider, providerId: data.providerId },
+                    create: {
+                        provider: data.provider,
+                        providerId: data.providerId,
+                    },
                 },
             },
             include: { providers: true },
+        });
+    }
+    static async updateProfilePicture(userId, profilePicture) {
+        return prisma_1.prisma.user.update({
+            where: { id: userId },
+            data: { profilePicture },
         });
     }
 }
