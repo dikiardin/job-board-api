@@ -124,6 +124,31 @@ export declare class JobService {
             applicantsCount: any;
         }[];
     }>;
+    static listPublishedJobs(params: {
+        query: {
+            title?: string;
+            category?: string;
+            city?: string;
+            sortBy?: "createdAt" | "deadline";
+            sortOrder?: "asc" | "desc";
+            limit?: number;
+            offset?: number;
+        };
+    }): Promise<{
+        total: number;
+        limit: number;
+        offset: number;
+        items: {
+            id: any;
+            title: any;
+            category: any;
+            city: any;
+            deadline: any;
+            createdAt: any;
+            companyId: any;
+            companyName: any;
+        }[];
+    }>;
     static jobDetail(params: {
         companyId: number;
         jobId: number;

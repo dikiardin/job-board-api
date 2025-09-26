@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pdfATSTemplateService = exports.PDFATSTemplateService = void 0;
-const cvTemplate_1 = require("../../../../utils/cvTemplate");
 const pdf_core_service_1 = require("../pdf.core.service");
 const pdf_sections_helper_service_1 = require("./pdf.sections.helper.service");
 class PDFATSTemplateService {
@@ -84,35 +83,29 @@ class PDFATSTemplateService {
         if (allSkills.length > 0) {
             pdf_core_service_1.pdfCoreService.addSectionHeader(doc, 'SKILLS', yPosition, margin, contentWidth);
             yPosition += 20;
-            // Use universal skill categorization system
+            // Use manual skill categorization if provided by user
             const customCategories = cvData.additionalInfo?.skillCategories;
-            const { categorized, uncategorized } = (0, cvTemplate_1.smartSkillCategorization)(allSkills, customCategories);
-            yPosition = this.renderCategorizedSkills(doc, categorized, uncategorized, customCategories, margin, contentWidth, yPosition);
+            if (customCategories && Object.keys(customCategories).length > 0) {
+                // Display user-defined skill categories
+                yPosition = this.renderManualCategories(doc, customCategories, margin, contentWidth, yPosition);
+            }
+            else {
+                // Display all skills as simple comma-separated list
+                yPosition = this.renderSimpleSkills(doc, allSkills, margin, contentWidth, yPosition);
+            }
         }
         return yPosition;
     }
-    renderCategorizedSkills(doc, categorized, uncategorized, customCategories, margin, contentWidth, yPosition) {
-        if (customCategories && Object.keys(categorized).length > 0) {
-            // User has defined custom categories - display categorized skills
-            const sortedCategories = Object.keys(categorized).sort();
-            for (const category of sortedCategories) {
-                const skills = categorized[category];
-                if (skills && skills.length > 0) {
-                    doc.fontSize(10).font('Helvetica-Bold').text(`${category}: `, margin, yPosition, { continued: true });
-                    doc.fontSize(10).font('Helvetica').text(skills.join(', '));
-                    yPosition += 12;
-                }
-            }
-            // Display uncategorized skills if any
-            if (uncategorized.length > 0) {
-                doc.fontSize(10).font('Helvetica-Bold').text('Other Skills: ', margin, yPosition, { continued: true });
-                doc.fontSize(10).font('Helvetica').text(uncategorized.join(', '));
+    renderManualCategories(doc, customCategories, margin, contentWidth, yPosition) {
+        // Display user-defined skill categories exactly as provided
+        const sortedCategories = Object.keys(customCategories).sort();
+        for (const category of sortedCategories) {
+            const skills = customCategories[category];
+            if (skills && skills.length > 0) {
+                doc.fontSize(10).font('Helvetica-Bold').text(`${category}: `, margin, yPosition, { continued: true });
+                doc.fontSize(10).font('Helvetica').text(skills.join(', '));
                 yPosition += 12;
             }
-        }
-        else {
-            // No custom categories - display all skills in clean comma-separated format
-            yPosition = this.renderSimpleSkills(doc, uncategorized, margin, contentWidth, yPosition);
         }
         return yPosition;
     }

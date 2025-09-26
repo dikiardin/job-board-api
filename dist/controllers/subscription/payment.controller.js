@@ -47,6 +47,7 @@ class PaymentController {
             });
         }
         catch (error) {
+            console.error("Upload payment proof error:", error);
             next(error);
         }
     }

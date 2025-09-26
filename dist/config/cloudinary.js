@@ -41,9 +41,9 @@ const cloudinary_1 = require("cloudinary");
 const path_1 = __importDefault(require("path"));
 const streamifier = __importStar(require("streamifier"));
 cloudinary_1.v2.config({
-    api_key: "331288569242839",
-    api_secret: "0LLOBjRjjmBPWYbaECxd_dP5O34",
-    cloud_name: "dluqjnhcm",
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
 });
 const cloudinaryUpload = (file) => {
     return new Promise((resolve, reject) => {
@@ -58,8 +58,8 @@ const cloudinaryUpload = (file) => {
             use_filename: true,
             unique_filename: false,
             public_id: publicId,
-            format: "pdf",
             type: "upload",
+            // Don't force format - let Cloudinary handle it automatically
         }, (err, result) => {
             if (err) {
                 reject(err);
@@ -75,4 +75,46 @@ const cloudinaryUpload = (file) => {
     });
 };
 exports.cloudinaryUpload = cloudinaryUpload;
+// COMMENTED OUT - Previous version with complex logic
+/*
+export const cloudinaryUpload = (
+  file: Express.Multer.File | undefined
+): Promise<UploadApiResponse> => {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.originalname || !file.buffer) {
+      return reject(new Error("No file provided or invalid file"));
+    }
+
+    const ext = path.extname(file.originalname).toLowerCase();
+    const docTypes = [".pdf", ".doc", ".docx"];
+    const isDoc = docTypes.includes(ext);
+
+    const resourceType: "image" | "raw" = isDoc ? "raw" : "image";
+
+    const baseName = path.parse(file.originalname).name;
+    const publicId = `${baseName}${ext}`;
+
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: resourceType,
+        use_filename: true,
+        unique_filename: false,
+        public_id: publicId,
+        type: "upload",
+        ...(isDoc ? {} : { format: "jpg" }), // only add format if image
+      },
+      (err?: UploadApiErrorResponse, result?: UploadApiResponse) => {
+        if (err) {
+          reject(err);
+        } else if (result) {
+          resolve(result);
+        } else {
+          reject(new Error("Upload failed: no result returned"));
+        }
+      }
+    );
+
+    streamifier.createReadStream(file.buffer).pipe(uploadStream);
+  });
+};*/
 //# sourceMappingURL=cloudinary.js.map

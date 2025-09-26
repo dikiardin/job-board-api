@@ -23,11 +23,17 @@ class SocialAuthService {
         let user;
         if (userProvider) {
             user = userProvider.user;
+            if (!user.profilePicture && profile.picture) {
+                user = await userProvider_repository_1.UserProviderRepo.updateProfilePicture(user.id, profile.picture);
+            }
         }
         else {
             const existing = await user_repository_1.UserRepo.findByEmail(profile.email);
             if (existing) {
                 user = existing;
+                if (!user.profilePicture && profile.picture) {
+                    user = await userProvider_repository_1.UserProviderRepo.updateProfilePicture(user.id, profile.picture);
+                }
             }
             else {
                 user = await userProvider_repository_1.UserProviderRepo.createUserWithProvider({
@@ -36,6 +42,7 @@ class SocialAuthService {
                     provider,
                     providerId: profile.providerId,
                     role,
+                    profilePicture: profile.picture ?? null,
                 });
                 if (role === "ADMIN") {
                     await createCompany_service_1.CreateCompanyService.createCompanyForAdmin(user.id, profile.name, profile.email);

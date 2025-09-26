@@ -38,7 +38,14 @@ exports.ApplicationRepo = void 0;
 const prisma_1 = require("../../config/prisma");
 class ApplicationRepo {
     static async createApplication(data) {
-        return prisma_1.prisma.application.create({ data });
+        return prisma_1.prisma.application.create({
+            data: {
+                userId: data.userId,
+                jobId: data.jobId,
+                cvFile: data.cvFile,
+                expectedSalary: typeof data.expectedSalary === "number" ? data.expectedSalary : null,
+            },
+        });
     }
     static async findExisting(userId, jobId) {
         return prisma_1.prisma.application.findFirst({

@@ -29,6 +29,9 @@ export interface CVAdditionalInfo {
     portfolio?: string;
     workExperience?: Array<{
         company: string;
+        position: string;
+        startDate: string;
+        endDate: string;
         responsibilities: string[];
     }>;
     educationDetails?: Array<{

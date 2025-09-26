@@ -31,6 +31,7 @@ export declare class UserProviderRepo {
         provider: "GOOGLE";
         providerId: string;
         role: "USER" | "ADMIN";
+        profilePicture?: string | null;
     }): Promise<{
         providers: {
             createdAt: Date;
@@ -42,6 +43,22 @@ export declare class UserProviderRepo {
             refreshToken: string | null;
         }[];
     } & {
+        role: import("../../generated/prisma").$Enums.UserRole;
+        name: string;
+        email: string;
+        passwordHash: string;
+        phone: string | null;
+        gender: string | null;
+        dob: Date | null;
+        education: string | null;
+        address: string | null;
+        profilePicture: string | null;
+        isVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+    }>;
+    static updateProfilePicture(userId: number, profilePicture: string): Promise<{
         role: import("../../generated/prisma").$Enums.UserRole;
         name: string;
         email: string;

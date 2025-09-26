@@ -4,7 +4,7 @@ export declare class PDFATSTemplateService {
     private generateSummarySection;
     private generateProjectsSection;
     private generateSkillsSection;
-    private renderCategorizedSkills;
+    private renderManualCategories;
     private renderSimpleSkills;
 }
 export declare const pdfATSTemplateService: PDFATSTemplateService;

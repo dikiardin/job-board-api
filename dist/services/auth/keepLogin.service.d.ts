@@ -6,6 +6,7 @@ export declare class KeepLoginService {
         role: import("../../generated/prisma").$Enums.UserRole;
         isVerified: boolean;
         token: string;
+        profilePicture: string | null;
     }>;
 }
 //# sourceMappingURL=keepLogin.service.d.ts.map

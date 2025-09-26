@@ -1,6 +1,5 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 export declare class SocialAuthController {
-    static socialUser(req: Request, res: Response, next: NextFunction): Promise<void>;
-    static socialAdmin(req: Request, res: Response, next: NextFunction): Promise<void>;
+    static socialLogin(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
 }
 //# sourceMappingURL=socialAuth.controller.d.ts.map

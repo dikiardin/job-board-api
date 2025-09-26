@@ -19,6 +19,9 @@ const cvGenerationSchema = joi_1.default.object({
         })).max(10).optional(),
         workExperience: joi_1.default.array().items(joi_1.default.object({
             company: joi_1.default.string().max(100).required(),
+            position: joi_1.default.string().max(100).required(),
+            startDate: joi_1.default.string().max(20).required(),
+            endDate: joi_1.default.string().max(20).required(),
             responsibilities: joi_1.default.array().items(joi_1.default.string().max(300)).max(10).required()
         })).max(10).optional(),
         educationDetails: joi_1.default.array().items(joi_1.default.object({

@@ -12,12 +12,12 @@ class InterviewRouter {
     }
     initializeRoutes() {
         // Create multiple schedules for a job's accepted applicants
-        this.route.post("/companies/:companyId/jobs/:jobId/interviews", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), interview_controller_1.InterviewController.createMany);
+        this.route.post("/companies/:companyId/jobs/:jobId/interviews", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), require("../middlewares/validator/interview.validator").validateCreateManyInterviews, interview_controller_1.InterviewController.createMany);
         // List interviews for a company with filters
         this.route.get("/companies/:companyId/interviews", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), interview_controller_1.InterviewController.list);
         // Detail, Update, Delete
         this.route.get("/companies/:companyId/interviews/:id", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), interview_controller_1.InterviewController.detail);
-        this.route.put("/companies/:companyId/interviews/:id", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), interview_controller_1.InterviewController.update);
+        this.route.put("/companies/:companyId/interviews/:id", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), require("../middlewares/validator/interview.validator").validateUpdateInterview, interview_controller_1.InterviewController.update);
         this.route.delete("/companies/:companyId/interviews/:id", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), interview_controller_1.InterviewController.remove);
     }
     getRouter() {

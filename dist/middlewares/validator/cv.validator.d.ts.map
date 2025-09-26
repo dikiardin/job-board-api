@@ -1,1 +1,1 @@
-{"version":3,"file":"cv.validator.d.ts","sourceRoot":"","sources":["../../../src/middlewares/validator/cv.validator.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,YAAY,EAAE,MAAM,SAAS,CAAC;AA8D1D,eAAO,MAAM,oBAAoB,GAAI,KAAK,OAAO,EAAE,KAAK,QAAQ,EAAE,MAAM,YAAY,mDAgBnF,CAAC"}
+{"version":3,"file":"cv.validator.d.ts","sourceRoot":"","sources":["../../../src/middlewares/validator/cv.validator.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,YAAY,EAAE,MAAM,SAAS,CAAC;AAiE1D,eAAO,MAAM,oBAAoB,GAAI,KAAK,OAAO,EAAE,KAAK,QAAQ,EAAE,MAAM,YAAY,mDAgBnF,CAAC"}

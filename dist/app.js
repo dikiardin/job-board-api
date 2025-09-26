@@ -17,6 +17,7 @@ const cv_router_1 = __importDefault(require("./routers/cv.router"));
 const interview_router_1 = __importDefault(require("./routers/interview.router"));
 const interviewJobs_1 = require("./jobs/interviewJobs");
 const analytics_router_1 = __importDefault(require("./routers/analytics.router"));
+const completeProfile_router_1 = __importDefault(require("./routers/completeProfile.router"));
 const PORT = process.env.PORT || "5000";
 class App {
     constructor() {
@@ -26,13 +27,14 @@ class App {
         this.errorHandling();
     }
     configure() {
+        this.app.use((req, res, next) => {
+            console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}`);
+            next();
+        });
         this.app.use((0, cors_1.default)({
             origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
             methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-            credentials: false,
-            allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-            exposedHeaders: ["Content-Type", "Authorization"],
-            optionsSuccessStatus: 200,
+            credentials: true,
         }));
         this.app.use(express_1.default.json());
     }
@@ -47,6 +49,7 @@ class App {
         const jobRouter = new job_router_1.default();
         const interviewRouter = new interview_router_1.default();
         const analyticsRouter = new analytics_router_1.default();
+        const completeProfileRouter = new completeProfile_router_1.default();
         this.app.use("/auth", authRouter.getRouter());
         this.app.use("/subscription", subscriptionRouter.getRouter());
         this.app.use("/preselection", preselectionRouter.getRouter());
@@ -55,6 +58,7 @@ class App {
         this.app.use("/cv", cv_router_1.default);
         this.app.use("/interview", interviewRouter.getRouter());
         this.app.use("/analytics", analyticsRouter.getRouter());
+        this.app.use("/complete-profile", completeProfileRouter.getRouter());
     }
     errorHandling() {
         this.app.use((error, req, res, next) => {

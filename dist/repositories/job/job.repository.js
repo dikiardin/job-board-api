@@ -77,6 +77,31 @@ class JobRepository {
         ]);
         return { items, total, limit, offset };
     }
+    static async listPublishedJobs(params) {
+        const { title, category, city, sortBy = "createdAt", sortOrder = "desc", limit = 10, offset = 0 } = params;
+        const now = new Date();
+        const where = {
+            isPublished: true,
+            ...(title ? { title: { contains: title, mode: "insensitive" } } : {}),
+            ...(category ? { category: { equals: category } } : {}),
+            ...(city ? { city: { contains: city, mode: "insensitive" } } : {}),
+            // Optional: exclude expired by deadline if provided
+            OR: [
+                { deadline: null },
+                { deadline: { gte: now } },
+            ],
+        };
+        const [items, total] = await Promise.all([
+            prisma_1.prisma.job.findMany({
+                where,
+                orderBy: sortBy === "deadline" ? { deadline: sortOrder } : { createdAt: sortOrder },
+                skip: offset,
+                take: limit,
+            }),
+            prisma_1.prisma.job.count({ where }),
+        ]);
+        return { items, total, limit, offset };
+    }
     static async listApplicantsForJob(params) {
         const { companyId, jobId, name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy = "appliedAt", sortOrder = "asc", limit = 10, offset = 0 } = params;
         // Build user where for name/education/age
