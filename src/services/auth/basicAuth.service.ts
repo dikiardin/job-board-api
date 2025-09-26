@@ -5,7 +5,7 @@ import { createToken } from "../../utils/createToken";
 import { CustomError } from "../../utils/customError";
 import { decodeToken } from "../../utils/decodeToken";
 import { transport } from "../../config/nodemailer";
-import { buildVerificationEmail } from "../../utils/emailTemplates";
+import { buildVerificationEmail } from "../../utils/emailTemplateVerify";
 import { CreateEmploymentService } from "../employment/createEmployment.service";
 import { CreateCompanyService } from "../company/createCompany.service";
 
@@ -77,10 +77,10 @@ export class BasicAuthService {
 
   public static async login(email: string, password: string) {
     const user = await UserRepo.findByEmail(email);
-    if (!user) throw new CustomError("Invalid credentials", 400);
+    if (!user) throw new CustomError("Email is not registered", 400);
 
     const isMatch = await comparePassword(password, user.passwordHash);
-    if (!isMatch) throw new CustomError("Invalid credentials", 400);
+    if (!isMatch) throw new CustomError("Wrong password", 400);
 
     if (!user.isVerified) {
       throw new CustomError("Please verify your email before logging in", 400);

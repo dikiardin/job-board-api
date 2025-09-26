@@ -1,14 +1,13 @@
 import { prisma } from "../../config/prisma";
 
 export class UserProviderRepo {
-  static async findByProvider(provider: "GOOGLE", providerId: string) {
+  public static async findByProvider(provider: "GOOGLE", providerId: string) {
     return prisma.userProvider.findUnique({
       where: { provider_providerId: { provider, providerId } },
       include: { user: true },
     });
   }
-
-  static async createUserWithProvider(data: {
+  public static async createUserWithProvider(data: {
     name: string;
     email: string;
     provider: "GOOGLE";
@@ -34,8 +33,7 @@ export class UserProviderRepo {
       include: { providers: true },
     });
   }
-
-  static async updateProfilePicture(userId: number, profilePicture: string) {
+  public static async updateProfilePicture(userId: number, profilePicture: string) {
     return prisma.user.update({
       where: { id: userId },
       data: { profilePicture },

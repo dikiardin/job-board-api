@@ -8,6 +8,9 @@ import {
 } from "../middlewares/validator/auth";
 import { validateRequest } from "../middlewares/validator/validate";
 import { verifyToken } from "../middlewares/verifyToken";
+import { ChangeEmailController } from "../controllers/auth/changeEmail.controller";
+import { ChangePasswordController } from "../controllers/auth/changePassword.controller";
+import { ForgotPasswordController } from "../controllers/auth/forgotPassword.controller";
 
 class AuthRouter {
   private route: Router;
@@ -40,6 +43,22 @@ class AuthRouter {
     this.route.get("/verify/:token", this.basicAuthController.verifyEmail);
     this.route.get("/keep", verifyToken, this.keepLoginController.keepLogin);
     this.route.post("/social", this.socialAuthController.socialLogin);
+
+    this.route.patch(
+      "/change-email",
+      verifyToken,
+      ChangeEmailController.changeEmail
+    );
+    this.route.patch(
+      "/change-password",
+      verifyToken,
+      ChangePasswordController.changePassword
+    );
+    this.route.post("/forgot-password", ForgotPasswordController.requestReset);
+    this.route.post(
+      "/reset-password/:token",
+      ForgotPasswordController.resetPassword
+    );
   }
 
   public getRouter(): Router {

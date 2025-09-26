@@ -12,19 +12,37 @@ export class UserRepo {
       data,
     });
   }
-
   public static async findByEmail(email: string) {
     return prisma.user.findUnique({ where: { email } });
   }
-
   public static async findById(id: number) {
     return prisma.user.findUnique({ where: { id } });
   }
-
   public static async verifyUser(id: number) {
     return prisma.user.update({
       where: { id },
       data: { isVerified: true },
+    });
+  }
+  public static async updateUser(
+    id: number,
+    data: Partial<{ email: string; isVerified: boolean }>
+  ) {
+    return prisma.user.update({
+      where: { id },
+      data,
+    });
+  }
+  public static async findByIdWithPassword(id: number) {
+    return prisma.user.findUnique({
+      where: { id },
+      select: { id: true, email: true, passwordHash: true }, 
+    });
+  }
+  public static async updatePassword(id: number, passwordHash: string) {
+    return prisma.user.update({
+      where: { id },
+      data: { passwordHash },
     });
   }
 }

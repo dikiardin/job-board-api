@@ -12,7 +12,7 @@ import cvRoutes from "./routers/cv.router";
 import InterviewRouter from "./routers/interview.router";
 import { startInterviewJobs } from "./jobs/interviewJobs";
 import AnalyticsRouter from "./routers/analytics.router";
-import CompleteProfileRouter from "./routers/completeProfile.router";
+import ProfileRouter from "./routers/profile.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -55,7 +55,7 @@ class App {
     const jobRouter: JobRouter = new JobRouter();
     const interviewRouter: InterviewRouter = new InterviewRouter();
     const analyticsRouter: AnalyticsRouter = new AnalyticsRouter();
-    const completeProfileRouter: CompleteProfileRouter = new CompleteProfileRouter();
+    const profileRouter: ProfileRouter = new ProfileRouter();
 
     this.app.use("/auth", authRouter.getRouter());
     this.app.use("/subscription", subscriptionRouter.getRouter());
@@ -65,7 +65,7 @@ class App {
     this.app.use("/cv", cvRoutes);
     this.app.use("/interview", interviewRouter.getRouter());
     this.app.use("/analytics", analyticsRouter.getRouter());
-    this.app.use("/complete-profile", completeProfileRouter.getRouter());
+    this.app.use("/profile", profileRouter.getRouter());
   
   }
 
