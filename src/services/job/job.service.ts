@@ -105,31 +105,41 @@ export class JobService {
     query: { title?: string; category?: string; sortBy?: "createdAt" | "deadline"; sortOrder?: "asc" | "desc"; limit?: number; offset?: number };
   }) {
     const { companyId, requesterId, requesterRole, query } = params;
-    if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can list their jobs" };
+    
+    this.validateAdminAccess(requesterRole);
     await this.assertCompanyOwnership(companyId, requesterId);
+    
+    const repoQuery = this.buildQueryParams(companyId, query);
+    const result = await JobRepository.listJobs(repoQuery);
+    
+    return this.formatJobListResponse(result);
+  }
 
-    const repoQuery: {
-      companyId: number;
-      title?: string;
-      category?: string;
-      sortBy?: "createdAt" | "deadline";
-      sortOrder?: "asc" | "desc";
-      limit?: number;
-      offset?: number;
-    } = { companyId };
+  private static validateAdminAccess(requesterRole: UserRole): void {
+    if (requesterRole !== UserRole.ADMIN) {
+      throw { status: 401, message: "Only company admin can list their jobs" };
+    }
+  }
 
+  private static buildQueryParams(companyId: number, query: any) {
+    const repoQuery: any = { companyId };
+    
     if (typeof query.title === "string") repoQuery.title = query.title;
     if (typeof query.category === "string") repoQuery.category = query.category;
     if (query.sortBy === "createdAt" || query.sortBy === "deadline") repoQuery.sortBy = query.sortBy;
     if (query.sortOrder === "asc" || query.sortOrder === "desc") repoQuery.sortOrder = query.sortOrder;
     if (typeof query.limit === "number") repoQuery.limit = query.limit;
     if (typeof query.offset === "number") repoQuery.offset = query.offset;
-    const result = await JobRepository.listJobs(repoQuery);
+    
+    return repoQuery;
+  }
+
+  private static formatJobListResponse(result: any) {
     return {
       total: result.total,
       limit: result.limit,
       offset: result.offset,
-      items: result.items.map((j) => ({
+      items: result.items.map((j: any) => ({
         id: j.id,
         title: j.title,
         category: j.category,
@@ -137,7 +147,7 @@ export class JobService {
         isPublished: j.isPublished,
         deadline: j.deadline,
         createdAt: j.createdAt,
-        applicantsCount: (j as any)._count?.applications ?? 0,
+        applicantsCount: j._count?.applications ?? 0,
       })),
     };
   }

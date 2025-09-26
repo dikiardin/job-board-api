@@ -6,12 +6,23 @@ import { pdfSectionsService } from "../legacy/pdf.sections.service";
 export class PDFTemplateService {
   // Generate ATS-friendly CV template
   generateATSTemplate(doc: any, cvData: any) {
-    const margin = 50;
-    const pageWidth = 595.28; // A4 width in points
-    const contentWidth = pageWidth - margin * 2;
-    let yPosition = 50;
+    const templateConfig = this.initializeTemplateConfig();
+    this.logDebugInfo(cvData);
+    
+    let yPosition = this.generateHeaderSection(doc, cvData, templateConfig);
+    yPosition = this.generateContentSections(doc, cvData, yPosition, templateConfig);
+    this.logCompletion(yPosition);
+  }
 
-    // Debug: Log what data we have
+  private initializeTemplateConfig() {
+    return {
+      margin: 50,
+      pageWidth: 595.28, // A4 width in points
+      contentWidth: 495.28 // pageWidth - margin * 2
+    };
+  }
+
+  private logDebugInfo(cvData: any): void {
     console.log("=== CV DATA DEBUG ===");
     console.log("Personal Info:", cvData.personalInfo);
     console.log("Additional Info:", cvData.additionalInfo);
@@ -19,24 +30,23 @@ export class PDFTemplateService {
     console.log("Education Details:", cvData.additionalInfo?.educationDetails);
     console.log("Skill Categories:", cvData.additionalInfo?.skillCategories);
     console.log("====================");
+  }
 
-    // Generate header section (name, title, contact)
-    yPosition = pdfHeaderService.generateHeader(doc, cvData, pageWidth, margin);
+  private generateHeaderSection(doc: any, cvData: any, config: any): number {
+    return pdfHeaderService.generateHeader(doc, cvData, config.pageWidth, config.margin);
+  }
 
-    // Generate summary section
-    yPosition = pdfHeaderService.generateSummary(doc, cvData, yPosition, margin, contentWidth);
+  private generateContentSections(doc: any, cvData: any, yPosition: number, config: any): number {
+    yPosition = pdfHeaderService.generateSummary(doc, cvData, yPosition, config.margin, config.contentWidth);
+    yPosition = pdfHeaderService.generateProjects(doc, cvData, yPosition, config.margin, config.contentWidth);
+    yPosition = pdfWorkService.generateWorkExperience(doc, cvData, yPosition, config.margin, config.contentWidth);
+    yPosition = pdfSectionsService.addEducationSection(doc, cvData, yPosition, config.margin, config.contentWidth);
+    yPosition = pdfSectionsService.addCertificationsSection(doc, cvData, yPosition, config.margin, config.contentWidth);
+    yPosition = pdfSectionsService.addSkillsSection(doc, cvData, yPosition, config.margin, config.contentWidth);
+    return yPosition;
+  }
 
-    // Generate projects section
-    yPosition = pdfHeaderService.generateProjects(doc, cvData, yPosition, margin, contentWidth);
-
-    // Generate work experience section
-    yPosition = pdfWorkService.generateWorkExperience(doc, cvData, yPosition, margin, contentWidth);
-
-    // Generate remaining sections (education, certifications, skills)
-    yPosition = pdfSectionsService.addEducationSection(doc, cvData, yPosition, margin, contentWidth);
-    yPosition = pdfSectionsService.addCertificationsSection(doc, cvData, yPosition, margin, contentWidth);
-    yPosition = pdfSectionsService.addSkillsSection(doc, cvData, yPosition, margin, contentWidth);
-
+  private logCompletion(yPosition: number): void {
     console.log("=== CV GENERATION COMPLETED ===");
     console.log("Final yPosition:", yPosition);
     console.log("===============================");
