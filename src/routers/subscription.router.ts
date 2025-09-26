@@ -4,7 +4,7 @@ import { SubscriptionController } from "../controllers/subscription/subscription
 import { PaymentController } from "../controllers/subscription/payment.controller";
 import { verifyToken } from "../middlewares/verifyToken";
 import { verifyRole } from "../middlewares/verifyRole";
-import { uploadSingle } from "../middlewares/uploadImage";
+import { uploadSingle, uploadPaymentProofSingle } from "../middlewares/uploadImage";
 import { UserRole } from "../generated/prisma";
 
 class SubscriptionRouter {
@@ -117,7 +117,7 @@ class SubscriptionRouter {
     this.route.post(
       "/payments/:paymentId/upload-proof",
       verifyToken,
-      uploadSingle("paymentProof"),
+      uploadPaymentProofSingle("paymentProof"),
       this.paymentController.uploadPaymentProof
     );
 

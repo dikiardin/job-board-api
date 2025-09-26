@@ -1,3 +1,4 @@
+
 import {
   v2 as cloudinary,
   UploadApiErrorResponse,
@@ -6,50 +7,52 @@ import {
 import path from "path";
 import * as streamifier from "streamifier";
 
+
 cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY as string,
   api_secret: process.env.CLOUDINARY_API_SECRET as string,
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME as string,
 });
 
-// export const cloudinaryUpload = (
-//   file: Express.Multer.File
-// ): Promise<UploadApiResponse> => {
-//   return new Promise((resolve, reject) => {
-//     const ext = path.extname(file.originalname).toLowerCase();
-//     const docTypes = [".pdf", ".doc", ".docx"];
-//     const isDoc = docTypes.includes(ext);
+export const cloudinaryUpload = (
+  file: Express.Multer.File
+): Promise<UploadApiResponse> => {
+  return new Promise((resolve, reject) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const docTypes = [".pdf", ".doc", ".docx"];
+    const isDoc = docTypes.includes(ext);
 
-//     const resourceType: "image" | "raw" = isDoc ? "raw" : "image";
+    const resourceType: "image" | "raw" = isDoc ? "raw" : "image";
 
-//     const baseName = path.parse(file.originalname).name;
-//     const publicId = `${baseName}${ext}`;
+    const baseName = path.parse(file.originalname).name;
+    const publicId = `${baseName}${ext}`;
 
-//     const uploadStream = cloudinary.uploader.upload_stream(
-//       {
-//         resource_type: resourceType,
-//         use_filename: true, 
-//         unique_filename: false, 
-//         public_id: publicId, 
-//         format: "pdf", 
-//         type: "upload",
-//       },
-//       (err?: UploadApiErrorResponse, result?: UploadApiResponse): void => {
-//         if (err) {
-//           reject(err);
-//         } else if (result) {
-//           resolve(result);
-//         } else {
-//           reject(new Error("Upload failed: no result returned"));
-//         }
-//       }
-//     );
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: resourceType,
+        use_filename: true, 
+        unique_filename: false, 
+        public_id: publicId, 
+        type: "upload",
+        // Don't force format - let Cloudinary handle it automatically
+      },
+      (err?: UploadApiErrorResponse, result?: UploadApiResponse): void => {
+        if (err) {
+          reject(err);
+        } else if (result) {
+          resolve(result);
+        } else {
+          reject(new Error("Upload failed: no result returned"));
+        }
+      }
+    );
 
-//     streamifier.createReadStream(file.buffer).pipe(uploadStream);
-//   });
-// };
+    streamifier.createReadStream(file.buffer).pipe(uploadStream);
+  });
+};
 
-
+// COMMENTED OUT - Previous version with complex logic
+/*
 export const cloudinaryUpload = (
   file: Express.Multer.File | undefined
 ): Promise<UploadApiResponse> => {
@@ -89,4 +92,4 @@ export const cloudinaryUpload = (
 
     streamifier.createReadStream(file.buffer).pipe(uploadStream);
   });
-};
+};*/
