@@ -65,7 +65,7 @@ model User {
   role           UserRole  @default(USER)
   name           String
   email          String    @unique
-  passwordHash   String
+  passwordHash   String?
   phone          String?
   gender         String?
   dob            DateTime?

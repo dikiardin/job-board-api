@@ -14,7 +14,7 @@ export class BasicAuthService {
     role: "USER" | "ADMIN",
     name: string,
     email: string,
-    password: string,
+    password: string
   ) {
     const existing = await UserRepo.findByEmail(email);
     if (existing) {
@@ -79,9 +79,16 @@ export class BasicAuthService {
     const user = await UserRepo.findByEmail(email);
     if (!user) throw new CustomError("Email is not registered", 400);
 
+    if (!user.passwordHash) {
+      throw new CustomError(
+        "This account uses social login. Please sign in with Google.",
+        400
+      );
+    }
+
     const isMatch = await comparePassword(password, user.passwordHash);
     if (!isMatch) throw new CustomError("Wrong password", 400);
-
+    
     if (!user.isVerified) {
       throw new CustomError("Please verify your email before logging in", 400);
     }

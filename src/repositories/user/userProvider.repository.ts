@@ -19,7 +19,7 @@ export class UserProviderRepo {
       data: {
         name: data.name,
         email: data.email,
-        passwordHash: "",
+        passwordHash: null,
         role: data.role,
         isVerified: true,
         profilePicture: data.profilePicture ?? null, 
