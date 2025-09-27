@@ -14,7 +14,7 @@ class ProfileRouter {
   }
 
   private initializeRoutes(): void {
-    this.route.post(
+    this.route.put(
       "/edit",
       verifyToken,
       uploadFields([
