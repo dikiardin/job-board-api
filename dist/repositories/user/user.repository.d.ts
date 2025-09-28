@@ -9,7 +9,7 @@ export declare class UserRepo {
         role: import("../../generated/prisma").$Enums.UserRole;
         name: string;
         email: string;
-        passwordHash: string;
+        passwordHash: string | null;
         phone: string | null;
         gender: string | null;
         dob: Date | null;
@@ -25,7 +25,7 @@ export declare class UserRepo {
         role: import("../../generated/prisma").$Enums.UserRole;
         name: string;
         email: string;
-        passwordHash: string;
+        passwordHash: string | null;
         phone: string | null;
         gender: string | null;
         dob: Date | null;
@@ -41,7 +41,7 @@ export declare class UserRepo {
         role: import("../../generated/prisma").$Enums.UserRole;
         name: string;
         email: string;
-        passwordHash: string;
+        passwordHash: string | null;
         phone: string | null;
         gender: string | null;
         dob: Date | null;
@@ -57,7 +57,47 @@ export declare class UserRepo {
         role: import("../../generated/prisma").$Enums.UserRole;
         name: string;
         email: string;
-        passwordHash: string;
+        passwordHash: string | null;
+        phone: string | null;
+        gender: string | null;
+        dob: Date | null;
+        education: string | null;
+        address: string | null;
+        profilePicture: string | null;
+        isVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+    }>;
+    static updateUser(id: number, data: Partial<{
+        email: string;
+        isVerified: boolean;
+    }>): Promise<{
+        role: import("../../generated/prisma").$Enums.UserRole;
+        name: string;
+        email: string;
+        passwordHash: string | null;
+        phone: string | null;
+        gender: string | null;
+        dob: Date | null;
+        education: string | null;
+        address: string | null;
+        profilePicture: string | null;
+        isVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+    }>;
+    static findByIdWithPassword(id: number): Promise<{
+        email: string;
+        passwordHash: string | null;
+        id: number;
+    } | null>;
+    static updatePassword(id: number, passwordHash: string): Promise<{
+        role: import("../../generated/prisma").$Enums.UserRole;
+        name: string;
+        email: string;
+        passwordHash: string | null;
         phone: string | null;
         gender: string | null;
         dob: Date | null;

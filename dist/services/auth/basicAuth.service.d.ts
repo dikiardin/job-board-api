@@ -8,7 +8,7 @@ export declare class BasicAuthService {
             role: import("../../generated/prisma").$Enums.UserRole;
             name: string;
             email: string;
-            passwordHash: string;
+            passwordHash: string | null;
             phone: string | null;
             gender: string | null;
             dob: Date | null;
@@ -27,7 +27,7 @@ export declare class BasicAuthService {
             role: import("../../generated/prisma").$Enums.UserRole;
             name: string;
             email: string;
-            passwordHash: string;
+            passwordHash: string | null;
             phone: string | null;
             gender: string | null;
             dob: Date | null;

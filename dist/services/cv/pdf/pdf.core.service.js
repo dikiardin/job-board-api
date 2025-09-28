@@ -11,41 +11,51 @@ class PDFCoreService {
             try {
                 const doc = new PDFDocument();
                 const buffers = [];
-                doc.on('data', (chunk) => buffers.push(chunk));
-                doc.on('end', async () => {
-                    try {
-                        const pdfBuffer = Buffer.concat(buffers);
-                        // Debug: Check if PDF buffer is valid
-                        console.log('PDF Buffer size:', pdfBuffer.length);
-                        console.log('PDF Buffer starts with PDF header:', pdfBuffer.toString('ascii', 0, 4) === '%PDF');
-                        console.log('PDF Buffer first 20 bytes:', pdfBuffer.toString('ascii', 0, 20));
-                        // Validate PDF buffer
-                        if (pdfBuffer.length === 0) {
-                            throw new Error('PDF buffer is empty');
-                        }
-                        if (!pdfBuffer.toString('ascii', 0, 4).startsWith('%PDF')) {
-                            throw new Error('Invalid PDF buffer - missing PDF header');
-                        }
-                        const fileName = `cv-files/cv_${(0, uuid_1.v4)()}.pdf`;
-                        console.log('Uploading PDF with filename:', fileName);
-                        const result = await (0, uploadBuffer_1.uploadToCloudinary)(stream_1.Readable.from(pdfBuffer), fileName);
-                        console.log('PDF uploaded successfully to:', result.secure_url);
-                        resolve(result.secure_url);
-                    }
-                    catch (error) {
-                        console.error('PDF upload error:', error);
-                        reject(error);
-                    }
-                });
-                // Generate content based on template type
-                const { pdfATSTemplateService } = require('./templates/pdf.ats.template.service');
-                pdfATSTemplateService.generateATSTemplate(doc, cvData);
-                doc.end();
+                this.setupPDFDocument(doc, buffers);
+                this.generatePDFContent(doc, cvData, templateType);
+                this.handlePDFCompletion(doc, buffers, resolve, reject);
             }
             catch (error) {
                 reject(error);
             }
         });
+    }
+    setupPDFDocument(doc, buffers) {
+        doc.on('data', (chunk) => buffers.push(chunk));
+    }
+    generatePDFContent(doc, cvData, templateType) {
+        const { pdfATSTemplateService } = require('./templates/pdf.ats.template.service');
+        pdfATSTemplateService.generateATSTemplate(doc, cvData);
+        doc.end();
+    }
+    async handlePDFCompletion(doc, buffers, resolve, reject) {
+        doc.on('end', async () => {
+            try {
+                const pdfBuffer = Buffer.concat(buffers);
+                this.validatePDFBuffer(pdfBuffer);
+                const fileName = this.generateFileName();
+                const result = await this.uploadPDFToCloudinary(pdfBuffer, fileName);
+                resolve(result.secure_url);
+            }
+            catch (error) {
+                console.error('PDF upload error:', error);
+                reject(error);
+            }
+        });
+    }
+    validatePDFBuffer(pdfBuffer) {
+        if (pdfBuffer.length === 0) {
+            throw new Error('PDF buffer is empty');
+        }
+        if (!pdfBuffer.toString('ascii', 0, 4).startsWith('%PDF')) {
+            throw new Error('Invalid PDF buffer - missing PDF header');
+        }
+    }
+    generateFileName() {
+        return `cv-files/cv_${(0, uuid_1.v4)()}.pdf`;
+    }
+    async uploadPDFToCloudinary(pdfBuffer, fileName) {
+        return await (0, uploadBuffer_1.uploadToCloudinary)(stream_1.Readable.from(pdfBuffer), fileName);
     }
     addSectionHeader(doc, title, yPosition, margin, contentWidth) {
         doc.fontSize(14).font('Helvetica-Bold').text(title, margin, yPosition);

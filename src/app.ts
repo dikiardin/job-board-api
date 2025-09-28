@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import cors, { CorsOptions } from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
+import helmet from "helmet";
 import AuthRouter from "./routers/auth.router";
 import SubscriptionRouter from "./routers/subscription.router";
 import { startSubscriptionJobs } from "./jobs/subscriptionJobs";
@@ -13,6 +14,8 @@ import InterviewRouter from "./routers/interview.router";
 import { startInterviewJobs } from "./jobs/interviewJobs";
 import AnalyticsRouter from "./routers/analytics.router";
 import ProfileRouter from "./routers/profile.router";
+import CompanyRouter from "./routers/company.router";
+import { prisma } from "./config/prisma";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -27,25 +30,140 @@ class App {
   }
 
   private configure(): void {
+    // Security headers
+    this.app.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", "data:", "https:"],
+        },
+      },
+      crossOriginEmbedderPolicy: false
+    }));
+
+    // Request logging
     this.app.use((req, res, next) => {
       console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}`);
       next();
     });
 
+    // CORS configuration
     this.app.use(
       cors({
-        origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+        origin: process.env.NODE_ENV === 'production' 
+          ? ['https://yourdomain.com'] 
+          : ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"],
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         credentials: true,
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
       } as CorsOptions)
     );
 
-    this.app.use(express.json());
+    // Body parsing with limits
+    this.app.use(express.json({ limit: '10mb' }));
+    this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
   }
 
   private route(): void {
     this.app.get("/", (req: Request, res: Response) => {
       res.status(200).send("<h1>Job Board API</h1>");
+    });
+
+    this.app.get("/test-db", async (req: Request, res: Response) => {
+      try {
+        const company = await prisma.company.findFirst();
+        res.status(200).json({ success: true, company });
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
+    this.app.get("/test-jobs/:companyId", async (req: Request, res: Response) => {
+      try {
+        const companyId = parseInt(req.params.companyId || "0");
+        const jobs = await prisma.job.findMany({ where: { companyId } });
+        const company = await prisma.company.findUnique({ where: { id: companyId } });
+        res.status(200).json({ success: true, company, jobs });
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
+    this.app.post("/test-create-job", async (req: Request, res: Response) => {
+      try {
+        const job = await prisma.job.create({
+          data: {
+            companyId: 16,
+            title: "Senior Frontend Developer",
+            description: "We are looking for a senior frontend developer with React experience",
+            category: "Engineering",
+            city: "Jakarta",
+            salaryMin: 15000000,
+            salaryMax: 25000000,
+            tags: ["React", "TypeScript", "Node.js"],
+            isPublished: true,
+          }
+        });
+        res.status(200).json({ success: true, job });
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
+    this.app.get("/test-job-service", async (req: Request, res: Response) => {
+      try {
+        const { JobService } = await import("./services/job/job.service");
+        const data = await JobService.listJobs({
+          companyId: 16,
+          requesterId: 77,
+          requesterRole: "ADMIN" as any,
+          query: { limit: 5, offset: 0 }
+        });
+        res.status(200).json({ success: true, data });
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message, stack: error.stack });
+      }
+    });
+
+    this.app.get("/test-job-controller", async (req: Request, res: Response) => {
+      try {
+        const { JobController } = await import("./controllers/job/job.controller");
+        const mockReq = {
+          params: { companyId: "16" },
+          query: { limit: "5", offset: "0" }
+        } as any;
+        const mockRes = {
+          status: (code: number) => ({
+            json: (data: any) => res.status(code).json(data)
+          }),
+          locals: { decrypt: { userId: 77, role: "ADMIN" } }
+        } as any;
+        const mockNext = (error: any) => {
+          if (error) {
+            res.status(500).json({ success: false, error: error.message, stack: error.stack });
+          }
+        };
+        
+        await JobController.list(mockReq, mockRes, mockNext);
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message, stack: error.stack });
+      }
+    });
+
+    this.app.get("/test-simple-jobs", async (req: Request, res: Response) => {
+      try {
+        const jobs = await prisma.job.findMany({ 
+          where: { companyId: 16 },
+          include: {
+            _count: { select: { applications: true } }
+          }
+        });
+        res.status(200).json({ success: true, jobs });
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message, stack: error.stack });
+      }
     });
 
     const authRouter: AuthRouter = new AuthRouter();
@@ -56,6 +174,7 @@ class App {
     const interviewRouter: InterviewRouter = new InterviewRouter();
     const analyticsRouter: AnalyticsRouter = new AnalyticsRouter();
     const profileRouter: ProfileRouter = new ProfileRouter();
+    const companyRouter: CompanyRouter = new CompanyRouter();
 
     this.app.use("/auth", authRouter.getRouter());
     this.app.use("/subscription", subscriptionRouter.getRouter());
@@ -66,13 +185,17 @@ class App {
     this.app.use("/interview", interviewRouter.getRouter());
     this.app.use("/analytics", analyticsRouter.getRouter());
     this.app.use("/profile", profileRouter.getRouter());
+    this.app.use("/company", companyRouter.getRouter());
   
   }
 
   private errorHandling(): void {
     this.app.use(
       (error: any, req: Request, res: Response, next: NextFunction) => {
-        console.log("Global error handler:", error);
+        console.error("Global error handler:", error);
+
+        // Don't leak error details in production
+        const isDevelopment = process.env.NODE_ENV === 'development';
 
         if (error.name === "JsonWebTokenError") {
           return res
@@ -86,14 +209,33 @@ class App {
             .json({ success: false, message: "Token has expired" });
         }
 
+        if (error.name === "ValidationError") {
+          return res.status(400).json({
+            success: false,
+            message: "Validation error",
+            errors: error.details?.map((d: any) => d.message) || [error.message]
+          });
+        }
+
+        if (error.code === 'P2002') {
+          return res.status(409).json({
+            success: false,
+            message: "Duplicate entry. This record already exists."
+          });
+        }
+
         if (error.status) {
           return res.status(error.status).json({
+            success: false,
             message: error.message,
+            ...(isDevelopment && { stack: error.stack })
           });
         }
 
         res.status(500).json({
-          message: "Internal server error",
+          success: false,
+          message: isDevelopment ? error.message : "Internal server error",
+          ...(isDevelopment && { stack: error.stack })
         });
       }
     );

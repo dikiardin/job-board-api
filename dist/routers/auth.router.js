@@ -7,6 +7,9 @@ const keepLogin_controller_1 = require("../controllers/auth/keepLogin.controller
 const auth_1 = require("../middlewares/validator/auth");
 const validate_1 = require("../middlewares/validator/validate");
 const verifyToken_1 = require("../middlewares/verifyToken");
+const changeEmail_controller_1 = require("../controllers/auth/changeEmail.controller");
+const changePassword_controller_1 = require("../controllers/auth/changePassword.controller");
+const forgotPassword_controller_1 = require("../controllers/auth/forgotPassword.controller");
 class AuthRouter {
     constructor() {
         this.route = (0, express_1.Router)();
@@ -22,6 +25,10 @@ class AuthRouter {
         this.route.get("/verify/:token", this.basicAuthController.verifyEmail);
         this.route.get("/keep", verifyToken_1.verifyToken, this.keepLoginController.keepLogin);
         this.route.post("/social", this.socialAuthController.socialLogin);
+        this.route.patch("/change-email", verifyToken_1.verifyToken, changeEmail_controller_1.ChangeEmailController.changeEmail);
+        this.route.patch("/change-password", verifyToken_1.verifyToken, changePassword_controller_1.ChangePasswordController.changePassword);
+        this.route.post("/forgot-password", forgotPassword_controller_1.ForgotPasswordController.requestReset);
+        this.route.post("/reset-password/:token", forgotPassword_controller_1.ForgotPasswordController.resetPassword);
     }
     getRouter() {
         return this.route;

@@ -1,7 +1,4 @@
 "use strict";
-// import { Request, Response, NextFunction } from "express";
-// import { ApplicationService } from "../../services/application/application.service";
-// import { UserRole } from "../../generated/prisma";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApplicationController = void 0;
 const application_service_1 = require("../../services/application/application.service");

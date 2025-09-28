@@ -24,9 +24,17 @@ export class JobController {
 
   static async list(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log("Job list request:", req.params, req.query);
+      console.log("Headers:", req.headers);
+      console.log("res.locals:", res.locals);
+      
       const companyId = Number(req.params.companyId);
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
-      const { title, category, sortBy, sortOrder, limit, offset } = req.query as Record<string, any>;
+      
+      console.log("Company ID:", companyId);
+      console.log("Requester:", requester);
+      
+      const { title, category, sortBy, sortOrder, limit, offset } = res.locals.validatedQuery || req.query as Record<string, any>;
 
       const query: { title?: string; category?: string; sortBy?: "createdAt" | "deadline"; sortOrder?: "asc" | "desc"; limit?: number; offset?: number } = {};
       if (typeof title === "string") query.title = title;
@@ -36,6 +44,8 @@ export class JobController {
       if (typeof limit === "string" && limit.trim() !== "") query.limit = Number(limit);
       if (typeof offset === "string" && offset.trim() !== "") query.offset = Number(offset);
 
+      console.log("Query params:", query);
+
       const data = await JobService.listJobs({
         companyId,
         requesterId: requester.userId,
@@ -43,8 +53,11 @@ export class JobController {
         query,
       });
 
+      console.log("Job data:", data);
       res.status(200).json({ success: true, data });
     } catch (error) {
+      console.error("Job list error:", error);
+      console.error("Error stack:", (error as any).stack);
       next(error);
     }
   }

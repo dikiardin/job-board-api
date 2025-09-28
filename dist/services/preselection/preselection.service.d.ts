@@ -26,6 +26,11 @@ export declare class PreselectionService {
         jobId: number;
         passingScore: number | null;
     }>;
+    private static validateAdminAccess;
+    private static validateJobOwnership;
+    private static validateQuestions;
+    private static validateQuestion;
+    private static validatePassingScore;
     static getTestForJob(jobId: number, requesterRole?: UserRole): Promise<{
         id: number;
         jobId: number;

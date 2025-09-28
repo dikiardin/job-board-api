@@ -3,8 +3,8 @@ import { InterviewRepository } from "../repositories/interview/interview.reposit
 import { InterviewEmailService } from "../services/interview/interviewEmail.service";
 
 export function startInterviewJobs() {
-  // Runs every hour to catch interviews happening ~24 hours later
-  cron.schedule("0 * * * *", async () => {
+  // Runs every 6 hours to catch interviews happening ~24 hours later
+  cron.schedule("0 */6 * * *", async () => {
     try {
       const now = new Date();
       const windowStart = new Date(now.getTime() + 24 * 60 * 60 * 1000); // +24h

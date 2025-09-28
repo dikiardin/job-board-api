@@ -8,8 +8,8 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const interview_repository_1 = require("../repositories/interview/interview.repository");
 const interviewEmail_service_1 = require("../services/interview/interviewEmail.service");
 function startInterviewJobs() {
-    // Runs every hour to catch interviews happening ~24 hours later
-    node_cron_1.default.schedule("0 * * * *", async () => {
+    // Runs every 6 hours to catch interviews happening ~24 hours later
+    node_cron_1.default.schedule("0 */6 * * *", async () => {
         try {
             const now = new Date();
             const windowStart = new Date(now.getTime() + 24 * 60 * 60 * 1000); // +24h

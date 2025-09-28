@@ -104,12 +104,16 @@ class JobRepository {
     }
     static async listApplicantsForJob(params) {
         const { companyId, jobId, name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy = "appliedAt", sortOrder = "asc", limit = 10, offset = 0 } = params;
-        // Build user where for name/education/age
+        // Build user where for name/education/age with input sanitization
         const userWhere = {};
-        if (typeof name === "string" && name.trim() !== "")
-            userWhere.name = { contains: name, mode: "insensitive" };
-        if (typeof education === "string" && education.trim() !== "")
-            userWhere.education = { contains: education, mode: "insensitive" };
+        if (typeof name === "string" && name.trim() !== "") {
+            const sanitizedName = name.trim().substring(0, 100); // Limit length
+            userWhere.name = { contains: sanitizedName, mode: "insensitive" };
+        }
+        if (typeof education === "string" && education.trim() !== "") {
+            const sanitizedEducation = education.trim().substring(0, 100); // Limit length
+            userWhere.education = { contains: sanitizedEducation, mode: "insensitive" };
+        }
         // Age filter using dob between date ranges
         if (typeof ageMin === "number" || typeof ageMax === "number") {
             const now = new Date();

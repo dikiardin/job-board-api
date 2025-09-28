@@ -31,7 +31,6 @@ class JobRouter {
       "/companies/:companyId/jobs",
       verifyToken,
       verifyRole([UserRole.ADMIN]),
-      require("../middlewares/validator/job.validator").validateListJobs,
       JobController.list
     );
 
