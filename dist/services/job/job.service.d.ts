@@ -110,20 +110,14 @@ export declare class JobService {
             offset?: number;
         };
     }): Promise<{
-        total: number;
-        limit: number;
-        offset: number;
-        items: {
-            id: number;
-            title: string;
-            category: string;
-            city: string;
-            isPublished: boolean;
-            deadline: Date | null;
-            createdAt: Date;
-            applicantsCount: any;
-        }[];
+        total: any;
+        limit: any;
+        offset: any;
+        items: any;
     }>;
+    private static validateAdminAccess;
+    private static buildQueryParams;
+    private static formatJobListResponse;
     static listPublishedJobs(params: {
         query: {
             title?: string;

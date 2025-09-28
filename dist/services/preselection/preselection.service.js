@@ -6,32 +6,51 @@ const prisma_1 = require("../../generated/prisma");
 class PreselectionService {
     static async createOrUpdateTest(params) {
         const { jobId, requesterId, requesterRole, questions, passingScore, isActive = true } = params;
-        if (requesterRole !== prisma_1.UserRole.ADMIN)
+        this.validateAdminAccess(requesterRole);
+        await this.validateJobOwnership(jobId, requesterId);
+        this.validateQuestions(questions);
+        this.validatePassingScore(passingScore, questions.length);
+        const created = await preselection_repository_1.PreselectionRepository.upsertTest(jobId, questions, passingScore, isActive);
+        return created;
+    }
+    static validateAdminAccess(requesterRole) {
+        if (requesterRole !== prisma_1.UserRole.ADMIN) {
             throw { status: 401, message: "Only company admin can create tests" };
+        }
+    }
+    static async validateJobOwnership(jobId, requesterId) {
         const job = await preselection_repository_1.PreselectionRepository.getJob(jobId);
         if (!job)
             throw { status: 404, message: "Job not found" };
         if (!job.company || job.company.adminId !== requesterId) {
             throw { status: 403, message: "You don't own this job" };
         }
-        if (!Array.isArray(questions) || questions.length === 0)
+    }
+    static validateQuestions(questions) {
+        if (!Array.isArray(questions) || questions.length === 0) {
             throw { status: 400, message: "Questions are required" };
-        if (questions.length !== 25)
+        }
+        if (questions.length !== 25) {
             throw { status: 400, message: "Preselection test must contain exactly 25 questions" };
+        }
         for (const [idx, q] of questions.entries()) {
-            if (!q.question || !Array.isArray(q.options) || q.options.length !== 4) {
-                throw { status: 400, message: `Question #${idx + 1} must have text and exactly 4 options` };
-            }
-            if (typeof q.answer !== "string" || !q.options.includes(q.answer)) {
-                throw { status: 400, message: `Question #${idx + 1} answer must match one of the options` };
-            }
+            this.validateQuestion(q, idx + 1);
         }
+    }
+    static validateQuestion(q, questionNumber) {
+        if (!q.question || !Array.isArray(q.options) || q.options.length !== 4) {
+            throw { status: 400, message: `Question #${questionNumber} must have text and exactly 4 options` };
+        }
+        if (typeof q.answer !== "string" || !q.options.includes(q.answer)) {
+            throw { status: 400, message: `Question #${questionNumber} answer must match one of the options` };
+        }
+    }
+    static validatePassingScore(passingScore, questionCount) {
         if (passingScore !== undefined) {
-            if (passingScore < 0 || passingScore > questions.length)
+            if (passingScore < 0 || passingScore > questionCount) {
                 throw { status: 400, message: "Invalid passingScore" };
+            }
         }
-        const created = await preselection_repository_1.PreselectionRepository.upsertTest(jobId, questions, passingScore, isActive);
-        return created;
     }
     static async getTestForJob(jobId, requesterRole) {
         const test = await preselection_repository_1.PreselectionRepository.getTestByJobId(jobId);

@@ -8,19 +8,20 @@ exports.validateApplicantsList = validateApplicantsList;
 exports.validateUpdateApplicantStatus = validateUpdateApplicantStatus;
 const joi_1 = __importDefault(require("joi"));
 const listJobsQuerySchema = joi_1.default.object({
-    title: joi_1.default.string().trim().optional(),
-    category: joi_1.default.string().trim().optional(),
-    city: joi_1.default.string().trim().optional(),
+    title: joi_1.default.string().trim().max(100).optional(),
+    category: joi_1.default.string().trim().max(50).optional(),
+    city: joi_1.default.string().trim().max(50).optional(),
     sortBy: joi_1.default.string().valid("createdAt", "deadline").optional(),
     sortOrder: joi_1.default.string().valid("asc", "desc").optional(),
-    limit: joi_1.default.number().integer().min(1).max(100).optional(),
-    offset: joi_1.default.number().integer().min(0).optional(),
+    limit: joi_1.default.number().integer().min(1).max(100).default(10).optional(),
+    offset: joi_1.default.number().integer().min(0).default(0).optional(),
 });
 function validateListJobs(req, res, next) {
     const { error, value } = listJobsQuerySchema.validate(req.query, { abortEarly: false, stripUnknown: true });
     if (error)
         return res.status(400).json({ message: "Invalid query", errors: error.details.map((d) => d.message) });
-    req.query = value;
+    // Store validated query in res.locals instead of modifying req.query
+    res.locals.validatedQuery = value;
     next();
 }
 const applicantsListQuerySchema = joi_1.default.object({
@@ -39,7 +40,7 @@ function validateApplicantsList(req, res, next) {
     const { error, value } = applicantsListQuerySchema.validate(req.query, { abortEarly: false, stripUnknown: true });
     if (error)
         return res.status(400).json({ message: "Invalid query", errors: error.details.map((d) => d.message) });
-    req.query = value;
+    res.locals.validatedQuery = value;
     next();
 }
 const updateApplicantStatusBody = joi_1.default.object({

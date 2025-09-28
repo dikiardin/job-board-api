@@ -22,9 +22,14 @@ class JobController {
     }
     static async list(req, res, next) {
         try {
+            console.log("Job list request:", req.params, req.query);
+            console.log("Headers:", req.headers);
+            console.log("res.locals:", res.locals);
             const companyId = Number(req.params.companyId);
             const requester = res.locals.decrypt;
-            const { title, category, sortBy, sortOrder, limit, offset } = req.query;
+            console.log("Company ID:", companyId);
+            console.log("Requester:", requester);
+            const { title, category, sortBy, sortOrder, limit, offset } = res.locals.validatedQuery || req.query;
             const query = {};
             if (typeof title === "string")
                 query.title = title;
@@ -38,15 +43,19 @@ class JobController {
                 query.limit = Number(limit);
             if (typeof offset === "string" && offset.trim() !== "")
                 query.offset = Number(offset);
+            console.log("Query params:", query);
             const data = await job_service_1.JobService.listJobs({
                 companyId,
                 requesterId: requester.userId,
                 requesterRole: requester.role,
                 query,
             });
+            console.log("Job data:", data);
             res.status(200).json({ success: true, data });
         }
         catch (error) {
+            console.error("Job list error:", error);
+            console.error("Error stack:", error.stack);
             next(error);
         }
     }

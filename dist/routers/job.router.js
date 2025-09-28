@@ -15,7 +15,7 @@ class JobRouter {
         this.route.get("/public/jobs", require("../middlewares/validator/job.validator").validateListJobs, job_controller_1.JobController.listPublic);
         // All job management endpoints require ADMIN role and JWT
         this.route.post("/companies/:companyId/jobs", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), job_controller_1.JobController.create);
-        this.route.get("/companies/:companyId/jobs", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), require("../middlewares/validator/job.validator").validateListJobs, job_controller_1.JobController.list);
+        this.route.get("/companies/:companyId/jobs", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), job_controller_1.JobController.list);
         this.route.get("/companies/:companyId/jobs/:jobId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), job_controller_1.JobController.detail);
         this.route.put("/companies/:companyId/jobs/:jobId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), job_controller_1.JobController.update);
         this.route.patch("/companies/:companyId/jobs/:jobId/publish", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), job_controller_1.JobController.togglePublish);

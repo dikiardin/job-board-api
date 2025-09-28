@@ -57,17 +57,31 @@ function validatePayload(payload, isUpdate = false) {
 class InterviewCommandService {
     static async createMany(params) {
         const { jobId, requesterId, requesterRole, body } = params;
-        if (requesterRole !== prisma_1.UserRole.ADMIN)
-            throw { status: 401, message: "Only company admin can create schedules" };
+        this.validateAdminAccess(requesterRole);
         await assertCompanyOwnershipByJob(jobId, requesterId);
         validatePayload(body);
-        const applications = await prisma_2.prisma.application.findMany({
-            where: { jobId, userId: { in: body.items.map((i) => i.applicantId) } },
+        const applications = await this.getApplicationsForJob(jobId, body.items);
+        const toCreate = await this.prepareInterviewSchedules(body.items, applications);
+        const created = await this.createInterviewSchedules(toCreate);
+        await this.updateApplicationStatuses(created);
+        await this.sendInterviewNotifications(created);
+        return created;
+    }
+    static validateAdminAccess(requesterRole) {
+        if (requesterRole !== prisma_1.UserRole.ADMIN) {
+            throw { status: 401, message: "Only company admin can create schedules" };
+        }
+    }
+    static async getApplicationsForJob(jobId, items) {
+        return await prisma_2.prisma.application.findMany({
+            where: { jobId, userId: { in: items.map((i) => i.applicantId) } },
             include: { user: true },
         });
+    }
+    static async prepareInterviewSchedules(items, applications) {
         const appByUser = new Map(applications.map((a) => [a.userId, a]));
         const toCreate = [];
-        for (const it of body.items) {
+        for (const it of items) {
             const app = appByUser.get(it.applicantId);
             if (!app)
                 throw { status: 400, message: `Applicant ${it.applicantId} has no application for this job` };
@@ -79,41 +93,53 @@ class InterviewCommandService {
                 throw { status: 400, message: `Schedule conflict for applicant ${it.applicantId}` };
             toCreate.push({ applicationId: app.id, scheduleDate, locationOrLink: it.locationOrLink ?? null, notes: it.notes ?? null });
         }
-        const created = await interview_repository_1.InterviewRepository.createMany(toCreate);
-        await prisma_2.prisma.application.updateMany({ where: { id: { in: created.map((c) => c.applicationId) } }, data: { status: "INTERVIEW" } });
+        return toCreate;
+    }
+    static async createInterviewSchedules(toCreate) {
+        return await interview_repository_1.InterviewRepository.createMany(toCreate);
+    }
+    static async updateApplicationStatuses(created) {
+        await prisma_2.prisma.application.updateMany({
+            where: { id: { in: created.map((c) => c.applicationId) } },
+            data: { status: "INTERVIEW" }
+        });
+    }
+    static async sendInterviewNotifications(created) {
         for (const it of created) {
-            const candidateEmail = it.application.user.email;
-            const candidateName = it.application.user.name;
-            const jobTitle = it.application.job.title;
-            const companyName = it.application.job.company.name;
-            const adminEmail = it.application.job.company.admin?.email || undefined;
-            const adminName = it.application.job.company.admin?.name || null;
-            await interviewEmail_service_1.InterviewEmailService.sendCandidateEmail({
+            await this.sendInterviewEmails(it);
+        }
+    }
+    static async sendInterviewEmails(interview) {
+        const candidateEmail = interview.application.user.email;
+        const candidateName = interview.application.user.name;
+        const jobTitle = interview.application.job.title;
+        const companyName = interview.application.job.company.name;
+        const adminEmail = interview.application.job.company.admin?.email || undefined;
+        const adminName = interview.application.job.company.admin?.name || null;
+        await interviewEmail_service_1.InterviewEmailService.sendCandidateEmail({
+            type: "created",
+            to: candidateEmail,
+            candidateName,
+            adminName,
+            jobTitle,
+            companyName,
+            scheduleDate: new Date(interview.scheduleDate),
+            locationOrLink: interview.locationOrLink ?? null,
+            notes: interview.notes ?? null,
+        });
+        if (adminEmail) {
+            await interviewEmail_service_1.InterviewEmailService.sendAdminEmail({
                 type: "created",
-                to: candidateEmail,
+                to: adminEmail,
+                adminName: adminName || "Admin",
                 candidateName,
-                adminName,
                 jobTitle,
                 companyName,
-                scheduleDate: new Date(it.scheduleDate),
-                locationOrLink: it.locationOrLink ?? null,
-                notes: it.notes ?? null,
+                scheduleDate: new Date(interview.scheduleDate),
+                locationOrLink: interview.locationOrLink ?? null,
+                notes: interview.notes ?? null,
             });
-            if (adminEmail) {
-                await interviewEmail_service_1.InterviewEmailService.sendAdminEmail({
-                    type: "created",
-                    to: adminEmail,
-                    adminName: adminName || "Admin",
-                    candidateName,
-                    jobTitle,
-                    companyName,
-                    scheduleDate: new Date(it.scheduleDate),
-                    locationOrLink: it.locationOrLink ?? null,
-                    notes: it.notes ?? null,
-                });
-            }
         }
-        return created;
     }
     static async update(params) {
         const { id, requesterId, requesterRole, body } = params;

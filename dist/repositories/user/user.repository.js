@@ -20,6 +20,24 @@ class UserRepo {
             data: { isVerified: true },
         });
     }
+    static async updateUser(id, data) {
+        return prisma_1.prisma.user.update({
+            where: { id },
+            data,
+        });
+    }
+    static async findByIdWithPassword(id) {
+        return prisma_1.prisma.user.findUnique({
+            where: { id },
+            select: { id: true, email: true, passwordHash: true },
+        });
+    }
+    static async updatePassword(id, passwordHash) {
+        return prisma_1.prisma.user.update({
+            where: { id },
+            data: { passwordHash },
+        });
+    }
 }
 exports.UserRepo = UserRepo;
 //# sourceMappingURL=user.repository.js.map

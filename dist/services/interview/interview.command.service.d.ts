@@ -14,6 +14,13 @@ export declare class InterviewCommandService {
             }>;
         };
     }): Promise<any[]>;
+    private static validateAdminAccess;
+    private static getApplicationsForJob;
+    private static prepareInterviewSchedules;
+    private static createInterviewSchedules;
+    private static updateApplicationStatuses;
+    private static sendInterviewNotifications;
+    private static sendInterviewEmails;
     static update(params: {
         id: number;
         requesterId: number;

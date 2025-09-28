@@ -89,9 +89,18 @@ class JobService {
     }
     static async listJobs(params) {
         const { companyId, requesterId, requesterRole, query } = params;
-        if (requesterRole !== prisma_1.UserRole.ADMIN)
-            throw { status: 401, message: "Only company admin can list their jobs" };
+        this.validateAdminAccess(requesterRole);
         await this.assertCompanyOwnership(companyId, requesterId);
+        const repoQuery = this.buildQueryParams(companyId, query);
+        const result = await job_repository_1.JobRepository.listJobs(repoQuery);
+        return this.formatJobListResponse(result);
+    }
+    static validateAdminAccess(requesterRole) {
+        if (requesterRole !== prisma_1.UserRole.ADMIN) {
+            throw { status: 401, message: "Only company admin can list their jobs" };
+        }
+    }
+    static buildQueryParams(companyId, query) {
         const repoQuery = { companyId };
         if (typeof query.title === "string")
             repoQuery.title = query.title;
@@ -105,7 +114,9 @@ class JobService {
             repoQuery.limit = query.limit;
         if (typeof query.offset === "number")
             repoQuery.offset = query.offset;
-        const result = await job_repository_1.JobRepository.listJobs(repoQuery);
+        return repoQuery;
+    }
+    static formatJobListResponse(result) {
         return {
             total: result.total,
             limit: result.limit,

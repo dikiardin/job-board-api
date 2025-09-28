@@ -8,24 +8,24 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const subscription_repository_1 = require("../repositories/subscription/subscription.repository");
 const email_service_1 = require("../services/subscription/email.service");
 function startSubscriptionJobs() {
-    // Job to check subscriptions expiring in 2 minutes (for testing)
-    node_cron_1.default.schedule("* * * * *", async () => {
-        console.log("[CRON] Checking subscriptions expiring in 2 minutes...");
+    // Job to check subscriptions expiring in 24 hours (daily at 9 AM)
+    node_cron_1.default.schedule("0 9 * * *", async () => {
+        console.log("[CRON] Checking subscriptions expiring in 24 hours...");
         try {
-            // Find subscriptions expiring in 2 minutes (for testing)
-            const expiringSubscriptions = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInMinutes(2);
+            // Find subscriptions expiring in 24 hours
+            const expiringSubscriptions = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInMinutes(24 * 60);
             // Send email for each expiring subscription
             for (const subscription of expiringSubscriptions) {
                 await email_service_1.EmailService.sendSubscriptionExpirationEmail(subscription.user.email, subscription.user.name, subscription.plan.planName, subscription.endDate);
             }
-            console.log(`[CRON] Sent ${expiringSubscriptions.length} expiration reminder emails (2 minutes before expiry)`);
+            console.log(`[CRON] Sent ${expiringSubscriptions.length} expiration reminder emails (24 hours before expiry)`);
         }
         catch (error) {
             console.error("[CRON] Failed to send expiration reminders:", error);
         }
     });
-    // Job to deactivate expired subscriptions
-    node_cron_1.default.schedule("* * * * *", async () => {
+    // Job to deactivate expired subscriptions (daily at 10 AM)
+    node_cron_1.default.schedule("0 10 * * *", async () => {
         console.log("[CRON] Checking for expired subscriptions...");
         try {
             // Find expired subscriptions

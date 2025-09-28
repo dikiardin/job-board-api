@@ -8,7 +8,7 @@ const createToken_1 = require("../../utils/createToken");
 const customError_1 = require("../../utils/customError");
 const decodeToken_1 = require("../../utils/decodeToken");
 const nodemailer_1 = require("../../config/nodemailer");
-const emailTemplates_1 = require("../../utils/emailTemplates");
+const emailTemplateVerify_1 = require("../../utils/emailTemplateVerify");
 const createEmployment_service_1 = require("../employment/createEmployment.service");
 const createCompany_service_1 = require("../company/createCompany.service");
 class BasicAuthService {
@@ -36,7 +36,7 @@ class BasicAuthService {
                 from: process.env.MAIL_SENDER,
                 to: email,
                 subject: "Workoo | Verify your account",
-                html: (0, emailTemplates_1.buildVerificationEmail)(name, token),
+                html: (0, emailTemplateVerify_1.buildVerificationEmail)(name, token),
             });
         }
         catch (err) {
@@ -63,10 +63,13 @@ class BasicAuthService {
     static async login(email, password) {
         const user = await user_repository_1.UserRepo.findByEmail(email);
         if (!user)
-            throw new customError_1.CustomError("Invalid credentials", 400);
+            throw new customError_1.CustomError("Email is not registered", 400);
+        if (!user.passwordHash) {
+            throw new customError_1.CustomError("This account uses social login. Please sign in with Google.", 400);
+        }
         const isMatch = await (0, comparePassword_1.comparePassword)(password, user.passwordHash);
         if (!isMatch)
-            throw new customError_1.CustomError("Invalid credentials", 400);
+            throw new customError_1.CustomError("Wrong password", 400);
         if (!user.isVerified) {
             throw new customError_1.CustomError("Please verify your email before logging in", 400);
         }

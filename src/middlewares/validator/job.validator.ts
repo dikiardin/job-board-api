@@ -2,19 +2,20 @@ import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 
 const listJobsQuerySchema = Joi.object({
-  title: Joi.string().trim().optional(),
-  category: Joi.string().trim().optional(),
-  city: Joi.string().trim().optional(),
+  title: Joi.string().trim().max(100).optional(),
+  category: Joi.string().trim().max(50).optional(),
+  city: Joi.string().trim().max(50).optional(),
   sortBy: Joi.string().valid("createdAt", "deadline").optional(),
   sortOrder: Joi.string().valid("asc", "desc").optional(),
-  limit: Joi.number().integer().min(1).max(100).optional(),
-  offset: Joi.number().integer().min(0).optional(),
+  limit: Joi.number().integer().min(1).max(100).default(10).optional(),
+  offset: Joi.number().integer().min(0).default(0).optional(),
 });
 
 export function validateListJobs(req: Request, res: Response, next: NextFunction) {
   const { error, value } = listJobsQuerySchema.validate(req.query, { abortEarly: false, stripUnknown: true });
   if (error) return res.status(400).json({ message: "Invalid query", errors: error.details.map((d) => d.message) });
-  req.query = value;
+  // Store validated query in res.locals instead of modifying req.query
+  res.locals.validatedQuery = value;
   next();
 }
 
@@ -34,7 +35,7 @@ const applicantsListQuerySchema = Joi.object({
 export function validateApplicantsList(req: Request, res: Response, next: NextFunction) {
   const { error, value } = applicantsListQuerySchema.validate(req.query, { abortEarly: false, stripUnknown: true });
   if (error) return res.status(400).json({ message: "Invalid query", errors: error.details.map((d) => d.message) });
-  req.query = value;
+  res.locals.validatedQuery = value;
   next();
 }
 
