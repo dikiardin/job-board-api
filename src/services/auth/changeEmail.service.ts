@@ -1,8 +1,8 @@
 import { UserRepo } from "../../repositories/user/user.repository";
 import { transport } from "../../config/nodemailer";
-import { buildVerificationEmail } from "../../utils/emailTemplateVerify";
 import { createToken } from "../../utils/createToken";
 import { CustomError } from "../../utils/customError";
+import { buildVerificationEmailChange } from "../../utils/emailTemplateVerifyEmailChange";
 
 export class ChangeEmailService {
   static async changeEmail(userId: number, newEmail: string) {
@@ -18,7 +18,7 @@ export class ChangeEmailService {
         from: process.env.MAIL_SENDER,
         to: newEmail,
         subject: "Workoo | Verify your new email",
-        html: buildVerificationEmail(newEmail, token),
+        html: buildVerificationEmailChange(newEmail, token),
       });
     } catch (err) {
       console.error("Nodemailer Error:", err);

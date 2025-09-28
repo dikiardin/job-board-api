@@ -2,6 +2,7 @@ import { Router } from "express";
 import { EditProfileController } from "../controllers/profile/editProfile.controller";
 import { verifyToken } from "../middlewares/verifyToken";
 import { uploadFields } from "../middlewares/uploadImage";
+import { ProfileController } from "../controllers/profile/profile.controller";
 
 class ProfileRouter {
   private route: Router;
@@ -23,6 +24,8 @@ class ProfileRouter {
       ]),
       this.editProfileController.editProfile
     );
+    this.route.get("/user", verifyToken, ProfileController.getUserProfile);
+    this.route.get("/admin", verifyToken, ProfileController.getCompanyProfile);
   }
 
   public getRouter(): Router {
