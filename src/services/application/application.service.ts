@@ -47,4 +47,8 @@ export class ApplicationService {
       ...(expectedSalary !== undefined ? { expectedSalary } : {}),
     });
   }
+
+  public static async getApplicationsByUserId(userId: number) {
+    return ApplicationRepo.getApplicationsByUserId(userId);
+  }
 }

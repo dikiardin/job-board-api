@@ -1,11 +1,10 @@
 import { Router } from "express";
-import { ApplicationController } from "../controllers/application/application.controller";
+import { SavedJobController } from "../controllers/save/saveJob.controller";
 import { verifyToken } from "../middlewares/verifyToken";
-import { uploadSingleFile } from "../middlewares/uploadFile";
 import { verifyRole } from "../middlewares/verifyRole";
 import { UserRole } from "../generated/prisma";
 
-class ApplicationRouter {
+class SavedJobRouter {
   private route: Router;
 
   constructor() {
@@ -18,15 +17,21 @@ class ApplicationRouter {
       "/:jobId",
       verifyToken,
       verifyRole([UserRole.USER]),
-      uploadSingleFile("cvFile"),
-      ApplicationController.applyJob
+      SavedJobController.saveJob
     );
 
     this.route.get(
       "/user/:userId",
       verifyToken,
       verifyRole([UserRole.USER]),
-      ApplicationController.getApplicationsByUserId
+      SavedJobController.getSavedJobsByUser
+    );
+
+    this.route.delete(
+      "/unsave/:jobId",
+      verifyToken,
+      verifyRole([UserRole.USER]),
+      SavedJobController.unsaveJob
     );
   }
 
@@ -35,4 +40,4 @@ class ApplicationRouter {
   }
 }
 
-export default ApplicationRouter;
+export default SavedJobRouter;

@@ -16,6 +16,8 @@ import AnalyticsRouter from "./routers/analytics.router";
 import ProfileRouter from "./routers/profile.router";
 import CompanyRouter from "./routers/company.router";
 import { prisma } from "./config/prisma";
+import JobShareRouter from "./routers/share.router";
+import SavedJobRouter from "./routers/save.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -175,6 +177,8 @@ class App {
     const analyticsRouter: AnalyticsRouter = new AnalyticsRouter();
     const profileRouter: ProfileRouter = new ProfileRouter();
     const companyRouter: CompanyRouter = new CompanyRouter();
+    const shareRouter: JobShareRouter = new JobShareRouter();
+    const saveRouter: SavedJobRouter = new SavedJobRouter();
 
     this.app.use("/auth", authRouter.getRouter());
     this.app.use("/subscription", subscriptionRouter.getRouter());
@@ -186,6 +190,8 @@ class App {
     this.app.use("/analytics", analyticsRouter.getRouter());
     this.app.use("/profile", profileRouter.getRouter());
     this.app.use("/company", companyRouter.getRouter());
+    this.app.use("/share", shareRouter.getRouter());
+    this.app.use("/save", saveRouter.getRouter());
   
   }
 

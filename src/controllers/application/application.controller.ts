@@ -36,4 +36,28 @@ export class ApplicationController {
       next(err);
     }
   }
+
+  public static async getApplicationsByUserId(
+    req: Request<{ userId: string }>,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const userId = parseInt(req.params.userId, 10);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user id" });
+      }
+
+      const applications = await ApplicationService.getApplicationsByUserId(
+        userId
+      );
+
+      res.status(200).json({
+        message: "Applications fetched successfully",
+        data: applications,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
