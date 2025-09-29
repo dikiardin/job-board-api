@@ -17,6 +17,8 @@ import ProfileRouter from "./routers/profile.router";
 import CompanyRouter from "./routers/company.router";
 import CompanyReviewRouter from "./routers/companyReview.router";
 import { prisma } from "./config/prisma";
+import JobShareRouter from "./routers/share.router";
+import SavedJobRouter from "./routers/save.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -46,7 +48,7 @@ class App {
 
     // Request logging
     this.app.use((req, res, next) => {
-      console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}`);
+      console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}` );
       next();
     });
 
@@ -177,6 +179,8 @@ class App {
     const profileRouter: ProfileRouter = new ProfileRouter();
     const companyRouter: CompanyRouter = new CompanyRouter();
     const companyReviewRouter: CompanyReviewRouter = new CompanyReviewRouter();
+    const shareRouter: JobShareRouter = new JobShareRouter();
+    const saveRouter: SavedJobRouter = new SavedJobRouter();
 
     this.app.use("/auth", authRouter.getRouter());
     this.app.use("/subscription", subscriptionRouter.getRouter());
@@ -189,6 +193,8 @@ class App {
     this.app.use("/profile", profileRouter.getRouter());
     this.app.use("/company", companyRouter.getRouter());
     this.app.use("/reviews", companyReviewRouter.getRouter());
+    this.app.use("/share", shareRouter.getRouter());
+    this.app.use("/save", saveRouter.getRouter());
   
   }
 
@@ -246,7 +252,7 @@ class App {
 
   public start(): void {
     this.app.listen(PORT, () => {
-      console.log(`API Running: http://localhost:${PORT}`);
+      console.log(`API Running: http://localhost:${PORT}` );
       startSubscriptionJobs();
       startInterviewJobs();
     });

@@ -32,7 +32,7 @@ export class ForgotPasswordService {
       throw new CustomError("Failed to send reset password email", 500);
     }
 
-    return { message: "Password reset email sent. Please check your inbox." };
+    return { message: "Password reset email sent. Please check your email." };
   }
 
   static async resetPassword(

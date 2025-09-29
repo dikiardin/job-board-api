@@ -41,4 +41,30 @@ export class ApplicationRepo {
       data: { status, reviewNote: reviewNote ?? null },
     });
   }
+
+  public static async getApplicationsByUserId(userId: number) {
+    return prisma.application.findMany({
+      where: { userId },
+      include: {
+        job: {
+          select: {
+            id: true,
+            title: true,
+            city: true,
+            category: true,
+            salaryMin: true,
+            salaryMax: true,
+            company: {
+              select: {
+                id: true,
+                name: true,
+                logo: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
 }

@@ -3,6 +3,7 @@ import { JobController } from "../controllers/job/job.controller";
 import { verifyToken } from "../middlewares/verifyToken";
 import { verifyRole } from "../middlewares/verifyRole";
 import { UserRole } from "../generated/prisma";
+import { GetJobController } from "../controllers/job/job.get.controller";
 
 class JobRouter {
   private route: Router;
@@ -79,6 +80,13 @@ class JobRouter {
       require("../middlewares/validator/job.validator").validateUpdateApplicantStatus,
       JobController.updateApplicantStatus
     );
+
+    this.route.get(
+      "/all",
+      GetJobController.getAllJobs
+    );
+    this.route.get("/:jobId", GetJobController.getJobById);
+
   }
 
   public getRouter(): Router {

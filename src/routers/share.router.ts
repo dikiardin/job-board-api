@@ -1,11 +1,10 @@
 import { Router } from "express";
-import { ApplicationController } from "../controllers/application/application.controller";
+import { JobShareController } from "../controllers/share/jobShare.controller";
 import { verifyToken } from "../middlewares/verifyToken";
-import { uploadSingleFile } from "../middlewares/uploadFile";
 import { verifyRole } from "../middlewares/verifyRole";
 import { UserRole } from "../generated/prisma";
 
-class ApplicationRouter {
+class JobShareRouter {
   private route: Router;
 
   constructor() {
@@ -18,15 +17,12 @@ class ApplicationRouter {
       "/:jobId",
       verifyToken,
       verifyRole([UserRole.USER]),
-      uploadSingleFile("cvFile"),
-      ApplicationController.applyJob
+      JobShareController.shareJob
     );
 
     this.route.get(
-      "/user/:userId",
-      verifyToken,
-      verifyRole([UserRole.USER]),
-      ApplicationController.getApplicationsByUserId
+      "/job/:jobId",
+      JobShareController.getSharesByJob
     );
   }
 
@@ -35,4 +31,4 @@ class ApplicationRouter {
   }
 }
 
-export default ApplicationRouter;
+export default JobShareRouter;

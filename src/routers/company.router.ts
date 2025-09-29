@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { CompanyController } from "../controllers/company/company.controller";
 import { verifyToken } from "../middlewares/verifyToken";
+import { GetCompanyController } from "../controllers/company/getCompany.controller";
 
 class CompanyRouter {
   private route: Router;
@@ -18,6 +19,9 @@ class CompanyRouter {
       verifyToken,
       this.companyController.getCompanyByAdmin
     );
+
+    this.route.get("/all", GetCompanyController.getAllCompanies);
+    this.route.get("/:companyId", GetCompanyController.getCompanyById);
   }
 
   public getRouter(): Router {
