@@ -11,7 +11,7 @@ export class ChangeEmailService {
 
     await UserRepo.updateUser(userId, { email: newEmail, isVerified: false });
 
-    const token = createToken({ userId, email: newEmail }, "1h");
+    const token = createToken({ userId, email: newEmail }, "3d");
 
     try {
       await transport.sendMail({
