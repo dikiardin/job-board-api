@@ -15,6 +15,7 @@ import { startInterviewJobs } from "./jobs/interviewJobs";
 import AnalyticsRouter from "./routers/analytics.router";
 import ProfileRouter from "./routers/profile.router";
 import CompanyRouter from "./routers/company.router";
+import CompanyReviewRouter from "./routers/companyReview.router";
 import { prisma } from "./config/prisma";
 import JobShareRouter from "./routers/share.router";
 import SavedJobRouter from "./routers/save.router";
@@ -47,7 +48,7 @@ class App {
 
     // Request logging
     this.app.use((req, res, next) => {
-      console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}`);
+      console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}` );
       next();
     });
 
@@ -177,6 +178,7 @@ class App {
     const analyticsRouter: AnalyticsRouter = new AnalyticsRouter();
     const profileRouter: ProfileRouter = new ProfileRouter();
     const companyRouter: CompanyRouter = new CompanyRouter();
+    const companyReviewRouter: CompanyReviewRouter = new CompanyReviewRouter();
     const shareRouter: JobShareRouter = new JobShareRouter();
     const saveRouter: SavedJobRouter = new SavedJobRouter();
 
@@ -190,6 +192,7 @@ class App {
     this.app.use("/analytics", analyticsRouter.getRouter());
     this.app.use("/profile", profileRouter.getRouter());
     this.app.use("/company", companyRouter.getRouter());
+    this.app.use("/reviews", companyReviewRouter.getRouter());
     this.app.use("/share", shareRouter.getRouter());
     this.app.use("/save", saveRouter.getRouter());
   
@@ -249,7 +252,7 @@ class App {
 
   public start(): void {
     this.app.listen(PORT, () => {
-      console.log(`API Running: http://localhost:${PORT}`);
+      console.log(`API Running: http://localhost:${PORT}` );
       startSubscriptionJobs();
       startInterviewJobs();
     });
