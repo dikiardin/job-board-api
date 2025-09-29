@@ -38,7 +38,7 @@ export class BasicAuthService {
       await CreateEmploymentService.createForNewUser(user.id);
     }
 
-    const token = createToken({ userId: user.id, email: user.email }, "1h");
+    const token = createToken({ userId: user.id, email: user.email }, "3d");
 
     try {
       await transport.sendMail({
