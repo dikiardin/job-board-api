@@ -19,26 +19,38 @@ export class EditProfileService {
     }
 
     if (role === "USER") {
-      const { phone, gender, dob, education, address } = data;
+      const { phone, gender, dob, education, address, city } = data;
       return await EditProfileRepository.updateUserProfile(userId, {
         phone,
         gender,
         dob: dob ? new Date(dob) : undefined,
         education,
         address,
-        profilePicture: profilePictureUrl,
+        city,
+        ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
       });
     }
 
     if (role === "ADMIN") {
-      const { phone, location, description, website } = data;
-      return await EditProfileRepository.updateCompanyProfile(userId, {
-        phone,
-        location,
-        description,
-        website,
-        logo: profilePictureUrl,
-      });
+      const { phone, location, city, description, website } = data;
+      const [companyResult, userResult] = await Promise.all([
+        EditProfileRepository.updateCompanyProfile(userId, {
+          phone,
+          location,
+          city,
+          description,
+          website,
+          ...(profilePictureUrl && { logo: profilePictureUrl }),
+        }),
+        EditProfileRepository.updateUserProfile(userId, {
+          phone,
+          address:location,
+          city,
+          ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
+        }),
+      ]);
+
+      return { company: companyResult, user: userResult };
     }
 
     throw new CustomError("Invalid role", 400);
@@ -60,19 +72,28 @@ export class EditProfileService {
     }
 
     if (user.role === "USER") {
-      const updateData: any = {
-        ...data,
+      const { phone, gender, dob, education, address, city } = data;
+      return await EditProfileRepository.updateUserProfile(userId, {
+        phone,
+        gender,
+        dob: dob ? new Date(dob) : undefined,
+        education,
+        address,
+        city,
         ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
-      };
-      return EditProfileRepository.updateUserProfile(user.id, updateData);
+      });
     }
 
     if (user.role === "ADMIN") {
-      const updateData: any = {
-        ...data,
+      const { phone, location, city, description, website } = data;
+      return await EditProfileRepository.updateCompanyProfile(userId, {
+        phone,
+        location,
+        city,
+        description,
+        website,
         ...(profilePictureUrl && { logo: profilePictureUrl }),
-      };
-      return EditProfileRepository.updateCompanyProfile(user.id, updateData);
+      });
     }
 
     throw new CustomError("Invalid role", 400);
