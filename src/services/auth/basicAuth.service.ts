@@ -68,11 +68,29 @@ export class BasicAuthService {
     }
 
     if (user.isVerified) {
-      return { message: "User already verified", user };
+      const jwt = createToken(
+        { userId: user.id, email: user.email, role: user.role },
+        "7d"
+      );
+      return { message: "User already verified", token: jwt, user };
     }
 
     const updatedUser = await UserRepo.verifyUser(decoded.userId);
-    return { message: "Email verified successfully", user: updatedUser };
+
+    const jwt = createToken(
+      {
+        userId: updatedUser.id,
+        email: updatedUser.email,
+        role: updatedUser.role,
+      },
+      "7d"
+    );
+
+    return {
+      message: "Email verified successfully",
+      token: jwt,
+      user: updatedUser,
+    };
   }
 
   public static async login(email: string, password: string) {
@@ -88,7 +106,7 @@ export class BasicAuthService {
 
     const isMatch = await comparePassword(password, user.passwordHash);
     if (!isMatch) throw new CustomError("Wrong password", 400);
-    
+
     if (!user.isVerified) {
       throw new CustomError("Please verify your email before logging in", 400);
     }

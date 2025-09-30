@@ -105,22 +105,22 @@ model UserProvider {
   @@index([userId])
 }
 
-model Company {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String?
-  phone       String?
-  location    String?
-  description String?
-  website     String?
-  logo        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  adminId     Int?     @unique
-  admin       User?    @relation("CompanyAdmin", fields: [adminId], references: [id], onDelete: SetNull)
-  jobs        Job[]
-  employments Employment[]
-}
+  model Company {
+    id          Int      @id @default(autoincrement())
+    name        String
+    email       String?
+    phone       String?
+    location    String?
+    description String?
+    website     String?
+    logo        String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    adminId     Int?     @unique
+    admin       User?    @relation("CompanyAdmin", fields: [adminId], references: [id], onDelete: SetNull)
+    jobs        Job[]
+    employments Employment[]
+  }
 
 
 model Job {

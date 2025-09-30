@@ -9,7 +9,7 @@ export class EditProfileRepository {
   }
   public static async updateCompanyProfile(adminId: number, data: any) {
     return prisma.company.update({
-      where: { adminId:adminId },
+      where: { adminId: adminId },
       data,
     });
   }

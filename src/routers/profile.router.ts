@@ -7,10 +7,12 @@ import { ProfileController } from "../controllers/profile/profile.controller";
 class ProfileRouter {
   private route: Router;
   private editProfileController: typeof EditProfileController;
+  private profileController: typeof ProfileController;
 
   constructor() {
     this.route = Router();
     this.editProfileController = EditProfileController;
+    this.profileController = ProfileController;
     this.initializeRoutes();
   }
 
@@ -24,8 +26,21 @@ class ProfileRouter {
       ]),
       this.editProfileController.editProfile
     );
-    this.route.get("/user", verifyToken, ProfileController.getUserProfile);
-    this.route.get("/admin", verifyToken, ProfileController.getCompanyProfile);
+    this.route.put(
+      "/complete",
+      verifyToken, 
+      uploadFields([
+        { name: "profilePicture", maxCount: 1 },
+        { name: "logo", maxCount: 1 },
+      ]),
+      this.editProfileController.completeProfile
+    );
+    this.route.get("/user", verifyToken, this.profileController.getUserProfile);
+    this.route.get(
+      "/admin",
+      verifyToken,
+      this.profileController.getCompanyProfile
+    );
   }
 
   public getRouter(): Router {
