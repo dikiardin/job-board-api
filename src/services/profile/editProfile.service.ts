@@ -43,4 +43,38 @@ export class EditProfileService {
 
     throw new CustomError("Invalid role", 400);
   }
+
+  public static async completeProfile(
+    userId: number,
+    data: any,
+    file?: Express.Multer.File
+  ) {
+    const user = await EditProfileRepository.findUserById(userId);
+    if (!user) throw new CustomError("User not found", 404);
+    if (!user.isVerified) throw new CustomError("User is not verified", 403);
+
+    let profilePictureUrl: string | undefined;
+    if (file) {
+      const upload = await cloudinaryUpload(file);
+      profilePictureUrl = upload.secure_url;
+    }
+
+    if (user.role === "USER") {
+      const updateData: any = {
+        ...data,
+        ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
+      };
+      return EditProfileRepository.updateUserProfile(user.id, updateData);
+    }
+
+    if (user.role === "ADMIN") {
+      const updateData: any = {
+        ...data,
+        ...(profilePictureUrl && { logo: profilePictureUrl }),
+      };
+      return EditProfileRepository.updateCompanyProfile(user.id, updateData);
+    }
+
+    throw new CustomError("Invalid role", 400);
+  }
 }

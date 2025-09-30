@@ -36,8 +36,17 @@ export class BasicAuthController {
         return res.status(400).json({ error: "Token missing" });
       }
 
-      const result = await BasicAuthService.verifyEmail(token);
-      res.status(200).json(result);
+      const {
+        message,
+        token: jwt,
+        user,
+      } = await BasicAuthService.verifyEmail(token);
+
+      res.status(200).json({
+        message,
+        token: jwt,
+        user,
+      });
     } catch (error) {
       next(error);
     }
