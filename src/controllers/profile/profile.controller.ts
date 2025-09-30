@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ProfileService } from "../../services/profile/pofile.service";
+import { ProfileService } from "../../services/profile/profile.service";
 
 export class ProfileController {
   static async getUserProfile(req: Request, res: Response, next: NextFunction) {

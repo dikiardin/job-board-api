@@ -3,6 +3,7 @@ import { transport } from "../../config/nodemailer";
 import { createToken } from "../../utils/createToken";
 import { CustomError } from "../../utils/customError";
 import { buildVerificationEmailChange } from "../../utils/emailTemplateVerifyEmailChange";
+import { CompanyRepo } from "../../repositories/company/company.repository";
 
 export class ChangeEmailService {
   static async changeEmail(userId: number, newEmail: string) {
@@ -10,6 +11,11 @@ export class ChangeEmailService {
     if (existing) throw new CustomError("Email already in use", 409);
 
     await UserRepo.updateUser(userId, { email: newEmail, isVerified: false });
+
+    const company = await CompanyRepo.findByAdminId(userId);
+    if (company) {
+      await CompanyRepo.updateCompany(company.id, { email: newEmail });
+    }
 
     const token = createToken({ userId, email: newEmail }, "3d");
 

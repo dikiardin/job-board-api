@@ -71,13 +71,14 @@ model User {
   dob            DateTime?
   education      String?
   address        String?
+  city           String?
   profilePicture String?
   isVerified     Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
   providers           UserProvider[]
-  adminOf          Company?         @relation("CompanyAdmin")
+  adminOf             Company?             @relation("CompanyAdmin")
   employments         Employment[]
   applications        Application[]
   preselectionResults PreselectionResult[]
@@ -105,23 +106,23 @@ model UserProvider {
   @@index([userId])
 }
 
-  model Company {
-    id          Int      @id @default(autoincrement())
-    name        String
-    email       String?
-    phone       String?
-    location    String?
-    description String?
-    website     String?
-    logo        String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    adminId     Int?     @unique
-    admin       User?    @relation("CompanyAdmin", fields: [adminId], references: [id], onDelete: SetNull)
-    jobs        Job[]
-    employments Employment[]
-  }
-
+model Company {
+  id          Int          @id @default(autoincrement())
+  name        String
+  email       String?
+  phone       String?
+  location    String?
+  city        String?
+  description String?
+  website     String?
+  logo        String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  adminId     Int?         @unique
+  admin       User?        @relation("CompanyAdmin", fields: [adminId], references: [id], onDelete: SetNull)
+  jobs        Job[]
+  employments Employment[]
+}
 
 model Job {
   id          Int       @id @default(autoincrement())
@@ -196,11 +197,11 @@ model Interview {
 }
 
 model PreselectionTest {
-  id        Int      @id @default(autoincrement())
-  jobId     Int      @unique
-  isActive  Boolean  @default(true)
+  id           Int      @id @default(autoincrement())
+  jobId        Int      @unique
+  isActive     Boolean  @default(true)
   passingScore Int?
-  createdAt DateTime @default(now())
+  createdAt    DateTime @default(now())
 
   job       Job                    @relation(fields: [jobId], references: [id], onDelete: Cascade)
   questions PreselectionQuestion[]
@@ -214,7 +215,7 @@ model PreselectionQuestion {
   options  Json
   answer   String
 
-  test PreselectionTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  test    PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
   answers ApplicantAnswer[]
 
   @@index([testId])
@@ -227,8 +228,8 @@ model PreselectionResult {
   score     Int
   createdAt DateTime @default(now())
 
-  user User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  test PreselectionTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  user    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  test    PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
   answers ApplicantAnswer[]
 
   @@unique([userId, testId])
@@ -236,13 +237,13 @@ model PreselectionResult {
 }
 
 model ApplicantAnswer {
-  id         Int                  @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   resultId   Int
   questionId Int
   selected   String
   isCorrect  Boolean
 
-  result   PreselectionResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  result   PreselectionResult   @relation(fields: [resultId], references: [id], onDelete: Cascade)
   question PreselectionQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([resultId, questionId])
@@ -357,15 +358,15 @@ model Payment {
 }
 
 model Employment {
-  id         Int       @id @default(autoincrement())
-  userId     Int
-  companyId  Int?
-  startDate  DateTime?
-  endDate    DateTime?
-  createdAt  DateTime  @default(now())
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  companyId Int?
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
 
   user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  company Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company Company?        @relation(fields: [companyId], references: [id], onDelete: Cascade)
   reviews CompanyReview[]
 
   @@unique([userId, companyId])
