@@ -17,8 +17,8 @@ const createAssessmentSchema = Joi.object({
   questions: Joi.array()
     .items(
       Joi.object({
-        question: Joi.string().min(10).max(500).required().messages({
-          "string.min": "Question must be at least 10 characters long",
+        question: Joi.string().min(5).max(500).required().messages({
+          "string.min": "Question must be at least 5 characters long",
           "string.max": "Question must not exceed 500 characters",
           "any.required": "Question text is required",
         }),
@@ -35,10 +35,10 @@ const createAssessmentSchema = Joi.object({
         }),
       })
     )
-    .length(25)
+    .min(1)
     .required()
     .messages({
-      "array.length": "Assessment must have exactly 25 questions",
+      "array.min": "Assessment must have at least 1 question",
       "any.required": "Questions are required",
     }),
 });
@@ -78,8 +78,8 @@ const updateAssessmentSchema = Joi.object({
   questions: Joi.array()
     .items(
       Joi.object({
-        question: Joi.string().min(10).max(500).required().messages({
-          "string.min": "Question must be at least 10 characters long",
+        question: Joi.string().min(5).max(500).required().messages({
+          "string.min": "Question must be at least 5 characters long",
           "string.max": "Question must not exceed 500 characters",
           "any.required": "Question text is required",
         }),
@@ -96,10 +96,10 @@ const updateAssessmentSchema = Joi.object({
         }),
       })
     )
-    .length(25)
+    .min(1)
     .optional()
     .messages({
-      "array.length": "Assessment must have exactly 25 questions",
+      "array.min": "Assessment must have at least 1 question",
     }),
 }).min(1).messages({
   "object.min": "At least one field (title, description, badgeTemplateId, or questions) must be provided",

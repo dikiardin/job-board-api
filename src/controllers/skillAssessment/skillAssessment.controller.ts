@@ -164,6 +164,40 @@ export class SkillAssessmentController {
     }
   }
 
+  // Get single assessment by ID (Developer only, for editing)
+  public static async getAssessmentById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      console.log("[CONTROLLER] getAssessmentById called");
+      const { userId, role } = res.locals.decrypt;
+      const assessmentId = parseInt(req.params.assessmentId || '0');
+      console.log("[CONTROLLER] Assessment ID:", assessmentId, "User ID:", userId);
+
+      if (isNaN(assessmentId)) {
+        throw new CustomError("Invalid assessment ID", 400);
+      }
+
+      const assessment = await SkillAssessmentService.getAssessmentByIdForDeveloper(
+        assessmentId,
+        userId,
+        role
+      );
+
+      console.log("[CONTROLLER] Assessment fetched successfully");
+      res.status(200).json({
+        success: true,
+        message: "Assessment retrieved successfully",
+        data: assessment,
+      });
+    } catch (error) {
+      console.error("[CONTROLLER] Error:", error);
+      next(error);
+    }
+  }
+
   // Download certificate (User only)
   public static async downloadCertificate(
     req: Request,

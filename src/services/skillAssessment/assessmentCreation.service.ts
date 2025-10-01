@@ -21,9 +21,9 @@ export class AssessmentCreationService {
       throw new CustomError("Only developers can create assessments", 403);
     }
 
-    // Validate 25 questions requirement
-    if (data.questions.length !== 25) {
-      throw new CustomError("Assessment must have exactly 25 questions", 400);
+    // Validate questions count (min 1)
+    if (data.questions.length < 1) {
+      throw new CustomError("Assessment must have at least 1 question", 400);
     }
 
     // Validate each question structure
@@ -78,8 +78,8 @@ export class AssessmentCreationService {
 
     // If questions are being updated, validate them
     if (data.questions) {
-      if (data.questions.length !== 25) {
-        throw new CustomError("Assessment must have exactly 25 questions", 400);
+      if (data.questions.length < 1) {
+        throw new CustomError("Assessment must have at least 1 question", 400);
       }
 
       data.questions.forEach((q, index) => {
@@ -117,15 +117,15 @@ export class AssessmentCreationService {
     // Mock implementation for stats
     return { totalAssessments: 0, totalQuestions: 0, totalResults: 0 };
   }
-
+  
   // Validate assessment structure
   private static validateQuestionStructure(questions: Array<{
     question: string;
     options: string[];
     answer: string;
   }>) {
-    if (questions.length !== 25) {
-      throw new CustomError("Assessment must have exactly 25 questions", 400);
+    if (questions.length < 1) {
+      throw new CustomError("Assessment must have at least 1 question", 400);
     }
 
     questions.forEach((q, index) => {

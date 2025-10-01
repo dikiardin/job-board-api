@@ -8,8 +8,8 @@ const createBadgeTemplateSchema = Joi.object({
     "string.max": "Badge name must not exceed 50 characters",
     "any.required": "Badge name is required",
   }),
-  icon: Joi.string().max(10).optional().messages({
-    "string.max": "Badge icon must not exceed 10 characters",
+  icon: Joi.string().max(500).optional().messages({
+    "string.max": "Badge icon must not exceed 500 characters",
   }),
   description: Joi.string().max(200).optional().messages({
     "string.max": "Description must not exceed 200 characters",
@@ -24,8 +24,8 @@ const updateBadgeTemplateSchema = Joi.object({
     "string.min": "Badge name must be at least 3 characters long",
     "string.max": "Badge name must not exceed 50 characters",
   }),
-  icon: Joi.string().max(10).optional().allow("").messages({
-    "string.max": "Badge icon must not exceed 10 characters",
+  icon: Joi.string().max(500).optional().allow("").messages({
+    "string.max": "Badge icon must not exceed 500 characters",
   }),
   description: Joi.string().max(200).optional().allow("").messages({
     "string.max": "Description must not exceed 200 characters",

@@ -64,6 +64,15 @@ class SkillAssessmentRouter {
       SkillAssessmentController.createAssessment
     );
 
+    // Get single assessment by ID (for editing) - MUST BE BEFORE general list
+    this.route.get(
+      "/developer/assessments/:assessmentId",
+      verifyToken,
+      verifyRole([UserRole.DEVELOPER]),
+      validateAssessmentId,
+      SkillAssessmentController.getAssessmentById
+    );
+
     this.route.get(
       "/developer/assessments",
       verifyToken,
