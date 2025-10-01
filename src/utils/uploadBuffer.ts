@@ -50,21 +50,13 @@ export async function uploadToCloudinary(
         public_id: fileName.replace(/\.[^/.]+$/, ""), // Remove extension from public_id
         use_filename: true,
         unique_filename: false, // Don't add random suffix
+        access_mode: "public", // Ensure public access
       },
       (error, result) => {
         if (error || !result) {
-          console.error('Cloudinary upload error:', error);
           return reject(error || new Error('Upload failed'));
         }
         
-        console.log('Cloudinary upload success:', {
-          public_id: result.public_id,
-          secure_url: result.secure_url,
-          resource_type: result.resource_type,
-          format: result.format
-        });
-        
-        // Return original URL
         resolve({
           secure_url: result.secure_url,
           public_id: result.public_id

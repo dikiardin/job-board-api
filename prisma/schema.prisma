@@ -84,6 +84,7 @@ model User {
   preselectionResults PreselectionResult[]
   skillResults        SkillResult[]
   createdAssessments  SkillAssessment[]    @relation("SkillAssessmentCreator")
+  createdBadgeTemplates BadgeTemplate[]    @relation("BadgeTemplateCreator")
   userBadges          UserBadge[]
   generatedCvs        GeneratedCV[]
   subscriptions       Subscription[]
@@ -251,15 +252,18 @@ model ApplicantAnswer {
 }
 
 model SkillAssessment {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  createdBy   Int
-  createdAt   DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String?
+  createdBy       Int
+  badgeTemplateId Int?
+  createdAt       DateTime @default(now())
 
-  creator   User            @relation("SkillAssessmentCreator", fields: [createdBy], references: [id], onDelete: Restrict)
-  questions SkillQuestion[]
-  results   SkillResult[]
+  creator       User            @relation("SkillAssessmentCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+  badgeTemplate BadgeTemplate?  @relation(fields: [badgeTemplateId], references: [id], onDelete: SetNull)
+  questions     SkillQuestion[]
+  results       SkillResult[]
+  userBadges    UserBadge[]
 }
 
 model SkillQuestion {
@@ -293,14 +297,33 @@ model SkillResult {
   @@index([assessmentId])
 }
 
-model UserBadge {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  badgeName String
-  badgeIcon String?
-  awardedAt DateTime @default(now())
+model BadgeTemplate {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  icon        String?
+  description String?
+  category    String?
+  createdBy   Int
+  createdAt   DateTime @default(now())
+  
+  creator     User              @relation("BadgeTemplateCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+  assessments SkillAssessment[]
+  userBadges  UserBadge[]
+}
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model UserBadge {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  badgeName       String
+  badgeIcon       String?
+  assessmentId    Int?
+  badgeTemplateId Int?
+  badgeType       String   @default("skill")
+  awardedAt       DateTime @default(now())
+
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assessment    SkillAssessment? @relation(fields: [assessmentId], references: [id], onDelete: SetNull)
+  badgeTemplate BadgeTemplate?   @relation(fields: [badgeTemplateId], references: [id], onDelete: SetNull)
 }
 
 model GeneratedCV {
