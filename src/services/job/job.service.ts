@@ -198,12 +198,12 @@ export class JobService {
     await this.assertCompanyOwnership(companyId, requesterId);
     const job = await JobRepository.getJobById(companyId, jobId);
     if (!job) throw { status: 404, message: "Job not found" };
-    const test = job.preselectionTests?.[0];
+    const test = job.preselectionTests || null;
     const passingScore = test?.passingScore ?? null;
     const applicants = job.applications.map((a) => {
       let preselectionPassed: boolean | undefined = undefined;
       if (test) {
-        const result = test.results.find((r) => r.userId === a.userId);
+        const result = test.results.find((r: any) => r.userId === a.userId);
         if (result) {
           preselectionPassed = passingScore != null ? result.score >= passingScore : true;
         } else {
@@ -215,7 +215,7 @@ export class JobService {
         userId: a.userId,
         userName: (a as any).user?.name,
         userEmail: (a as any).user?.email,
-        score: test ? test.results.find((r) => r.userId === a.userId)?.score ?? null : null,
+        score: test ? test.results.find((r: any) => r.userId === a.userId)?.score ?? null : null,
         preselectionPassed,
         status: a.status,
         appliedAt: a.createdAt,
