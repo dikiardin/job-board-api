@@ -24,9 +24,9 @@ export class SkillAssessmentService {
       throw new CustomError("Only developers can create assessments", 403);
     }
 
-    // Validate 25 questions
-    if (data.questions.length !== 25) {
-      throw new CustomError("Assessment must have exactly 25 questions", 400);
+    // Validate questions count (min 1)
+    if (data.questions.length < 1) {
+      throw new CustomError("Assessment must have at least 1 question", 400);
     }
 
     // Validate each question
@@ -171,6 +171,26 @@ export class SkillAssessmentService {
     return await SkillAssessmentModularRepository.getDeveloperAssessments(userId);
   }
 
+  // Get single assessment by ID for developer (includes questions)
+  public static async getAssessmentByIdForDeveloper(assessmentId: number, userId: number, userRole: UserRole) {
+    if (userRole !== UserRole.DEVELOPER) {
+      throw new CustomError("Only developers can view assessment details", 403);
+    }
+
+    const assessment = await SkillAssessmentModularRepository.getAssessmentById(assessmentId);
+    
+    if (!assessment) {
+      throw new CustomError("Assessment not found", 404);
+    }
+
+    // Check if developer owns this assessment
+    if (assessment.createdBy !== userId) {
+      throw new CustomError("You can only view your own assessments", 403);
+    }
+
+    return assessment;
+  }
+
   // Get assessment results (Developer only)
   public static async getAssessmentResults(assessmentId: number, userId: number, userRole: UserRole) {
     if (userRole !== UserRole.DEVELOPER) {
@@ -216,8 +236,8 @@ export class SkillAssessmentService {
 
     // Validate questions if provided
     if (data.questions) {
-      if (data.questions.length !== 25) {
-        throw new CustomError("Assessment must have exactly 25 questions", 400);
+      if (data.questions.length < 1) {
+        throw new CustomError("Assessment must have at least 1 question", 400);
       }
 
       // Validate each question
