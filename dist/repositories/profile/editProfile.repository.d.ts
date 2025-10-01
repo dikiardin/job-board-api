@@ -9,6 +9,7 @@ export declare class EditProfileRepository {
         dob: Date | null;
         education: string | null;
         address: string | null;
+        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
@@ -19,6 +20,7 @@ export declare class EditProfileRepository {
         name: string;
         email: string | null;
         phone: string | null;
+        city: string | null;
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -38,6 +40,7 @@ export declare class EditProfileRepository {
         dob: Date | null;
         education: string | null;
         address: string | null;
+        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;

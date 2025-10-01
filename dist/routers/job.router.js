@@ -5,6 +5,7 @@ const job_controller_1 = require("../controllers/job/job.controller");
 const verifyToken_1 = require("../middlewares/verifyToken");
 const verifyRole_1 = require("../middlewares/verifyRole");
 const prisma_1 = require("../generated/prisma");
+const job_get_controller_1 = require("../controllers/job/job.get.controller");
 class JobRouter {
     constructor() {
         this.route = (0, express_1.Router)();
@@ -24,6 +25,8 @@ class JobRouter {
         this.route.get("/companies/:companyId/jobs/:jobId/applicants", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), require("../middlewares/validator/job.validator").validateApplicantsList, job_controller_1.JobController.applicantsList);
         // Update applicant status (IN_REVIEW / INTERVIEW / ACCEPTED / REJECTED)
         this.route.put("/companies/:companyId/jobs/:jobId/applications/:applicationId/status", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), require("../middlewares/validator/job.validator").validateUpdateApplicantStatus, job_controller_1.JobController.updateApplicantStatus);
+        this.route.get("/all", job_get_controller_1.GetJobController.getAllJobs);
+        this.route.get("/:jobId", job_get_controller_1.GetJobController.getJobById);
     }
     getRouter() {
         return this.route;

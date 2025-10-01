@@ -4,6 +4,7 @@ export declare class BasicAuthService {
     }>;
     static verifyEmail(token: string): Promise<{
         message: string;
+        token: string;
         user: {
             role: import("../../generated/prisma").$Enums.UserRole;
             name: string;
@@ -14,6 +15,7 @@ export declare class BasicAuthService {
             dob: Date | null;
             education: string | null;
             address: string | null;
+            city: string | null;
             profilePicture: string | null;
             isVerified: boolean;
             createdAt: Date;
@@ -33,6 +35,7 @@ export declare class BasicAuthService {
             dob: Date | null;
             education: string | null;
             address: string | null;
+            city: string | null;
             profilePicture: string | null;
             isVerified: boolean;
             createdAt: Date;

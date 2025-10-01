@@ -27,6 +27,22 @@ class EditProfileController {
             next(error);
         }
     }
+    static async completeProfile(req, res, next) {
+        try {
+            const { userId } = res.locals.decrypt;
+            const files = req.files;
+            const uploadedFile = (files?.profilePicture && files.profilePicture[0]) ||
+                (files?.logo && files.logo[0]);
+            const updatedProfile = await editProfile_service_1.EditProfileService.completeProfile(userId, req.body, uploadedFile);
+            res.status(200).json({
+                message: "Profile completed successfully",
+                data: updatedProfile,
+            });
+        }
+        catch (err) {
+            next(err);
+        }
+    }
 }
 exports.EditProfileController = EditProfileController;
 //# sourceMappingURL=editProfile.controller.js.map

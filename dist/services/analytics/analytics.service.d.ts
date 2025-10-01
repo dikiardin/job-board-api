@@ -4,6 +4,7 @@ export declare class AnalyticsService {
         name: string;
         email: string | null;
         phone: string | null;
+        city: string | null;
         createdAt: Date;
         updatedAt: Date;
         id: number;

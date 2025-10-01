@@ -12,6 +12,7 @@ export declare class CreateCompanyRepo {
         name: string;
         email: string | null;
         phone: string | null;
+        city: string | null;
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -25,6 +26,7 @@ export declare class CreateCompanyRepo {
         name: string;
         email: string | null;
         phone: string | null;
+        city: string | null;
         createdAt: Date;
         updatedAt: Date;
         id: number;

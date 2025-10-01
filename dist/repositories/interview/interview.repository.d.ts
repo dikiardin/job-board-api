@@ -23,6 +23,7 @@ export declare class InterviewRepository {
                 dob: Date | null;
                 education: string | null;
                 address: string | null;
+                city: string | null;
                 profilePicture: string | null;
                 isVerified: boolean;
                 createdAt: Date;
@@ -41,6 +42,7 @@ export declare class InterviewRepository {
                         dob: Date | null;
                         education: string | null;
                         address: string | null;
+                        city: string | null;
                         profilePicture: string | null;
                         isVerified: boolean;
                         createdAt: Date;
@@ -51,6 +53,7 @@ export declare class InterviewRepository {
                     name: string;
                     email: string | null;
                     phone: string | null;
+                    city: string | null;
                     createdAt: Date;
                     updatedAt: Date;
                     id: number;
@@ -61,6 +64,7 @@ export declare class InterviewRepository {
                     adminId: number | null;
                 };
             } & {
+                city: string;
                 createdAt: Date;
                 updatedAt: Date;
                 id: number;
@@ -68,7 +72,6 @@ export declare class InterviewRepository {
                 description: string;
                 title: string;
                 category: string;
-                city: string;
                 salaryMin: number | null;
                 salaryMax: number | null;
                 tags: string[];
@@ -115,6 +118,7 @@ export declare class InterviewRepository {
                 dob: Date | null;
                 education: string | null;
                 address: string | null;
+                city: string | null;
                 profilePicture: string | null;
                 isVerified: boolean;
                 createdAt: Date;
@@ -133,6 +137,7 @@ export declare class InterviewRepository {
                         dob: Date | null;
                         education: string | null;
                         address: string | null;
+                        city: string | null;
                         profilePicture: string | null;
                         isVerified: boolean;
                         createdAt: Date;
@@ -143,6 +148,7 @@ export declare class InterviewRepository {
                     name: string;
                     email: string | null;
                     phone: string | null;
+                    city: string | null;
                     createdAt: Date;
                     updatedAt: Date;
                     id: number;
@@ -153,6 +159,7 @@ export declare class InterviewRepository {
                     adminId: number | null;
                 };
             } & {
+                city: string;
                 createdAt: Date;
                 updatedAt: Date;
                 id: number;
@@ -160,7 +167,6 @@ export declare class InterviewRepository {
                 description: string;
                 title: string;
                 category: string;
-                city: string;
                 salaryMin: number | null;
                 salaryMax: number | null;
                 tags: string[];
@@ -213,6 +219,7 @@ export declare class InterviewRepository {
                 dob: Date | null;
                 education: string | null;
                 address: string | null;
+                city: string | null;
                 profilePicture: string | null;
                 isVerified: boolean;
                 createdAt: Date;
@@ -231,6 +238,7 @@ export declare class InterviewRepository {
                         dob: Date | null;
                         education: string | null;
                         address: string | null;
+                        city: string | null;
                         profilePicture: string | null;
                         isVerified: boolean;
                         createdAt: Date;
@@ -241,6 +249,7 @@ export declare class InterviewRepository {
                     name: string;
                     email: string | null;
                     phone: string | null;
+                    city: string | null;
                     createdAt: Date;
                     updatedAt: Date;
                     id: number;
@@ -251,6 +260,7 @@ export declare class InterviewRepository {
                     adminId: number | null;
                 };
             } & {
+                city: string;
                 createdAt: Date;
                 updatedAt: Date;
                 id: number;
@@ -258,7 +268,6 @@ export declare class InterviewRepository {
                 description: string;
                 title: string;
                 category: string;
-                city: string;
                 salaryMin: number | null;
                 salaryMax: number | null;
                 tags: string[];
@@ -310,6 +319,7 @@ export declare class InterviewRepository {
                     dob: Date | null;
                     education: string | null;
                     address: string | null;
+                    city: string | null;
                     profilePicture: string | null;
                     isVerified: boolean;
                     createdAt: Date;
@@ -328,6 +338,7 @@ export declare class InterviewRepository {
                             dob: Date | null;
                             education: string | null;
                             address: string | null;
+                            city: string | null;
                             profilePicture: string | null;
                             isVerified: boolean;
                             createdAt: Date;
@@ -338,6 +349,7 @@ export declare class InterviewRepository {
                         name: string;
                         email: string | null;
                         phone: string | null;
+                        city: string | null;
                         createdAt: Date;
                         updatedAt: Date;
                         id: number;
@@ -348,6 +360,7 @@ export declare class InterviewRepository {
                         adminId: number | null;
                     };
                 } & {
+                    city: string;
                     createdAt: Date;
                     updatedAt: Date;
                     id: number;
@@ -355,7 +368,6 @@ export declare class InterviewRepository {
                     description: string;
                     title: string;
                     category: string;
-                    city: string;
                     salaryMin: number | null;
                     salaryMax: number | null;
                     tags: string[];
@@ -412,6 +424,7 @@ export declare class InterviewRepository {
                 dob: Date | null;
                 education: string | null;
                 address: string | null;
+                city: string | null;
                 profilePicture: string | null;
                 isVerified: boolean;
                 createdAt: Date;
@@ -430,6 +443,7 @@ export declare class InterviewRepository {
                         dob: Date | null;
                         education: string | null;
                         address: string | null;
+                        city: string | null;
                         profilePicture: string | null;
                         isVerified: boolean;
                         createdAt: Date;
@@ -440,6 +454,7 @@ export declare class InterviewRepository {
                     name: string;
                     email: string | null;
                     phone: string | null;
+                    city: string | null;
                     createdAt: Date;
                     updatedAt: Date;
                     id: number;
@@ -450,6 +465,7 @@ export declare class InterviewRepository {
                     adminId: number | null;
                 };
             } & {
+                city: string;
                 createdAt: Date;
                 updatedAt: Date;
                 id: number;
@@ -457,7 +473,6 @@ export declare class InterviewRepository {
                 description: string;
                 title: string;
                 category: string;
-                city: string;
                 salaryMin: number | null;
                 salaryMax: number | null;
                 tags: string[];

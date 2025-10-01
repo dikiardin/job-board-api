@@ -37,6 +37,7 @@ export declare class ApplicationRepo {
             dob: Date | null;
             education: string | null;
             address: string | null;
+            city: string | null;
             profilePicture: string | null;
             isVerified: boolean;
             createdAt: Date;
@@ -48,6 +49,7 @@ export declare class ApplicationRepo {
                 name: string;
                 email: string | null;
                 phone: string | null;
+                city: string | null;
                 createdAt: Date;
                 updatedAt: Date;
                 id: number;
@@ -58,6 +60,7 @@ export declare class ApplicationRepo {
                 adminId: number | null;
             };
         } & {
+            city: string;
             createdAt: Date;
             updatedAt: Date;
             id: number;
@@ -65,7 +68,6 @@ export declare class ApplicationRepo {
             description: string;
             title: string;
             category: string;
-            city: string;
             salaryMin: number | null;
             salaryMax: number | null;
             tags: string[];
@@ -95,5 +97,30 @@ export declare class ApplicationRepo {
         expectedSalary: number | null;
         reviewNote: string | null;
     }>;
+    static getApplicationsByUserId(userId: number): Promise<({
+        job: {
+            city: string;
+            id: number;
+            company: {
+                name: string;
+                id: number;
+                logo: string | null;
+            };
+            title: string;
+            category: string;
+            salaryMin: number | null;
+            salaryMax: number | null;
+        };
+    } & {
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+        userId: number;
+        status: import("../../generated/prisma").$Enums.ApplicationStatus;
+        jobId: number;
+        cvFile: string;
+        expectedSalary: number | null;
+        reviewNote: string | null;
+    })[]>;
 }
 //# sourceMappingURL=application.repository.d.ts.map

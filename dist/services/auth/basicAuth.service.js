@@ -30,7 +30,7 @@ class BasicAuthService {
         if (role === "USER") {
             await createEmployment_service_1.CreateEmploymentService.createForNewUser(user.id);
         }
-        const token = (0, createToken_1.createToken)({ userId: user.id, email: user.email }, "1h");
+        const token = (0, createToken_1.createToken)({ userId: user.id, email: user.email }, "3d");
         try {
             await nodemailer_1.transport.sendMail({
                 from: process.env.MAIL_SENDER,
@@ -55,10 +55,20 @@ class BasicAuthService {
             throw new customError_1.CustomError("User not found", 404);
         }
         if (user.isVerified) {
-            return { message: "User already verified", user };
+            const jwt = (0, createToken_1.createToken)({ userId: user.id, email: user.email, role: user.role }, "7d");
+            return { message: "User already verified", token: jwt, user };
         }
         const updatedUser = await user_repository_1.UserRepo.verifyUser(decoded.userId);
-        return { message: "Email verified successfully", user: updatedUser };
+        const jwt = (0, createToken_1.createToken)({
+            userId: updatedUser.id,
+            email: updatedUser.email,
+            role: updatedUser.role,
+        }, "7d");
+        return {
+            message: "Email verified successfully",
+            token: jwt,
+            user: updatedUser,
+        };
     }
     static async login(email, password) {
         const user = await user_repository_1.UserRepo.findByEmail(email);

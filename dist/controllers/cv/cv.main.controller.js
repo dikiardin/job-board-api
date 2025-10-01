@@ -74,6 +74,32 @@ class CVMainController {
             });
         }
     }
+    // Update CV
+    async updateCV(req, res) {
+        try {
+            const userId = req.user?.id;
+            const cvId = parseInt(req.params.id);
+            if (!userId) {
+                return res.status(401).json({ message: "Unauthorized" });
+            }
+            if (isNaN(cvId)) {
+                return res.status(400).json({ message: "Invalid CV ID" });
+            }
+            const { templateType, additionalInfo } = req.body;
+            const updatedCV = await cv_service_1.cvService.updateCV(cvId, userId, templateType, additionalInfo);
+            res.status(200).json({
+                message: "CV updated successfully",
+                data: updatedCV,
+            });
+        }
+        catch (error) {
+            console.error("Update CV error:", error);
+            res.status(500).json({
+                message: "Failed to update CV",
+                error: error instanceof Error ? error.message : "Unknown error",
+            });
+        }
+    }
     // Delete CV
     async deleteCV(req, res) {
         try {

@@ -26,6 +26,7 @@ export declare class InterviewQueryService {
                     dob: Date | null;
                     education: string | null;
                     address: string | null;
+                    city: string | null;
                     profilePicture: string | null;
                     isVerified: boolean;
                     createdAt: Date;
@@ -44,6 +45,7 @@ export declare class InterviewQueryService {
                             dob: Date | null;
                             education: string | null;
                             address: string | null;
+                            city: string | null;
                             profilePicture: string | null;
                             isVerified: boolean;
                             createdAt: Date;
@@ -54,6 +56,7 @@ export declare class InterviewQueryService {
                         name: string;
                         email: string | null;
                         phone: string | null;
+                        city: string | null;
                         createdAt: Date;
                         updatedAt: Date;
                         id: number;
@@ -64,6 +67,7 @@ export declare class InterviewQueryService {
                         adminId: number | null;
                     };
                 } & {
+                    city: string;
                     createdAt: Date;
                     updatedAt: Date;
                     id: number;
@@ -71,7 +75,6 @@ export declare class InterviewQueryService {
                     description: string;
                     title: string;
                     category: string;
-                    city: string;
                     salaryMin: number | null;
                     salaryMax: number | null;
                     tags: string[];
@@ -117,6 +120,7 @@ export declare class InterviewQueryService {
                     name: string;
                     email: string | null;
                     phone: string | null;
+                    city: string | null;
                     createdAt: Date;
                     updatedAt: Date;
                     id: number;
@@ -127,6 +131,7 @@ export declare class InterviewQueryService {
                     adminId: number | null;
                 };
             } & {
+                city: string;
                 createdAt: Date;
                 updatedAt: Date;
                 id: number;
@@ -134,7 +139,6 @@ export declare class InterviewQueryService {
                 description: string;
                 title: string;
                 category: string;
-                city: string;
                 salaryMin: number | null;
                 salaryMax: number | null;
                 tags: string[];
