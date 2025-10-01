@@ -9,6 +9,7 @@ export class GetCompanyRepository {
         email: true,
         phone: true,
         location: true,
+        city:true,
         description: true,
         website: true,
         logo: true,

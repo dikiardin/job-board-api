@@ -5,10 +5,14 @@ export class GetJobService {
   public static async getAllJobs(filters?: {
     keyword?: string;
     city?: string;
+    limit?: number;
+    offset?: number;
   }) {
-    const jobs = await GetJobRepository.getAllJobs(filters);
-
-    return jobs.map((job) => ({
+    const [jobs, total] = await Promise.all([
+      GetJobRepository.getAllJobs(filters),
+      GetJobRepository.countJobs(filters),
+    ]);
+    const formattedJobs = jobs.map((job) => ({
       id: job.id,
       title: job.title,
       category: job.category,
@@ -23,6 +27,8 @@ export class GetJobService {
       companyName: job.company.name,
       companyLogo: job.company.logo,
     }));
+
+    return { jobs: formattedJobs, total };
   }
 
   public static async getJobById(jobId: number) {
