@@ -400,10 +400,11 @@ model CompanyReview {
   employmentId   Int      @unique
   position       String
   salaryEstimate Int?
-  cultureRating  Int
-  worklifeRating Int
-  facilityRating Int
-  careerRating   Int
+  companyRating  Decimal? @db.Decimal(3, 2)
+  cultureRating  Decimal? @db.Decimal(3, 2)
+  worklifeRating Decimal? @db.Decimal(3, 2)
+  facilityRating Decimal? @db.Decimal(3, 2)
+  careerRating   Decimal? @db.Decimal(3, 2)
   comment        String?
   createdAt      DateTime @default(now())
 
