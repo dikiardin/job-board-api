@@ -4,6 +4,7 @@ export declare class JobService {
         name: string;
         email: string | null;
         phone: string | null;
+        city: string | null;
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -31,6 +32,7 @@ export declare class JobService {
             isPublished?: boolean;
         };
     }): Promise<{
+        city: string;
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -38,7 +40,6 @@ export declare class JobService {
         description: string;
         title: string;
         category: string;
-        city: string;
         salaryMin: number | null;
         salaryMax: number | null;
         tags: string[];
@@ -53,6 +54,7 @@ export declare class JobService {
         requesterRole: UserRole;
         body: any;
     }): Promise<{
+        city: string;
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -60,7 +62,6 @@ export declare class JobService {
         description: string;
         title: string;
         category: string;
-        city: string;
         salaryMin: number | null;
         salaryMax: number | null;
         tags: string[];
@@ -74,6 +75,7 @@ export declare class JobService {
         requesterId: number;
         requesterRole: UserRole;
     }): Promise<{
+        city: string;
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -81,7 +83,6 @@ export declare class JobService {
         description: string;
         title: string;
         category: string;
-        city: string;
         salaryMin: number | null;
         salaryMax: number | null;
         tags: string[];

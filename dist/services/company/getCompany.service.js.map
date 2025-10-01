@@ -1,0 +1,1 @@
+{"version":3,"file":"getCompany.service.js","sourceRoot":"","sources":["../../../src/services/company/getCompany.service.ts"],"names":[],"mappings":";;;AAAA,4FAAwF;AAExF,MAAa,iBAAiB;IACrB,MAAM,CAAC,KAAK,CAAC,eAAe;QACjC,OAAO,4CAAoB,CAAC,eAAe,EAAE,CAAC;IAChD,CAAC;IAEM,MAAM,CAAC,KAAK,CAAC,cAAc,CAAC,SAAiB;QAClD,OAAO,4CAAoB,CAAC,cAAc,CAAC,SAAS,CAAC,CAAC;IACxD,CAAC;CACF;AARD,8CAQC"}

@@ -33,6 +33,9 @@ class ApplicationService {
             ...(expectedSalary !== undefined ? { expectedSalary } : {}),
         });
     }
+    static async getApplicationsByUserId(userId) {
+        return application_repository_1.ApplicationRepo.getApplicationsByUserId(userId);
+    }
 }
 exports.ApplicationService = ApplicationService;
 //# sourceMappingURL=application.service.js.map

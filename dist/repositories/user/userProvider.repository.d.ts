@@ -10,6 +10,7 @@ export declare class UserProviderRepo {
             dob: Date | null;
             education: string | null;
             address: string | null;
+            city: string | null;
             profilePicture: string | null;
             isVerified: boolean;
             createdAt: Date;
@@ -52,6 +53,7 @@ export declare class UserProviderRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
+        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
@@ -68,6 +70,7 @@ export declare class UserProviderRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
+        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;

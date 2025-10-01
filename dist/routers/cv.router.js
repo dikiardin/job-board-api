@@ -24,6 +24,8 @@ router.get("/", cv_main_controller_1.cvMainController.getUserCVs);
 router.get("/:id", cv_main_controller_1.cvMainController.getCVById);
 // Download CV
 router.get("/:id/download", cv_download_controller_1.cvDownloadController.downloadCV);
+// Update CV
+router.patch("/:id", cv_validator_1.validateCVGeneration, subscription_middleware_1.checkTemplateAccess, cv_main_controller_1.cvMainController.updateCV);
 // Delete CV
 router.delete("/:id", cv_main_controller_1.cvMainController.deleteCV);
 exports.default = router;

@@ -39,7 +39,7 @@ const pdf_service_1 = require("../pdf/pdf.service");
 const cv_repository_1 = require("../../../repositories/cv/cv.repository");
 class CVService {
     // Generate CV from user profile
-    async generateCV(userId, templateType = 'ats', additionalInfo) {
+    async generateCV(userId, templateType = "ats", additionalInfo) {
         try {
             // Get user data with related information
             const user = await prisma_1.prisma.user.findUnique({
@@ -47,23 +47,23 @@ class CVService {
                 include: {
                     employments: {
                         include: {
-                            company: true
+                            company: true,
                         },
                         orderBy: {
-                            startDate: 'desc'
-                        }
+                            startDate: "desc",
+                        },
                     },
                     skillResults: {
                         where: { isPassed: true },
                         include: {
-                            assessment: true
-                        }
+                            assessment: true,
+                        },
                     },
-                    userBadges: true
-                }
+                    userBadges: true,
+                },
             });
             if (!user) {
-                throw new Error('User not found');
+                throw new Error("User not found");
             }
             // Prepare CV data
             const cvData = {
@@ -72,63 +72,143 @@ class CVService {
                     email: user.email,
                     phone: user.phone,
                     address: user.address,
-                    profilePicture: user.profilePicture
+                    profilePicture: user.profilePicture,
                 },
                 education: user.education,
-                employments: user.employments.map(emp => ({
-                    company: emp.company?.name || 'Unknown Company',
+                employments: user.employments.map((emp) => ({
+                    company: emp.company?.name || "Unknown Company",
                     startDate: emp.startDate,
                     endDate: emp.endDate,
-                    position: 'Employee' // You might want to add position field to Employment model
+                    position: "Employee", // You might want to add position field to Employment model
                 })),
-                skills: user.skillResults.map(result => result.assessment.title),
-                badges: user.userBadges.map(badge => ({
+                skills: user.skillResults.map((result) => result.assessment.title),
+                badges: user.userBadges.map((badge) => ({
                     name: badge.badgeName,
                     icon: badge.badgeIcon,
-                    awardedAt: badge.awardedAt
+                    awardedAt: badge.awardedAt,
                 })),
-                additionalInfo
+                additionalInfo,
             };
             // Generate PDF and upload to Cloudinary
             const pdfService = new pdf_service_1.PDFService();
             const fileUrl = await pdfService.generatePDF(cvData, templateType);
             if (!fileUrl) {
-                throw new Error('Failed to generate and upload CV');
+                throw new Error("Failed to generate and upload CV");
             }
             // Save to database using repository
             const generatedCV = await cv_repository_1.CVRepo.create({
                 userId,
                 fileUrl,
                 templateUsed: templateType,
-                additionalInfo
+                additionalInfo,
             });
             return {
                 id: generatedCV.id,
                 fileUrl: generatedCV.fileUrl,
                 templateUsed: generatedCV.templateUsed,
-                createdAt: generatedCV.createdAt
+                createdAt: generatedCV.createdAt,
             };
         }
         catch (error) {
-            console.error('Generate CV error:', error);
+            console.error("Generate CV error:", error);
+            throw error;
+        }
+    }
+    // Update existing CV
+    async updateCV(cvId, userId, templateType = "ats", additionalInfo) {
+        try {
+            // Check if CV exists and belongs to user
+            const existingCV = await cv_repository_1.CVRepo.findByIdAndUserId(cvId, userId);
+            if (!existingCV) {
+                throw new Error("CV not found or access denied");
+            }
+            // Get user data with related information
+            const user = await prisma_1.prisma.user.findUnique({
+                where: { id: userId },
+                include: {
+                    employments: {
+                        include: {
+                            company: true,
+                        },
+                        orderBy: {
+                            startDate: "desc",
+                        },
+                    },
+                    skillResults: {
+                        where: { isPassed: true },
+                        include: {
+                            assessment: true,
+                        },
+                    },
+                    userBadges: true,
+                },
+            });
+            if (!user) {
+                throw new Error("User not found");
+            }
+            // Prepare updated CV data
+            const cvData = {
+                personalInfo: {
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    address: user.address,
+                    profilePicture: user.profilePicture,
+                },
+                education: user.education,
+                employments: user.employments.map((emp) => ({
+                    company: emp.company?.name || "Unknown Company",
+                    startDate: emp.startDate,
+                    endDate: emp.endDate,
+                    position: "Employee",
+                })),
+                skills: user.skillResults.map((result) => result.assessment.title),
+                badges: user.userBadges.map((badge) => ({
+                    name: badge.badgeName,
+                    icon: badge.badgeIcon,
+                    awardedAt: badge.awardedAt,
+                })),
+                additionalInfo,
+            };
+            // Generate new PDF with updated data
+            const pdfService = new pdf_service_1.PDFService();
+            const fileUrl = await pdfService.generatePDF(cvData, templateType);
+            if (!fileUrl) {
+                throw new Error("Failed to generate updated CV");
+            }
+            // Update CV record in database
+            const updatedCV = await cv_repository_1.CVRepo.updateById(cvId, {
+                fileUrl,
+                templateUsed: templateType,
+                additionalInfo,
+            });
+            return {
+                id: updatedCV.id,
+                fileUrl: updatedCV.fileUrl,
+                templateUsed: updatedCV.templateUsed,
+                createdAt: updatedCV.createdAt,
+            };
+        }
+        catch (error) {
+            console.error("Update CV error:", error);
             throw error;
         }
     }
     // Delegate to management service
     async getUserCVs(userId) {
-        const { cvManagementService } = await Promise.resolve().then(() => __importStar(require('./cv.management.service')));
+        const { cvManagementService } = await Promise.resolve().then(() => __importStar(require("./cv.management.service")));
         return cvManagementService.getUserCVs(userId);
     }
     async getCVById(cvId, userId) {
-        const { cvManagementService } = await Promise.resolve().then(() => __importStar(require('./cv.management.service')));
+        const { cvManagementService } = await Promise.resolve().then(() => __importStar(require("./cv.management.service")));
         return cvManagementService.getCVById(cvId, userId);
     }
     async deleteCV(cvId, userId) {
-        const { cvManagementService } = await Promise.resolve().then(() => __importStar(require('./cv.management.service')));
+        const { cvManagementService } = await Promise.resolve().then(() => __importStar(require("./cv.management.service")));
         return cvManagementService.deleteCV(cvId, userId);
     }
     getAvailableTemplates() {
-        const { cvManagementService } = require('./cv.management.service');
+        const { cvManagementService } = require("./cv.management.service");
         return cvManagementService.getAvailableTemplates();
     }
 }

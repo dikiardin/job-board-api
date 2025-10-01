@@ -15,7 +15,7 @@ function buildResetPasswordEmail(name, token) {
             <div style="text-align: center; margin: 30px 0;">
               <div style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; display: inline-block; background-color: #f9f9f9;">
                 <p style="text-align: center; margin: 0 0 15px 0;">
-                  <a href="${process.env.FRONTEND_URL}/auth/reset-password/${token}" target="_blank" 
+                  <a href="${process.env.FE_URL}/auth/reset-password/${token}" target="_blank" 
                     style="background-color: #000000ff; color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-size: 16px; font-weight: bold;">
                     Reset Password
                   </a>

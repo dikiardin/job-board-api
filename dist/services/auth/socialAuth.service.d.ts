@@ -10,6 +10,7 @@ export declare class SocialAuthService {
         dob: Date | null;
         education: string | null;
         address: string | null;
+        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;

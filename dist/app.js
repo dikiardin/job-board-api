@@ -53,7 +53,10 @@ const interviewJobs_1 = require("./jobs/interviewJobs");
 const analytics_router_1 = __importDefault(require("./routers/analytics.router"));
 const profile_router_1 = __importDefault(require("./routers/profile.router"));
 const company_router_1 = __importDefault(require("./routers/company.router"));
+const companyReview_router_1 = __importDefault(require("./routers/companyReview.router"));
 const prisma_1 = require("./config/prisma");
+const share_router_1 = __importDefault(require("./routers/share.router"));
+const save_router_1 = __importDefault(require("./routers/save.router"));
 const PORT = process.env.PORT || "5000";
 class App {
     constructor() {
@@ -200,6 +203,9 @@ class App {
         const analyticsRouter = new analytics_router_1.default();
         const profileRouter = new profile_router_1.default();
         const companyRouter = new company_router_1.default();
+        const companyReviewRouter = new companyReview_router_1.default();
+        const shareRouter = new share_router_1.default();
+        const saveRouter = new save_router_1.default();
         this.app.use("/auth", authRouter.getRouter());
         this.app.use("/subscription", subscriptionRouter.getRouter());
         this.app.use("/preselection", preselectionRouter.getRouter());
@@ -210,6 +216,9 @@ class App {
         this.app.use("/analytics", analyticsRouter.getRouter());
         this.app.use("/profile", profileRouter.getRouter());
         this.app.use("/company", companyRouter.getRouter());
+        this.app.use("/reviews", companyReviewRouter.getRouter());
+        this.app.use("/share", shareRouter.getRouter());
+        this.app.use("/save", saveRouter.getRouter());
     }
     errorHandling() {
         this.app.use((error, req, res, next) => {

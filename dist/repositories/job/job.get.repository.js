@@ -1,0 +1,85 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GetJobRepository = void 0;
+const prisma_1 = require("../../config/prisma");
+class GetJobRepository {
+    static async getAllJobs(filters) {
+        const { keyword, city, limit, offset } = filters || {};
+        const conditions = [];
+        if (keyword) {
+            conditions.push({
+                OR: [
+                    { title: { contains: keyword, mode: "insensitive" } },
+                    { category: { contains: keyword, mode: "insensitive" } },
+                    {
+                        company: {
+                            is: { name: { contains: keyword, mode: "insensitive" } },
+                        },
+                    },
+                ],
+            });
+        }
+        if (city)
+            conditions.push({ city: { contains: city, mode: "insensitive" } });
+        return prisma_1.prisma.job.findMany({
+            where: {
+                isPublished: true,
+                AND: conditions,
+            },
+            select: {
+                id: true,
+                title: true,
+                category: true,
+                city: true,
+                salaryMin: true,
+                salaryMax: true,
+                tags: true,
+                company: { select: { name: true, logo: true } },
+            },
+            orderBy: { createdAt: "desc" },
+            ...(limit !== undefined ? { take: limit } : {}),
+            ...(offset !== undefined ? { skip: offset } : {}),
+        });
+    }
+    static async countJobs(filters) {
+        const { keyword, city } = filters || {};
+        return prisma_1.prisma.job.count({
+            where: {
+                isPublished: true,
+                AND: [
+                    keyword
+                        ? {
+                            OR: [
+                                { title: { contains: keyword, mode: "insensitive" } },
+                                { category: { contains: keyword, mode: "insensitive" } },
+                                {
+                                    company: {
+                                        is: { name: { contains: keyword, mode: "insensitive" } },
+                                    },
+                                },
+                            ],
+                        }
+                        : {},
+                    city ? { city: { contains: city, mode: "insensitive" } } : {},
+                ],
+            },
+        });
+    }
+    static async findById(jobId) {
+        return prisma_1.prisma.job.findUnique({
+            where: { id: jobId },
+            include: {
+                company: {
+                    select: {
+                        id: true,
+                        name: true,
+                        logo: true,
+                        location: true,
+                    },
+                },
+            },
+        });
+    }
+}
+exports.GetJobRepository = GetJobRepository;
+//# sourceMappingURL=job.get.repository.js.map

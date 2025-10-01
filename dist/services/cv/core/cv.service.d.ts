@@ -77,6 +77,12 @@ declare class CVService {
         templateUsed: string;
         createdAt: Date;
     }>;
+    updateCV(cvId: number, userId: number, templateType?: string, additionalInfo?: CVAdditionalInfo): Promise<{
+        id: number;
+        fileUrl: string;
+        templateUsed: string;
+        createdAt: Date;
+    }>;
     getUserCVs(userId: number): Promise<Partial<{
         createdAt: Date;
         id: number;

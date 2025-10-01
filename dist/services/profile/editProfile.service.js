@@ -15,24 +15,71 @@ class EditProfileService {
             profilePictureUrl = upload.secure_url;
         }
         if (role === "USER") {
-            const { phone, gender, dob, education, address } = data;
+            const { phone, gender, dob, education, address, city } = data;
             return await editProfile_repository_1.EditProfileRepository.updateUserProfile(userId, {
                 phone,
                 gender,
                 dob: dob ? new Date(dob) : undefined,
                 education,
                 address,
-                profilePicture: profilePictureUrl,
+                city,
+                ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
             });
         }
         if (role === "ADMIN") {
-            const { phone, location, description, website } = data;
+            const { phone, location, city, description, website } = data;
+            const [companyResult, userResult] = await Promise.all([
+                editProfile_repository_1.EditProfileRepository.updateCompanyProfile(userId, {
+                    phone,
+                    location,
+                    city,
+                    description,
+                    website,
+                    ...(profilePictureUrl && { logo: profilePictureUrl }),
+                }),
+                editProfile_repository_1.EditProfileRepository.updateUserProfile(userId, {
+                    phone,
+                    address: location,
+                    city,
+                    ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
+                }),
+            ]);
+            return { company: companyResult, user: userResult };
+        }
+        throw new customError_1.CustomError("Invalid role", 400);
+    }
+    static async completeProfile(userId, data, file) {
+        const user = await editProfile_repository_1.EditProfileRepository.findUserById(userId);
+        if (!user)
+            throw new customError_1.CustomError("User not found", 404);
+        if (!user.isVerified)
+            throw new customError_1.CustomError("User is not verified", 403);
+        let profilePictureUrl;
+        if (file) {
+            const upload = await (0, cloudinary_1.cloudinaryUpload)(file);
+            profilePictureUrl = upload.secure_url;
+        }
+        if (user.role === "USER") {
+            const { phone, gender, dob, education, address, city } = data;
+            return await editProfile_repository_1.EditProfileRepository.updateUserProfile(userId, {
+                phone,
+                gender,
+                dob: dob ? new Date(dob) : undefined,
+                education,
+                address,
+                city,
+                ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
+            });
+        }
+        if (user.role === "ADMIN") {
+            const { phone, location, city, description, website } = data;
             return await editProfile_repository_1.EditProfileRepository.updateCompanyProfile(userId, {
                 phone,
                 location,
+                city,
                 description,
                 website,
-                logo: profilePictureUrl,
+                ...(profilePictureUrl && { logo: profilePictureUrl }),
             });
         }
         throw new customError_1.CustomError("Invalid role", 400);
