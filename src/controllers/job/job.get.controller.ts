@@ -2,21 +2,28 @@ import { NextFunction, Request, Response } from "express";
 import { GetJobService } from "../../services/job/job.get.service";
 
 export class GetJobController {
-  public static async getAllJobs(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const jobs = await GetJobService.getAllJobs();
-      res.status(200).json({
-        message: "Jobs fetched successfully",
-        data: jobs,
-      });
-    } catch (err) {
-      next(err);
-    }
+public static async getAllJobs(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { keyword, city } = req.query;
+
+    const jobs = await GetJobService.getAllJobs({
+      keyword: keyword as string,
+      city: city as string,
+    });
+
+    res.status(200).json({
+      message: "Jobs fetched successfully",
+      data: jobs,
+    });
+  } catch (err) {
+    next(err);
   }
+}
+
 
   public static async getJobById(
     req: Request,

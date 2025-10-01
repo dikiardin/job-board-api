@@ -2,8 +2,11 @@ import { GetJobRepository } from "../../repositories/job/job.get.repository";
 import { CustomError } from "../../utils/customError";
 
 export class GetJobService {
-  public static async getAllJobs() {
-    const jobs = await GetJobRepository.getAllJobs();
+  public static async getAllJobs(filters?: {
+    keyword?: string;
+    city?: string;
+  }) {
+    const jobs = await GetJobRepository.getAllJobs(filters);
 
     return jobs.map((job) => ({
       id: job.id,
