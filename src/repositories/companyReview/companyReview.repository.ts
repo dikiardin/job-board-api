@@ -202,8 +202,8 @@ export class CompanyReviewRepository {
     const avgRatings = stats._avg;
     const overallRating = avgRatings.cultureRating && avgRatings.worklifeRating && 
                          avgRatings.facilityRating && avgRatings.careerRating
-      ? (avgRatings.cultureRating + avgRatings.worklifeRating + 
-         avgRatings.facilityRating + avgRatings.careerRating) / 4
+      ? (Number(avgRatings.cultureRating) + Number(avgRatings.worklifeRating) + 
+         Number(avgRatings.facilityRating) + Number(avgRatings.careerRating)) / 4
       : 0;
 
     // Get rating distribution
