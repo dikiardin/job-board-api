@@ -9,16 +9,17 @@ import { startSubscriptionJobs } from "./jobs/subscriptionJobs";
 import PreselectionRouter from "./routers/preselection.router";
 import ApplicationRouter from "./routers/application.router";
 import JobRouter from "./routers/job.router";
-import cvRoutes from "./routers/cv.router";
 import InterviewRouter from "./routers/interview.router";
 import { startInterviewJobs } from "./jobs/interviewJobs";
 import AnalyticsRouter from "./routers/analytics.router";
 import ProfileRouter from "./routers/profile.router";
 import CompanyRouter from "./routers/company.router";
 import CompanyReviewRouter from "./routers/companyReview.router";
+import SkillAssessmentRouter from "./routers/skillAssessment.router";
 import { prisma } from "./config/prisma";
 import JobShareRouter from "./routers/share.router";
 import SavedJobRouter from "./routers/save.router";
+import cvRoutes from "./routers/cv.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -179,6 +180,7 @@ class App {
     const profileRouter: ProfileRouter = new ProfileRouter();
     const companyRouter: CompanyRouter = new CompanyRouter();
     const companyReviewRouter: CompanyReviewRouter = new CompanyReviewRouter();
+    const skillAssessmentRouter: SkillAssessmentRouter = new SkillAssessmentRouter();
     const shareRouter: JobShareRouter = new JobShareRouter();
     const saveRouter: SavedJobRouter = new SavedJobRouter();
 
@@ -193,6 +195,7 @@ class App {
     this.app.use("/profile", profileRouter.getRouter());
     this.app.use("/company", companyRouter.getRouter());
     this.app.use("/reviews", companyReviewRouter.getRouter());
+    this.app.use("/skill-assessment", skillAssessmentRouter.getRouter());
     this.app.use("/share", shareRouter.getRouter());
     this.app.use("/save", saveRouter.getRouter());
   
