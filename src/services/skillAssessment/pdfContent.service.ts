@@ -1,11 +1,21 @@
 import * as PDFKit from "pdfkit";
+import * as path from "path";
+import * as fs from "fs";
 
 export class PDFContentService {
   // Add header section
-  public static addHeader(doc: PDFKit.PDFDocument) {
+  public static async addHeader(doc: PDFKit.PDFDocument, badgeIcon?: string) {
     // Background border
     doc.rect(20, 20, 802, 515).strokeColor("#2563eb").lineWidth(3).stroke();
     doc.rect(30, 30, 782, 495).strokeColor("#e5e7eb").lineWidth(1).stroke();
+
+    // Add website logo (left top corner)
+    await this.addWebsiteLogo(doc);
+
+    // Add badge logo (right top corner) if provided
+    if (badgeIcon) {
+      await this.addBadgeLogo(doc, badgeIcon);
+    }
 
     // Company name
     doc
@@ -93,7 +103,7 @@ export class PDFContentService {
   // Add score section
   public static addScoreSection(doc: PDFKit.PDFDocument, data: any) {
     const scoreY = data.assessmentDescription ? 310 : 295;
-    
+
     // Score display
     doc
       .fontSize(14)
@@ -110,7 +120,10 @@ export class PDFContentService {
       .fontSize(12)
       .font("Helvetica-Bold")
       .fillColor(achievement.color)
-      .text(achievement.level, 60, scoreY + 20, { align: "center", width: 722 });
+      .text(achievement.level, 60, scoreY + 20, {
+        align: "center",
+        width: 722,
+      });
   }
 
   // Add dates section
@@ -123,7 +136,7 @@ export class PDFContentService {
       month: "long",
       day: "numeric",
     });
-    
+
     const completedDate = data.completedAt.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -224,5 +237,94 @@ export class PDFContentService {
 
       doc.on("error", reject);
     });
+  }
+
+  // Add website logo to left top corner
+  private static async addWebsiteLogo(doc: PDFKit.PDFDocument) {
+    try {
+      const logoPath = path.join(
+        process.cwd(),
+        "img_logo_pdf",
+        "nobg_logo.png"
+      );
+
+      // Check if logo file exists
+      if (fs.existsSync(logoPath)) {
+        const logoSize = 80; // Increased from 50 to 80
+        const logoX = 40;
+        const logoY = 40;
+
+        doc.image(logoPath, logoX, logoY, {
+          width: logoSize,
+          height: logoSize,
+          fit: [logoSize, logoSize],
+          align: "center",
+          valign: "center",
+        });
+      } else {
+        console.warn("Website logo not found at:", logoPath);
+      }
+    } catch (error) {
+      console.error("Error adding website logo:", error);
+    }
+  }
+
+  // Add badge logo to right top corner
+  private static async addBadgeLogo(
+    doc: PDFKit.PDFDocument,
+    badgeIconUrl: string
+  ) {
+    try {
+      // For now, we'll use a local badge logo file
+      // In the future, you could download the badge icon from URL and use it
+      const badgeLogoPath = path.join(
+        process.cwd(),
+        "img_logo_pdf",
+        "badge-logo.png"
+      );
+
+      // Check if badge logo file exists
+      if (fs.existsSync(badgeLogoPath)) {
+        const logoSize = 50;
+        const logoX = 842 - 40 - logoSize; // Page width - margin - logo size
+        const logoY = 40;
+
+        doc.image(badgeLogoPath, logoX, logoY, {
+          width: logoSize,
+          height: logoSize,
+          fit: [logoSize, logoSize],
+          align: "center",
+          valign: "center",
+        });
+      } else {
+        console.warn("Badge logo not found at:", badgeLogoPath);
+
+        // Fallback: try to use the badge icon URL directly (if it's a local file or supported format)
+        if (
+          badgeIconUrl &&
+          (badgeIconUrl.includes(".png") ||
+            badgeIconUrl.includes(".jpg") ||
+            badgeIconUrl.includes(".jpeg"))
+        ) {
+          try {
+            const logoSize = 50;
+            const logoX = 842 - 40 - logoSize;
+            const logoY = 40;
+
+            doc.image(badgeIconUrl, logoX, logoY, {
+              width: logoSize,
+              height: logoSize,
+              fit: [logoSize, logoSize],
+              align: "center",
+              valign: "center",
+            });
+          } catch (urlError) {
+            console.error("Error loading badge icon from URL:", urlError);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error adding badge logo:", error);
+    }
   }
 }

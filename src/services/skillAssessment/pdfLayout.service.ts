@@ -13,6 +13,7 @@ export class PDFLayoutService {
     completedAt: Date;
     userId: number;
     certificateCode: string;
+    badgeIcon?: string;
   }): Promise<Buffer> {
     // Create PDF document
     const doc = new PDFKit.default({
@@ -23,7 +24,7 @@ export class PDFLayoutService {
     });
 
     // Add header and content using PDFContentService
-    PDFContentService.addHeader(doc);
+    await PDFContentService.addHeader(doc, data.badgeIcon);
     PDFContentService.addCertificateBody(doc, data);
     PDFContentService.addScoreSection(doc, data);
     PDFContentService.addDatesSection(doc, data);

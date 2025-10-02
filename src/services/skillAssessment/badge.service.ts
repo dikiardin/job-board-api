@@ -8,10 +8,19 @@ export class BadgeService {
     score: number,
     totalQuestions: number
   ) {
+    console.log("🏆 BadgeService.awardBadgeFromAssessment called:", {
+      userId,
+      assessmentId,
+      score,
+      totalQuestions
+    });
+
     const percentage = (score / totalQuestions) * 100;
+    console.log("📊 Calculated percentage:", percentage);
 
     // Only award badge if passed (75% or higher)
     if (percentage < 75) {
+      console.log("❌ Badge not awarded - percentage below 75%");
       return null;
     }
 
@@ -24,8 +33,14 @@ export class BadgeService {
     });
 
     if (!assessment) {
+      console.log("❌ Assessment not found for ID:", assessmentId);
       return null;
     }
+
+    console.log("✅ Assessment found:", {
+      title: assessment.title,
+      hasBadgeTemplate: !!assessment.badgeTemplate
+    });
 
     let badgeInfo;
     let badgeTemplateId = null;
@@ -37,8 +52,10 @@ export class BadgeService {
         icon: assessment.badgeTemplate.icon || "🏆",
       };
       badgeTemplateId = assessment.badgeTemplate.id;
+      console.log("🎯 Using badge template:", badgeInfo);
     } else {
       badgeInfo = this.generateBadgeFromTitle(assessment.title);
+      console.log("🎯 Generated badge from title:", badgeInfo);
     }
 
     // Check if user already has this badge for this assessment
@@ -50,11 +67,21 @@ export class BadgeService {
     });
 
     if (existingBadge) {
+      console.log("⚠️ User already has badge for this assessment:", existingBadge.id);
       return existingBadge;
     }
 
+    console.log("🎖️ Creating new badge:", {
+      userId,
+      badgeName: badgeInfo.name,
+      badgeIcon: badgeInfo.icon,
+      assessmentId,
+      badgeTemplateId,
+      badgeType: "skill"
+    });
+
     // Create new badge with proper relationships
-    return await prisma.userBadge.create({
+    const newBadge = await prisma.userBadge.create({
       data: {
         userId,
         badgeName: badgeInfo.name,
@@ -64,6 +91,9 @@ export class BadgeService {
         badgeType: "skill",
       },
     });
+
+    console.log("✅ Badge created successfully:", newBadge.id);
+    return newBadge;
   }
 
   private static generateBadgeFromTitle(assessmentTitle: string) {
@@ -161,6 +191,8 @@ export class BadgeService {
 
   // Award milestone badges based on achievements
   public static async checkMilestoneBadges(userId: number) {
+    console.log("🎖️ Checking milestone badges for user:", userId);
+    
     const userStats = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -171,7 +203,17 @@ export class BadgeService {
       },
     });
 
-    if (!userStats) return [];
+    if (!userStats) {
+      console.log("❌ User not found for milestone check");
+      return [];
+    }
+    
+    console.log("📊 User milestone stats:", {
+      passedAssessments: userStats.skillResults.length,
+      totalBadges: userStats.userBadges.length
+    });
+    
+    // TODO: Implement milestone badge logic
     return [];
   }
 

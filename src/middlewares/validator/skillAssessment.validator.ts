@@ -3,47 +3,47 @@ import Joi from "joi";
 
 // Validation schemas
 const createAssessmentSchema = Joi.object({
-  title: Joi.string().min(3).max(100).required().messages({
-    "string.min": "Title must be at least 3 characters long",
-    "string.max": "Title must not exceed 100 characters",
+  title: Joi.string().min(1).required().messages({
+    "string.min": "Title is required",
     "any.required": "Title is required",
   }),
-  description: Joi.string().max(500).optional().messages({
-    "string.max": "Description must not exceed 500 characters",
-  }),
+  description: Joi.string().optional(),
   badgeTemplateId: Joi.number().integer().positive().optional().messages({
     "number.positive": "Badge template ID must be a positive number",
   }),
   questions: Joi.array()
     .items(
       Joi.object({
-        question: Joi.string().min(5).max(500).required().messages({
-          "string.min": "Question must be at least 5 characters long",
-          "string.max": "Question must not exceed 500 characters",
+        question: Joi.string().min(1).required().messages({
+          "string.min": "Question text is required",
           "any.required": "Question text is required",
         }),
         options: Joi.array()
-          .items(Joi.string().min(1).max(200))
+          .items(Joi.string().min(1).required())
           .length(4)
           .required()
           .messages({
             "array.length": "Each question must have exactly 4 options",
             "any.required": "Options are required",
           }),
-        answer: Joi.string().min(1).max(200).required().messages({
+        answer: Joi.string().min(1).required().messages({
           "any.required": "Correct answer is required",
         }),
       })
     )
-    .min(1)
+    .min(0)
     .required()
     .messages({
-      "array.min": "Assessment must have at least 1 question",
+      "array.min": "Questions array is required",
       "any.required": "Questions are required",
     }),
 });
 
 const submitAssessmentSchema = Joi.object({
+  startedAt: Joi.string().isoDate().required().messages({
+    "string.isoDate": "Started time must be a valid ISO date",
+    "any.required": "Started time is required",
+  }),
   answers: Joi.array()
     .items(
       Joi.object({
@@ -56,53 +56,73 @@ const submitAssessmentSchema = Joi.object({
         }),
       })
     )
-    .length(25)
+    .min(1)
+    .max(25)
     .required()
     .messages({
-      "array.length": "All 25 questions must be answered",
+      "array.min": "At least 1 answer is required",
+      "array.max": "Maximum 25 answers allowed",
       "any.required": "Answers are required",
     }),
 });
 
 const updateAssessmentSchema = Joi.object({
-  title: Joi.string().min(3).max(100).optional().messages({
-    "string.min": "Title must be at least 3 characters long",
-    "string.max": "Title must not exceed 100 characters",
+  title: Joi.string().min(1).optional().messages({
+    "string.min": "Title is required",
   }),
-  description: Joi.string().max(500).optional().messages({
-    "string.max": "Description must not exceed 500 characters",
-  }),
+  description: Joi.string().optional(),
   badgeTemplateId: Joi.number().integer().positive().optional().allow(null).messages({
     "number.positive": "Badge template ID must be a positive number",
   }),
   questions: Joi.array()
     .items(
       Joi.object({
-        question: Joi.string().min(5).max(500).required().messages({
-          "string.min": "Question must be at least 5 characters long",
-          "string.max": "Question must not exceed 500 characters",
+        question: Joi.string().min(1).required().messages({
+          "string.min": "Question text is required",
           "any.required": "Question text is required",
         }),
         options: Joi.array()
-          .items(Joi.string().min(1).max(200))
+          .items(Joi.string().min(1).required())
           .length(4)
           .required()
           .messages({
             "array.length": "Each question must have exactly 4 options",
             "any.required": "Options are required",
           }),
-        answer: Joi.string().min(1).max(200).required().messages({
+        answer: Joi.string().min(1).required().messages({
           "any.required": "Correct answer is required",
         }),
       })
     )
-    .min(1)
+    .min(0)
     .optional()
     .messages({
-      "array.min": "Assessment must have at least 1 question",
+      "array.min": "Questions array is required",
     }),
 }).min(1).messages({
   "object.min": "At least one field (title, description, badgeTemplateId, or questions) must be provided",
+});
+
+const saveQuestionSchema = Joi.object({
+  assessmentId: Joi.number().integer().positive().required().messages({
+    "number.positive": "Assessment ID must be a positive number",
+    "any.required": "Assessment ID is required",
+  }),
+  question: Joi.string().min(1).required().messages({
+    "string.min": "Question text is required",
+    "any.required": "Question text is required",
+  }),
+  options: Joi.array()
+    .items(Joi.string().min(1).required())
+    .length(4)
+    .required()
+    .messages({
+      "array.length": "Each question must have exactly 4 options",
+      "any.required": "Options are required",
+    }),
+  answer: Joi.string().min(1).required().messages({
+    "any.required": "Correct answer is required",
+  }),
 });
 
 const paginationSchema = Joi.object({
@@ -130,14 +150,16 @@ export const validateCreateAssessment = (
     });
   }
 
-  // Additional validation: check if answer is one of the options
-  for (let i = 0; i < req.body.questions.length; i++) {
-    const question = req.body.questions[i];
-    if (!question.options.includes(question.answer)) {
-      return res.status(400).json({
-        success: false,
-        message: `Question ${i + 1}: Answer must be one of the provided options`,
-      });
+  // Additional validation: check if answer is one of the options (only if questions exist)
+  if (req.body.questions && req.body.questions.length > 0) {
+    for (let i = 0; i < req.body.questions.length; i++) {
+      const question = req.body.questions[i];
+      if (!question.options.includes(question.answer)) {
+        return res.status(400).json({
+          success: false,
+          message: `Question ${i + 1}: Answer must be one of the provided options`,
+        });
+      }
     }
   }
 
@@ -168,13 +190,14 @@ export const validateSubmitAssessment = (
     });
   }
 
-  // Check if time difference is reasonable (not more than 35 minutes to account for network delays)
+  // Check if time difference is reasonable (30 minutes + 2 minutes buffer for network delays)
   const timeDiff = now.getTime() - startedAt.getTime();
   const minutesDiff = timeDiff / (1000 * 60);
-  if (minutesDiff > 35) {
+  
+  if (minutesDiff > 32) {
     return res.status(400).json({
       success: false,
-      message: "Assessment submission time exceeded maximum allowed duration",
+      message: `Assessment submission time exceeded maximum allowed duration of 30 minutes. Time taken: ${Math.round(minutesDiff * 100) / 100} minutes`,
     });
   }
 
@@ -256,5 +279,32 @@ export const validateResultId = (
       message: "Valid result ID is required",
     });
   }
+  next();
+};
+
+export const validateSaveQuestion = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { error } = saveQuestionSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      success: false,
+      message: "Validation error",
+      errors: error.details.map((detail) => detail.message),
+    });
+  }
+
+  // Additional validation: check if answer is one of the options
+  const { options, answer } = req.body;
+  
+  if (!options.includes(answer)) {
+    return res.status(400).json({
+      success: false,
+      message: "Answer must be one of the provided options",
+    });
+  }
+
   next();
 };
