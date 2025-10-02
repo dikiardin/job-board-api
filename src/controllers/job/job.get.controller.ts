@@ -8,7 +8,7 @@ export class GetJobController {
     next: NextFunction
   ) {
     try {
-      const { keyword, city, limit = "6", page = "1" } = req.query;
+      const { keyword, city, limit = "9", page = "1" } = req.query;
 
       const numericLimit = parseInt(limit as string, 10);
       const numericPage = parseInt(page as string, 10);
