@@ -24,20 +24,18 @@ export class SkillAssessmentService {
       throw new CustomError("Only developers can create assessments", 403);
     }
 
-    // Validate questions count (min 1)
-    if (data.questions.length < 1) {
-      throw new CustomError("Assessment must have at least 1 question", 400);
+    // Validate questions if provided
+    if (data.questions.length > 0) {
+      // Validate each question
+      data.questions.forEach((q, index) => {
+        if (!q.question || q.options.length !== 4 || !q.answer) {
+          throw new CustomError(`Question ${index + 1} is invalid`, 400);
+        }
+        if (!q.options.includes(q.answer)) {
+          throw new CustomError(`Question ${index + 1} answer must be one of the options`, 400);
+        }
+      });
     }
-
-    // Validate each question
-    data.questions.forEach((q, index) => {
-      if (!q.question || q.options.length !== 4 || !q.answer) {
-        throw new CustomError(`Question ${index + 1} is invalid`, 400);
-      }
-      if (!q.options.includes(q.answer)) {
-        throw new CustomError(`Question ${index + 1} answer must be one of the options`, 400);
-      }
-    });
 
     return await SkillAssessmentModularRepository.createAssessment(data);
   }
@@ -67,8 +65,10 @@ export class SkillAssessmentService {
   public static async submitAssessment(data: {
     userId: number;
     assessmentId: number;
+    startedAt: string;
     answers: Array<{ questionId: number; selectedAnswer: string }>;
   }) {
+    try {
     // Check if user already took this assessment
     const existingResult = await SkillAssessmentModularRepository.getUserResult(data.userId, data.assessmentId);
     if (existingResult) {
@@ -81,12 +81,24 @@ export class SkillAssessmentService {
       throw new CustomError("Assessment not found", 404);
     }
 
-    // Set finished time (no time limit validation since we removed startedAt)
+    // Get start and finish times
+    const startedAt = new Date(data.startedAt);
     const finishedAt = new Date();
+    
+    // Validate 30-minute time limit
+    const timeDiff = finishedAt.getTime() - startedAt.getTime();
+    const minutesDiff = timeDiff / (1000 * 60);
+    
+    if (minutesDiff > 32) {
+      throw new CustomError(`Assessment submission time exceeded maximum allowed duration of 30 minutes. Time taken: ${Math.round(minutesDiff * 100) / 100} minutes`, 400);
+    }
 
-    // Validate all questions answered
-    if (data.answers.length !== 25) {
-      throw new CustomError("All 25 questions must be answered", 400);
+    // Basic answer validation - just check for valid structure
+    const totalQuestions = assessment.questions.length;
+    
+    // Allow any number of answers (0 to totalQuestions)
+    if (data.answers.length > totalQuestions) {
+      throw new CustomError(`Too many answers provided. Expected max ${totalQuestions}, got ${data.answers.length}`, 400);
     }
 
     // Calculate score
@@ -101,7 +113,7 @@ export class SkillAssessmentService {
     }
 
     // Convert to 100-point scale
-    const score = Math.round((correctAnswers / 25) * 100);
+    const score = Math.round((correctAnswers / totalQuestions) * 100);
     const isPassed = score >= 75; // 75% passing grade
 
     let certificateUrl: string | undefined;
@@ -115,13 +127,18 @@ export class SkillAssessmentService {
         userEmail: user.email,
         assessmentTitle: assessment.title,
         score,
-        totalQuestions: 25,
+        totalQuestions: totalQuestions,
         completedAt: finishedAt,
         userId: data.userId,
       };
       
       if (assessment.description) {
         certificateData.assessmentDescription = assessment.description;
+      }
+      
+      // Add badge icon if assessment has badge template
+      if (assessment.badgeTemplate && assessment.badgeTemplate.icon) {
+        certificateData.badgeIcon = assessment.badgeTemplate.icon;
       }
       
       const certificate = await CertificateService.generateCertificate(certificateData);
@@ -136,25 +153,30 @@ export class SkillAssessmentService {
       assessmentId: data.assessmentId,
       score,
       isPassed,
-      startedAt: finishedAt, // Use finishedAt as startedAt since we don't track start time
+      startedAt,
       finishedAt,
     };
 
     if (certificateUrl) resultData.certificateUrl = certificateUrl;
-    if (certificateCode) resultData.certificateCode = certificateCode;
-
     const result = await SkillAssessmentModularRepository.saveAssessmentResult(resultData);
 
     // Award badge if passed
     if (isPassed) {
-      await BadgeService.awardBadgeFromAssessment(data.userId, data.assessmentId, correctAnswers, 25);
-      await BadgeService.checkMilestoneBadges(data.userId);
+      try {
+        await BadgeService.awardBadgeFromAssessment(data.userId, data.assessmentId, correctAnswers, totalQuestions);
+        await BadgeService.checkMilestoneBadges(data.userId);
+      } catch (error) {
+        // Badge awarding failed, but assessment submission should still succeed
+      }
     }
 
     return {
       ...result,
       percentage: score, // Score is already in 100-point scale
     };
+    } catch (error) {
+      throw error;
+    }
   }
 
   // Get user's assessment results
@@ -257,6 +279,61 @@ export class SkillAssessmentService {
     }
 
     return { message: "Assessment updated successfully" };
+  }
+
+  // Save individual question (Developer only)
+  public static async saveQuestion(data: {
+    assessmentId: number;
+    question: string;
+    options: string[];
+    answer: string;
+    userId: number;
+    userRole: UserRole;
+  }) {
+    if (data.userRole !== UserRole.DEVELOPER) {
+      throw new CustomError("Only developers can save questions", 403);
+    }
+
+    // Validate question data
+    if (!data.question.trim()) {
+      throw new CustomError("Question text is required", 400);
+    }
+
+    if (data.options.length !== 4) {
+      throw new CustomError("Exactly 4 options are required", 400);
+    }
+
+    if (data.options.some(opt => !opt.trim())) {
+      throw new CustomError("All options must be filled", 400);
+    }
+
+    if (!data.answer.trim()) {
+      throw new CustomError("Correct answer is required", 400);
+    }
+
+    if (!data.options.includes(data.answer)) {
+      throw new CustomError("Answer must match one of the options", 400);
+    }
+
+    // Check if assessment exists and belongs to the developer
+    const assessment = await SkillAssessmentModularRepository.getAssessmentByIdForDeveloper(
+      data.assessmentId, 
+      data.userId
+    );
+
+    if (!assessment) {
+      throw new CustomError("Assessment not found or you don't have permission", 404);
+    }
+
+    // Save the question
+    const savedQuestion = await SkillAssessmentModularRepository.saveQuestion({
+      assessmentId: data.assessmentId,
+      question: data.question,
+      options: data.options,
+      answer: data.answer
+    });
+
+    return savedQuestion;
   }
 
   // Delete assessment (Developer only)

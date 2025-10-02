@@ -54,7 +54,22 @@ export class AssessmentResultsRepository {
     const query: any = {
       where: { userId },
       include: {
-        assessment: { select: { id: true, title: true, description: true } },
+        assessment: { 
+          select: { 
+            id: true, 
+            title: true, 
+            description: true,
+            creator: { select: { id: true, name: true } },
+            badgeTemplate: { 
+              select: { 
+                id: true, 
+                name: true, 
+                icon: true, 
+                category: true 
+              } 
+            }
+          } 
+        },
       },
       orderBy: { createdAt: "desc" },
     };

@@ -44,6 +44,19 @@ export class SkillAssessmentModularRepository {
     return await AssessmentCrudRepository.getAssessmentStats();
   }
 
+  public static async getAssessmentByIdForDeveloper(assessmentId: number, createdBy: number) {
+    return await AssessmentCrudRepository.getAssessmentByIdForDeveloper(assessmentId, createdBy);
+  }
+
+  public static async saveQuestion(data: {
+    assessmentId: number;
+    question: string;
+    options: string[];
+    answer: string;
+  }) {
+    return await AssessmentCrudRepository.saveQuestion(data);
+  }
+
   // ===== ASSESSMENT RESULTS OPERATIONS =====
   
   // Delegate to AssessmentResultsRepository

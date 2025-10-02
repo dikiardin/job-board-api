@@ -13,6 +13,7 @@ import {
   validatePagination,
   validateCertificateCode,
   validateResultId,
+  validateSaveQuestion,
 } from "../middlewares/validator/skillAssessment.validator";
 import {
   validateCreateBadgeTemplate,
@@ -95,6 +96,15 @@ class SkillAssessmentRouter {
       verifyRole([UserRole.DEVELOPER]),
       validateAssessmentId,
       SkillAssessmentController.deleteAssessment
+    );
+
+    // Save individual question
+    this.route.post(
+      "/assessments/questions",
+      verifyToken,
+      verifyRole([UserRole.DEVELOPER]),
+      validateSaveQuestion,
+      SkillAssessmentController.saveQuestion
     );
 
     this.route.get(

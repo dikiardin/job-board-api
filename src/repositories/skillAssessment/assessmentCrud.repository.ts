@@ -19,13 +19,15 @@ export class AssessmentCrudRepository {
         description: data.description || null,
         badgeTemplateId: data.badgeTemplateId || null,
         createdBy: data.createdBy,
-        questions: {
-          create: data.questions.map((q) => ({
-            question: q.question,
-            options: q.options,
-            answer: q.answer,
-          })),
-        },
+        ...(data.questions.length > 0 && {
+          questions: {
+            create: data.questions.map((q) => ({
+              question: q.question,
+              options: q.options,
+              answer: q.answer,
+            })),
+          },
+        }),
       },
       include: {
         questions: true,
@@ -44,7 +46,8 @@ export class AssessmentCrudRepository {
         take: limit,
         include: {
           creator: { select: { id: true, name: true } },
-          _count: { select: { results: true } },
+          badgeTemplate: { select: { id: true, name: true, icon: true, description: true, category: true } },
+          _count: { select: { results: true, questions: true } },
         },
         orderBy: { createdAt: "desc" },
       }),
@@ -185,5 +188,42 @@ export class AssessmentCrudRepository {
     ]);
 
     return { totalAssessments, totalQuestions, totalResults };
+  }
+
+  // Get assessment by ID for developer (includes questions)
+  public static async getAssessmentByIdForDeveloper(assessmentId: number, createdBy: number) {
+    return await prisma.skillAssessment.findFirst({
+      where: {
+        id: assessmentId,
+        createdBy: createdBy,
+      },
+      include: {
+        questions: true,
+        badgeTemplate: {
+          select: {
+            id: true,
+            name: true,
+            icon: true,
+          },
+        },
+      },
+    });
+  }
+
+  // Save individual question
+  public static async saveQuestion(data: {
+    assessmentId: number;
+    question: string;
+    options: string[];
+    answer: string;
+  }) {
+    return await prisma.skillQuestion.create({
+      data: {
+        assessmentId: data.assessmentId,
+        question: data.question,
+        options: data.options,
+        answer: data.answer,
+      },
+    });
   }
 }
