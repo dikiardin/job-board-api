@@ -8,10 +8,21 @@ export class GetCompanyController {
     next: NextFunction
   ) {
     try {
-      const companies = await GetCompanyService.getAllCompanies();
+      const { page = 1, limit = 9, keyword, city } = req.query;
+
+      const companies = await GetCompanyService.getAllCompanies({
+        page: Number(page),
+        limit: Number(limit),
+        keyword: keyword as string,
+        city: city as string,
+      });
+
       res.status(200).json({
         message: "Companies fetched successfully",
-        data: companies,
+        data: companies.data,
+        total: companies.total,
+        page: Number(page),
+        limit: Number(limit),
       });
     } catch (err) {
       next(err);

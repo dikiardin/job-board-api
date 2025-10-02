@@ -1,15 +1,37 @@
 import { prisma } from "../../config/prisma";
 
+interface GetAllCompaniesParams {
+  page: number;
+  limit: number;
+  keyword?: string;
+  city?: string;
+}
+
 export class GetCompanyRepository {
-  public static async getAllCompanies() {
-    return prisma.company.findMany({
+
+public static async getAllCompanies({ page, limit, keyword, city }: GetAllCompaniesParams) {
+  const skip = (page - 1) * limit;
+
+  const where: any = {};
+  if (keyword) {
+    where.name = { contains: keyword, mode: "insensitive" };
+  }
+  if (city) {
+    where.city = { contains: city, mode: "insensitive" };
+  }
+
+  const [companies, total] = await prisma.$transaction([
+    prisma.company.findMany({
+      where,
+      skip,
+      take: limit,
       select: {
         id: true,
         name: true,
         email: true,
         phone: true,
         location: true,
-        city:true,
+        city: true,
         description: true,
         website: true,
         logo: true,
@@ -17,17 +39,17 @@ export class GetCompanyRepository {
         updatedAt: true,
         _count: {
           select: {
-            jobs: {
-              where: { isPublished: true },
-            },
+            jobs: { where: { isPublished: true } },
           },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  }
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.company.count({ where }),
+  ]);
+
+  return { data: companies, total };
+}
 
   public static async getCompanyById(companyId: number) {
     return prisma.company.findUnique({
@@ -38,6 +60,7 @@ export class GetCompanyRepository {
         email: true,
         phone: true,
         location: true,
+        city:true,
         description: true,
         website: true,
         logo: true,
