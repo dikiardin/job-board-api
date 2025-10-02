@@ -152,6 +152,18 @@ export class JobRepository {
 
     return { items, total, limit, offset };
   }
+
+  static async getJobPublic(jobId: number) {
+    const now = new Date();
+    return prisma.job.findFirst({
+      where: {
+        id: jobId,
+        isPublished: true,
+        OR: [{ deadline: null }, { deadline: { gte: now } }],
+      },
+      select: { id: true, title: true, companyId: true, deadline: true, isPublished: true },
+    });
+  }
   static async listApplicantsForJob(params: {
     companyId: number;
     jobId: number;

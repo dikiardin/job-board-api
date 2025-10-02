@@ -47,16 +47,17 @@ const subscriptionJobs_1 = require("./jobs/subscriptionJobs");
 const preselection_router_1 = __importDefault(require("./routers/preselection.router"));
 const application_router_1 = __importDefault(require("./routers/application.router"));
 const job_router_1 = __importDefault(require("./routers/job.router"));
-const cv_router_1 = __importDefault(require("./routers/cv.router"));
 const interview_router_1 = __importDefault(require("./routers/interview.router"));
 const interviewJobs_1 = require("./jobs/interviewJobs");
 const analytics_router_1 = __importDefault(require("./routers/analytics.router"));
 const profile_router_1 = __importDefault(require("./routers/profile.router"));
 const company_router_1 = __importDefault(require("./routers/company.router"));
 const companyReview_router_1 = __importDefault(require("./routers/companyReview.router"));
+const skillAssessment_router_1 = __importDefault(require("./routers/skillAssessment.router"));
 const prisma_1 = require("./config/prisma");
 const share_router_1 = __importDefault(require("./routers/share.router"));
 const save_router_1 = __importDefault(require("./routers/save.router"));
+const cv_router_1 = __importDefault(require("./routers/cv.router"));
 const PORT = process.env.PORT || "5000";
 class App {
     constructor() {
@@ -78,11 +79,13 @@ class App {
             },
             crossOriginEmbedderPolicy: false
         }));
-        // Request logging
-        this.app.use((req, res, next) => {
-            console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}`);
-            next();
-        });
+        // Request logging (development only)
+        if (process.env.NODE_ENV !== 'production') {
+            this.app.use((req, res, next) => {
+                console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}`);
+                next();
+            });
+        }
         // CORS configuration
         this.app.use((0, cors_1.default)({
             origin: process.env.NODE_ENV === 'production'
@@ -204,6 +207,7 @@ class App {
         const profileRouter = new profile_router_1.default();
         const companyRouter = new company_router_1.default();
         const companyReviewRouter = new companyReview_router_1.default();
+        const skillAssessmentRouter = new skillAssessment_router_1.default();
         const shareRouter = new share_router_1.default();
         const saveRouter = new save_router_1.default();
         this.app.use("/auth", authRouter.getRouter());
@@ -217,6 +221,7 @@ class App {
         this.app.use("/profile", profileRouter.getRouter());
         this.app.use("/company", companyRouter.getRouter());
         this.app.use("/reviews", companyReviewRouter.getRouter());
+        this.app.use("/skill-assessment", skillAssessmentRouter.getRouter());
         this.app.use("/share", shareRouter.getRouter());
         this.app.use("/save", saveRouter.getRouter());
     }

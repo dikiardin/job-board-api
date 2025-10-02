@@ -59,6 +59,7 @@ const cloudinaryUpload = (file) => {
             unique_filename: false,
             public_id: publicId,
             type: "upload",
+            access_mode: "public", // ← Added: Ensure files are publicly accessible
             // Don't force format - let Cloudinary handle it automatically
         }, (err, result) => {
             if (err) {
@@ -101,6 +102,7 @@ export const cloudinaryUpload = (
         unique_filename: false,
         public_id: publicId,
         type: "upload",
+        access_mode: "public", // ← Added: Ensure files are publicly accessible
         ...(isDoc ? {} : { format: "jpg" }), // only add format if image
       },
       (err?: UploadApiErrorResponse, result?: UploadApiResponse) => {

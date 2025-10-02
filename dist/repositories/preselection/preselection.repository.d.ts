@@ -5,9 +5,9 @@ export declare class PreselectionRepository {
             name: string;
             email: string | null;
             phone: string | null;
-            city: string | null;
             createdAt: Date;
             updatedAt: Date;
+            city: string | null;
             id: number;
             location: string | null;
             description: string | null;
@@ -16,9 +16,9 @@ export declare class PreselectionRepository {
             adminId: number | null;
         };
     } & {
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;
@@ -52,9 +52,9 @@ export declare class PreselectionRepository {
                 name: string;
                 email: string | null;
                 phone: string | null;
-                city: string | null;
                 createdAt: Date;
                 updatedAt: Date;
+                city: string | null;
                 id: number;
                 location: string | null;
                 description: string | null;
@@ -63,9 +63,9 @@ export declare class PreselectionRepository {
                 adminId: number | null;
             };
         } & {
-            city: string;
             createdAt: Date;
             updatedAt: Date;
+            city: string;
             id: number;
             companyId: number;
             description: string;
@@ -173,9 +173,9 @@ export declare class PreselectionRepository {
     }>;
     static getTestResultsByJob(jobId: number): Promise<({
         job: {
-            city: string;
             createdAt: Date;
             updatedAt: Date;
+            city: string;
             id: number;
             companyId: number;
             description: string;
@@ -206,11 +206,11 @@ export declare class PreselectionRepository {
                 dob: Date | null;
                 education: string | null;
                 address: string | null;
-                city: string | null;
                 profilePicture: string | null;
                 isVerified: boolean;
                 createdAt: Date;
                 updatedAt: Date;
+                city: string | null;
                 id: number;
             };
             answers: {
@@ -234,5 +234,6 @@ export declare class PreselectionRepository {
         jobId: number;
         passingScore: number | null;
     }) | null>;
+    static getResultsByTestAndUsers(testId: number, userIds: number[]): Promise<any[]>;
 }
 //# sourceMappingURL=preselection.repository.d.ts.map

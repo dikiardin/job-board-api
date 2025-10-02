@@ -2,6 +2,7 @@ import { ApplicationRepo } from "../../repositories/application/application.repo
 import { cloudinaryUpload } from "../../config/cloudinary";
 import { CustomError } from "../../utils/customError";
 import { PreselectionRepository } from "../../repositories/preselection/preselection.repository";
+import { JobRepository } from "../../repositories/job/job.repository";
 
 export class ApplicationService {
   public static async submitApplication(
@@ -11,6 +12,12 @@ export class ApplicationService {
     expectedSalary?: number
   ) {
     if (!file) throw new CustomError("CV file is required", 400);
+
+    // Ensure job is open for applications (published and not past deadline)
+    const job = await JobRepository.getJobPublic(jobId);
+    if (!job) {
+      throw new CustomError("This job is not open for applications", 400);
+    }
 
     const existing = await ApplicationRepo.findExisting(userId, jobId);
     if (existing) {

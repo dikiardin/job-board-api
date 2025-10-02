@@ -47,11 +47,13 @@ class App {
       crossOriginEmbedderPolicy: false
     }));
 
-    // Request logging
-    this.app.use((req, res, next) => {
-      console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}` );
-      next();
-    });
+    // Request logging (development only)
+    if (process.env.NODE_ENV !== 'production') {
+      this.app.use((req, res, next) => {
+        console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}` );
+        next();
+      });
+    }
 
     // CORS configuration
     this.app.use(

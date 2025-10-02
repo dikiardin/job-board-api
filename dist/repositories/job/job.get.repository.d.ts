@@ -29,9 +29,9 @@ export declare class GetJobRepository {
             logo: string | null;
         };
     } & {
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;

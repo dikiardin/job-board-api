@@ -24,15 +24,8 @@ export class JobController {
 
   static async list(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log("Job list request:", req.params, req.query);
-      console.log("Headers:", req.headers);
-      console.log("res.locals:", res.locals);
-      
       const companyId = Number(req.params.companyId);
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
-      
-      console.log("Company ID:", companyId);
-      console.log("Requester:", requester);
       
       const { title, category, sortBy, sortOrder, limit, offset } = res.locals.validatedQuery || req.query as Record<string, any>;
 
@@ -44,20 +37,14 @@ export class JobController {
       if (typeof limit === "string" && limit.trim() !== "") query.limit = Number(limit);
       if (typeof offset === "string" && offset.trim() !== "") query.offset = Number(offset);
 
-      console.log("Query params:", query);
-
       const data = await JobService.listJobs({
         companyId,
         requesterId: requester.userId,
         requesterRole: requester.role,
         query,
       });
-
-      console.log("Job data:", data);
       res.status(200).json({ success: true, data });
     } catch (error) {
-      console.error("Job list error:", error);
-      console.error("Error stack:", (error as any).stack);
       next(error);
     }
   }
@@ -119,8 +106,10 @@ export class JobController {
       const companyId = Number(req.params.companyId);
       const jobId = Number(req.params.jobId);
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
-
-      const updated = await JobService.togglePublish({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role });
+      const desired = (req.body as any)?.isPublished as boolean | undefined;
+      const args: any = { companyId, jobId, requesterId: requester.userId, requesterRole: requester.role };
+      if (typeof desired === "boolean") args.isPublished = desired;
+      const updated = await JobService.togglePublish(args);
       res.status(200).json({ success: true, data: updated });
     } catch (error) {
       next(error);

@@ -9,20 +9,20 @@ export declare class EditProfileService {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     } | {
         company: {
             name: string;
             email: string | null;
             phone: string | null;
-            city: string | null;
             createdAt: Date;
             updatedAt: Date;
+            city: string | null;
             id: number;
             location: string | null;
             description: string | null;
@@ -40,11 +40,11 @@ export declare class EditProfileService {
             dob: Date | null;
             education: string | null;
             address: string | null;
-            city: string | null;
             profilePicture: string | null;
             isVerified: boolean;
             createdAt: Date;
             updatedAt: Date;
+            city: string | null;
             id: number;
         };
     }>;
@@ -58,25 +58,44 @@ export declare class EditProfileService {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     } | {
-        name: string;
-        email: string | null;
-        phone: string | null;
-        city: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
-        location: string | null;
-        description: string | null;
-        website: string | null;
-        logo: string | null;
-        adminId: number | null;
+        company: {
+            name: string;
+            email: string | null;
+            phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            city: string | null;
+            id: number;
+            location: string | null;
+            description: string | null;
+            website: string | null;
+            logo: string | null;
+            adminId: number | null;
+        };
+        user: {
+            role: import("../../generated/prisma").$Enums.UserRole;
+            name: string;
+            email: string;
+            passwordHash: string | null;
+            phone: string | null;
+            gender: string | null;
+            dob: Date | null;
+            education: string | null;
+            address: string | null;
+            profilePicture: string | null;
+            isVerified: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            city: string | null;
+            id: number;
+        };
     }>;
 }
 //# sourceMappingURL=editProfile.service.d.ts.map

@@ -1,0 +1,134 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AssessmentCreationService = void 0;
+const assessmentCrud_repository_1 = require("../../repositories/skillAssessment/assessmentCrud.repository");
+const customError_1 = require("../../utils/customError");
+const prisma_1 = require("../../generated/prisma");
+class AssessmentCreationService {
+    // Create assessment (Developer only)
+    static async createAssessment(data) {
+        // Validate developer role
+        if (data.userRole !== prisma_1.UserRole.DEVELOPER) {
+            throw new customError_1.CustomError("Only developers can create assessments", 403);
+        }
+        // Validate questions count (min 1)
+        if (data.questions.length < 1) {
+            throw new customError_1.CustomError("Assessment must have at least 1 question", 400);
+        }
+        // Validate each question structure
+        data.questions.forEach((q, index) => {
+            if (!q.question || q.options.length !== 4 || !q.answer) {
+                throw new customError_1.CustomError(`Question ${index + 1} is invalid`, 400);
+            }
+            if (!q.options.includes(q.answer)) {
+                throw new customError_1.CustomError(`Question ${index + 1} answer must be one of the options`, 400);
+            }
+        });
+        return await assessmentCrud_repository_1.AssessmentCrudRepository.createAssessment(data);
+    }
+    // Get all assessments for management (Developer only)
+    static async getAssessments(page = 1, limit = 10) {
+        return await assessmentCrud_repository_1.AssessmentCrudRepository.getAllAssessments(page, limit);
+    }
+    // Get assessment details for editing (Developer only)
+    static async getAssessmentById(assessmentId, userRole) {
+        if (userRole !== prisma_1.UserRole.DEVELOPER) {
+            throw new customError_1.CustomError("Only developers can access assessment details", 403);
+        }
+        // Use getAllAssessments to get assessment by ID (mock implementation)
+        const assessments = await assessmentCrud_repository_1.AssessmentCrudRepository.getAllAssessments(1, 1000);
+        const assessment = assessments.assessments.find((a) => a.id === assessmentId);
+        if (!assessment) {
+            throw new customError_1.CustomError("Assessment not found", 404);
+        }
+        return assessment;
+    }
+    // Update assessment (Developer only)
+    static async updateAssessment(assessmentId, userId, data) {
+        // If questions are being updated, validate them
+        if (data.questions) {
+            if (data.questions.length < 1) {
+                throw new customError_1.CustomError("Assessment must have at least 1 question", 400);
+            }
+            data.questions.forEach((q, index) => {
+                if (!q.question || q.options.length !== 4 || !q.answer) {
+                    throw new customError_1.CustomError(`Question ${index + 1} is invalid`, 400);
+                }
+                if (!q.options.includes(q.answer)) {
+                    throw new customError_1.CustomError(`Question ${index + 1} answer must be one of the options`, 400);
+                }
+            });
+        }
+        return await assessmentCrud_repository_1.AssessmentCrudRepository.updateAssessment(assessmentId, userId, data);
+    }
+    // Delete assessment (Developer only)
+    static async deleteAssessment(assessmentId, userId) {
+        // Use getAllAssessments to check if assessment exists (mock implementation)
+        const assessments = await assessmentCrud_repository_1.AssessmentCrudRepository.getAllAssessments(1, 1000);
+        const assessment = assessments.assessments.find((a) => a.id === assessmentId);
+        if (!assessment) {
+            throw new customError_1.CustomError("Assessment not found", 404);
+        }
+        return await assessmentCrud_repository_1.AssessmentCrudRepository.deleteAssessment(assessmentId, userId);
+    }
+    // Get assessment statistics (Developer only)
+    static async getAssessmentStats(assessmentId, userRole) {
+        if (userRole !== prisma_1.UserRole.DEVELOPER) {
+            throw new customError_1.CustomError("Only developers can access assessment statistics", 403);
+        }
+        // Mock implementation for stats
+        return { totalAssessments: 0, totalQuestions: 0, totalResults: 0 };
+    }
+    // Validate assessment structure
+    static validateQuestionStructure(questions) {
+        if (questions.length < 1) {
+            throw new customError_1.CustomError("Assessment must have at least 1 question", 400);
+        }
+        questions.forEach((q, index) => {
+            if (!q.question?.trim()) {
+                throw new customError_1.CustomError(`Question ${index + 1} text is required`, 400);
+            }
+            if (!Array.isArray(q.options) || q.options.length !== 4) {
+                throw new customError_1.CustomError(`Question ${index + 1} must have exactly 4 options`, 400);
+            }
+            if (q.options.some(option => !option?.trim())) {
+                throw new customError_1.CustomError(`Question ${index + 1} options cannot be empty`, 400);
+            }
+            if (!q.answer?.trim()) {
+                throw new customError_1.CustomError(`Question ${index + 1} answer is required`, 400);
+            }
+            if (!q.options.includes(q.answer)) {
+                throw new customError_1.CustomError(`Question ${index + 1} answer must be one of the provided options`, 400);
+            }
+        });
+    }
+    // Bulk import questions from JSON/CSV
+    static async importQuestions(assessmentId, questions, userRole) {
+        if (userRole !== prisma_1.UserRole.DEVELOPER) {
+            throw new customError_1.CustomError("Only developers can import questions", 403);
+        }
+        this.validateQuestionStructure(questions);
+        return await assessmentCrud_repository_1.AssessmentCrudRepository.updateAssessment(assessmentId, 0, { questions });
+    }
+    // Export questions to JSON format
+    static async exportQuestions(assessmentId, userRole) {
+        if (userRole !== prisma_1.UserRole.DEVELOPER) {
+            throw new customError_1.CustomError("Only developers can export questions", 403);
+        }
+        // Use getAllAssessments to get assessment for export (mock implementation)
+        const assessments = await assessmentCrud_repository_1.AssessmentCrudRepository.getAllAssessments(1, 1000);
+        const assessment = assessments.assessments.find((a) => a.id === assessmentId);
+        if (!assessment) {
+            throw new customError_1.CustomError("Assessment not found", 404);
+        }
+        return {
+            assessmentId,
+            title: assessment.title,
+            description: assessment.description,
+            questions: assessment.questions || [],
+            exportedAt: new Date().toISOString()
+        };
+    }
+}
+exports.AssessmentCreationService = AssessmentCreationService;
+//# sourceMappingURL=assessmentCreation.service.js.map

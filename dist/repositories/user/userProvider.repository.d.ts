@@ -10,11 +10,11 @@ export declare class UserProviderRepo {
             dob: Date | null;
             education: string | null;
             address: string | null;
-            city: string | null;
             profilePicture: string | null;
             isVerified: boolean;
             createdAt: Date;
             updatedAt: Date;
+            city: string | null;
             id: number;
         };
     } & {
@@ -53,11 +53,11 @@ export declare class UserProviderRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     }>;
     static updateProfilePicture(userId: number, profilePicture: string): Promise<{
@@ -70,11 +70,11 @@ export declare class UserProviderRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     }>;
 }

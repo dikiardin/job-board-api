@@ -4,6 +4,7 @@ exports.JobApplicantsService = void 0;
 const prisma_1 = require("../../generated/prisma");
 const job_repository_1 = require("../../repositories/job/job.repository");
 const application_repository_1 = require("../../repositories/application/application.repository");
+const preselection_repository_1 = require("../../repositories/preselection/preselection.repository");
 async function assertCompanyOwnership(companyId, requesterId) {
     const company = await job_repository_1.JobRepository.getCompany(companyId);
     if (!company)
@@ -51,25 +52,41 @@ class JobApplicantsService {
             ...(typeof query.limit === "number" ? { limit: query.limit } : {}),
             ...(typeof query.offset === "number" ? { offset: query.offset } : {}),
         });
+        // Attach preselection test results if available
+        let scoreByUser = new Map();
+        let passingScore = null;
+        const test = await preselection_repository_1.PreselectionRepository.getTestByJobId(jobId);
+        if (test) {
+            passingScore = test.passingScore ?? null;
+            const userIds = result.items.map((a) => a.userId);
+            const results = await preselection_repository_1.PreselectionRepository.getResultsByTestAndUsers(test.id, userIds);
+            scoreByUser = new Map(results.map((r) => [r.userId, r.score]));
+        }
         return {
             total: result.total,
             limit: result.limit,
             offset: result.offset,
-            items: result.items.map((a) => ({
-                applicationId: a.id,
-                appliedAt: a.createdAt,
-                expectedSalary: a.expectedSalary ?? null,
-                status: a.status,
-                cvFile: a.cvFile,
-                user: {
-                    id: a.userId,
-                    name: a.user?.name,
-                    email: a.user?.email,
-                    profilePicture: a.user?.profilePicture ?? null,
-                    education: a.user?.education ?? null,
-                    dob: a.user?.dob ?? null,
-                },
-            })),
+            items: result.items.map((a) => {
+                const score = scoreByUser.get(a.userId) ?? null;
+                const preselectionPassed = score != null ? (passingScore != null ? score >= passingScore : true) : null;
+                return {
+                    applicationId: a.id,
+                    appliedAt: a.createdAt,
+                    expectedSalary: a.expectedSalary ?? null,
+                    status: a.status,
+                    cvFile: a.cvFile,
+                    testScore: score,
+                    preselectionPassed,
+                    user: {
+                        id: a.userId,
+                        name: a.user?.name,
+                        email: a.user?.email,
+                        profilePicture: a.user?.profilePicture ?? null,
+                        education: a.user?.education ?? null,
+                        dob: a.user?.dob ?? null,
+                    },
+                };
+            }),
         };
     }
 }

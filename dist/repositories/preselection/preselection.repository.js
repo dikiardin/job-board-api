@@ -79,6 +79,14 @@ class PreselectionRepository {
             },
         });
     }
+    static async getResultsByTestAndUsers(testId, userIds) {
+        if (!userIds.length)
+            return [];
+        return prisma_1.prisma.preselectionResult.findMany({
+            where: { testId, userId: { in: userIds } },
+            select: { id: true, userId: true, testId: true, score: true, createdAt: true },
+        });
+    }
 }
 exports.PreselectionRepository = PreselectionRepository;
 //# sourceMappingURL=preselection.repository.js.map

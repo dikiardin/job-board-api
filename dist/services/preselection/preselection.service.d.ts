@@ -81,5 +81,23 @@ export declare class PreselectionService {
             submittedAt: Date;
         }[];
     }>;
+    static statusForUser(params: {
+        jobId: number;
+        userId: number;
+    }): Promise<{
+        required: boolean;
+        testId?: never;
+        submitted?: never;
+        score?: never;
+        passingScore?: never;
+        isPassed?: never;
+    } | {
+        required: boolean;
+        testId: number;
+        submitted: boolean;
+        score: number | null;
+        passingScore: number | null;
+        isPassed: boolean;
+    }>;
 }
 //# sourceMappingURL=preselection.service.d.ts.map

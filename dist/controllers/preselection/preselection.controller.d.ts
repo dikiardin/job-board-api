@@ -4,5 +4,6 @@ export declare class PreselectionController {
     static getTest(req: Request, res: Response, next: NextFunction): Promise<void>;
     static submit(req: Request, res: Response, next: NextFunction): Promise<void>;
     static getJobResults(req: Request, res: Response, next: NextFunction): Promise<void>;
+    static myStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 //# sourceMappingURL=preselection.controller.d.ts.map

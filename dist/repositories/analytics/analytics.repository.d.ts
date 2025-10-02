@@ -4,9 +4,9 @@ export declare class AnalyticsRepository {
         name: string;
         email: string | null;
         phone: string | null;
-        city: string | null;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
         location: string | null;
         description: string | null;
@@ -29,17 +29,17 @@ export declare class AnalyticsRepository {
             dob: Date | null;
             education: string | null;
             address: string | null;
-            city: string | null;
             profilePicture: string | null;
             isVerified: boolean;
             createdAt: Date;
             updatedAt: Date;
+            city: string | null;
             id: number;
         };
         job: {
-            city: string;
             createdAt: Date;
             updatedAt: Date;
+            city: string;
             id: number;
             companyId: number;
             description: string;
