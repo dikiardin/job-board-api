@@ -1,0 +1,1 @@
+{"version":3,"file":"skillAssessment.router.d.ts","sourceRoot":"","sources":["../../src/routers/skillAssessment.router.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAyBjC,cAAM,qBAAqB;IACzB,OAAO,CAAC,KAAK,CAAS;;IAOtB,OAAO,CAAC,gBAAgB;IAoLjB,SAAS,IAAI,MAAM;CAG3B;AAED,eAAe,qBAAqB,CAAC"}

@@ -47,7 +47,22 @@ class InterviewQueryService {
         if (typeof query.offset === "number")
             listParams.offset = query.offset;
         const result = await interview_repository_1.InterviewRepository.list(listParams);
-        return result;
+        // Map to lightweight DTO expected by frontend
+        return {
+            total: result.total,
+            limit: result.limit,
+            offset: result.offset,
+            items: result.items.map((it) => ({
+                id: it.id,
+                applicationId: it.applicationId,
+                scheduleDate: it.scheduleDate,
+                locationOrLink: it.locationOrLink ?? null,
+                notes: it.notes ?? null,
+                status: it.status,
+                candidateName: it.application?.user?.name,
+                jobTitle: it.application?.job?.title,
+            })),
+        };
     }
     static async detail(params) {
         const { id, requesterId } = params;

@@ -5,10 +5,19 @@ const getCompany_service_1 = require("../../services/company/getCompany.service"
 class GetCompanyController {
     static async getAllCompanies(req, res, next) {
         try {
-            const companies = await getCompany_service_1.GetCompanyService.getAllCompanies();
+            const { page = 1, limit = 9, keyword, city } = req.query;
+            const companies = await getCompany_service_1.GetCompanyService.getAllCompanies({
+                page: Number(page),
+                limit: Number(limit),
+                keyword: keyword,
+                city: city,
+            });
             res.status(200).json({
                 message: "Companies fetched successfully",
-                data: companies,
+                data: companies.data,
+                total: companies.total,
+                page: Number(page),
+                limit: Number(limit),
             });
         }
         catch (err) {

@@ -513,6 +513,19 @@ async function seed() {
     data: questionsFrontend.map((q) => ({ resultId: resultAlice.id, questionId: q.id, selected: "A", isCorrect: true })),
   });
 
+  // Passing result for Frontend (25 Q, passing 20) – Bob scores 22
+  const resultBobFrontend = await prisma.preselectionResult.create({
+    data: { userId: bob.id, testId: testFrontend.id, score: 22 },
+  });
+  await prisma.applicantAnswer.createMany({
+    data: questionsFrontend.map((q, idx) => ({
+      resultId: resultBobFrontend.id,
+      questionId: q.id,
+      selected: idx < 22 ? "A" : "B",
+      isCorrect: idx < 22,
+    })),
+  });
+
   // Failing result for Backend (10 Q, passing 7) → score 5
   const resultBobBackend = await prisma.preselectionResult.create({
     data: { userId: bob.id, testId: testBackend.id, score: 5 },

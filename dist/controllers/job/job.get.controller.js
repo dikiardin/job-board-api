@@ -5,7 +5,7 @@ const job_get_service_1 = require("../../services/job/job.get.service");
 class GetJobController {
     static async getAllJobs(req, res, next) {
         try {
-            const { keyword, city, limit = "6", page = "1" } = req.query;
+            const { keyword, city, limit = "9", page = "1" } = req.query;
             const numericLimit = parseInt(limit, 10);
             const numericPage = parseInt(page, 10);
             const offset = (numericPage - 1) * numericLimit;

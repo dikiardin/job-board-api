@@ -1,6 +1,7 @@
 import { UserRole, ApplicationStatus } from "../../generated/prisma";
 import { JobRepository } from "../../repositories/job/job.repository";
 import { ApplicationRepo } from "../../repositories/application/application.repository";
+import { PreselectionRepository } from "../../repositories/preselection/preselection.repository";
 
 async function assertCompanyOwnership(companyId: number, requesterId: number) {
   const company = await JobRepository.getCompany(companyId);
@@ -74,25 +75,42 @@ export class JobApplicantsService {
       ...(typeof query.offset === "number" ? { offset: query.offset } : {}),
     });
 
+    // Attach preselection test results if available
+    let scoreByUser = new Map<number, number>();
+    let passingScore: number | null = null;
+    const test = await PreselectionRepository.getTestByJobId(jobId);
+    if (test) {
+      passingScore = test.passingScore ?? null;
+      const userIds = result.items.map((a: any) => a.userId);
+      const results = await PreselectionRepository.getResultsByTestAndUsers(test.id, userIds);
+      scoreByUser = new Map<number, number>(results.map((r: any) => [r.userId, r.score]));
+    }
+
     return {
       total: result.total,
       limit: result.limit,
       offset: result.offset,
-      items: result.items.map((a: any) => ({
-        applicationId: a.id,
-        appliedAt: a.createdAt,
-        expectedSalary: a.expectedSalary ?? null,
-        status: a.status,
-        cvFile: a.cvFile,
-        user: {
-          id: a.userId,
-          name: a.user?.name,
-          email: a.user?.email,
-          profilePicture: a.user?.profilePicture ?? null,
-          education: a.user?.education ?? null,
-          dob: a.user?.dob ?? null,
-        },
-      })),
+      items: result.items.map((a: any) => {
+        const score = scoreByUser.get(a.userId) ?? null;
+        const preselectionPassed = score != null ? (passingScore != null ? score >= passingScore : true) : null;
+        return {
+          applicationId: a.id,
+          appliedAt: a.createdAt,
+          expectedSalary: a.expectedSalary ?? null,
+          status: a.status,
+          cvFile: a.cvFile,
+          testScore: score,
+          preselectionPassed,
+          user: {
+            id: a.userId,
+            name: a.user?.name,
+            email: a.user?.email,
+            profilePicture: a.user?.profilePicture ?? null,
+            education: a.user?.education ?? null,
+            dob: a.user?.dob ?? null,
+          },
+        };
+      }),
     };
   }
 }

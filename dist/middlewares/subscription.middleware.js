@@ -2,17 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkTemplateAccess = exports.checkCVGenerationLimit = exports.checkSubscription = void 0;
 const prisma_1 = require("../config/prisma");
-// Define subscription limits
+// Define subscription limits (updated according to requirements)
 const SUBSCRIPTION_LIMITS = {
     Standard: {
-        cvGenerationLimit: 5, // 5 CV per month
-        templatesAccess: ["ats"], // ATS template only
-        additionalFeatures: ["basic_download"],
+        cvGenerationLimit: -1, // Unlimited CV generation for Standard plan (IDR 25,000/month)
+        templatesAccess: ["ats", "modern", "creative"], // All templates available
+        additionalFeatures: ["cv_generator", "skill_assessment_2x"],
     },
     Professional: {
-        cvGenerationLimit: -1, // Unlimited
-        templatesAccess: ["ats"], // ATS template only (same as Standard now)
-        additionalFeatures: ["basic_download", "premium_templates", "analytics"],
+        cvGenerationLimit: -1, // Unlimited CV generation for Professional plan (IDR 100,000/month)
+        templatesAccess: ["ats", "modern", "creative"], // All templates available
+        additionalFeatures: ["cv_generator", "skill_assessment_unlimited", "priority_review"],
     },
 };
 const checkSubscription = async (req, res, next) => {
@@ -36,7 +36,7 @@ const checkSubscription = async (req, res, next) => {
         });
         if (!activeSubscription) {
             return res.status(403).json({
-                message: "Active subscription required to use CV Generator",
+                message: "Active subscription required to use CV Generator. Choose Standard (IDR 25,000/month) or Professional (IDR 100,000/month) plan.",
                 code: "SUBSCRIPTION_REQUIRED",
             });
         }

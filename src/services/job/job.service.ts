@@ -80,13 +80,14 @@ export class JobService {
     return job;
   }
 
-  static async togglePublish(params: { companyId: number; jobId: number; requesterId: number; requesterRole: UserRole }) {
-    const { companyId, jobId, requesterId, requesterRole } = params;
+  static async togglePublish(params: { companyId: number; jobId: number; requesterId: number; requesterRole: UserRole; isPublished?: boolean }) {
+    const { companyId, jobId, requesterId, requesterRole, isPublished } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can publish/unpublish jobs" };
     await this.assertCompanyOwnership(companyId, requesterId);
     const detail = await JobRepository.getJobById(companyId, jobId);
     if (!detail) throw { status: 404, message: "Job not found" };
-    const updated = await JobRepository.togglePublish(jobId, !detail.isPublished);
+    const nextState = typeof isPublished === "boolean" ? isPublished : !detail.isPublished;
+    const updated = await JobRepository.togglePublish(jobId, nextState);
     return updated;
   }
 
@@ -215,6 +216,9 @@ export class JobService {
         userId: a.userId,
         userName: (a as any).user?.name,
         userEmail: (a as any).user?.email,
+        profilePicture: (a as any).user?.profilePicture ?? null,
+        expectedSalary: (a as any).expectedSalary ?? null,
+        cvFile: (a as any).cvFile ?? null,
         score: test ? test.results.find((r: any) => r.userId === a.userId)?.score ?? null : null,
         preselectionPassed,
         status: a.status,
@@ -232,7 +236,7 @@ export class JobService {
       salaryMin: job.salaryMin,
       salaryMax: job.salaryMax,
       tags: job.tags,
-      applicationDeadline: job.deadline,
+      deadline: job.deadline,
       isPublished: job.isPublished,
       createdAt: job.createdAt,
       applicantsCount: (job as any)._count?.applications ?? job.applications.length,

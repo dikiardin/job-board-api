@@ -4,9 +4,9 @@ export declare class AnalyticsService {
         name: string;
         email: string | null;
         phone: string | null;
-        city: string | null;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
         location: string | null;
         description: string | null;

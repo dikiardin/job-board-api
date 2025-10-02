@@ -25,9 +25,9 @@ export declare class GetJobService {
             logo: string | null;
         };
     } & {
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;

@@ -23,10 +23,10 @@ export declare class CompanyReviewService {
             id: number;
             position: string;
             salaryEstimate: number | null;
-            cultureRating: number;
-            worklifeRating: number;
-            facilityRating: number;
-            careerRating: number;
+            cultureRating: import("../../generated/prisma/runtime/library").Decimal | null;
+            worklifeRating: import("../../generated/prisma/runtime/library").Decimal | null;
+            facilityRating: import("../../generated/prisma/runtime/library").Decimal | null;
+            careerRating: import("../../generated/prisma/runtime/library").Decimal | null;
             comment: string | null;
         }[];
         pagination: {
@@ -55,10 +55,10 @@ export declare class CompanyReviewService {
         id: number;
         position: string;
         salaryEstimate: number | null;
-        cultureRating: number;
-        worklifeRating: number;
-        facilityRating: number;
-        careerRating: number;
+        cultureRating: import("../../generated/prisma/runtime/library").Decimal | null;
+        worklifeRating: import("../../generated/prisma/runtime/library").Decimal | null;
+        facilityRating: import("../../generated/prisma/runtime/library").Decimal | null;
+        careerRating: import("../../generated/prisma/runtime/library").Decimal | null;
         comment: string | null;
     }>;
     static checkReviewEligibility(userId: number, companyId: number): Promise<{
@@ -81,10 +81,10 @@ export declare class CompanyReviewService {
         id: number;
         position: string;
         salaryEstimate: number | null;
-        cultureRating: number;
-        worklifeRating: number;
-        facilityRating: number;
-        careerRating: number;
+        cultureRating: import("../../generated/prisma/runtime/library").Decimal | null;
+        worklifeRating: import("../../generated/prisma/runtime/library").Decimal | null;
+        facilityRating: import("../../generated/prisma/runtime/library").Decimal | null;
+        careerRating: import("../../generated/prisma/runtime/library").Decimal | null;
         comment: string | null;
     }>;
     static updateReview(data: CreateReviewData): Promise<{
@@ -92,10 +92,10 @@ export declare class CompanyReviewService {
         id: number;
         position: string;
         salaryEstimate: number | null;
-        cultureRating: number;
-        worklifeRating: number;
-        facilityRating: number;
-        careerRating: number;
+        cultureRating: import("../../generated/prisma/runtime/library").Decimal | null;
+        worklifeRating: import("../../generated/prisma/runtime/library").Decimal | null;
+        facilityRating: import("../../generated/prisma/runtime/library").Decimal | null;
+        careerRating: import("../../generated/prisma/runtime/library").Decimal | null;
         comment: string | null;
     }>;
     static deleteReview(userId: number, companyId: number): Promise<void>;

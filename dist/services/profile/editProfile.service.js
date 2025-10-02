@@ -73,14 +73,23 @@ class EditProfileService {
         }
         if (user.role === "ADMIN") {
             const { phone, location, city, description, website } = data;
-            return await editProfile_repository_1.EditProfileRepository.updateCompanyProfile(userId, {
-                phone,
-                location,
-                city,
-                description,
-                website,
-                ...(profilePictureUrl && { logo: profilePictureUrl }),
-            });
+            const [companyResult, userResult] = await Promise.all([
+                editProfile_repository_1.EditProfileRepository.updateCompanyProfile(userId, {
+                    phone,
+                    location,
+                    city,
+                    description,
+                    website,
+                    ...(profilePictureUrl && { logo: profilePictureUrl }),
+                }),
+                editProfile_repository_1.EditProfileRepository.updateUserProfile(userId, {
+                    phone,
+                    address: location,
+                    city,
+                    ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
+                }),
+            ]);
+            return { company: companyResult, user: userResult };
         }
         throw new customError_1.CustomError("Invalid role", 400);
     }

@@ -5,12 +5,6 @@ export declare class SubscriptionRepo {
             email: string;
             id: number;
         };
-        plan: {
-            id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
-        };
         payments: {
             createdAt: Date;
             id: number;
@@ -23,6 +17,12 @@ export declare class SubscriptionRepo {
             gatewayTransactionId: string | null;
             expiredAt: Date | null;
         }[];
+        plan: {
+            id: number;
+            planName: string;
+            planPrice: import("../../generated/prisma/runtime/library").Decimal;
+            planDescription: string | null;
+        };
     } & {
         createdAt: Date;
         id: number;
@@ -38,12 +38,6 @@ export declare class SubscriptionRepo {
             email: string;
             id: number;
         };
-        plan: {
-            id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
-        };
         payments: {
             createdAt: Date;
             id: number;
@@ -56,6 +50,12 @@ export declare class SubscriptionRepo {
             gatewayTransactionId: string | null;
             expiredAt: Date | null;
         }[];
+        plan: {
+            id: number;
+            planName: string;
+            planPrice: import("../../generated/prisma/runtime/library").Decimal;
+            planDescription: string | null;
+        };
     } & {
         createdAt: Date;
         id: number;
@@ -66,12 +66,6 @@ export declare class SubscriptionRepo {
         isActive: boolean;
     }) | null>;
     static getUserSubscriptions(userId: number): Promise<({
-        plan: {
-            id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
-        };
         payments: {
             createdAt: Date;
             id: number;
@@ -84,6 +78,12 @@ export declare class SubscriptionRepo {
             gatewayTransactionId: string | null;
             expiredAt: Date | null;
         }[];
+        plan: {
+            id: number;
+            planName: string;
+            planPrice: import("../../generated/prisma/runtime/library").Decimal;
+            planDescription: string | null;
+        };
     } & {
         createdAt: Date;
         id: number;

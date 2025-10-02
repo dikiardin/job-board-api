@@ -102,6 +102,17 @@ class JobRepository {
         ]);
         return { items, total, limit, offset };
     }
+    static async getJobPublic(jobId) {
+        const now = new Date();
+        return prisma_1.prisma.job.findFirst({
+            where: {
+                id: jobId,
+                isPublished: true,
+                OR: [{ deadline: null }, { deadline: { gte: now } }],
+            },
+            select: { id: true, title: true, companyId: true, deadline: true, isPublished: true },
+        });
+    }
     static async listApplicantsForJob(params) {
         const { companyId, jobId, name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy = "appliedAt", sortOrder = "asc", limit = 10, offset = 0 } = params;
         // Build user where for name/education/age with input sanitization

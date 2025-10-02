@@ -66,4 +66,15 @@ export class PreselectionController {
       next(error);
     }
   }
+
+  static async myStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jobId = Number(req.params.jobId);
+      const requester = res.locals.decrypt as { userId: number; role: UserRole };
+      const data = await PreselectionService.statusForUser({ jobId, userId: requester.userId });
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

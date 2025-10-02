@@ -8,8 +8,11 @@ class PreselectionService {
         const { jobId, requesterId, requesterRole, questions, passingScore, isActive = true } = params;
         this.validateAdminAccess(requesterRole);
         await this.validateJobOwnership(jobId, requesterId);
-        this.validateQuestions(questions);
-        this.validatePassingScore(passingScore, questions.length);
+        // Allow disabling test without providing 25 questions
+        if (isActive) {
+            this.validateQuestions(questions);
+            this.validatePassingScore(passingScore, questions.length);
+        }
         const created = await preselection_repository_1.PreselectionRepository.upsertTest(jobId, questions, passingScore, isActive);
         return created;
     }
@@ -140,6 +143,26 @@ class PreselectionService {
                 score: r.score,
                 submittedAt: r.createdAt,
             })),
+        };
+    }
+    static async statusForUser(params) {
+        const { jobId, userId } = params;
+        const test = await preselection_repository_1.PreselectionRepository.getTestByJobId(jobId);
+        if (!test || !test.isActive) {
+            return { required: false };
+        }
+        const result = await preselection_repository_1.PreselectionRepository.getResult(userId, test.id);
+        const submitted = !!result;
+        const score = result?.score ?? null;
+        const passingScore = test.passingScore ?? null;
+        const isPassed = submitted ? (passingScore != null ? (score >= passingScore) : true) : false;
+        return {
+            required: true,
+            testId: test.id,
+            submitted,
+            score,
+            passingScore,
+            isPassed,
         };
     }
 }

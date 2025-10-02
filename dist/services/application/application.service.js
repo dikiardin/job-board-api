@@ -5,10 +5,16 @@ const application_repository_1 = require("../../repositories/application/applica
 const cloudinary_1 = require("../../config/cloudinary");
 const customError_1 = require("../../utils/customError");
 const preselection_repository_1 = require("../../repositories/preselection/preselection.repository");
+const job_repository_1 = require("../../repositories/job/job.repository");
 class ApplicationService {
     static async submitApplication(userId, jobId, file, expectedSalary) {
         if (!file)
             throw new customError_1.CustomError("CV file is required", 400);
+        // Ensure job is open for applications (published and not past deadline)
+        const job = await job_repository_1.JobRepository.getJobPublic(jobId);
+        if (!job) {
+            throw new customError_1.CustomError("This job is not open for applications", 400);
+        }
         const existing = await application_repository_1.ApplicationRepo.findExisting(userId, jobId);
         if (existing) {
             throw new customError_1.CustomError("You already applied for this job", 400);

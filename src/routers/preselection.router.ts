@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { PreselectionController } from "../controllers/preselection/preselection.controller";
 import { verifyToken } from "../middlewares/verifyToken";
+import { tryVerifyToken } from "../middlewares/tryVerifyToken";
 import { verifyRole } from "../middlewares/verifyRole";
 import { UserRole } from "../generated/prisma";
 
@@ -24,6 +25,7 @@ class PreselectionRouter {
     // Get test for a job (public/applicant; answers are hidden unless ADMIN)
     this.route.get(
       "/jobs/:jobId/tests",
+      tryVerifyToken,
       PreselectionController.getTest
     );
 
@@ -33,6 +35,14 @@ class PreselectionRouter {
       verifyToken,
       verifyRole([UserRole.USER]),
       PreselectionController.submit
+    );
+
+    // Current applicant preselection status for a job
+    this.route.get(
+      "/jobs/:jobId/my-status",
+      verifyToken,
+      verifyRole([UserRole.USER]),
+      PreselectionController.myStatus
     );
 
     // Company admin views test results for applicants

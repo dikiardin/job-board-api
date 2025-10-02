@@ -3,9 +3,9 @@ export declare class JobRepository {
         name: string;
         email: string | null;
         phone: string | null;
-        city: string | null;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
         location: string | null;
         description: string | null;
@@ -25,9 +25,9 @@ export declare class JobRepository {
         deadline?: Date | null;
         isPublished?: boolean;
     }): Promise<{
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;
@@ -52,9 +52,9 @@ export declare class JobRepository {
         deadline?: Date | null;
         isPublished?: boolean;
     }>): Promise<{
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;
@@ -79,11 +79,11 @@ export declare class JobRepository {
                 dob: Date | null;
                 education: string | null;
                 address: string | null;
-                city: string | null;
                 profilePicture: string | null;
                 isVerified: boolean;
                 createdAt: Date;
                 updatedAt: Date;
+                city: string | null;
                 id: number;
             };
         } & {
@@ -114,11 +114,11 @@ export declare class JobRepository {
             isActive: boolean;
             jobId: number;
             passingScore: number | null;
-        })[];
+        }) | null;
     } & {
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;
@@ -132,9 +132,9 @@ export declare class JobRepository {
         isPublished: boolean;
     }) | null>;
     static togglePublish(jobId: number, isPublished: boolean): Promise<{
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;
@@ -148,9 +148,9 @@ export declare class JobRepository {
         isPublished: boolean;
     }>;
     static deleteJob(companyId: number, jobId: number): Promise<{
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;
@@ -177,9 +177,9 @@ export declare class JobRepository {
                 applications: number;
             };
         } & {
-            city: string;
             createdAt: Date;
             updatedAt: Date;
+            city: string;
             id: number;
             companyId: number;
             description: string;
@@ -206,9 +206,9 @@ export declare class JobRepository {
         offset?: number;
     }): Promise<{
         items: {
-            city: string;
             createdAt: Date;
             updatedAt: Date;
+            city: string;
             id: number;
             companyId: number;
             description: string;
@@ -225,6 +225,13 @@ export declare class JobRepository {
         limit: number;
         offset: number;
     }>;
+    static getJobPublic(jobId: number): Promise<{
+        id: number;
+        companyId: number;
+        title: string;
+        deadline: Date | null;
+        isPublished: boolean;
+    } | null>;
     static listApplicantsForJob(params: {
         companyId: number;
         jobId: number;
@@ -250,11 +257,11 @@ export declare class JobRepository {
                 dob: Date | null;
                 education: string | null;
                 address: string | null;
-                city: string | null;
                 profilePicture: string | null;
                 isVerified: boolean;
                 createdAt: Date;
                 updatedAt: Date;
+                city: string | null;
                 id: number;
             };
         } & {

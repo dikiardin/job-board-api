@@ -4,9 +4,9 @@ export declare class JobService {
         name: string;
         email: string | null;
         phone: string | null;
-        city: string | null;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
         location: string | null;
         description: string | null;
@@ -32,9 +32,9 @@ export declare class JobService {
             isPublished?: boolean;
         };
     }): Promise<{
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;
@@ -54,9 +54,9 @@ export declare class JobService {
         requesterRole: UserRole;
         body: any;
     }): Promise<{
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;
@@ -74,10 +74,11 @@ export declare class JobService {
         jobId: number;
         requesterId: number;
         requesterRole: UserRole;
+        isPublished?: boolean;
     }): Promise<{
-        city: string;
         createdAt: Date;
         updatedAt: Date;
+        city: string;
         id: number;
         companyId: number;
         description: string;
@@ -159,7 +160,7 @@ export declare class JobService {
         salaryMin: number | null;
         salaryMax: number | null;
         tags: string[];
-        applicationDeadline: Date | null;
+        deadline: Date | null;
         isPublished: boolean;
         createdAt: Date;
         applicantsCount: any;
@@ -168,6 +169,9 @@ export declare class JobService {
             userId: number;
             userName: any;
             userEmail: any;
+            profilePicture: any;
+            expectedSalary: any;
+            cvFile: any;
             score: number | null;
             preselectionPassed: boolean | undefined;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;

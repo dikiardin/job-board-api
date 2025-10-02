@@ -63,6 +63,17 @@ class PreselectionController {
             next(error);
         }
     }
+    static async myStatus(req, res, next) {
+        try {
+            const jobId = Number(req.params.jobId);
+            const requester = res.locals.decrypt;
+            const data = await preselection_service_1.PreselectionService.statusForUser({ jobId, userId: requester.userId });
+            res.status(200).json({ success: true, data });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 }
 exports.PreselectionController = PreselectionController;
 //# sourceMappingURL=preselection.controller.js.map

@@ -15,11 +15,11 @@ export declare class UserRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     }>;
     static findByEmail(email: string): Promise<{
@@ -32,11 +32,11 @@ export declare class UserRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     } | null>;
     static findById(id: number): Promise<{
@@ -49,11 +49,11 @@ export declare class UserRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     } | null>;
     static verifyUser(id: number): Promise<{
@@ -66,11 +66,11 @@ export declare class UserRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     }>;
     static updateUser(id: number, data: Partial<{
@@ -86,11 +86,11 @@ export declare class UserRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     }>;
     static findByIdWithPassword(id: number): Promise<{
@@ -108,11 +108,11 @@ export declare class UserRepo {
         dob: Date | null;
         education: string | null;
         address: string | null;
-        city: string | null;
         profilePicture: string | null;
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     }>;
 }

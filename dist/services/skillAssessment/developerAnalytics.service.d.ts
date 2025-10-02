@@ -1,0 +1,166 @@
+import { UserRole } from "../../generated/prisma";
+export declare class DeveloperAnalyticsService {
+    static getAssessmentResults(assessmentId: number, userId: number, userRole: UserRole): Promise<{
+        results: never[];
+        assessmentId: number;
+        total: number;
+    }>;
+    static getCertificateAnalytics(userRole: UserRole): Promise<{
+        totalCertificatesIssued: number;
+        certificatesThisMonth: number;
+        topPerformingAssessments: {
+            title: string;
+            certificates: number;
+        }[];
+        averageScores: {
+            javascript: number;
+            python: number;
+            react: number;
+        };
+        passRates: {
+            javascript: number;
+            python: number;
+            react: number;
+        };
+    }>;
+    static getBadgeAnalytics(userRole: UserRole): Promise<{
+        totalBadgesAwarded: number;
+        badgesThisMonth: number;
+        topBadges: {
+            title: string;
+            awarded: number;
+        }[];
+        badgesByCategory: {
+            programming: number;
+            frameworks: number;
+            databases: number;
+        };
+    }>;
+    static getVerificationStats(userRole: UserRole): Promise<{
+        totalVerifications: number;
+        verificationsToday: number;
+        verificationsThisWeek: number;
+        verificationsThisMonth: number;
+        topVerifiedCertificates: {
+            certificateCode: string;
+            verifications: number;
+        }[];
+    }>;
+    static getAssessmentMetrics(assessmentId: number, userRole: UserRole): Promise<{
+        totalAttempts: number;
+        uniqueUsers: number;
+        averageScore: number;
+        passRate: number;
+        averageTimeSpent: number;
+        difficultyRating: number;
+        completionRate: number;
+        retakeRate: number;
+    }>;
+    static getUserEngagementAnalytics(userRole: UserRole): Promise<{
+        activeUsers: {
+            daily: number;
+            weekly: number;
+            monthly: number;
+        };
+        assessmentTrends: {
+            thisMonth: number;
+            lastMonth: number;
+            growth: number;
+        };
+        popularAssessments: {
+            title: string;
+            attempts: number;
+        }[];
+        userRetention: {
+            day1: number;
+            day7: number;
+            day30: number;
+        };
+    }>;
+    static getCertificateTrends(userRole: UserRole): Promise<{
+        monthlyIssuance: {
+            month: string;
+            certificates: number;
+        }[];
+        topSkills: {
+            skill: string;
+            certificates: number;
+            growth: number;
+        }[];
+        industryDemand: {
+            "Web Development": number;
+            "Data Science": number;
+            "Mobile Development": number;
+        };
+    }>;
+    static exportAnalyticsData(userRole: UserRole, format?: 'json' | 'csv'): Promise<{
+        format: "json" | "csv";
+        data: {
+            certificates: {
+                totalCertificatesIssued: number;
+                certificatesThisMonth: number;
+                topPerformingAssessments: {
+                    title: string;
+                    certificates: number;
+                }[];
+                averageScores: {
+                    javascript: number;
+                    python: number;
+                    react: number;
+                };
+                passRates: {
+                    javascript: number;
+                    python: number;
+                    react: number;
+                };
+            };
+            badges: {
+                totalBadgesAwarded: number;
+                badgesThisMonth: number;
+                topBadges: {
+                    title: string;
+                    awarded: number;
+                }[];
+                badgesByCategory: {
+                    programming: number;
+                    frameworks: number;
+                    databases: number;
+                };
+            };
+            verification: {
+                totalVerifications: number;
+                verificationsToday: number;
+                verificationsThisWeek: number;
+                verificationsThisMonth: number;
+                topVerifiedCertificates: {
+                    certificateCode: string;
+                    verifications: number;
+                }[];
+            };
+            engagement: {
+                activeUsers: {
+                    daily: number;
+                    weekly: number;
+                    monthly: number;
+                };
+                assessmentTrends: {
+                    thisMonth: number;
+                    lastMonth: number;
+                    growth: number;
+                };
+                popularAssessments: {
+                    title: string;
+                    attempts: number;
+                }[];
+                userRetention: {
+                    day1: number;
+                    day7: number;
+                    day30: number;
+                };
+            };
+            exportedAt: Date;
+        };
+        filename: string;
+    }>;
+}
+//# sourceMappingURL=developerAnalytics.service.d.ts.map
