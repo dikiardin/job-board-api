@@ -31,7 +31,7 @@ export class GetJobService {
     return { jobs: formattedJobs, total };
   }
 
-  public static async getJobById(jobId: number) {
+  public static async getJobById(jobId: string) {
     const job = await GetJobRepository.findById(jobId);
     if (!job) {
       throw new CustomError("Job not found", 404);

@@ -2,7 +2,7 @@ import { UserRole } from "../../generated/prisma";
 import { JobRepository } from "../../repositories/job/job.repository";
 
 export class JobService {
-  static async assertCompanyOwnership(companyId: number, requesterId: number) {
+  static async assertCompanyOwnership(companyId: string, requesterId: number) {
     const company = await JobRepository.getCompany(companyId);
     if (!company) throw { status: 404, message: "Company not found" };
     if (company.adminId !== requesterId) throw { status: 403, message: "You don't own this company" };
@@ -27,7 +27,7 @@ export class JobService {
   }
 
   static async createJob(params: {
-    companyId: number;
+    companyId: string;
     requesterId: number;
     requesterRole: UserRole;
     body: {
@@ -64,8 +64,8 @@ export class JobService {
   }
 
   static async updateJob(params: {
-    companyId: number;
-    jobId: number;
+    companyId: string;
+    jobId: string;
     requesterId: number;
     requesterRole: UserRole;
     body: any;
@@ -80,7 +80,7 @@ export class JobService {
     return job;
   }
 
-  static async togglePublish(params: { companyId: number; jobId: number; requesterId: number; requesterRole: UserRole; isPublished?: boolean }) {
+  static async togglePublish(params: { companyId: string; jobId: string; requesterId: number; requesterRole: UserRole; isPublished?: boolean }) {
     const { companyId, jobId, requesterId, requesterRole, isPublished } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can publish/unpublish jobs" };
     await this.assertCompanyOwnership(companyId, requesterId);
@@ -91,7 +91,7 @@ export class JobService {
     return updated;
   }
 
-  static async deleteJob(params: { companyId: number; jobId: number; requesterId: number; requesterRole: UserRole }) {
+  static async deleteJob(params: { companyId: string; jobId: string; requesterId: number; requesterRole: UserRole }) {
     const { companyId, jobId, requesterId, requesterRole } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can delete jobs" };
     await this.assertCompanyOwnership(companyId, requesterId);
@@ -100,7 +100,7 @@ export class JobService {
   }
 
   static async listJobs(params: {
-    companyId: number;
+    companyId: string;
     requesterId: number;
     requesterRole: UserRole;
     query: { title?: string; category?: string; sortBy?: "createdAt" | "deadline"; sortOrder?: "asc" | "desc"; limit?: number; offset?: number };
@@ -122,7 +122,7 @@ export class JobService {
     }
   }
 
-  private static buildQueryParams(companyId: number, query: any) {
+  private static buildQueryParams(companyId: string, query: any) {
     const repoQuery: any = { companyId };
     
     if (typeof query.title === "string") repoQuery.title = query.title;
@@ -193,7 +193,7 @@ export class JobService {
     };
   }
 
-  static async jobDetail(params: { companyId: number; jobId: number; requesterId: number; requesterRole: UserRole }) {
+  static async jobDetail(params: { companyId: string; jobId: string; requesterId: number; requesterRole: UserRole }) {
     const { companyId, jobId, requesterId, requesterRole } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can view job detail" };
     await this.assertCompanyOwnership(companyId, requesterId);

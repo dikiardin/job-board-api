@@ -7,7 +7,7 @@ import { JobRepository } from "../../repositories/job/job.repository";
 export class ApplicationService {
   public static async submitApplication(
     userId: number,
-    jobId: number,
+    jobId: string,
     file: Express.Multer.File,
     expectedSalary?: number
   ) {

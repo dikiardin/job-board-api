@@ -1,5 +1,5 @@
 export declare class PDFContentService {
-    static addHeader(doc: PDFKit.PDFDocument): void;
+    static addHeader(doc: PDFKit.PDFDocument, badgeIcon?: string): Promise<void>;
     static addCertificateBody(doc: PDFKit.PDFDocument, data: any): void;
     static addScoreSection(doc: PDFKit.PDFDocument, data: any): void;
     static addDatesSection(doc: PDFKit.PDFDocument, data: any): void;
@@ -7,5 +7,7 @@ export declare class PDFContentService {
     static calculateQRPosition(data: any): number;
     private static getAchievementLevel;
     static convertToBuffer(doc: PDFKit.PDFDocument): Promise<Buffer>;
+    private static addWebsiteLogo;
+    private static addBadgeLogo;
 }
 //# sourceMappingURL=pdfContent.service.d.ts.map

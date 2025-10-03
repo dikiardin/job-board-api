@@ -3,7 +3,7 @@ import { JobRepository } from "../../repositories/job/job.repository";
 import { ApplicationRepo } from "../../repositories/application/application.repository";
 import { PreselectionRepository } from "../../repositories/preselection/preselection.repository";
 
-async function assertCompanyOwnership(companyId: number, requesterId: number) {
+async function assertCompanyOwnership(companyId: string, requesterId: number) {
   const company = await JobRepository.getCompany(companyId);
   if (!company) throw { status: 404, message: "Company not found" };
   if (company.adminId !== requesterId) throw { status: 403, message: "You don't own this company" };
@@ -12,8 +12,8 @@ async function assertCompanyOwnership(companyId: number, requesterId: number) {
 
 export class JobApplicantsService {
   static async updateApplicantStatus(params: {
-    companyId: number;
-    jobId: number;
+    companyId: string;
+    jobId: string;
     applicationId: number;
     requesterId: number;
     requesterRole: UserRole;
@@ -39,8 +39,8 @@ export class JobApplicantsService {
   }
 
   static async listApplicants(params: {
-    companyId: number;
-    jobId: number;
+    companyId: string;
+    jobId: string;
     requesterId: number;
     requesterRole: UserRole;
     query: {

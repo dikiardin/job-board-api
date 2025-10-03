@@ -1,11 +1,11 @@
 export declare class ApplicationService {
-    static submitApplication(userId: number, jobId: number, file: Express.Multer.File, expectedSalary?: number): Promise<{
+    static submitApplication(userId: number, jobId: string, file: Express.Multer.File, expectedSalary?: number): Promise<{
         createdAt: Date;
         updatedAt: Date;
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: number;
+        jobId: string;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;
@@ -13,10 +13,10 @@ export declare class ApplicationService {
     static getApplicationsByUserId(userId: number): Promise<({
         job: {
             city: string;
-            id: number;
+            id: string;
             company: {
                 name: string;
-                id: number;
+                id: string;
                 logo: string | null;
             };
             title: string;
@@ -30,7 +30,7 @@ export declare class ApplicationService {
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: number;
+        jobId: string;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;

@@ -62,8 +62,16 @@ export declare class AssessmentExecutionService {
             options: string[];
         }[];
         _count: {
+            questions: number;
             results: number;
         };
+        badgeTemplate: {
+            name: string;
+            id: number;
+            description: string | null;
+            category: string | null;
+            icon: string | null;
+        } | null;
         creator: {
             name: string;
             id: number;

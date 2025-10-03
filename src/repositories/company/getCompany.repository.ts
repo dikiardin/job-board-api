@@ -51,7 +51,7 @@ public static async getAllCompanies({ page, limit, keyword, city }: GetAllCompan
   return { data: companies, total };
 }
 
-  public static async getCompanyById(companyId: number) {
+  public static async getCompanyById(companyId: string) {
     return prisma.company.findUnique({
       where: { id: companyId },
       select: {

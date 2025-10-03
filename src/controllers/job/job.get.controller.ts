@@ -43,10 +43,7 @@ export class GetJobController {
         return res.status(400).json({ message: "Job ID is required" });
       }
 
-      const jobId = Number(jobIdParam);
-      if (isNaN(jobId)) {
-        return res.status(400).json({ message: "Invalid job ID" });
-      }
+      const jobId = jobIdParam as string;
 
       const job = await GetJobService.getJobById(jobId);
       if (!job) {

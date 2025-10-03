@@ -3,7 +3,7 @@ import { CustomError } from "../../utils/customError";
 
 export interface CreateReviewData {
   userId: number;
-  companyId: number;
+  companyId: string;
   position: string;
   salaryEstimate?: number;
   cultureRating: number;
@@ -14,7 +14,7 @@ export interface CreateReviewData {
 }
 
 export interface GetReviewsParams {
-  companyId: number;
+  companyId: string;
   page: number;
   limit: number;
   sortBy: string;
@@ -57,7 +57,7 @@ export class CompanyReviewService {
   }
 
   // Get company review statistics
-  public static async getCompanyReviewStats(companyId: number) {
+  public static async getCompanyReviewStats(companyId: string) {
     // Check if company exists
     const companyExists = await CompanyReviewRepository.checkCompanyExists(companyId);
     if (!companyExists) {
@@ -121,7 +121,7 @@ export class CompanyReviewService {
   }
 
   // Check if user can review a company
-  public static async checkReviewEligibility(userId: number, companyId: number) {
+  public static async checkReviewEligibility(userId: number, companyId: string) {
     // Check if company exists
     const companyExists = await CompanyReviewRepository.checkCompanyExists(companyId);
     if (!companyExists) {
@@ -152,7 +152,7 @@ export class CompanyReviewService {
   }
 
   // Get user's own review for a company
-  public static async getUserReview(userId: number, companyId: number) {
+  public static async getUserReview(userId: number, companyId: string) {
     const employment = await CompanyReviewRepository.getUserEmployment(userId, companyId);
     if (!employment) {
       throw new CustomError("Employment record not found", 404);
@@ -210,7 +210,7 @@ export class CompanyReviewService {
   }
 
   // Delete user's review
-  public static async deleteReview(userId: number, companyId: number) {
+  public static async deleteReview(userId: number, companyId: string) {
     const employment = await CompanyReviewRepository.getUserEmployment(userId, companyId);
     if (!employment) {
       throw new CustomError("Employment record not found", 404);
@@ -225,7 +225,7 @@ export class CompanyReviewService {
   }
 
   // Get salary estimates by position for a company
-  public static async getSalaryEstimates(companyId: number) {
+  public static async getSalaryEstimates(companyId: string) {
     // Check if company exists
     const companyExists = await CompanyReviewRepository.checkCompanyExists(companyId);
     if (!companyExists) {

@@ -10,8 +10,11 @@ class SkillAssessmentController {
         try {
             const { userId, role } = res.locals.decrypt;
             const { title, description, questions, badgeTemplateId } = req.body;
-            if (!title || !questions) {
-                throw new customError_1.CustomError("Title and questions are required", 400);
+            if (!title) {
+                throw new customError_1.CustomError("Title is required", 400);
+            }
+            if (!Array.isArray(questions)) {
+                throw new customError_1.CustomError("Questions must be an array", 400);
             }
             const assessment = await skillAssessment_service_1.SkillAssessmentService.createAssessment({
                 title,
@@ -71,13 +74,14 @@ class SkillAssessmentController {
         try {
             const { userId } = res.locals.decrypt;
             const assessmentId = parseInt(req.params.assessmentId || '0');
-            const { answers } = req.body;
+            const { answers, startedAt } = req.body;
             if (isNaN(assessmentId)) {
                 throw new customError_1.CustomError("Invalid assessment ID", 400);
             }
             const result = await skillAssessment_service_1.SkillAssessmentService.submitAssessment({
                 userId,
                 assessmentId,
+                startedAt,
                 answers,
             });
             res.status(200).json({
@@ -123,15 +127,12 @@ class SkillAssessmentController {
     // Get single assessment by ID (Developer only, for editing)
     static async getAssessmentById(req, res, next) {
         try {
-            console.log("[CONTROLLER] getAssessmentById called");
             const { userId, role } = res.locals.decrypt;
             const assessmentId = parseInt(req.params.assessmentId || '0');
-            console.log("[CONTROLLER] Assessment ID:", assessmentId, "User ID:", userId);
             if (isNaN(assessmentId)) {
                 throw new customError_1.CustomError("Invalid assessment ID", 400);
             }
             const assessment = await skillAssessment_service_1.SkillAssessmentService.getAssessmentByIdForDeveloper(assessmentId, userId, role);
-            console.log("[CONTROLLER] Assessment fetched successfully");
             res.status(200).json({
                 success: true,
                 message: "Assessment retrieved successfully",
@@ -139,7 +140,6 @@ class SkillAssessmentController {
             });
         }
         catch (error) {
-            console.error("[CONTROLLER] Error:", error);
             next(error);
         }
     }
@@ -246,6 +246,38 @@ class SkillAssessmentController {
             res.status(200).json({
                 success: true,
                 ...result,
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    // Save individual question (Developer only)
+    static async saveQuestion(req, res, next) {
+        try {
+            const { userId, role } = res.locals.decrypt;
+            const { assessmentId, question, options, answer } = req.body;
+            if (!assessmentId || !question || !options || !answer) {
+                throw new customError_1.CustomError("Assessment ID, question, options, and answer are required", 400);
+            }
+            if (!Array.isArray(options) || options.length !== 4) {
+                throw new customError_1.CustomError("Options must be an array of 4 items", 400);
+            }
+            if (!options.includes(answer)) {
+                throw new customError_1.CustomError("Answer must be one of the provided options", 400);
+            }
+            const result = await skillAssessment_service_1.SkillAssessmentService.saveQuestion({
+                assessmentId,
+                question,
+                options,
+                answer,
+                userId,
+                userRole: role
+            });
+            res.status(201).json({
+                success: true,
+                message: "Question saved successfully",
+                data: result,
             });
         }
         catch (error) {

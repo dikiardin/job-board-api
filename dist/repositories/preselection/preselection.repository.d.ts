@@ -1,6 +1,6 @@
 import { Prisma } from "../../generated/prisma";
 export declare class PreselectionRepository {
-    static getJob(jobId: number): Promise<({
+    static getJob(jobId: string): Promise<({
         company: {
             name: string;
             email: string | null;
@@ -8,7 +8,7 @@ export declare class PreselectionRepository {
             createdAt: Date;
             updatedAt: Date;
             city: string | null;
-            id: number;
+            id: string;
             location: string | null;
             description: string | null;
             website: string | null;
@@ -19,8 +19,8 @@ export declare class PreselectionRepository {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: number;
-        companyId: number;
+        id: string;
+        companyId: string;
         description: string;
         title: string;
         category: string;
@@ -31,7 +31,7 @@ export declare class PreselectionRepository {
         deadline: Date | null;
         isPublished: boolean;
     }) | null>;
-    static getTestByJobId(jobId: number): Promise<({
+    static getTestByJobId(jobId: string): Promise<({
         questions: {
             id: number;
             options: Prisma.JsonValue;
@@ -43,7 +43,7 @@ export declare class PreselectionRepository {
         createdAt: Date;
         id: number;
         isActive: boolean;
-        jobId: number;
+        jobId: string;
         passingScore: number | null;
     }) | null>;
     static getTestById(testId: number): Promise<({
@@ -55,7 +55,7 @@ export declare class PreselectionRepository {
                 createdAt: Date;
                 updatedAt: Date;
                 city: string | null;
-                id: number;
+                id: string;
                 location: string | null;
                 description: string | null;
                 website: string | null;
@@ -66,8 +66,8 @@ export declare class PreselectionRepository {
             createdAt: Date;
             updatedAt: Date;
             city: string;
-            id: number;
-            companyId: number;
+            id: string;
+            companyId: string;
             description: string;
             title: string;
             category: string;
@@ -89,10 +89,10 @@ export declare class PreselectionRepository {
         createdAt: Date;
         id: number;
         isActive: boolean;
-        jobId: number;
+        jobId: string;
         passingScore: number | null;
     }) | null>;
-    static createTest(jobId: number, questions: Array<{
+    static createTest(jobId: string, questions: Array<{
         question: string;
         options: string[];
         answer: string;
@@ -108,17 +108,17 @@ export declare class PreselectionRepository {
         createdAt: Date;
         id: number;
         isActive: boolean;
-        jobId: number;
+        jobId: string;
         passingScore: number | null;
     }>;
-    static deleteTestByJobId(jobId: number): Promise<{
+    static deleteTestByJobId(jobId: string): Promise<{
         createdAt: Date;
         id: number;
         isActive: boolean;
-        jobId: number;
+        jobId: string;
         passingScore: number | null;
     }>;
-    static upsertTest(jobId: number, questions: Array<{
+    static upsertTest(jobId: string, questions: Array<{
         question: string;
         options: string[];
         answer: string;
@@ -134,7 +134,7 @@ export declare class PreselectionRepository {
         createdAt: Date;
         id: number;
         isActive: boolean;
-        jobId: number;
+        jobId: string;
         passingScore: number | null;
     }>;
     static getResult(userId: number, testId: number): Promise<({
@@ -171,13 +171,13 @@ export declare class PreselectionRepository {
         testId: number;
         score: number;
     }>;
-    static getTestResultsByJob(jobId: number): Promise<({
+    static getTestResultsByJob(jobId: string): Promise<({
         job: {
             createdAt: Date;
             updatedAt: Date;
             city: string;
-            id: number;
-            companyId: number;
+            id: string;
+            companyId: string;
             description: string;
             title: string;
             category: string;
@@ -231,7 +231,7 @@ export declare class PreselectionRepository {
         createdAt: Date;
         id: number;
         isActive: boolean;
-        jobId: number;
+        jobId: string;
         passingScore: number | null;
     }) | null>;
     static getResultsByTestAndUsers(testId: number, userIds: number[]): Promise<any[]>;

@@ -14,7 +14,7 @@ export class ApplicationController {
       if (!jobIdParam) {
         throw new CustomError("Job ID is required", 400);
       }
-      const jobId = parseInt(jobIdParam, 10);
+      const jobId = jobIdParam as string;
       const { expectedSalary } = req.body;
 
       if (!req.file) {

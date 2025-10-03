@@ -2,11 +2,11 @@ import { prisma } from "../../config/prisma";
 import { Prisma } from "../../generated/prisma";
 
 export class JobRepository {
-  static async getCompany(companyId: number) {
+  static async getCompany(companyId: string) {
     return prisma.company.findUnique({ where: { id: companyId } });
   }
 
-  static async createJob(companyId: number, data: {
+  static async createJob(companyId: string, data: {
     title: string;
     description: string;
     banner?: string | null;
@@ -35,7 +35,7 @@ export class JobRepository {
     });
   }
 
-  static async updateJob(companyId: number, jobId: number, data: Partial<{
+  static async updateJob(companyId: string, jobId: string, data: Partial<{
     title: string;
     description: string;
     banner?: string | null;
@@ -55,7 +55,7 @@ export class JobRepository {
     });
   }
 
-  static async getJobById(companyId: number, jobId: number) {
+  static async getJobById(companyId: string, jobId: string) {
     return prisma.job.findFirst({
       where: { id: jobId, companyId },
       include: {
@@ -75,16 +75,16 @@ export class JobRepository {
     });
   }
 
-  static async togglePublish(jobId: number, isPublished: boolean) {
+  static async togglePublish(jobId: string, isPublished: boolean) {
     return prisma.job.update({ where: { id: jobId }, data: { isPublished } });
   }
 
-  static async deleteJob(companyId: number, jobId: number) {
+  static async deleteJob(companyId: string, jobId: string) {
     return prisma.job.delete({ where: { id: jobId } });
   }
 
   static async listJobs(params: {
-    companyId: number;
+    companyId: string;
     title?: string;
     category?: string;
     sortBy?: "createdAt" | "deadline";
@@ -153,7 +153,7 @@ export class JobRepository {
     return { items, total, limit, offset };
   }
 
-  static async getJobPublic(jobId: number) {
+  static async getJobPublic(jobId: string) {
     const now = new Date();
     return prisma.job.findFirst({
       where: {
@@ -165,8 +165,8 @@ export class JobRepository {
     });
   }
   static async listApplicantsForJob(params: {
-    companyId: number;
-    jobId: number;
+    companyId: string;
+    jobId: string;
     name?: string;
     education?: string;
     ageMin?: number;

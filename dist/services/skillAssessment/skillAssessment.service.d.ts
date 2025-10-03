@@ -42,8 +42,16 @@ export declare class SkillAssessmentService {
     static getAssessments(page?: number, limit?: number): Promise<{
         assessments: ({
             _count: {
+                questions: number;
                 results: number;
             };
+            badgeTemplate: {
+                name: string;
+                id: number;
+                description: string | null;
+                category: string | null;
+                icon: string | null;
+            } | null;
             creator: {
                 name: string;
                 id: number;
@@ -93,6 +101,7 @@ export declare class SkillAssessmentService {
     static submitAssessment(data: {
         userId: number;
         assessmentId: number;
+        startedAt: string;
         answers: Array<{
             questionId: number;
             selectedAnswer: string;
@@ -231,6 +240,20 @@ export declare class SkillAssessmentService {
         }>;
     }): Promise<{
         message: string;
+    }>;
+    static saveQuestion(data: {
+        assessmentId: number;
+        question: string;
+        options: string[];
+        answer: string;
+        userId: number;
+        userRole: UserRole;
+    }): Promise<{
+        id: number;
+        options: import("../../generated/prisma/runtime/library").JsonValue;
+        question: string;
+        answer: string;
+        assessmentId: number;
     }>;
     static deleteAssessment(assessmentId: number, userId: number, userRole: UserRole): Promise<{
         message: string;

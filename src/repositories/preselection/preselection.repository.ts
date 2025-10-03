@@ -2,11 +2,11 @@ import { prisma } from "../../config/prisma";
 import { Prisma } from "../../generated/prisma";
 
 export class PreselectionRepository {
-  static async getJob(jobId: number) {
+  static async getJob(jobId: string) {
     return prisma.job.findUnique({ where: { id: jobId }, include: { company: true } });
   }
 
-  static async getTestByJobId(jobId: number) {
+  static async getTestByJobId(jobId: string) {
     return prisma.preselectionTest.findUnique({
       where: { jobId },
       include: { questions: true },
@@ -20,7 +20,7 @@ export class PreselectionRepository {
     });
   }
 
-  static async createTest(jobId: number, questions: Array<{ question: string; options: string[]; answer: string }>, passingScore?: number, isActive: boolean = true) {
+  static async createTest(jobId: string, questions: Array<{ question: string; options: string[]; answer: string }>, passingScore?: number, isActive: boolean = true) {
     return prisma.preselectionTest.create({
       data: {
         jobId,
@@ -34,11 +34,11 @@ export class PreselectionRepository {
     });
   }
 
-  static async deleteTestByJobId(jobId: number) {
+  static async deleteTestByJobId(jobId: string) {
     return prisma.preselectionTest.delete({ where: { jobId } });
   }
 
-  static async upsertTest(jobId: number, questions: Array<{ question: string; options: string[]; answer: string }>, passingScore?: number, isActive: boolean = true) {
+  static async upsertTest(jobId: string, questions: Array<{ question: string; options: string[]; answer: string }>, passingScore?: number, isActive: boolean = true) {
     const existing = await this.getTestByJobId(jobId);
     if (existing) {
       // Replace questions entirely
@@ -76,7 +76,7 @@ export class PreselectionRepository {
     });
   }
 
-  static async getTestResultsByJob(jobId: number) {
+  static async getTestResultsByJob(jobId: string) {
     return prisma.preselectionTest.findUnique({
       where: { jobId },
       include: {

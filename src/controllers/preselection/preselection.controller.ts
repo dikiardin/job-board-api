@@ -5,7 +5,7 @@ import { UserRole } from "../../generated/prisma";
 export class PreselectionController {
   static async createTest(req: Request, res: Response, next: NextFunction) {
     try {
-      const jobId = Number(req.params.jobId);
+      const jobId = req.params.jobId as string;
       const { questions, passingScore, isActive } = req.body;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 
@@ -26,7 +26,7 @@ export class PreselectionController {
 
   static async getTest(req: Request, res: Response, next: NextFunction) {
     try {
-      const jobId = Number(req.params.jobId);
+      const jobId = req.params.jobId as string;
       const requester = res.locals.decrypt as { role?: UserRole };
       const data = await PreselectionService.getTestForJob(jobId, requester?.role);
       res.status(200).json({ success: true, data });
@@ -58,7 +58,7 @@ export class PreselectionController {
 
   static async getJobResults(req: Request, res: Response, next: NextFunction) {
     try {
-      const jobId = Number(req.params.jobId);
+      const jobId = req.params.jobId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
       const data = await PreselectionService.getJobResults({ jobId, requesterId: requester.userId, requesterRole: requester.role });
       res.status(200).json({ success: true, data });
@@ -69,7 +69,7 @@ export class PreselectionController {
 
   static async myStatus(req: Request, res: Response, next: NextFunction) {
     try {
-      const jobId = Number(req.params.jobId);
+      const jobId = req.params.jobId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
       const data = await PreselectionService.statusForUser({ jobId, userId: requester.userId });
       res.status(200).json({ success: true, data });

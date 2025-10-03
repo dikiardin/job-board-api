@@ -6,4 +6,5 @@ export declare const validatePagination: (req: Request, res: Response, next: Nex
 export declare const validateAssessmentId: (req: Request, res: Response, next: NextFunction) => Response<any, Record<string, any>> | undefined;
 export declare const validateCertificateCode: (req: Request, res: Response, next: NextFunction) => Response<any, Record<string, any>> | undefined;
 export declare const validateResultId: (req: Request, res: Response, next: NextFunction) => Response<any, Record<string, any>> | undefined;
+export declare const validateSaveQuestion: (req: Request, res: Response, next: NextFunction) => Response<any, Record<string, any>> | undefined;
 //# sourceMappingURL=skillAssessment.validator.d.ts.map

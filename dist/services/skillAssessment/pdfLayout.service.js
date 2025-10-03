@@ -47,7 +47,7 @@ class PDFLayoutService {
             bufferPages: true,
         });
         // Add header and content using PDFContentService
-        pdfContent_service_1.PDFContentService.addHeader(doc);
+        await pdfContent_service_1.PDFContentService.addHeader(doc, data.badgeIcon);
         pdfContent_service_1.PDFContentService.addCertificateBody(doc, data);
         pdfContent_service_1.PDFContentService.addScoreSection(doc, data);
         pdfContent_service_1.PDFContentService.addDatesSection(doc, data);

@@ -1,11 +1,11 @@
 export declare class SavedJobRepo {
-    static saveJob(userId: number, jobId: number): Promise<{
+    static saveJob(userId: number, jobId: string): Promise<{
         job: {
             city: string;
-            id: number;
+            id: string;
             company: {
                 name: string;
-                id: number;
+                id: string;
                 logo: string | null;
             };
             title: string;
@@ -18,15 +18,15 @@ export declare class SavedJobRepo {
         createdAt: Date;
         id: number;
         userId: number;
-        jobId: number;
+        jobId: string;
     }>;
     static getSavedJobsByUser(userId: number): Promise<({
         job: {
             city: string;
-            id: number;
+            id: string;
             company: {
                 name: string;
-                id: number;
+                id: string;
                 logo: string | null;
             };
             title: string;
@@ -39,13 +39,13 @@ export declare class SavedJobRepo {
         createdAt: Date;
         id: number;
         userId: number;
-        jobId: number;
+        jobId: string;
     })[]>;
-    static unsaveJob(userId: number, jobId: number): Promise<{
+    static unsaveJob(userId: number, jobId: string): Promise<{
         createdAt: Date;
         id: number;
         userId: number;
-        jobId: number;
+        jobId: string;
     }>;
 }
 //# sourceMappingURL=saveJob.repositody.d.ts.map

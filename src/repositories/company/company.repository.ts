@@ -7,7 +7,7 @@ export class CompanyRepo {
     });
   }
 
-  static async updateCompany(companyId: number, data: Partial<{ email: string; name: string; location: string; description: string; website: string }>) {
+  static async updateCompany(companyId: string, data: Partial<{ email: string; name: string; location: string; description: string; website: string }>) {
     return prisma.company.update({
       where: { id: companyId },
       data,

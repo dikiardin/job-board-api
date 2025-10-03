@@ -37,6 +37,12 @@ class SkillAssessmentModularRepository {
     static async getAssessmentStats() {
         return await assessmentCrud_repository_1.AssessmentCrudRepository.getAssessmentStats();
     }
+    static async getAssessmentByIdForDeveloper(assessmentId, createdBy) {
+        return await assessmentCrud_repository_1.AssessmentCrudRepository.getAssessmentByIdForDeveloper(assessmentId, createdBy);
+    }
+    static async saveQuestion(data) {
+        return await assessmentCrud_repository_1.AssessmentCrudRepository.saveQuestion(data);
+    }
     // ===== ASSESSMENT RESULTS OPERATIONS =====
     // Delegate to AssessmentResultsRepository
     static async saveAssessmentResult(data) {

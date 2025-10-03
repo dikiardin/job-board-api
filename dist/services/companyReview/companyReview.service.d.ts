@@ -1,6 +1,6 @@
 export interface CreateReviewData {
     userId: number;
-    companyId: number;
+    companyId: string;
     position: string;
     salaryEstimate?: number;
     cultureRating: number;
@@ -10,7 +10,7 @@ export interface CreateReviewData {
     comment?: string;
 }
 export interface GetReviewsParams {
-    companyId: number;
+    companyId: string;
     page: number;
     limit: number;
     sortBy: string;
@@ -36,7 +36,7 @@ export declare class CompanyReviewService {
             totalPages: number;
         };
     }>;
-    static getCompanyReviewStats(companyId: number): Promise<{
+    static getCompanyReviewStats(companyId: string): Promise<{
         totalReviews: number;
         averageRatings: {
             culture: number;
@@ -61,7 +61,7 @@ export declare class CompanyReviewService {
         careerRating: import("../../generated/prisma/runtime/library").Decimal | null;
         comment: string | null;
     }>;
-    static checkReviewEligibility(userId: number, companyId: number): Promise<{
+    static checkReviewEligibility(userId: number, companyId: string): Promise<{
         canReview: boolean;
         reason: string;
         employmentId?: never;
@@ -76,7 +76,7 @@ export declare class CompanyReviewService {
         };
         reason?: never;
     }>;
-    static getUserReview(userId: number, companyId: number): Promise<{
+    static getUserReview(userId: number, companyId: string): Promise<{
         createdAt: Date;
         id: number;
         position: string;
@@ -98,8 +98,8 @@ export declare class CompanyReviewService {
         careerRating: import("../../generated/prisma/runtime/library").Decimal | null;
         comment: string | null;
     }>;
-    static deleteReview(userId: number, companyId: number): Promise<void>;
-    static getSalaryEstimates(companyId: number): Promise<{
+    static deleteReview(userId: number, companyId: string): Promise<void>;
+    static getSalaryEstimates(companyId: string): Promise<{
         position: string;
         count: number;
         averageSalary: number;

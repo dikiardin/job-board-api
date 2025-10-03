@@ -10,15 +10,11 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const companyId = parseInt(req.params.companyId || '0');
+      const companyId = (req.params.companyId as string);
       const page = parseInt((req.query.page as string) || '1');
       const limit = parseInt((req.query.limit as string) || '10');
       const sortBy = (req.query.sortBy as string) || 'createdAt';
       const sortOrder = (req.query.sortOrder as string) || 'desc';
-
-      if (isNaN(companyId)) {
-        throw new CustomError("Invalid company ID", 400);
-      }
 
       const result = await CompanyReviewService.getCompanyReviews({
         companyId,
@@ -45,11 +41,7 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const companyId = parseInt(req.params.companyId || '0');
-
-      if (isNaN(companyId)) {
-        throw new CustomError("Invalid company ID", 400);
-      }
+      const companyId = (req.params.companyId as string);
 
       const stats = await CompanyReviewService.getCompanyReviewStats(companyId);
 
@@ -71,12 +63,8 @@ export class CompanyReviewController {
   ) {
     try {
       const userId = res.locals.decrypt.userId;
-      const companyId = parseInt(req.params.companyId || '0');
+      const companyId = (req.params.companyId as string);
       const reviewData = req.body;
-
-      if (isNaN(companyId)) {
-        throw new CustomError("Invalid company ID", 400);
-      }
 
       const review = await CompanyReviewService.createReview({
         userId,
@@ -102,12 +90,7 @@ export class CompanyReviewController {
   ) {
     try {
       const userId = res.locals.decrypt.userId;
-      const companyId = parseInt(req.params.companyId || '0');
-
-      if (isNaN(companyId)) {
-        throw new CustomError("Invalid company ID", 400);
-      }
-
+      const companyId = (req.params.companyId as string);
       const eligibility = await CompanyReviewService.checkReviewEligibility(
         userId,
         companyId
@@ -131,12 +114,7 @@ export class CompanyReviewController {
   ) {
     try {
       const userId = res.locals.decrypt.userId;
-      const companyId = parseInt(req.params.companyId || '0');
-
-      if (isNaN(companyId)) {
-        throw new CustomError("Invalid company ID", 400);
-      }
-
+      const companyId = (req.params.companyId as string);
       const review = await CompanyReviewService.getUserReview(userId, companyId);
 
       res.status(200).json({
@@ -157,13 +135,8 @@ export class CompanyReviewController {
   ) {
     try {
       const userId = res.locals.decrypt.userId;
-      const companyId = parseInt(req.params.companyId || '0');
+      const companyId = (req.params.companyId as string);
       const reviewData = req.body;
-
-      if (isNaN(companyId)) {
-        throw new CustomError("Invalid company ID", 400);
-      }
-
       const review = await CompanyReviewService.updateReview({
         userId,
         companyId,
@@ -188,12 +161,7 @@ export class CompanyReviewController {
   ) {
     try {
       const userId = res.locals.decrypt.userId;
-      const companyId = parseInt(req.params.companyId || '0');
-
-      if (isNaN(companyId)) {
-        throw new CustomError("Invalid company ID", 400);
-      }
-
+      const companyId = (req.params.companyId as string);
       await CompanyReviewService.deleteReview(userId, companyId);
 
       res.status(200).json({
@@ -212,12 +180,7 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const companyId = parseInt(req.params.companyId || '0');
-
-      if (isNaN(companyId)) {
-        throw new CustomError("Invalid company ID", 400);
-      }
-
+      const companyId = (req.params.companyId as string);
       const salaryEstimates = await CompanyReviewService.getSalaryEstimates(companyId);
 
       res.status(200).json({

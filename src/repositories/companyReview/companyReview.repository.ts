@@ -22,7 +22,7 @@ export interface UpdateReviewData {
 }
 
 export interface GetReviewsParams {
-  companyId: number;
+  companyId: string;
   limit: number;
   offset: number;
   sortBy: string;
@@ -31,7 +31,7 @@ export interface GetReviewsParams {
 
 export class CompanyReviewRepository {
   // Check if company exists
-  public static async checkCompanyExists(companyId: number): Promise<boolean> {
+  public static async checkCompanyExists(companyId: string): Promise<boolean> {
     const company = await prisma.company.findUnique({
       where: { id: companyId },
       select: { id: true }
@@ -40,7 +40,7 @@ export class CompanyReviewRepository {
   }
 
   // Get user's employment record with a company
-  public static async getUserEmployment(userId: number, companyId: number) {
+  public static async getUserEmployment(userId: number, companyId: string) {
     return await prisma.employment.findFirst({
       where: {
         userId,
@@ -169,7 +169,7 @@ export class CompanyReviewRepository {
   }
 
   // Get total count of reviews for a company
-  public static async getCompanyReviewsCount(companyId: number): Promise<number> {
+  public static async getCompanyReviewsCount(companyId: string): Promise<number> {
     return await prisma.companyReview.count({
       where: {
         employment: {
@@ -180,7 +180,7 @@ export class CompanyReviewRepository {
   }
 
   // Get company review statistics
-  public static async getCompanyReviewStats(companyId: number) {
+  public static async getCompanyReviewStats(companyId: string) {
     const stats = await prisma.companyReview.aggregate({
       where: {
         employment: {
@@ -233,7 +233,7 @@ export class CompanyReviewRepository {
   }
 
   // Get salary estimates by position for a company
-  public static async getSalaryEstimates(companyId: number) {
+  public static async getSalaryEstimates(companyId: string) {
     const estimates = await prisma.$queryRaw`
       SELECT 
         position,

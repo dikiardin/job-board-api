@@ -2,7 +2,7 @@ import { InterviewStatus, UserRole, ApplicationStatus } from "../../generated/pr
 import { prisma } from "../../config/prisma";
 import { InterviewRepository } from "../../repositories/interview/interview.repository";
 import { InterviewEmailService } from "./interviewEmail.service";
-async function assertCompanyOwnershipByJob(jobId: number, requesterId: number) {
+async function assertCompanyOwnershipByJob(jobId: string, requesterId: number) {
   const job = await prisma.job.findUnique({ where: { id: jobId }, include: { company: true } });
   if (!job) throw { status: 404, message: "Job not found" };
   if (job.company.adminId !== requesterId) throw { status: 403, message: "You don't own this company" };
@@ -42,8 +42,8 @@ function validatePayload(payload: any, isUpdate = false) {
 }
 export class InterviewCommandService {
   static async createMany(params: {
-    companyId: number;
-    jobId: number;
+    companyId: string;
+    jobId: string;
     requesterId: number;
     requesterRole: UserRole;
     body: { items: Array<{ applicantId: number; scheduleDate: string | Date; locationOrLink?: string | null; notes?: string | null }> };
@@ -69,7 +69,7 @@ export class InterviewCommandService {
     }
   }
 
-  private static async getApplicationsForJob(jobId: number, items: any[]) {
+  private static async getApplicationsForJob(jobId: string, items: any[]) {
     return await prisma.application.findMany({
       where: { jobId, userId: { in: items.map((i) => i.applicantId) } },
       include: { user: true },

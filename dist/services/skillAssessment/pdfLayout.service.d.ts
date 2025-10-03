@@ -9,6 +9,7 @@ export declare class PDFLayoutService {
         completedAt: Date;
         userId: number;
         certificateCode: string;
+        badgeIcon?: string;
     }): Promise<Buffer>;
 }
 //# sourceMappingURL=pdfLayout.service.d.ts.map

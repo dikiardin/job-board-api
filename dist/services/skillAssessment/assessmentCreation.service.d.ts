@@ -42,8 +42,16 @@ export declare class AssessmentCreationService {
     static getAssessments(page?: number, limit?: number): Promise<{
         assessments: ({
             _count: {
+                questions: number;
                 results: number;
             };
+            badgeTemplate: {
+                name: string;
+                id: number;
+                description: string | null;
+                category: string | null;
+                icon: string | null;
+            } | null;
             creator: {
                 name: string;
                 id: number;
@@ -65,8 +73,16 @@ export declare class AssessmentCreationService {
     }>;
     static getAssessmentById(assessmentId: number, userRole: UserRole): Promise<{
         _count: {
+            questions: number;
             results: number;
         };
+        badgeTemplate: {
+            name: string;
+            id: number;
+            description: string | null;
+            category: string | null;
+            icon: string | null;
+        } | null;
         creator: {
             name: string;
             id: number;

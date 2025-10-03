@@ -5,7 +5,7 @@ export declare class CreateEmploymentService {
         startDate: Date | null;
         endDate: Date | null;
         userId: number;
-        companyId: number | null;
+        companyId: string | null;
     }>;
 }
 //# sourceMappingURL=createEmployment.service.d.ts.map

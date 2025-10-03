@@ -35,11 +35,7 @@ export class GetCompanyController {
     next: NextFunction
   ) {
     try {
-      const companyId = parseInt(req.params.companyId, 10);
-
-      if (isNaN(companyId)) {
-        return res.status(400).json({ message: "Invalid company id" });
-      }
+      const companyId = req.params.companyId as string;
 
       const company = await GetCompanyService.getCompanyById(companyId);
       if (!company) {

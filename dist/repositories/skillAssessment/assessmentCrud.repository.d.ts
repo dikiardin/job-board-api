@@ -40,8 +40,16 @@ export declare class AssessmentCrudRepository {
     static getAllAssessments(page?: number, limit?: number): Promise<{
         assessments: ({
             _count: {
+                questions: number;
                 results: number;
             };
+            badgeTemplate: {
+                name: string;
+                id: number;
+                description: string | null;
+                category: string | null;
+                icon: string | null;
+            } | null;
             creator: {
                 name: string;
                 id: number;
@@ -144,6 +152,39 @@ export declare class AssessmentCrudRepository {
         totalAssessments: number;
         totalQuestions: number;
         totalResults: number;
+    }>;
+    static getAssessmentByIdForDeveloper(assessmentId: number, createdBy: number): Promise<({
+        questions: {
+            id: number;
+            options: import("../../generated/prisma/runtime/library").JsonValue;
+            question: string;
+            answer: string;
+            assessmentId: number;
+        }[];
+        badgeTemplate: {
+            name: string;
+            id: number;
+            icon: string | null;
+        } | null;
+    } & {
+        createdAt: Date;
+        id: number;
+        description: string | null;
+        title: string;
+        createdBy: number;
+        badgeTemplateId: number | null;
+    }) | null>;
+    static saveQuestion(data: {
+        assessmentId: number;
+        question: string;
+        options: string[];
+        answer: string;
+    }): Promise<{
+        id: number;
+        options: import("../../generated/prisma/runtime/library").JsonValue;
+        question: string;
+        answer: string;
+        assessmentId: number;
     }>;
 }
 //# sourceMappingURL=assessmentCrud.repository.d.ts.map

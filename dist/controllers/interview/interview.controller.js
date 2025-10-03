@@ -6,8 +6,8 @@ const interview_query_service_1 = require("../../services/interview/interview.qu
 class InterviewController {
     static async createMany(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
-            const jobId = Number(req.params.jobId);
+            const companyId = req.params.companyId;
+            const jobId = req.params.jobId;
             const requester = res.locals.decrypt;
             const created = await interview_command_service_1.InterviewCommandService.createMany({
                 companyId,
@@ -24,12 +24,12 @@ class InterviewController {
     }
     static async list(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
+            const companyId = req.params.companyId;
             const requester = res.locals.decrypt;
             const { jobId, applicantId, status, dateFrom, dateTo, limit, offset } = req.query;
             const query = {};
             if (typeof jobId === "string")
-                query.jobId = Number(jobId);
+                query.jobId = jobId;
             if (typeof applicantId === "string")
                 query.applicantId = Number(applicantId);
             if (status === "SCHEDULED" || status === "COMPLETED" || status === "CANCELLED" || status === "NO_SHOW")
@@ -51,7 +51,7 @@ class InterviewController {
     }
     static async detail(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
+            const companyId = req.params.companyId;
             const id = Number(req.params.id);
             const requester = res.locals.decrypt;
             const data = await interview_query_service_1.InterviewQueryService.detail({ companyId, id, requesterId: requester.userId, requesterRole: requester.role });

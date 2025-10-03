@@ -26,10 +26,7 @@ class GetCompanyController {
     }
     static async getCompanyById(req, res, next) {
         try {
-            const companyId = parseInt(req.params.companyId, 10);
-            if (isNaN(companyId)) {
-                return res.status(400).json({ message: "Invalid company id" });
-            }
+            const companyId = req.params.companyId;
             const company = await getCompany_service_1.GetCompanyService.getCompanyById(companyId);
             if (!company) {
                 return res.status(404).json({ message: "Company not found" });

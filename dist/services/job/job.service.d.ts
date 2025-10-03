@@ -1,13 +1,13 @@
 import { UserRole } from "../../generated/prisma";
 export declare class JobService {
-    static assertCompanyOwnership(companyId: number, requesterId: number): Promise<{
+    static assertCompanyOwnership(companyId: string, requesterId: number): Promise<{
         name: string;
         email: string | null;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: number;
+        id: string;
         location: string | null;
         description: string | null;
         website: string | null;
@@ -16,7 +16,7 @@ export declare class JobService {
     }>;
     static validateJobPayload(payload: any, isUpdate?: boolean): void;
     static createJob(params: {
-        companyId: number;
+        companyId: string;
         requesterId: number;
         requesterRole: UserRole;
         body: {
@@ -35,8 +35,8 @@ export declare class JobService {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: number;
-        companyId: number;
+        id: string;
+        companyId: string;
         description: string;
         title: string;
         category: string;
@@ -48,8 +48,8 @@ export declare class JobService {
         isPublished: boolean;
     }>;
     static updateJob(params: {
-        companyId: number;
-        jobId: number;
+        companyId: string;
+        jobId: string;
         requesterId: number;
         requesterRole: UserRole;
         body: any;
@@ -57,8 +57,8 @@ export declare class JobService {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: number;
-        companyId: number;
+        id: string;
+        companyId: string;
         description: string;
         title: string;
         category: string;
@@ -70,8 +70,8 @@ export declare class JobService {
         isPublished: boolean;
     }>;
     static togglePublish(params: {
-        companyId: number;
-        jobId: number;
+        companyId: string;
+        jobId: string;
         requesterId: number;
         requesterRole: UserRole;
         isPublished?: boolean;
@@ -79,8 +79,8 @@ export declare class JobService {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: number;
-        companyId: number;
+        id: string;
+        companyId: string;
         description: string;
         title: string;
         category: string;
@@ -92,15 +92,15 @@ export declare class JobService {
         isPublished: boolean;
     }>;
     static deleteJob(params: {
-        companyId: number;
-        jobId: number;
+        companyId: string;
+        jobId: string;
         requesterId: number;
         requesterRole: UserRole;
     }): Promise<{
         success: boolean;
     }>;
     static listJobs(params: {
-        companyId: number;
+        companyId: string;
         requesterId: number;
         requesterRole: UserRole;
         query: {
@@ -146,12 +146,12 @@ export declare class JobService {
         }[];
     }>;
     static jobDetail(params: {
-        companyId: number;
-        jobId: number;
+        companyId: string;
+        jobId: string;
         requesterId: number;
         requesterRole: UserRole;
     }): Promise<{
-        id: number;
+        id: string;
         title: string;
         description: string;
         banner: string | null;

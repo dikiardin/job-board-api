@@ -20,7 +20,7 @@ export declare class ProfileService {
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
-        id: number;
+        id: string;
         location: string | null;
         description: string | null;
         website: string | null;

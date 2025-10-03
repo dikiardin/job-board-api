@@ -56,7 +56,7 @@ export declare class InterviewRepository {
                     createdAt: Date;
                     updatedAt: Date;
                     city: string | null;
-                    id: number;
+                    id: string;
                     location: string | null;
                     description: string | null;
                     website: string | null;
@@ -67,8 +67,8 @@ export declare class InterviewRepository {
                 createdAt: Date;
                 updatedAt: Date;
                 city: string;
-                id: number;
-                companyId: number;
+                id: string;
+                companyId: string;
                 description: string;
                 title: string;
                 category: string;
@@ -85,7 +85,7 @@ export declare class InterviewRepository {
             id: number;
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            jobId: number;
+            jobId: string;
             cvFile: string;
             expectedSalary: number | null;
             reviewNote: string | null;
@@ -151,7 +151,7 @@ export declare class InterviewRepository {
                     createdAt: Date;
                     updatedAt: Date;
                     city: string | null;
-                    id: number;
+                    id: string;
                     location: string | null;
                     description: string | null;
                     website: string | null;
@@ -162,8 +162,8 @@ export declare class InterviewRepository {
                 createdAt: Date;
                 updatedAt: Date;
                 city: string;
-                id: number;
-                companyId: number;
+                id: string;
+                companyId: string;
                 description: string;
                 title: string;
                 category: string;
@@ -180,7 +180,7 @@ export declare class InterviewRepository {
             id: number;
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            jobId: number;
+            jobId: string;
             cvFile: string;
             expectedSalary: number | null;
             reviewNote: string | null;
@@ -252,7 +252,7 @@ export declare class InterviewRepository {
                     createdAt: Date;
                     updatedAt: Date;
                     city: string | null;
-                    id: number;
+                    id: string;
                     location: string | null;
                     description: string | null;
                     website: string | null;
@@ -263,8 +263,8 @@ export declare class InterviewRepository {
                 createdAt: Date;
                 updatedAt: Date;
                 city: string;
-                id: number;
-                companyId: number;
+                id: string;
+                companyId: string;
                 description: string;
                 title: string;
                 category: string;
@@ -281,7 +281,7 @@ export declare class InterviewRepository {
             id: number;
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            jobId: number;
+            jobId: string;
             cvFile: string;
             expectedSalary: number | null;
             reviewNote: string | null;
@@ -298,8 +298,8 @@ export declare class InterviewRepository {
         reminderSentAt: Date | null;
     }) | null>;
     static list(params: {
-        companyId: number;
-        jobId?: number;
+        companyId: string;
+        jobId?: string;
         applicantId?: number;
         status?: InterviewStatus;
         dateFrom?: Date;
@@ -352,7 +352,7 @@ export declare class InterviewRepository {
                         createdAt: Date;
                         updatedAt: Date;
                         city: string | null;
-                        id: number;
+                        id: string;
                         location: string | null;
                         description: string | null;
                         website: string | null;
@@ -363,8 +363,8 @@ export declare class InterviewRepository {
                     createdAt: Date;
                     updatedAt: Date;
                     city: string;
-                    id: number;
-                    companyId: number;
+                    id: string;
+                    companyId: string;
                     description: string;
                     title: string;
                     category: string;
@@ -381,7 +381,7 @@ export declare class InterviewRepository {
                 id: number;
                 userId: number;
                 status: import("../../generated/prisma").$Enums.ApplicationStatus;
-                jobId: number;
+                jobId: string;
                 cvFile: string;
                 expectedSalary: number | null;
                 reviewNote: string | null;
@@ -457,7 +457,7 @@ export declare class InterviewRepository {
                     createdAt: Date;
                     updatedAt: Date;
                     city: string | null;
-                    id: number;
+                    id: string;
                     location: string | null;
                     description: string | null;
                     website: string | null;
@@ -468,8 +468,8 @@ export declare class InterviewRepository {
                 createdAt: Date;
                 updatedAt: Date;
                 city: string;
-                id: number;
-                companyId: number;
+                id: string;
+                companyId: string;
                 description: string;
                 title: string;
                 category: string;
@@ -486,7 +486,7 @@ export declare class InterviewRepository {
             id: number;
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            jobId: number;
+            jobId: string;
             cvFile: string;
             expectedSalary: number | null;
             reviewNote: string | null;

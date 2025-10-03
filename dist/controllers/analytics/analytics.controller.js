@@ -5,7 +5,7 @@ const analytics_service_1 = require("../../services/analytics/analytics.service"
 class AnalyticsController {
     static async demographics(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
+            const companyId = req.params.companyId;
             const requester = res.locals.decrypt;
             const data = await analytics_service_1.AnalyticsService.demographics({
                 companyId,
@@ -21,7 +21,7 @@ class AnalyticsController {
     }
     static async salaryTrends(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
+            const companyId = req.params.companyId;
             const requester = res.locals.decrypt;
             const data = await analytics_service_1.AnalyticsService.salaryTrends({
                 companyId,
@@ -37,7 +37,7 @@ class AnalyticsController {
     }
     static async interests(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
+            const companyId = req.params.companyId;
             const requester = res.locals.decrypt;
             const data = await analytics_service_1.AnalyticsService.interests({
                 companyId,
@@ -53,7 +53,7 @@ class AnalyticsController {
     }
     static async overview(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
+            const companyId = req.params.companyId;
             const requester = res.locals.decrypt;
             const data = await analytics_service_1.AnalyticsService.overview({
                 companyId,
