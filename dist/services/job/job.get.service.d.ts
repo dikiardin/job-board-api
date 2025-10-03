@@ -12,33 +12,32 @@ export declare class GetJobService {
             city: string;
             tags: string[];
             salary: string;
-            companyName: string;
-            companyLogo: string | null;
+            companyName: any;
+            companyLogo: any;
         }[];
         total: number;
     }>;
     static getJobById(jobId: string): Promise<{
-        company: {
-            name: string;
-            id: number;
-            location: string | null;
-            logo: string | null;
-        };
-    } & {
+        city: string;
         createdAt: Date;
         updatedAt: Date;
-        city: string;
         id: number;
         companyId: number;
+        slug: string;
         description: string;
+        bannerUrl: string | null;
         title: string;
         category: string;
+        employmentType: string | null;
+        experienceLevel: string | null;
+        province: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
+        salaryCurrency: string | null;
         tags: string[];
-        banner: string | null;
-        deadline: Date | null;
+        applyDeadline: Date | null;
         isPublished: boolean;
+        publishedAt: Date | null;
     }>;
 }
 //# sourceMappingURL=job.get.service.d.ts.map

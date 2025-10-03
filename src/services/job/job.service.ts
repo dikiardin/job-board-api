@@ -5,7 +5,8 @@ export class JobService {
   static async assertCompanyOwnership(companyId: string, requesterId: number) {
     const company = await JobRepository.getCompany(companyId);
     if (!company) throw { status: 404, message: "Company not found" };
-    if (company.adminId !== requesterId) throw { status: 403, message: "You don't own this company" };
+    const ownerId = (company as any).ownerAdminId ?? (company as any).adminId;
+    if (ownerId !== requesterId) throw { status: 403, message: "You don't own this company" };
     return company;
   }
 
@@ -199,9 +200,9 @@ export class JobService {
     await this.assertCompanyOwnership(companyId, requesterId);
     const job = await JobRepository.getJobById(companyId, jobId);
     if (!job) throw { status: 404, message: "Job not found" };
-    const test = job.preselectionTests || null;
+    const test = (job as any).preselectionTest || null;
     const passingScore = test?.passingScore ?? null;
-    const applicants = job.applications.map((a) => {
+    const applicants = ((job as any).applications ?? []).map((a: any) => {
       let preselectionPassed: boolean | undefined = undefined;
       if (test) {
         const result = test.results.find((r: any) => r.userId === a.userId);
@@ -214,11 +215,11 @@ export class JobService {
       return {
         applicationId: a.id,
         userId: a.userId,
-        userName: (a as any).user?.name,
-        userEmail: (a as any).user?.email,
-        profilePicture: (a as any).user?.profilePicture ?? null,
-        expectedSalary: (a as any).expectedSalary ?? null,
-        cvFile: (a as any).cvFile ?? null,
+        userName: a.user?.name,
+        userEmail: a.user?.email,
+        profilePicture: a.user?.profilePicture ?? null,
+        expectedSalary: a.expectedSalary ?? null,
+        cvFile: a.cvUrl ?? null,
         score: test ? test.results.find((r: any) => r.userId === a.userId)?.score ?? null : null,
         preselectionPassed,
         status: a.status,
@@ -230,16 +231,16 @@ export class JobService {
       id: job.id,
       title: job.title,
       description: job.description,
-      banner: job.banner,
+      banner: (job as any).bannerUrl ?? null,
       category: job.category,
       city: job.city,
       salaryMin: job.salaryMin,
       salaryMax: job.salaryMax,
       tags: job.tags,
-      deadline: job.deadline,
+      deadline: (job as any).applyDeadline ?? null,
       isPublished: job.isPublished,
       createdAt: job.createdAt,
-      applicantsCount: (job as any)._count?.applications ?? job.applications.length,
+      applicantsCount: (job as any)._count?.applications ?? ((job as any).applications?.length ?? 0),
       applicants,
     };
   }

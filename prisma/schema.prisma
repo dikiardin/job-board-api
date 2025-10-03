@@ -10,34 +10,79 @@ datasource db {
 }
 
 model User {
-  id                    Int                  @id @default(autoincrement())
-  role                  UserRole             @default(USER)
-  name                  String
-  email                 String               @unique
-  passwordHash          String?
-  phone                 String?
-  gender                String?
-  dob                   DateTime?
-  education             String?
-  address               String?
-  profilePicture        String?
-  isVerified            Boolean              @default(false)
-  createdAt             DateTime             @default(now())
-  updatedAt             DateTime             @updatedAt
-  city                  String?
-  applications          Application[]
-  createdBadgeTemplates BadgeTemplate[]      @relation("BadgeTemplateCreator")
-  adminOf               Company?             @relation("CompanyAdmin")
-  employments           Employment[]
-  generatedCvs          GeneratedCV[]
-  jobShares             JobShare[]
-  preselectionResults   PreselectionResult[]
-  savedJobs             SavedJob[]
-  createdAssessments    SkillAssessment[]    @relation("SkillAssessmentCreator")
-  skillResults          SkillResult[]
-  subscriptions         Subscription[]
-  userBadges            UserBadge[]
-  providers             UserProvider[]
+  id                         Int       @id @default(autoincrement())
+  role                       UserRole  @default(USER)
+  email                      String    @unique
+  passwordHash               String?
+  name                       String?
+  phone                      String?
+  gender                     String?
+  dob                        DateTime?
+  education                  String?
+  address                    String?
+  city                       String?
+  profilePicture             String?
+  emailVerifiedAt            DateTime?
+  verificationToken          String?
+  verificationTokenExpiresAt DateTime?
+  passwordResetToken         String?
+  passwordResetExpiresAt     DateTime?
+  emailChangeToken           String?
+  emailChangeNewEmail        String?
+  emailChangeExpiresAt       DateTime?
+  lastLoginAt                DateTime?
+  isActive                   Boolean   @default(true)
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @default(now()) @updatedAt
+
+  profile                 UserProfile?
+  applications            Application[]
+  createdBadgeTemplates   BadgeTemplate[]
+  createdBadges           Badge[]
+  ownedCompany            Company?              @relation("CompanyOwner")
+  employments             Employment[]
+  employmentVerifications Employment[]          @relation("EmploymentVerifier")
+  generatedCvs            GeneratedCV[]
+  jobShares               JobShare[]
+  preselectionResults     PreselectionResult[]
+  savedJobs               SavedJob[]
+  createdAssessments      SkillAssessment[]     @relation("SkillAssessmentCreator")
+  skillResults            SkillResult[]
+  subscriptions           Subscription[]
+  subscriptionApprovals   Subscription[]        @relation("SubscriptionApprover")
+  approvedPayments        Payment[]             @relation("PaymentDeveloperApprover")
+  userBadges              UserBadge[]
+  providers               UserProvider[]
+  certificatesIssued      Certificate[]         @relation("CertificateIssuer")
+  interviewsCreated       Interview[]           @relation("InterviewCreator")
+  interviewsUpdated       Interview[]           @relation("InterviewUpdater")
+  analyticsEvents         AnalyticsEvent[]
+  ApplicationTimeline     ApplicationTimeline[]
+  Certificate             Certificate[]
+  CompanyReview           CompanyReview[]
+}
+
+model UserProfile {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @unique
+  fullName     String
+  phone        String?
+  gender       String?
+  dob          DateTime?
+  education    String?
+  address      String?
+  city         String?
+  province     String?
+  country      String?   @default("ID")
+  postalCode   String?
+  summary      String?
+  linkedinUrl  String?
+  portfolioUrl String?
+  avatarUrl    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserProvider {
@@ -48,70 +93,126 @@ model UserProvider {
   accessToken  String?
   refreshToken String?
   createdAt    DateTime     @default(now())
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt    DateTime     @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerId])
   @@index([userId])
 }
 
 model Company {
-  id          Int          @id @default(autoincrement())
-  name        String
-  email       String?
-  phone       String?
-  location    String?
-  description String?
-  website     String?
-  logo        String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  adminId     Int?         @unique
-  city        String?
-  admin       User?        @relation("CompanyAdmin", fields: [adminId], references: [id])
+  id               Int      @id @default(autoincrement())
+  slug             String   @unique @default(cuid())
+  name             String
+  description      String?  @db.Text
+  logoUrl          String?
+  bannerUrl        String?
+  website          String?
+  locationCity     String?
+  locationProvince String?
+  locationCountry  String?  @default("ID")
+  address          String?
+  socials          Json?
+  ownerAdminId     Int?     @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now()) @updatedAt
+
+  owner       User?           @relation("CompanyOwner", fields: [ownerAdminId], references: [id])
   employments Employment[]
   jobs        Job[]
+  reviews     CompanyReview[]
+
+  @@index([name])
+  @@index([locationCity])
 }
 
 model Job {
-  id                Int               @id @default(autoincrement())
-  companyId         Int
-  title             String
-  description       String
-  category          String
-  city              String
-  salaryMin         Int?
-  salaryMax         Int?
-  tags              String[]
-  banner            String?
-  deadline          DateTime?
-  isPublished       Boolean           @default(false)
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  applications      Application[]
-  company           Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  shares            JobShare[]
-  preselectionTests PreselectionTest?
-  savedBy           SavedJob[]
+  id              Int       @id @default(autoincrement())
+  slug            String    @unique @default(cuid())
+  companyId       Int
+  title           String
+  description     String    @db.Text
+  category        String
+  employmentType  String?
+  experienceLevel String?
+  city            String
+  province        String?
+  salaryMin       Int?
+  salaryMax       Int?
+  salaryCurrency  String?   @default("IDR")
+  tags            String[]
+  bannerUrl       String?
+  applyDeadline   DateTime?
+  isPublished     Boolean   @default(false)
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
+
+  company          Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  applications     Application[]
+  jobShares        JobShare[]
+  preselectionTest PreselectionTest?
+  savedBy          SavedJob[]
 
   @@index([companyId])
+  @@index([category])
+  @@index([city])
+  @@index([isPublished, createdAt])
 }
 
 model Application {
-  id             Int               @id @default(autoincrement())
-  userId         Int
-  jobId          Int
-  cvFile         String
-  expectedSalary Int?
-  status         ApplicationStatus @default(SUBMITTED)
-  reviewNote     String?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  job            Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  interviews     Interview[]
+  id                     Int               @id @default(autoincrement())
+  userId                 Int
+  jobId                  Int
+  cvUrl                  String
+  cvFileName             String?
+  cvFileSize             Int?
+  expectedSalary         Int?
+  expectedSalaryCurrency String?           @default("IDR")
+  status                 ApplicationStatus @default(SUBMITTED)
+  reviewNote             String?
+  reviewUpdatedAt        DateTime?
+  referralSource         String?
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @default(now()) @updatedAt
+
+  job         Job                     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user        User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviews  Interview[]
+  timeline    ApplicationTimeline[]
+  attachments ApplicationAttachment[]
 
   @@unique([userId, jobId])
   @@index([jobId])
+  @@index([status, updatedAt])
+}
+
+model ApplicationTimeline {
+  id            Int               @id @default(autoincrement())
+  applicationId Int
+  status        ApplicationStatus
+  note          String?
+  createdAt     DateTime          @default(now())
+  createdById   Int?
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdBy   User?       @relation(fields: [createdById], references: [id])
+
+  @@index([applicationId])
+}
+
+model ApplicationAttachment {
+  id            Int      @id @default(autoincrement())
+  applicationId Int
+  url           String
+  fileName      String?
+  fileSize      Int?
+  createdAt     DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
 }
 
 model SavedJob {
@@ -119,224 +220,373 @@ model SavedJob {
   userId    Int
   jobId     Int
   createdAt DateTime @default(now())
-  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, jobId])
+  @@index([userId])
+  @@index([jobId])
 }
 
 model Interview {
   id             Int             @id @default(autoincrement())
   applicationId  Int
-  scheduleDate   DateTime
+  startsAt       DateTime
+  endsAt         DateTime?
   locationOrLink String?
   status         InterviewStatus @default(SCHEDULED)
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
   notes          String?
   reminderSentAt DateTime?
-  application    Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdById    Int?
+  updatedById    Int?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @default(now()) @updatedAt
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdBy   User?       @relation("InterviewCreator", fields: [createdById], references: [id])
+  updatedBy   User?       @relation("InterviewUpdater", fields: [updatedById], references: [id])
 
   @@index([applicationId])
+  @@index([startsAt])
 }
 
 model PreselectionTest {
-  id           Int                    @id @default(autoincrement())
-  jobId        Int                    @unique
-  createdAt    DateTime               @default(now())
-  isActive     Boolean                @default(true)
-  passingScore Int?
-  questions    PreselectionQuestion[]
-  results      PreselectionResult[]
-  job          Job                    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  id               Int      @id @default(autoincrement())
+  jobId            Int      @unique
+  isActive         Boolean  @default(true)
+  passingScore     Int?
+  questionCount    Int      @default(25)
+  timeLimitMinutes Int      @default(30)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now()) @updatedAt
+
+  job       Job                    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  questions PreselectionQuestion[]
+  results   PreselectionResult[]
 }
 
 model PreselectionQuestion {
-  id       Int               @id @default(autoincrement())
-  testId   Int
-  question String
-  options  Json
-  answer   String
-  answers  ApplicantAnswer[]
-  test     PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
+  id         Int    @id @default(autoincrement())
+  testId     Int
+  question   String
+  options    Json
+  answer     String
+  orderIndex Int    @default(0)
+
+  test    PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
+  answers ApplicantAnswer[]
 
   @@index([testId])
 }
 
 model PreselectionResult {
-  id        Int               @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    Int
   testId    Int
   score     Int
-  createdAt DateTime          @default(now())
-  answers   ApplicantAnswer[]
-  test      PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
-  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  test    PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
+  user    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers ApplicantAnswer[]
 
   @@unique([userId, testId])
   @@index([testId])
 }
 
 model ApplicantAnswer {
-  id         Int                  @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   resultId   Int
   questionId Int
   selected   String
   isCorrect  Boolean
-  question   PreselectionQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  result     PreselectionResult   @relation(fields: [resultId], references: [id], onDelete: Cascade)
+
+  question PreselectionQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  result   PreselectionResult   @relation(fields: [resultId], references: [id], onDelete: Cascade)
 
   @@unique([resultId, questionId])
   @@index([questionId])
 }
 
 model SkillAssessment {
-  id              Int             @id @default(autoincrement())
-  title           String
-  description     String?
-  createdBy       Int
-  createdAt       DateTime        @default(now())
-  badgeTemplateId Int?
-  badgeTemplate   BadgeTemplate?  @relation(fields: [badgeTemplateId], references: [id])
-  creator         User            @relation("SkillAssessmentCreator", fields: [createdBy], references: [id])
-  questions       SkillQuestion[]
-  results         SkillResult[]
-  userBadges      UserBadge[]
+  id               Int      @id @default(autoincrement())
+  slug             String   @unique @default(cuid())
+  title            String
+  description      String?  @db.Text
+  category         String
+  createdBy        Int
+  badgeTemplateId  Int?
+  timeLimitMinutes Int      @default(30)
+  passScore        Int      @default(75)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now()) @updatedAt
+
+  creator       User            @relation("SkillAssessmentCreator", fields: [createdBy], references: [id])
+  badgeTemplate BadgeTemplate?  @relation(fields: [badgeTemplateId], references: [id])
+  questions     SkillQuestion[]
+  results       SkillResult[]
+  UserBadge     UserBadge[]
+  Certificate   Certificate[]
 }
 
 model SkillQuestion {
-  id           Int             @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   assessmentId Int
   question     String
   options      Json
   answer       String
-  assessment   SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  orderIndex   Int    @default(0)
+
+  assessment SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
 
   @@index([assessmentId])
 }
 
 model SkillResult {
-  id              Int             @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   userId          Int
   assessmentId    Int
   score           Int
-  isPassed        Boolean         @default(false)
-  certificateUrl  String?
-  certificateCode String?
+  isPassed        Boolean   @default(false)
+  answers         Json?
   startedAt       DateTime?
   finishedAt      DateTime?
-  createdAt       DateTime        @default(now())
-  assessment      SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  durationSeconds Int?
+  certificateUrl  String?
+  certificateCode String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
+
+  assessment  SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  certificate Certificate?
 
   @@unique([userId, assessmentId])
   @@index([assessmentId])
+  @@index([userId, createdAt])
 }
 
 model BadgeTemplate {
-  id          Int               @id @default(autoincrement())
-  name        String            @unique
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
   icon        String?
   description String?
   category    String?
   createdBy   Int
-  createdAt   DateTime          @default(now())
-  creator     User              @relation("BadgeTemplateCreator", fields: [createdBy], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  creator     User              @relation(fields: [createdBy], references: [id])
   assessments SkillAssessment[]
   userBadges  UserBadge[]
 }
 
+model Badge {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  icon        String?
+  criteria    String?
+  description String?
+  category    String?
+  createdBy   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  creator    User        @relation(fields: [createdBy], references: [id])
+  userBadges UserBadge[]
+}
+
 model UserBadge {
-  id              Int              @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   userId          Int
-  badgeName       String
-  badgeIcon       String?
-  awardedAt       DateTime         @default(now())
-  assessmentId    Int?
   badgeTemplateId Int?
-  badgeType       String           @default("skill")
-  assessment      SkillAssessment? @relation(fields: [assessmentId], references: [id])
-  badgeTemplate   BadgeTemplate?   @relation(fields: [badgeTemplateId], references: [id])
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId         Int?
+  assessmentId    Int?
+  earnedAt        DateTime @default(now())
+  evidenceUrl     String?
+  badgeType       String   @default("skill")
+
+  badgeTemplate BadgeTemplate?   @relation(fields: [badgeTemplateId], references: [id])
+  badge         Badge?           @relation(fields: [badgeId], references: [id])
+  assessment    SkillAssessment? @relation(fields: [assessmentId], references: [id])
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([assessmentId])
+  @@index([badgeId])
+}
+
+model Certificate {
+  id              Int       @id @default(autoincrement())
+  code            String    @unique
+  userId          Int
+  assessmentId    Int
+  skillResultId   Int       @unique
+  pdfUrl          String?
+  qrUrl           String?
+  verificationUrl String?
+  issuedAt        DateTime  @default(now())
+  expiresAt       DateTime?
+  verifiedAt      DateTime?
+  issuerId        Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
+
+  assessment  SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  skillResult SkillResult     @relation(fields: [skillResultId], references: [id], onDelete: Cascade)
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  issuer      User?           @relation("CertificateIssuer", fields: [issuerId], references: [id])
 }
 
 model GeneratedCV {
   id             Int      @id @default(autoincrement())
   userId         Int
+  title          String?
   fileUrl        String
   templateUsed   String
   additionalInfo Json?
+  isPriority     Boolean  @default(false)
   createdAt      DateTime @default(now())
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt      DateTime @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model SubscriptionPlan {
-  id              Int            @id @default(autoincrement())
-  planName        String
-  planPrice       Decimal        @db.Decimal(12, 2)
-  planDescription String?
-  subscriptions   Subscription[]
+  id                     Int                  @id @default(autoincrement())
+  code                   SubscriptionPlanCode @unique
+  name                   String
+  description            String?
+  priceIdr               Int
+  perks                  String[]
+  monthlyAssessmentQuota Int?
+  priorityCvReview       Boolean              @default(false)
+  cvGeneratorEnabled     Boolean              @default(true)
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @default(now()) @updatedAt
+
+  subscriptions Subscription[]
 }
 
 model Subscription {
-  id                 Int              @id @default(autoincrement())
-  userId             Int
-  subscriptionPlanId Int
-  startDate          DateTime
-  endDate            DateTime
-  isActive           Boolean          @default(false)
-  createdAt          DateTime         @default(now())
-  payments           Payment[]
-  plan               SubscriptionPlan @relation(fields: [subscriptionPlanId], references: [id])
-  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                    Int                @id @default(autoincrement())
+  userId                Int
+  planId                Int
+  status                SubscriptionStatus @default(PENDING)
+  startDate             DateTime?
+  paidAt                DateTime?
+  expiresAt             DateTime?
+  cancelledAt           DateTime?
+  paymentMethod         PaymentMethod      @default(TRANSFER)
+  proofUrl              String?
+  approvedByDeveloperId Int?
+  lastReminderSentAt    DateTime?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @default(now()) @updatedAt
+
+  plan                SubscriptionPlan   @relation(fields: [planId], references: [id])
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments            Payment[]
+  usage               SubscriptionUsage?
+  approvedByDeveloper User?              @relation("SubscriptionApprover", fields: [approvedByDeveloperId], references: [id])
 
   @@index([userId])
-  @@index([subscriptionPlanId])
+  @@index([planId])
+  @@index([status])
 }
 
 model Payment {
   id                   Int           @id @default(autoincrement())
   subscriptionId       Int
-  paymentMethod        PaymentMethod
-  paymentProof         String?
-  status               PaymentStatus @default(PENDING)
   amount               Decimal       @db.Decimal(12, 2)
+  paymentMethod        PaymentMethod
+  status               PaymentStatus @default(PENDING)
+  paymentProof         String?
+  paidAt               DateTime?
   approvedAt           DateTime?
+  approvedById         Int?
   gatewayTransactionId String?
+  referenceCode        String?
+  expiresAt            DateTime?
+  notes                String?
   createdAt            DateTime      @default(now())
-  expiredAt            DateTime?
-  subscription         Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  updatedAt            DateTime      @default(now()) @updatedAt
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  approvedBy   User?        @relation("PaymentDeveloperApprover", fields: [approvedById], references: [id])
 
   @@index([subscriptionId])
+  @@index([status])
+}
+
+model SubscriptionUsage {
+  id              Int      @id @default(autoincrement())
+  subscriptionId  Int      @unique
+  assessmentsUsed Int      @default(0)
+  cvGenerated     Int      @default(0)
+  priorityReviews Int      @default(0)
+  periodStart     DateTime
+  periodEnd       DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 }
 
 model Employment {
-  id        Int            @id @default(autoincrement())
-  userId    Int
-  companyId Int?
-  startDate DateTime?
-  endDate   DateTime?
-  createdAt DateTime       @default(now())
-  reviews   CompanyReview?
-  company   Company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  Int       @id @default(autoincrement())
+  userId              Int
+  companyId           Int?
+  positionTitle       String?
+  department          String?
+  startDate           DateTime?
+  endDate             DateTime?
+  isCurrent           Boolean   @default(false)
+  isVerified          Boolean   @default(false)
+  verifiedAt          DateTime?
+  verifiedById        Int?
+  companyNameSnapshot String?
+  userNameSnapshot    String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @default(now()) @updatedAt
+
+  company    Company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verifiedBy User?          @relation("EmploymentVerifier", fields: [verifiedById], references: [id])
+  review     CompanyReview?
 
   @@unique([userId, companyId])
+  @@index([userId])
 }
 
 model CompanyReview {
-  id             Int        @id @default(autoincrement())
-  employmentId   Int        @unique
-  position       String
-  salaryEstimate Int?
-  cultureRating  Decimal?   @db.Decimal(3, 2)
-  worklifeRating Decimal?   @db.Decimal(3, 2)
-  facilityRating Decimal?   @db.Decimal(3, 2)
-  careerRating   Decimal?   @db.Decimal(3, 2)
-  comment        String?
-  createdAt      DateTime   @default(now())
-  companyRating  Decimal?   @db.Decimal(3, 2)
-  employment     Employment @relation(fields: [employmentId], references: [id], onDelete: Cascade)
+  id                 Int      @id @default(autoincrement())
+  companyId          Int
+  employmentId       Int?     @unique
+  reviewerUserId     Int
+  positionTitle      String
+  isVerifiedEmployee Boolean  @default(false)
+  isAnonymous        Boolean  @default(true)
+  ratingCulture      Decimal? @db.Decimal(3, 2)
+  ratingWorkLife     Decimal? @db.Decimal(3, 2)
+  ratingFacilities   Decimal? @db.Decimal(3, 2)
+  ratingCareer       Decimal? @db.Decimal(3, 2)
+  salaryEstimateMin  Int?
+  salaryEstimateMax  Int?
+  currency           String?  @default("IDR")
+  body               String?
+  reviewerSnapshot   String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now()) @updatedAt
+
+  company    Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  employment Employment? @relation(fields: [employmentId], references: [id])
+  reviewer   User        @relation(fields: [reviewerUserId], references: [id])
+
+  @@index([companyId])
+  @@index([reviewerUserId])
 }
 
 model JobShare {
@@ -347,17 +597,50 @@ model JobShare {
   sharedUrl     String?
   customMessage String?
   createdAt     DateTime      @default(now())
-  job           Job           @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([jobId])
+}
+
+model AnalyticsEvent {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  type      String
+  payload   Json?
+  city      String?
+  province  String?
+  gender    String?
+  ageRange  String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([type])
+  @@index([createdAt])
+}
+
+model LocationCache {
+  id        Int      @id @default(autoincrement())
+  city      String
+  province  String?
+  country   String?  @default("ID")
+  lat       Decimal? @db.Decimal(10, 7)
+  lng       Decimal? @db.Decimal(10, 7)
+  source    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([city, province])
 }
 
 enum UserRole {
   USER
   ADMIN
   DEVELOPER
+  MENTOR
 }
 
 enum ApplicationStatus {
@@ -397,4 +680,16 @@ enum SharePlatform {
 enum ProviderType {
   GOOGLE
   FACEBOOK
+}
+
+enum SubscriptionPlanCode {
+  STANDARD
+  PROFESSIONAL
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CANCELLED
 }

@@ -2,31 +2,17 @@ import { AssessmentCrudRepository } from "./assessmentCrud.repository";
 import { AssessmentResultsRepository } from "./assessmentResults.repository";
 export declare class SkillAssessmentModularRepository {
     static createAssessment(data: any): Promise<{
-        questions: {
-            id: number;
-            options: import("../../generated/prisma/runtime/library").JsonValue;
-            question: string;
-            answer: string;
-            assessmentId: number;
-        }[];
-        badgeTemplate: {
-            name: string;
-            id: number;
-            description: string | null;
-            category: string | null;
-            icon: string | null;
-        } | null;
-        creator: {
-            name: string;
-            email: string;
-            id: number;
-        };
-    } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }>;
     static getAllAssessments(page?: number, limit?: number): Promise<{
@@ -43,15 +29,21 @@ export declare class SkillAssessmentModularRepository {
                 icon: string | null;
             } | null;
             creator: {
-                name: string;
+                name: string | null;
                 id: number;
             };
         } & {
+            isActive: boolean;
             createdAt: Date;
+            updatedAt: Date;
             id: number;
+            slug: string;
             description: string | null;
             title: string;
+            category: string;
+            timeLimitMinutes: number;
             createdBy: number;
+            passScore: number;
             badgeTemplateId: number | null;
         })[];
         pagination: {
@@ -67,6 +59,7 @@ export declare class SkillAssessmentModularRepository {
             options: import("../../generated/prisma/runtime/library").JsonValue;
             question: string;
             answer: string;
+            orderIndex: number;
             assessmentId: number;
         }[];
         badgeTemplate: {
@@ -77,15 +70,21 @@ export declare class SkillAssessmentModularRepository {
             icon: string | null;
         } | null;
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }) | null>;
     static updateAssessment(assessmentId: number, createdBy: number, data: any): Promise<import("../../generated/prisma").Prisma.BatchPayload | ({
@@ -94,6 +93,7 @@ export declare class SkillAssessmentModularRepository {
             options: import("../../generated/prisma/runtime/library").JsonValue;
             question: string;
             answer: string;
+            orderIndex: number;
             assessmentId: number;
         }[];
         badgeTemplate: {
@@ -104,39 +104,63 @@ export declare class SkillAssessmentModularRepository {
             icon: string | null;
         } | null;
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     })>;
     static deleteAssessment(assessmentId: number, createdBy: number): Promise<{
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     } | null>;
     static getDeveloperAssessments(createdBy: number, page?: number, limit?: number): Promise<{
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }[]>;
     static searchAssessments(searchTerm: string, page?: number, limit?: number): Promise<{
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }[]>;
     static isAssessmentTitleAvailable(title: string, excludeId?: number): Promise<boolean>;
@@ -151,6 +175,7 @@ export declare class SkillAssessmentModularRepository {
             options: import("../../generated/prisma/runtime/library").JsonValue;
             question: string;
             answer: string;
+            orderIndex: number;
             assessmentId: number;
         }[];
         badgeTemplate: {
@@ -159,11 +184,17 @@ export declare class SkillAssessmentModularRepository {
             icon: string | null;
         } | null;
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }) | null>;
     static saveQuestion(data: {
@@ -176,12 +207,13 @@ export declare class SkillAssessmentModularRepository {
         options: import("../../generated/prisma/runtime/library").JsonValue;
         question: string;
         answer: string;
+        orderIndex: number;
         assessmentId: number;
     }>;
     static saveAssessmentResult(data: any): Promise<{
         user: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
         };
         assessment: {
@@ -191,15 +223,18 @@ export declare class SkillAssessmentModularRepository {
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
         score: number;
         assessmentId: number;
         isPassed: boolean;
-        certificateUrl: string | null;
-        certificateCode: string | null;
         startedAt: Date | null;
         finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
     }>;
     static getUserResult(userId: number, assessmentId: number): Promise<({
         assessment: {
@@ -209,46 +244,55 @@ export declare class SkillAssessmentModularRepository {
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
         score: number;
         assessmentId: number;
         isPassed: boolean;
-        certificateUrl: string | null;
-        certificateCode: string | null;
         startedAt: Date | null;
         finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
     }) | null>;
     static getAssessmentResults(assessmentId: number): Promise<({
         user: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
         score: number;
         assessmentId: number;
         isPassed: boolean;
-        certificateUrl: string | null;
-        certificateCode: string | null;
         startedAt: Date | null;
         finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
     })[]>;
     static getUserResults(userId: number, page?: number, limit?: number): Promise<{
         results: {
             createdAt: Date;
+            updatedAt: Date;
             id: number;
             userId: number;
+            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
             score: number;
             assessmentId: number;
             isPassed: boolean;
-            certificateUrl: string | null;
-            certificateCode: string | null;
             startedAt: Date | null;
             finishedAt: Date | null;
+            durationSeconds: number | null;
+            certificateUrl: string | null;
+            certificateCode: string | null;
         }[];
         pagination: {
             page: number;
@@ -259,8 +303,8 @@ export declare class SkillAssessmentModularRepository {
     }>;
     static verifyCertificate(certificateCode: string): Promise<({
         user: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
         };
         assessment: {
@@ -270,28 +314,34 @@ export declare class SkillAssessmentModularRepository {
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
         score: number;
         assessmentId: number;
         isPassed: boolean;
-        certificateUrl: string | null;
-        certificateCode: string | null;
         startedAt: Date | null;
         finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
     }) | null>;
     static getUserCertificates(userId: number, page?: number, limit?: number): Promise<{
         certificates: {
             createdAt: Date;
+            updatedAt: Date;
             id: number;
             userId: number;
+            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
             score: number;
             assessmentId: number;
             isPassed: boolean;
-            certificateUrl: string | null;
-            certificateCode: string | null;
             startedAt: Date | null;
             finishedAt: Date | null;
+            durationSeconds: number | null;
+            certificateUrl: string | null;
+            certificateCode: string | null;
         }[];
         pagination: {
             page: number;
@@ -302,8 +352,8 @@ export declare class SkillAssessmentModularRepository {
     }>;
     static getCertificateByCode(certificateCode: string): Promise<({
         user: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
         };
         assessment: {
@@ -313,27 +363,33 @@ export declare class SkillAssessmentModularRepository {
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
         score: number;
         assessmentId: number;
         isPassed: boolean;
-        certificateUrl: string | null;
-        certificateCode: string | null;
         startedAt: Date | null;
         finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
     }) | null>;
     static getAssessmentLeaderboard(assessmentId: number, limit?: number): Promise<{
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
         score: number;
         assessmentId: number;
         isPassed: boolean;
-        certificateUrl: string | null;
-        certificateCode: string | null;
         startedAt: Date | null;
         finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
     }[]>;
     static getAssessmentStatistics(assessmentId: number): Promise<{
         totalAttempts: number;
@@ -352,27 +408,33 @@ export declare class SkillAssessmentModularRepository {
     }>;
     static deleteAssessmentResult(resultId: number): Promise<{
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
         score: number;
         assessmentId: number;
         isPassed: boolean;
-        certificateUrl: string | null;
-        certificateCode: string | null;
         startedAt: Date | null;
         finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
     }>;
     static updateCertificateInfo(resultId: number, certificateUrl: string, certificateCode: string): Promise<{
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
         score: number;
         assessmentId: number;
         isPassed: boolean;
-        certificateUrl: string | null;
-        certificateCode: string | null;
         startedAt: Date | null;
         finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
     }>;
     static getUserAssessmentHistory(userId: number): Promise<{
         results: ({
@@ -382,15 +444,18 @@ export declare class SkillAssessmentModularRepository {
             };
         } & {
             createdAt: Date;
+            updatedAt: Date;
             id: number;
             userId: number;
+            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
             score: number;
             assessmentId: number;
             isPassed: boolean;
-            certificateUrl: string | null;
-            certificateCode: string | null;
             startedAt: Date | null;
             finishedAt: Date | null;
+            durationSeconds: number | null;
+            certificateUrl: string | null;
+            certificateCode: string | null;
         })[];
         statistics: {
             totalAssessments: number;
@@ -411,6 +476,7 @@ export declare class SkillAssessmentModularRepository {
                 options: import("../../generated/prisma/runtime/library").JsonValue;
                 question: string;
                 answer: string;
+                orderIndex: number;
                 assessmentId: number;
             }[];
             badgeTemplate: {
@@ -421,34 +487,43 @@ export declare class SkillAssessmentModularRepository {
                 icon: string | null;
             } | null;
             creator: {
-                name: string;
+                name: string | null;
                 id: number;
             };
         } & {
+            isActive: boolean;
             createdAt: Date;
+            updatedAt: Date;
             id: number;
+            slug: string;
             description: string | null;
             title: string;
+            category: string;
+            timeLimitMinutes: number;
             createdBy: number;
+            passScore: number;
             badgeTemplateId: number | null;
         }) | null;
         results: ({
             user: {
-                name: string;
                 email: string;
+                name: string | null;
                 id: number;
             };
         } & {
             createdAt: Date;
+            updatedAt: Date;
             id: number;
             userId: number;
+            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
             score: number;
             assessmentId: number;
             isPassed: boolean;
-            certificateUrl: string | null;
-            certificateCode: string | null;
             startedAt: Date | null;
             finishedAt: Date | null;
+            durationSeconds: number | null;
+            certificateUrl: string | null;
+            certificateCode: string | null;
         })[];
         statistics: {
             totalAttempts: number;
@@ -469,27 +544,33 @@ export declare class SkillAssessmentModularRepository {
     static getUserAssessmentSummary(userId: number): Promise<{
         results: {
             createdAt: Date;
+            updatedAt: Date;
             id: number;
             userId: number;
+            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
             score: number;
             assessmentId: number;
             isPassed: boolean;
-            certificateUrl: string | null;
-            certificateCode: string | null;
             startedAt: Date | null;
             finishedAt: Date | null;
+            durationSeconds: number | null;
+            certificateUrl: string | null;
+            certificateCode: string | null;
         }[];
         certificates: {
             createdAt: Date;
+            updatedAt: Date;
             id: number;
             userId: number;
+            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
             score: number;
             assessmentId: number;
             isPassed: boolean;
-            certificateUrl: string | null;
-            certificateCode: string | null;
             startedAt: Date | null;
             finishedAt: Date | null;
+            durationSeconds: number | null;
+            certificateUrl: string | null;
+            certificateCode: string | null;
         }[];
         statistics: {
             totalAssessments: number;

@@ -1,217 +1,417 @@
+import { SubscriptionStatus } from "../../generated/prisma";
 export declare class SubscriptionRepo {
     static getAllSubscriptions(): Promise<({
         user: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
+        };
+        plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
         };
         payments: {
             createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            status: import("../../generated/prisma").$Enums.PaymentStatus;
+            paidAt: Date | null;
+            expiresAt: Date | null;
+            paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+            subscriptionId: number;
+            amount: import("../../generated/prisma/runtime/library").Decimal;
+            paymentProof: string | null;
+            approvedAt: Date | null;
+            approvedById: number | null;
+            gatewayTransactionId: string | null;
+            referenceCode: string | null;
+            notes: string | null;
+        }[];
+        usage: {
+            createdAt: Date;
+            updatedAt: Date;
             id: number;
             subscriptionId: number;
-            paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
-            paymentProof: string | null;
-            status: import("../../generated/prisma").$Enums.PaymentStatus;
-            amount: import("../../generated/prisma/runtime/library").Decimal;
-            approvedAt: Date | null;
-            gatewayTransactionId: string | null;
-            expiredAt: Date | null;
-        }[];
-        plan: {
-            id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
-        };
+            assessmentsUsed: number;
+            cvGenerated: number;
+            priorityReviews: number;
+            periodStart: Date;
+            periodEnd: Date;
+        } | null;
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date | null;
         userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
     })[]>;
     static getSubscriptionById(id: number): Promise<({
         user: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
+        };
+        plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
         };
         payments: {
             createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            status: import("../../generated/prisma").$Enums.PaymentStatus;
+            paidAt: Date | null;
+            expiresAt: Date | null;
+            paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+            subscriptionId: number;
+            amount: import("../../generated/prisma/runtime/library").Decimal;
+            paymentProof: string | null;
+            approvedAt: Date | null;
+            approvedById: number | null;
+            gatewayTransactionId: string | null;
+            referenceCode: string | null;
+            notes: string | null;
+        }[];
+        usage: {
+            createdAt: Date;
+            updatedAt: Date;
             id: number;
             subscriptionId: number;
-            paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
-            paymentProof: string | null;
-            status: import("../../generated/prisma").$Enums.PaymentStatus;
-            amount: import("../../generated/prisma/runtime/library").Decimal;
-            approvedAt: Date | null;
-            gatewayTransactionId: string | null;
-            expiredAt: Date | null;
-        }[];
-        plan: {
-            id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
-        };
+            assessmentsUsed: number;
+            cvGenerated: number;
+            priorityReviews: number;
+            periodStart: Date;
+            periodEnd: Date;
+        } | null;
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date | null;
         userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
     }) | null>;
     static getUserSubscriptions(userId: number): Promise<({
+        plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
+        };
         payments: {
             createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            status: import("../../generated/prisma").$Enums.PaymentStatus;
+            paidAt: Date | null;
+            expiresAt: Date | null;
+            paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+            subscriptionId: number;
+            amount: import("../../generated/prisma/runtime/library").Decimal;
+            paymentProof: string | null;
+            approvedAt: Date | null;
+            approvedById: number | null;
+            gatewayTransactionId: string | null;
+            referenceCode: string | null;
+            notes: string | null;
+        }[];
+        usage: {
+            createdAt: Date;
+            updatedAt: Date;
             id: number;
             subscriptionId: number;
-            paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
-            paymentProof: string | null;
-            status: import("../../generated/prisma").$Enums.PaymentStatus;
-            amount: import("../../generated/prisma/runtime/library").Decimal;
-            approvedAt: Date | null;
-            gatewayTransactionId: string | null;
-            expiredAt: Date | null;
-        }[];
-        plan: {
-            id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
-        };
+            assessmentsUsed: number;
+            cvGenerated: number;
+            priorityReviews: number;
+            periodStart: Date;
+            periodEnd: Date;
+        } | null;
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date | null;
         userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
     })[]>;
     static getUserActiveSubscription(userId: number): Promise<({
         plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
             id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
         };
+        usage: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            subscriptionId: number;
+            assessmentsUsed: number;
+            cvGenerated: number;
+            priorityReviews: number;
+            periodStart: Date;
+            periodEnd: Date;
+        } | null;
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date | null;
         userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
     }) | null>;
     static createSubscription(data: {
         userId: number;
-        subscriptionPlanId: number;
-        startDate: Date;
-        endDate: Date;
-    }): Promise<{
-        plan: {
-            id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
-        };
-    } & {
-        createdAt: Date;
-        id: number;
-        startDate: Date;
-        endDate: Date;
-        userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
-    }>;
-    static updateSubscription(id: number, data: {
-        isActive?: boolean;
+        planId: number;
+        status?: SubscriptionStatus;
         startDate?: Date;
-        endDate?: Date;
+        expiresAt?: Date;
     }): Promise<{
         plan: {
-            id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
-        };
-    } & {
-        createdAt: Date;
-        id: number;
-        startDate: Date;
-        endDate: Date;
-        userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
-    }>;
-    static getSubscriptionsExpiringTomorrow(): Promise<({
-        user: {
             name: string;
-            email: string;
+            createdAt: Date;
+            updatedAt: Date;
             id: number;
-        };
-        plan: {
-            id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date | null;
         userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
-    })[]>;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
+    }>;
+    static updateSubscription(id: number, data: Partial<{
+        status: SubscriptionStatus;
+        startDate: Date | null;
+        expiresAt: Date | null;
+        paidAt: Date | null;
+        approvedByDeveloperId: number | null;
+    }>): Promise<{
+        plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
+        };
+        usage: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            subscriptionId: number;
+            assessmentsUsed: number;
+            cvGenerated: number;
+            priorityReviews: number;
+            periodStart: Date;
+            periodEnd: Date;
+        } | null;
+    } & {
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+        startDate: Date | null;
+        userId: number;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
+    }>;
     static getSubscriptionsExpiringInMinutes(minutes: number): Promise<({
         user: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
         };
         plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
             id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date | null;
         userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
+    })[]>;
+    static getSubscriptionsExpiringWithinHours(hours: number): Promise<({
+        user: {
+            email: string;
+            name: string | null;
+            id: number;
+        };
+        plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
+        };
+    } & {
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+        startDate: Date | null;
+        userId: number;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
     })[]>;
     static getExpiredSubscriptions(): Promise<({
         user: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
         };
         plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
             id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date | null;
         userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
     })[]>;
 }
 //# sourceMappingURL=subscription.repository.d.ts.map

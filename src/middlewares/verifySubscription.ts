@@ -1,5 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { prisma } from "../config/prisma";
+import { SubscriptionStatus } from "../generated/prisma";
+
+const ASSESSMENT_LIMITS: Record<string, number> = {
+  STANDARD: 2,
+  PROFESSIONAL: -1,
+};
 
 export const verifySubscription = async (
   req: Request,
@@ -10,66 +16,35 @@ export const verifySubscription = async (
     const { userId } = res.locals.decrypt;
 
     if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Authentication required",
-      });
+      return res.status(401).json({ success: false, message: "Authentication required" });
     }
 
-    // Get user's active subscription
-    const activeSubscription = await prisma.subscription.findFirst({
+    const subscription = await prisma.subscription.findFirst({
       where: {
         userId,
-        isActive: true,
-        endDate: {
-          gte: new Date(), // Subscription belum expired
-        },
+        status: SubscriptionStatus.ACTIVE,
+        expiresAt: { gt: new Date() },
       },
-      include: {
-        plan: true,
-      },
+      include: { plan: true, usage: true },
     });
 
-    if (!activeSubscription) {
+    if (!subscription) {
       return res.status(403).json({
         success: false,
         message: "Active subscription required to access skill assessments",
         code: "SUBSCRIPTION_REQUIRED",
-        details: "Please purchase a subscription to take skill assessments and earn certificates",
       });
     }
 
-    // Check if subscription is expired
-    if (activeSubscription.endDate < new Date()) {
-      return res.status(403).json({
-        success: false,
-        message: "Your subscription has expired. Please renew to continue accessing skill assessments",
-        code: "SUBSCRIPTION_EXPIRED",
-        expiredDate: activeSubscription.endDate,
-      });
-    }
+    const planCode = subscription.plan.code;
 
-    // Check if subscription plan allows skill assessments
-    const allowedPlans = ["Standard", "Professional", "STANDARD", "PROFESSIONAL"]; // Both plans allow skill assessments (case-insensitive)
-    const planNameUpper = activeSubscription.plan.planName.toUpperCase();
-    
-    if (!allowedPlans.map(p => p.toUpperCase()).includes(planNameUpper)) {
-      return res.status(403).json({
-        success: false,
-        message: "Your subscription plan does not include access to skill assessments",
-        code: "PLAN_NOT_SUPPORTED",
-        currentPlan: activeSubscription.plan.planName,
-        requiredPlans: ["STANDARD", "PROFESSIONAL"],
-      });
-    }
-
-    // Attach subscription info to response locals for potential use in controllers
     res.locals.subscription = {
-      id: activeSubscription.id,
-      planName: activeSubscription.plan.planName,
-      planPrice: activeSubscription.plan.planPrice,
-      endDate: activeSubscription.endDate,
-      isActive: activeSubscription.isActive,
+      id: subscription.id,
+      planCode,
+      planName: subscription.plan.name,
+      priceIdr: subscription.plan.priceIdr,
+      expiresAt: subscription.expiresAt,
+      status: subscription.status,
     };
 
     next();
@@ -82,7 +57,6 @@ export const verifySubscription = async (
   }
 };
 
-// Middleware to check assessment attempt limits based on subscription plan
 export const checkAssessmentLimits = async (
   req: Request,
   res: Response,
@@ -93,59 +67,49 @@ export const checkAssessmentLimits = async (
     const { subscription } = res.locals;
 
     if (!userId || !subscription) {
-      return res.status(403).json({
-        success: false,
-        message: "Subscription verification required",
-      });
+      return res.status(403).json({ success: false, message: "Subscription verification required" });
     }
 
-    // Define assessment limits per plan (updated according to requirements)
-    const assessmentLimits: Record<string, number> = {
-      Standard: 2, // 2 assessments per month for Standard plan
-      STANDARD: 2, // Support uppercase
-      Professional: -1, // Unlimited for Professional plan
-      PROFESSIONAL: -1, // Support uppercase
-    };
+    const planKey = subscription.planCode.toUpperCase();
+    const monthlyLimit = ASSESSMENT_LIMITS[planKey] ?? 2;
 
-    const monthlyLimit = assessmentLimits[subscription.planName] || 2;
-
-    // Skip limit check for unlimited plans (Professional)
     if (monthlyLimit === -1) {
       return next();
     }
 
-    // Count assessments taken this month
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const assessmentCount = await prisma.skillResult.count({
+    const attemptCount = await prisma.skillResult.count({
       where: {
         userId,
-        createdAt: {
-          gte: startOfMonth,
-        },
+        createdAt: { gte: startOfMonth },
       },
     });
 
-    if (assessmentCount >= monthlyLimit) {
-      const isStandardPlan = subscription.planName.toUpperCase() === 'STANDARD';
+    if (attemptCount >= monthlyLimit) {
+      const resetDate = new Date(startOfMonth);
+      resetDate.setMonth(resetDate.getMonth() + 1);
+      const isStandard = planKey === "STANDARD";
+
       return res.status(403).json({
         success: false,
-        message: `Assessment limit reached. You can take ${monthlyLimit} skill assessments per month with your ${subscription.planName} plan (IDR ${isStandardPlan ? '25,000' : '100,000'}/month).`,
+        message: `Assessment limit reached. You can take ${monthlyLimit} skill assessments per month with your ${subscription.planName} plan`,
         code: "ASSESSMENT_LIMIT_EXCEEDED",
-        currentCount: assessmentCount,
+        currentCount: attemptCount,
         limit: monthlyLimit,
-        resetDate: new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 1),
-        upgradeMessage: isStandardPlan ? "Upgrade to Professional plan (IDR 100,000/month) for unlimited skill assessments and priority job application review." : null,
+        resetDate,
+        upgradeMessage: isStandard
+          ? "Upgrade to Professional plan (IDR 100,000/month) for unlimited assessments and priority review."
+          : null,
       });
     }
 
-    // Add remaining assessments info to response locals
     res.locals.assessmentInfo = {
-      used: assessmentCount,
+      used: attemptCount,
       limit: monthlyLimit,
-      remaining: monthlyLimit - assessmentCount,
+      remaining: monthlyLimit - attemptCount,
     };
 
     next();

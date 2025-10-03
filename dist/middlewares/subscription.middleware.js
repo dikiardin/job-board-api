@@ -2,16 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkTemplateAccess = exports.checkCVGenerationLimit = exports.checkSubscription = void 0;
 const prisma_1 = require("../config/prisma");
-// Define subscription limits (updated according to requirements)
+const prisma_2 = require("../generated/prisma");
 const SUBSCRIPTION_LIMITS = {
     Standard: {
-        cvGenerationLimit: -1, // Unlimited CV generation for Standard plan (IDR 25,000/month)
-        templatesAccess: ["ats", "modern", "creative"], // All templates available
+        cvGenerationLimit: 2,
+        templatesAccess: ["ats", "modern"],
         additionalFeatures: ["cv_generator", "skill_assessment_2x"],
     },
     Professional: {
-        cvGenerationLimit: -1, // Unlimited CV generation for Professional plan (IDR 100,000/month)
-        templatesAccess: ["ats", "modern", "creative"], // All templates available
+        cvGenerationLimit: -1,
+        templatesAccess: ["ats", "modern", "creative"],
         additionalFeatures: ["cv_generator", "skill_assessment_unlimited", "priority_review"],
     },
 };
@@ -21,38 +21,24 @@ const checkSubscription = async (req, res, next) => {
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
-        // Get user's active subscription
         const activeSubscription = await prisma_1.prisma.subscription.findFirst({
             where: {
                 userId,
-                isActive: true,
-                endDate: {
-                    gte: new Date(), // Subscription belum expired
-                },
+                status: prisma_2.SubscriptionStatus.ACTIVE,
+                expiresAt: { gt: new Date() },
             },
-            include: {
-                plan: true,
-            },
+            include: { plan: true, usage: true },
         });
         if (!activeSubscription) {
             return res.status(403).json({
-                message: "Active subscription required to use CV Generator. Choose Standard (IDR 25,000/month) or Professional (IDR 100,000/month) plan.",
+                message: "Active subscription required to access this feature. Choose Standard (IDR 25,000/month) or Professional (IDR 100,000/month).",
                 code: "SUBSCRIPTION_REQUIRED",
             });
         }
-        // Check if subscription is expired
-        if (activeSubscription.endDate < new Date()) {
-            return res.status(403).json({
-                message: "Your subscription has expired. Please renew to continue using CV Generator",
-                code: "SUBSCRIPTION_EXPIRED",
-            });
-        }
-        // Attach subscription info to request
         req.subscription = {
             plan: activeSubscription.plan,
-            limits: SUBSCRIPTION_LIMITS[activeSubscription.plan.planName] ||
-                SUBSCRIPTION_LIMITS["Standard"],
-            endDate: activeSubscription.endDate,
+            limits: SUBSCRIPTION_LIMITS[activeSubscription.plan.name] ?? SUBSCRIPTION_LIMITS.Standard,
+            expiresAt: activeSubscription.expiresAt,
         };
         next();
     }
@@ -74,20 +60,16 @@ const checkCVGenerationLimit = async (req, res, next) => {
                 .status(403)
                 .json({ message: "Subscription verification failed" });
         }
-        // Skip limit check for unlimited plans
         if (limits.cvGenerationLimit === -1) {
             return next();
         }
-        // Count CVs generated this month
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
         const cvCount = await prisma_1.prisma.generatedCV.count({
             where: {
                 userId,
-                createdAt: {
-                    gte: startOfMonth,
-                },
+                createdAt: { gte: startOfMonth },
             },
         });
         if (cvCount >= limits.cvGenerationLimit) {

@@ -24,8 +24,8 @@ export class GetJobService {
           : job.salaryMin
           ? `${job.salaryMin}+`
           : "Not specified",
-      companyName: job.company.name,
-      companyLogo: job.company.logo,
+      companyName: (job as any).company?.name,
+      companyLogo: (job as any).company?.logoUrl,
     }));
 
     return { jobs: formattedJobs, total };

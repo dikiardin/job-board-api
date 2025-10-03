@@ -17,14 +17,18 @@ export declare class PreselectionService {
             options: import("../../generated/prisma/runtime/library").JsonValue;
             question: string;
             answer: string;
+            orderIndex: number;
             testId: number;
         }[];
     } & {
-        createdAt: Date;
-        id: number;
         isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
         jobId: number;
         passingScore: number | null;
+        questionCount: number;
+        timeLimitMinutes: number;
     }>;
     private static validateAdminAccess;
     private static validateJobOwnership;
@@ -74,7 +78,7 @@ export declare class PreselectionService {
             resultId: number;
             user: {
                 id: number;
-                name: string;
+                name: string | null;
                 email: string;
             };
             score: number;

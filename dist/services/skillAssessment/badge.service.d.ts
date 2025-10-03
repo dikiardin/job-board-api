@@ -4,9 +4,9 @@ export declare class BadgeService {
         userId: number;
         badgeTemplateId: number | null;
         assessmentId: number | null;
-        badgeName: string;
-        badgeIcon: string | null;
-        awardedAt: Date;
+        badgeId: number | null;
+        earnedAt: Date;
+        evidenceUrl: string | null;
         badgeType: string;
     } | null>;
     private static generateBadgeFromTitle;
@@ -15,36 +15,37 @@ export declare class BadgeService {
         userId: number;
         badgeTemplateId: number | null;
         assessmentId: number | null;
-        badgeName: string;
-        badgeIcon: string | null;
-        awardedAt: Date;
+        badgeId: number | null;
+        earnedAt: Date;
+        evidenceUrl: string | null;
         badgeType: string;
     }[]>;
     static getBadgeStats(): Promise<{
-        badgeName: string;
-        count: number;
+        badgeName: any;
+        count: any;
     }[]>;
     static getTopBadgeHolders(limit?: number): Promise<{
         id: number;
-        name: string;
+        name: string | null;
         email: string;
         badgeCount: number;
         badges: {
-            name: string;
-            icon: string | null;
-            awardedAt: Date;
+            name: any;
+            icon: any;
+            awardedAt: any;
         }[];
     }[]>;
     static checkMilestoneBadges(userId: number): Promise<never[]>;
     static getBadgeDetails(badgeId: number): Promise<({
         user: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
         };
         badgeTemplate: {
             name: string;
             createdAt: Date;
+            updatedAt: Date;
             id: number;
             description: string | null;
             category: string | null;
@@ -60,22 +61,23 @@ export declare class BadgeService {
         userId: number;
         badgeTemplateId: number | null;
         assessmentId: number | null;
-        badgeName: string;
-        badgeIcon: string | null;
-        awardedAt: Date;
+        badgeId: number | null;
+        earnedAt: Date;
+        evidenceUrl: string | null;
         badgeType: string;
     }) | null>;
     static verifyBadge(badgeId: number, userId: number): Promise<{
         isValid: boolean;
         badge: {
             user: {
-                name: string;
                 email: string;
+                name: string | null;
                 id: number;
             };
             badgeTemplate: {
                 name: string;
                 createdAt: Date;
+                updatedAt: Date;
                 id: number;
                 description: string | null;
                 category: string | null;
@@ -91,9 +93,9 @@ export declare class BadgeService {
             userId: number;
             badgeTemplateId: number | null;
             assessmentId: number | null;
-            badgeName: string;
-            badgeIcon: string | null;
-            awardedAt: Date;
+            badgeId: number | null;
+            earnedAt: Date;
+            evidenceUrl: string | null;
             badgeType: string;
         };
     }>;

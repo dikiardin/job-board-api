@@ -10,31 +10,17 @@ export declare class AssessmentCrudRepository {
             answer: string;
         }>;
     }): Promise<{
-        questions: {
-            id: number;
-            options: import("../../generated/prisma/runtime/library").JsonValue;
-            question: string;
-            answer: string;
-            assessmentId: number;
-        }[];
-        badgeTemplate: {
-            name: string;
-            id: number;
-            description: string | null;
-            category: string | null;
-            icon: string | null;
-        } | null;
-        creator: {
-            name: string;
-            email: string;
-            id: number;
-        };
-    } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }>;
     static getAllAssessments(page?: number, limit?: number): Promise<{
@@ -51,15 +37,21 @@ export declare class AssessmentCrudRepository {
                 icon: string | null;
             } | null;
             creator: {
-                name: string;
+                name: string | null;
                 id: number;
             };
         } & {
+            isActive: boolean;
             createdAt: Date;
+            updatedAt: Date;
             id: number;
+            slug: string;
             description: string | null;
             title: string;
+            category: string;
+            timeLimitMinutes: number;
             createdBy: number;
+            passScore: number;
             badgeTemplateId: number | null;
         })[];
         pagination: {
@@ -75,6 +67,7 @@ export declare class AssessmentCrudRepository {
             options: import("../../generated/prisma/runtime/library").JsonValue;
             question: string;
             answer: string;
+            orderIndex: number;
             assessmentId: number;
         }[];
         badgeTemplate: {
@@ -85,15 +78,21 @@ export declare class AssessmentCrudRepository {
             icon: string | null;
         } | null;
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }) | null>;
     static updateAssessment(assessmentId: number, createdBy: number, data: any): Promise<import("../../generated/prisma").Prisma.BatchPayload | ({
@@ -102,6 +101,7 @@ export declare class AssessmentCrudRepository {
             options: import("../../generated/prisma/runtime/library").JsonValue;
             question: string;
             answer: string;
+            orderIndex: number;
             assessmentId: number;
         }[];
         badgeTemplate: {
@@ -112,39 +112,63 @@ export declare class AssessmentCrudRepository {
             icon: string | null;
         } | null;
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     })>;
     static deleteAssessment(assessmentId: number, createdBy: number): Promise<{
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     } | null>;
     static getDeveloperAssessments(createdBy: number, page?: number, limit?: number): Promise<{
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }[]>;
     static searchAssessments(searchTerm: string, page?: number, limit?: number): Promise<{
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }[]>;
     static isAssessmentTitleAvailable(title: string, excludeId?: number): Promise<boolean>;
@@ -159,6 +183,7 @@ export declare class AssessmentCrudRepository {
             options: import("../../generated/prisma/runtime/library").JsonValue;
             question: string;
             answer: string;
+            orderIndex: number;
             assessmentId: number;
         }[];
         badgeTemplate: {
@@ -167,11 +192,17 @@ export declare class AssessmentCrudRepository {
             icon: string | null;
         } | null;
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }) | null>;
     static saveQuestion(data: {
@@ -184,6 +215,7 @@ export declare class AssessmentCrudRepository {
         options: import("../../generated/prisma/runtime/library").JsonValue;
         question: string;
         answer: string;
+        orderIndex: number;
         assessmentId: number;
     }>;
 }

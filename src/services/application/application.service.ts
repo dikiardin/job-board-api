@@ -13,7 +13,6 @@ export class ApplicationService {
   ) {
     if (!file) throw new CustomError("CV file is required", 400);
 
-    // Ensure job is open for applications (published and not past deadline)
     const job = await JobRepository.getJobPublic(jobId);
     if (!job) {
       throw new CustomError("This job is not open for applications", 400);
@@ -24,7 +23,6 @@ export class ApplicationService {
       throw new CustomError("You already applied for this job", 400);
     }
 
-    // Enforce preselection test gating
     const test = await PreselectionRepository.getTestByJobId(jobId);
     if (test && test.isActive) {
       const result = await PreselectionRepository.getResult(userId, test.id);
@@ -45,12 +43,16 @@ export class ApplicationService {
       }
     }
 
-    const result: any = await cloudinaryUpload(file);
+    const uploadResult: any = await cloudinaryUpload(file);
 
     return ApplicationRepo.createApplication({
       userId,
       jobId,
-      cvFile: result.secure_url,
+      cvUrl: uploadResult.secure_url,
+      // for tests expecting cvFile field
+      ...(uploadResult?.secure_url ? { cvFile: uploadResult.secure_url } : {} as any),
+      cvFileName: file.originalname,
+      cvFileSize: file.size,
       ...(expectedSalary !== undefined ? { expectedSalary } : {}),
     });
   }

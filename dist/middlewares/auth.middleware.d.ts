@@ -1,18 +1,18 @@
-import { Request, Response, NextFunction } from 'express';
-import { UserRole } from '../generated/prisma';
+import { Request, Response, NextFunction } from "express";
+import { UserRole } from "../generated/prisma";
 export interface AuthUser {
     id: number;
     email: string;
     name: string;
     role: UserRole;
-    isVerified: boolean;
+    emailVerified: boolean;
 }
 export interface AuthRequest extends Request {
     user?: AuthUser;
     subscription?: {
         plan: any;
         limits: any;
-        endDate: Date;
+        expiresAt: Date | null;
     };
 }
 export interface JWTPayload {

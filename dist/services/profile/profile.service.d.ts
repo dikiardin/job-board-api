@@ -1,33 +1,46 @@
 export declare class ProfileService {
     static getUserProfile(userId: number): Promise<{
         role: import("../../generated/prisma").$Enums.UserRole;
-        name: string;
         email: string;
+        passwordHash: string | null;
+        name: string | null;
         phone: string | null;
         gender: string | null;
         dob: Date | null;
         education: string | null;
         address: string | null;
+        city: string | null;
         profilePicture: string | null;
-        isVerified: boolean;
+        emailVerifiedAt: Date | null;
+        verificationToken: string | null;
+        verificationTokenExpiresAt: Date | null;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        emailChangeToken: string | null;
+        emailChangeNewEmail: string | null;
+        emailChangeExpiresAt: Date | null;
+        lastLoginAt: Date | null;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
     }>;
     static getCompanyProfile(adminId: number): Promise<{
         name: string;
-        email: string | null;
-        phone: string | null;
+        address: string | null;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
-        location: string | null;
+        slug: string;
         description: string | null;
+        logoUrl: string | null;
+        bannerUrl: string | null;
         website: string | null;
-        logo: string | null;
-        adminId: number | null;
+        locationCity: string | null;
+        locationProvince: string | null;
+        locationCountry: string | null;
+        socials: import("../../generated/prisma/runtime/library").JsonValue | null;
+        ownerAdminId: number | null;
     }>;
 }
 //# sourceMappingURL=profile.service.d.ts.map
