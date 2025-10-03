@@ -12,6 +12,7 @@ export declare class ProfileService {
         isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        city: string | null;
         id: number;
     }>;
     static getCompanyProfile(adminId: number): Promise<{
@@ -20,7 +21,8 @@ export declare class ProfileService {
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
+        city: string | null;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;

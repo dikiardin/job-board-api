@@ -6,7 +6,7 @@ export declare class GetJobRepository {
         offset?: number;
     }): Promise<{
         city: string;
-        id: string;
+        id: number;
         company: {
             name: string;
             logo: string | null;
@@ -21,10 +21,10 @@ export declare class GetJobRepository {
         keyword?: string;
         city?: string;
     }): Promise<number>;
-    static findById(jobId: string): Promise<({
+    static findById(jobId: string | number): Promise<({
         company: {
             name: string;
-            id: string;
+            id: number;
             location: string | null;
             logo: string | null;
         };
@@ -32,8 +32,8 @@ export declare class GetJobRepository {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: string;
-        companyId: string;
+        id: number;
+        companyId: number;
         description: string;
         title: string;
         category: string;

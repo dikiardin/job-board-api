@@ -1,7 +1,7 @@
 export declare class JobApplicantsRepository {
     static listApplicantsForJob(params: {
-        companyId: string;
-        jobId: string;
+        companyId: string | number;
+        jobId: string | number;
         name?: string;
         education?: string;
         ageMin?: number;
@@ -37,7 +37,7 @@ export declare class JobApplicantsRepository {
             id: number;
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            jobId: string;
+            jobId: number;
             cvFile: string;
             expectedSalary: number | null;
             reviewNote: string | null;

@@ -4,12 +4,14 @@ exports.JobRepository = void 0;
 const prisma_1 = require("../../config/prisma");
 class JobRepository {
     static async getCompany(companyId) {
-        return prisma_1.prisma.company.findUnique({ where: { id: companyId } });
+        const id = typeof companyId === 'string' ? Number(companyId) : companyId;
+        return prisma_1.prisma.company.findUnique({ where: { id } });
     }
     static async createJob(companyId, data) {
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         return prisma_1.prisma.job.create({
             data: {
-                companyId,
+                companyId: cid,
                 title: data.title,
                 description: data.description,
                 banner: data.banner ?? null,
@@ -24,16 +26,19 @@ class JobRepository {
         });
     }
     static async updateJob(companyId, jobId, data) {
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         return prisma_1.prisma.job.update({
-            where: { id: jobId },
+            where: { id: jid },
             data: {
                 ...data,
             },
         });
     }
     static async getJobById(companyId, jobId) {
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         return prisma_1.prisma.job.findFirst({
-            where: { id: jobId, companyId },
+            where: { id: jid, companyId: cid },
             include: {
                 _count: { select: { applications: true } },
                 applications: {
@@ -51,15 +56,18 @@ class JobRepository {
         });
     }
     static async togglePublish(jobId, isPublished) {
-        return prisma_1.prisma.job.update({ where: { id: jobId }, data: { isPublished } });
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+        return prisma_1.prisma.job.update({ where: { id: jid }, data: { isPublished } });
     }
     static async deleteJob(companyId, jobId) {
-        return prisma_1.prisma.job.delete({ where: { id: jobId } });
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+        return prisma_1.prisma.job.delete({ where: { id: jid } });
     }
     static async listJobs(params) {
         const { companyId, title, category, sortBy = "createdAt", sortOrder = "desc", limit = 10, offset = 0 } = params;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
-            companyId,
+            companyId: cid,
             ...(title ? { title: { contains: title, mode: "insensitive" } } : {}),
             ...(category ? { category: { equals: category } } : {}),
         };
@@ -104,9 +112,10 @@ class JobRepository {
     }
     static async getJobPublic(jobId) {
         const now = new Date();
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         return prisma_1.prisma.job.findFirst({
             where: {
-                id: jobId,
+                id: jid,
                 isPublished: true,
                 OR: [{ deadline: null }, { deadline: { gte: now } }],
             },
@@ -115,6 +124,8 @@ class JobRepository {
     }
     static async listApplicantsForJob(params) {
         const { companyId, jobId, name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy = "appliedAt", sortOrder = "asc", limit = 10, offset = 0 } = params;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         // Build user where for name/education/age with input sanitization
         const userWhere = {};
         if (typeof name === "string" && name.trim() !== "") {
@@ -153,8 +164,8 @@ class JobRepository {
         }
         // Salary filter on application
         const appWhere = {
-            jobId,
-            job: { companyId },
+            jobId: jid,
+            job: { companyId: cid },
             ...(expectedSalaryMin != null ? { expectedSalary: { gte: expectedSalaryMin } } : {}),
             ...(expectedSalaryMax != null ? { expectedSalary: { lte: expectedSalaryMax, ...(expectedSalaryMin != null ? { gte: expectedSalaryMin } : {}) } } : {}),
         };

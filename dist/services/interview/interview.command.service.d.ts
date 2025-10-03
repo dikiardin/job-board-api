@@ -1,8 +1,8 @@
 import { InterviewStatus, UserRole } from "../../generated/prisma";
 export declare class InterviewCommandService {
     static createMany(params: {
-        companyId: string;
-        jobId: string;
+        companyId: string | number;
+        jobId: string | number;
         requesterId: number;
         requesterRole: UserRole;
         body: {

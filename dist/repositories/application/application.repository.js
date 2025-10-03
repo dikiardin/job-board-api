@@ -7,7 +7,7 @@ class ApplicationRepo {
         return prisma_1.prisma.application.create({
             data: {
                 userId: data.userId,
-                jobId: data.jobId,
+                jobId: typeof data.jobId === 'string' ? Number(data.jobId) : data.jobId,
                 cvFile: data.cvFile,
                 expectedSalary: typeof data.expectedSalary === "number" ? data.expectedSalary : null,
             },
@@ -15,7 +15,7 @@ class ApplicationRepo {
     }
     static async findExisting(userId, jobId) {
         return prisma_1.prisma.application.findFirst({
-            where: { userId, jobId },
+            where: { userId, jobId: typeof jobId === 'string' ? Number(jobId) : jobId },
         });
     }
     static async getApplicationWithOwnership(applicationId) {

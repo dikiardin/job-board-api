@@ -1,8 +1,8 @@
 import { UserRole, ApplicationStatus } from "../../generated/prisma";
 export declare class JobApplicantsService {
     static updateApplicantStatus(params: {
-        companyId: string;
-        jobId: string;
+        companyId: string | number;
+        jobId: string | number;
         applicationId: number;
         requesterId: number;
         requesterRole: UserRole;
@@ -17,8 +17,8 @@ export declare class JobApplicantsService {
         updatedAt: Date;
     }>;
     static listApplicants(params: {
-        companyId: string;
-        jobId: string;
+        companyId: string | number;
+        jobId: string | number;
         requesterId: number;
         requesterRole: UserRole;
         query: {

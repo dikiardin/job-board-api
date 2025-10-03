@@ -1,11 +1,12 @@
 import { prisma } from "../../config/prisma";
 
 export class SavedJobRepo {
-  public static async saveJob(userId: number, jobId: string) {
+  public static async saveJob(userId: number, jobId: string | number) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
     return prisma.savedJob.create({
       data: {
         userId,
-        jobId,
+        jobId: jid,
       },
       include: {
         job: {
@@ -49,9 +50,10 @@ export class SavedJobRepo {
     });
   }
 
-  public static async unsaveJob(userId: number, jobId: string) {
+  public static async unsaveJob(userId: number, jobId: string | number) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
     return prisma.savedJob.delete({
-      where: { userId_jobId: { userId, jobId } },
+      where: { userId_jobId: { userId, jobId: jid } },
     });
   }
 }

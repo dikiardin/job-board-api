@@ -55,7 +55,7 @@ model UserProvider {
 }
 
 model Company {
-  id          String       @id @default(uuid()) @db.Uuid
+  id          Int          @id @default(autoincrement())
   name        String
   email       String?
   phone       String?
@@ -73,8 +73,8 @@ model Company {
 }
 
 model Job {
-  id                String            @id @default(uuid()) @db.Uuid
-  companyId         String            @db.Uuid
+  id                Int               @id @default(autoincrement())
+  companyId         Int
   title             String
   description       String
   category          String
@@ -99,7 +99,7 @@ model Job {
 model Application {
   id             Int               @id @default(autoincrement())
   userId         Int
-  jobId          String            @db.Uuid
+  jobId          Int
   cvFile         String
   expectedSalary Int?
   status         ApplicationStatus @default(SUBMITTED)
@@ -117,7 +117,7 @@ model Application {
 model SavedJob {
   id        Int      @id @default(autoincrement())
   userId    Int
-  jobId     String            @db.Uuid
+  jobId     Int
   createdAt DateTime @default(now())
   job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -142,7 +142,7 @@ model Interview {
 
 model PreselectionTest {
   id           Int                    @id @default(autoincrement())
-  jobId        String                 @unique @db.Uuid
+  jobId        Int                    @unique
   createdAt    DateTime               @default(now())
   isActive     Boolean                @default(true)
   passingScore Int?
@@ -313,7 +313,7 @@ model Payment {
 model Employment {
   id        Int            @id @default(autoincrement())
   userId    Int
-  companyId String? @db.Uuid
+  companyId Int?
   startDate DateTime?
   endDate   DateTime?
   createdAt DateTime       @default(now())
@@ -342,7 +342,7 @@ model CompanyReview {
 model JobShare {
   id            Int           @id @default(autoincrement())
   userId        Int
-  jobId         String            @db.Uuid
+  jobId         Int
   platform      SharePlatform
   sharedUrl     String?
   customMessage String?

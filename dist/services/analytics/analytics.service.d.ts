@@ -1,13 +1,13 @@
 import { UserRole } from "../../generated/prisma";
 export declare class AnalyticsService {
-    static assertCompanyOwnership(companyId: string, requesterId: number, requesterRole: UserRole): Promise<{
+    static assertCompanyOwnership(companyId: string | number, requesterId: number, requesterRole: UserRole): Promise<{
         name: string;
         email: string | null;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: string;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;
@@ -15,7 +15,7 @@ export declare class AnalyticsService {
         adminId: number | null;
     }>;
     static demographics(params: {
-        companyId: string;
+        companyId: string | number;
         requesterId: number;
         requesterRole: UserRole;
         query: {
@@ -35,7 +35,7 @@ export declare class AnalyticsService {
         totalApplicants: number;
     }>;
     static salaryTrends(params: {
-        companyId: string;
+        companyId: string | number;
         requesterId: number;
         requesterRole: UserRole;
         query: {
@@ -55,7 +55,7 @@ export declare class AnalyticsService {
         };
     }>;
     static interests(params: {
-        companyId: string;
+        companyId: string | number;
         requesterId: number;
         requesterRole: UserRole;
         query: {
@@ -69,7 +69,7 @@ export declare class AnalyticsService {
         }[];
     }>;
     static overview(params: {
-        companyId: string;
+        companyId: string | number;
         requesterId: number;
         requesterRole: UserRole;
         query: {

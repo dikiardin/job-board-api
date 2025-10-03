@@ -1,13 +1,13 @@
 import { Prisma } from "../../generated/prisma";
 export declare class AnalyticsRepository {
-    static getCompany(companyId: string): Promise<{
+    static getCompany(companyId: string | number): Promise<{
         name: string;
         email: string | null;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: string;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;
@@ -15,7 +15,7 @@ export declare class AnalyticsRepository {
         adminId: number | null;
     } | null>;
     static getCompanyApplications(params: {
-        companyId: string;
+        companyId: string | number;
         from?: Date;
         to?: Date;
     }): Promise<({
@@ -40,8 +40,8 @@ export declare class AnalyticsRepository {
             createdAt: Date;
             updatedAt: Date;
             city: string;
-            id: string;
-            companyId: string;
+            id: number;
+            companyId: number;
             description: string;
             title: string;
             category: string;
@@ -58,13 +58,13 @@ export declare class AnalyticsRepository {
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: string;
+        jobId: number;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;
     })[]>;
     static applicationStatusCounts(params: {
-        companyId: string;
+        companyId: string | number;
         from?: Date;
         to?: Date;
     }): Promise<(Prisma.PickEnumerable<Prisma.ApplicationGroupByOutputType, "status"[]> & {
@@ -73,7 +73,7 @@ export declare class AnalyticsRepository {
         };
     })[]>;
     static applicationsByCategory(params: {
-        companyId: string;
+        companyId: string | number;
         from?: Date;
         to?: Date;
     }): Promise<{
@@ -81,7 +81,7 @@ export declare class AnalyticsRepository {
         count: number;
     }[]>;
     static expectedSalaryByCityAndTitle(params: {
-        companyId: string;
+        companyId: string | number;
         from?: Date;
         to?: Date;
     }): Promise<{
@@ -91,14 +91,14 @@ export declare class AnalyticsRepository {
         samples: number;
     }[]>;
     static topCitiesByApplications(params: {
-        companyId: string;
+        companyId: string | number;
         from?: Date;
         to?: Date;
     }): Promise<{
         city: string;
         count: number;
     }[]>;
-    static companyReviewSalaryStats(companyId: string): Promise<{
+    static companyReviewSalaryStats(companyId: string | number): Promise<{
         avgSalaryEstimate: number | null;
         samples: number;
     }>;

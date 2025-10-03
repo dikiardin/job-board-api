@@ -5,7 +5,7 @@ export declare class CreateEmploymentRepo {
         startDate: Date | null;
         endDate: Date | null;
         userId: number;
-        companyId: string | null;
+        companyId: number | null;
     }>;
 }
 //# sourceMappingURL=createEmployment.repository.d.ts.map

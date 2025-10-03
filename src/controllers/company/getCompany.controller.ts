@@ -35,7 +35,7 @@ export class GetCompanyController {
     next: NextFunction
   ) {
     try {
-      const companyId = req.params.companyId as string;
+      const companyId = Number(req.params.companyId);
 
       const company = await GetCompanyService.getCompanyById(companyId);
       if (!company) {

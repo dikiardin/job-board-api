@@ -2,13 +2,15 @@ import { prisma } from "../../config/prisma";
 import { Prisma } from "../../generated/prisma";
 
 export class PreselectionRepository {
-  static async getJob(jobId: string) {
-    return prisma.job.findUnique({ where: { id: jobId }, include: { company: true } });
+  static async getJob(jobId: string | number) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    return prisma.job.findUnique({ where: { id: jid }, include: { company: true } });
   }
 
-  static async getTestByJobId(jobId: string) {
+  static async getTestByJobId(jobId: string | number) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
     return prisma.preselectionTest.findUnique({
-      where: { jobId },
+      where: { jobId: jid },
       include: { questions: true },
     });
   }
@@ -20,10 +22,11 @@ export class PreselectionRepository {
     });
   }
 
-  static async createTest(jobId: string, questions: Array<{ question: string; options: string[]; answer: string }>, passingScore?: number, isActive: boolean = true) {
+  static async createTest(jobId: string | number, questions: Array<{ question: string; options: string[]; answer: string }>, passingScore?: number, isActive: boolean = true) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
     return prisma.preselectionTest.create({
       data: {
-        jobId,
+        jobId: jid,
         isActive,
         passingScore: passingScore ?? null,
         questions: {
@@ -34,17 +37,19 @@ export class PreselectionRepository {
     });
   }
 
-  static async deleteTestByJobId(jobId: string) {
-    return prisma.preselectionTest.delete({ where: { jobId } });
+  static async deleteTestByJobId(jobId: string | number) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    return prisma.preselectionTest.delete({ where: { jobId: jid } });
   }
 
-  static async upsertTest(jobId: string, questions: Array<{ question: string; options: string[]; answer: string }>, passingScore?: number, isActive: boolean = true) {
-    const existing = await this.getTestByJobId(jobId);
+  static async upsertTest(jobId: string | number, questions: Array<{ question: string; options: string[]; answer: string }>, passingScore?: number, isActive: boolean = true) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const existing = await this.getTestByJobId(jid);
     if (existing) {
       // Replace questions entirely
       await prisma.preselectionQuestion.deleteMany({ where: { testId: existing.id } });
       return prisma.preselectionTest.update({
-        where: { jobId },
+        where: { jobId: jid },
         data: {
           isActive,
           passingScore: passingScore ?? null,
@@ -55,7 +60,7 @@ export class PreselectionRepository {
         include: { questions: true },
       });
     }
-    return this.createTest(jobId, questions, passingScore, isActive);
+    return this.createTest(jid, questions, passingScore, isActive);
   }
 
   static async getResult(userId: number, testId: number) {
@@ -76,9 +81,10 @@ export class PreselectionRepository {
     });
   }
 
-  static async getTestResultsByJob(jobId: string) {
+  static async getTestResultsByJob(jobId: string | number) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
     return prisma.preselectionTest.findUnique({
-      where: { jobId },
+      where: { jobId: jid },
       include: {
         results: { include: { user: true, answers: true } },
         questions: true,

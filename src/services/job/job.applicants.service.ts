@@ -3,7 +3,7 @@ import { JobRepository } from "../../repositories/job/job.repository";
 import { ApplicationRepo } from "../../repositories/application/application.repository";
 import { PreselectionRepository } from "../../repositories/preselection/preselection.repository";
 
-async function assertCompanyOwnership(companyId: string, requesterId: number) {
+async function assertCompanyOwnership(companyId: string | number, requesterId: number) {
   const company = await JobRepository.getCompany(companyId);
   if (!company) throw { status: 404, message: "Company not found" };
   if (company.adminId !== requesterId) throw { status: 403, message: "You don't own this company" };
@@ -12,8 +12,8 @@ async function assertCompanyOwnership(companyId: string, requesterId: number) {
 
 export class JobApplicantsService {
   static async updateApplicantStatus(params: {
-    companyId: string;
-    jobId: string;
+    companyId: string | number;
+    jobId: string | number;
     applicationId: number;
     requesterId: number;
     requesterRole: UserRole;
@@ -24,7 +24,9 @@ export class JobApplicantsService {
     await assertCompanyOwnership(companyId, requesterId);
 
     const app = await ApplicationRepo.getApplicationWithOwnership(applicationId);
-    if (!app || app.jobId !== jobId || (app as any).job.companyId !== companyId) throw { status: 404, message: "Application not found" };
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+    if (!app || app.jobId !== jid || (app as any).job.companyId !== cid) throw { status: 404, message: "Application not found" };
 
     const allowed: ApplicationStatus[] = [
       ApplicationStatus.IN_REVIEW,
@@ -39,8 +41,8 @@ export class JobApplicantsService {
   }
 
   static async listApplicants(params: {
-    companyId: string;
-    jobId: string;
+    companyId: string | number;
+    jobId: string | number;
     requesterId: number;
     requesterRole: UserRole;
     query: {

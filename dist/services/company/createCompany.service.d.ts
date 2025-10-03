@@ -6,7 +6,7 @@ export declare class CreateCompanyService {
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: string;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;

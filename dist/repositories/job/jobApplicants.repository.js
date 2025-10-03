@@ -5,6 +5,8 @@ const prisma_1 = require("../../config/prisma");
 class JobApplicantsRepository {
     static async listApplicantsForJob(params) {
         const { companyId, jobId, name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy = "appliedAt", sortOrder = "asc", limit = 10, offset = 0 } = params;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         // Build user where for name/education/age
         const userWhere = {};
         if (typeof name === "string" && name.trim() !== "")
@@ -26,8 +28,8 @@ class JobApplicantsRepository {
         }
         // Salary filter on application
         const appWhere = {
-            jobId,
-            job: { companyId },
+            jobId: jid,
+            job: { companyId: cid },
             ...(expectedSalaryMin != null ? { expectedSalary: { gte: expectedSalaryMin } } : {}),
             ...(expectedSalaryMax != null ? { expectedSalary: { lte: expectedSalaryMax, ...(expectedSalaryMin != null ? { gte: expectedSalaryMin } : {}) } } : {}),
         };

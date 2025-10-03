@@ -18,7 +18,7 @@ function calcAge(dob?: Date | null): number | null {
 }
 
 export class AnalyticsService {
-  static async assertCompanyOwnership(companyId: string, requesterId: number, requesterRole: UserRole) {
+  static async assertCompanyOwnership(companyId: string | number, requesterId: number, requesterRole: UserRole) {
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only admin can view analytics" };
     const company = await AnalyticsRepository.getCompany(companyId);
     if (!company) throw { status: 404, message: "Company not found" };
@@ -26,7 +26,7 @@ export class AnalyticsService {
     return company;
   }
 
-  static async demographics(params: { companyId: string; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
+  static async demographics(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
@@ -79,7 +79,7 @@ export class AnalyticsService {
     };
   }
 
-  static async salaryTrends(params: { companyId: string; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
+  static async salaryTrends(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
@@ -96,7 +96,7 @@ export class AnalyticsService {
     };
   }
 
-  static async interests(params: { companyId: string; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
+  static async interests(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
@@ -108,7 +108,7 @@ export class AnalyticsService {
     return { byCategory };
   }
 
-  static async overview(params: { companyId: string; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
+  static async overview(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
@@ -116,10 +116,10 @@ export class AnalyticsService {
     // Totals
     const [usersTotal, jobsTotal, appsTotal] = await Promise.all([
       prisma.user.count(),
-      prisma.job.count({ where: { companyId } }),
+      prisma.job.count({ where: { companyId: (typeof companyId === 'string' ? Number(companyId) : companyId) } }),
       prisma.application.count({
         where: {
-          job: { companyId },
+          job: { companyId: (typeof companyId === 'string' ? Number(companyId) : companyId) },
           ...(from || to
             ? {
                 createdAt: {

@@ -4,10 +4,11 @@ exports.SavedJobRepo = void 0;
 const prisma_1 = require("../../config/prisma");
 class SavedJobRepo {
     static async saveJob(userId, jobId) {
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         return prisma_1.prisma.savedJob.create({
             data: {
                 userId,
-                jobId,
+                jobId: jid,
             },
             include: {
                 job: {
@@ -50,8 +51,9 @@ class SavedJobRepo {
         });
     }
     static async unsaveJob(userId, jobId) {
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         return prisma_1.prisma.savedJob.delete({
-            where: { userId_jobId: { userId, jobId } },
+            where: { userId_jobId: { userId, jobId: jid } },
         });
     }
 }

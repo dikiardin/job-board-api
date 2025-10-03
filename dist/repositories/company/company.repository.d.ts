@@ -6,14 +6,14 @@ export declare class CompanyRepo {
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: string;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;
         logo: string | null;
         adminId: number | null;
     } | null>;
-    static updateCompany(companyId: string, data: Partial<{
+    static updateCompany(companyId: string | number, data: Partial<{
         email: string;
         name: string;
         location: string;
@@ -26,7 +26,7 @@ export declare class CompanyRepo {
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: string;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;

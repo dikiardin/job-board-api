@@ -7,7 +7,8 @@ const interview_repository_1 = require("../../repositories/interview/interview.r
 async function assertCompanyOwnershipByCompanyId(companyId, requesterId, requesterRole) {
     if (requesterRole !== prisma_1.UserRole.ADMIN)
         throw { status: 401, message: "Only company admin can view schedules" };
-    const company = await prisma_2.prisma.company.findUnique({ where: { id: companyId } });
+    const id = typeof companyId === 'string' ? Number(companyId) : companyId;
+    const company = await prisma_2.prisma.company.findUnique({ where: { id } });
     if (!company)
         throw { status: 404, message: "Company not found" };
     if (company.adminId !== requesterId)
@@ -32,7 +33,7 @@ class InterviewQueryService {
         const dateFrom = query.dateFrom ? new Date(query.dateFrom) : undefined;
         const dateTo = query.dateTo ? new Date(query.dateTo) : undefined;
         const listParams = { companyId };
-        if (typeof query.jobId === "string")
+        if (typeof query.jobId === "string" || typeof query.jobId === 'number')
             listParams.jobId = query.jobId;
         if (typeof query.applicantId === "number")
             listParams.applicantId = query.applicantId;

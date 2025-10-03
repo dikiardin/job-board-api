@@ -1,7 +1,7 @@
 import { UserRole } from "../../generated/prisma";
 export declare class PreselectionService {
     static createOrUpdateTest(params: {
-        jobId: string;
+        jobId: string | number;
         requesterId: number;
         requesterRole: UserRole;
         questions: Array<{
@@ -23,7 +23,7 @@ export declare class PreselectionService {
         createdAt: Date;
         id: number;
         isActive: boolean;
-        jobId: string;
+        jobId: number;
         passingScore: number | null;
     }>;
     private static validateAdminAccess;
@@ -31,9 +31,9 @@ export declare class PreselectionService {
     private static validateQuestions;
     private static validateQuestion;
     private static validatePassingScore;
-    static getTestForJob(jobId: string, requesterRole?: UserRole): Promise<{
+    static getTestForJob(jobId: string | number, requesterRole?: UserRole): Promise<{
         id: number;
-        jobId: string;
+        jobId: number;
         isActive: boolean;
         passingScore: number | null;
         createdAt: Date;
@@ -60,15 +60,15 @@ export declare class PreselectionService {
         isPassed: boolean | undefined;
     }>;
     static getJobResults(params: {
-        jobId: string;
+        jobId: string | number;
         requesterId: number;
         requesterRole: UserRole;
     }): Promise<{
-        jobId: string;
+        jobId: string | number;
         results: never[];
         testId?: never;
     } | {
-        jobId: string;
+        jobId: number;
         testId: number;
         results: {
             resultId: number;
@@ -82,7 +82,7 @@ export declare class PreselectionService {
         }[];
     }>;
     static statusForUser(params: {
-        jobId: string;
+        jobId: string | number;
         userId: number;
     }): Promise<{
         required: boolean;

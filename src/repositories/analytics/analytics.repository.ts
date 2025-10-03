@@ -2,14 +2,16 @@ import { prisma } from "../../config/prisma";
 import { Prisma } from "../../generated/prisma";
 
 export class AnalyticsRepository {
-  static async getCompany(companyId: string) {
-    return prisma.company.findUnique({ where: { id: companyId } });
+  static async getCompany(companyId: string | number) {
+    const id = typeof companyId === 'string' ? Number(companyId) : companyId;
+    return prisma.company.findUnique({ where: { id } });
   }
 
-  static async getCompanyApplications(params: { companyId: string; from?: Date; to?: Date }) {
+  static async getCompanyApplications(params: { companyId: string | number; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
     const where: Prisma.ApplicationWhereInput = {
-      job: { companyId },
+      job: { companyId: cid },
       ...(from || to
         ? {
             createdAt: {
@@ -26,10 +28,11 @@ export class AnalyticsRepository {
     });
   }
 
-  static async applicationStatusCounts(params: { companyId: string; from?: Date; to?: Date }) {
+  static async applicationStatusCounts(params: { companyId: string | number; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
     const where: Prisma.ApplicationWhereInput = {
-      job: { companyId },
+      job: { companyId: cid },
       ...(from || to
         ? {
             createdAt: {
@@ -48,10 +51,11 @@ export class AnalyticsRepository {
     return grouped;
   }
 
-  static async applicationsByCategory(params: { companyId: string; from?: Date; to?: Date }) {
+  static async applicationsByCategory(params: { companyId: string | number; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
     const where: Prisma.ApplicationWhereInput = {
-      job: { companyId },
+      job: { companyId: cid },
       ...(from || to
         ? {
             createdAt: {
@@ -71,10 +75,11 @@ export class AnalyticsRepository {
     return Array.from(map.entries()).map(([category, count]) => ({ category, count }));
   }
 
-  static async expectedSalaryByCityAndTitle(params: { companyId: string; from?: Date; to?: Date }) {
+  static async expectedSalaryByCityAndTitle(params: { companyId: string | number; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
     const where: Prisma.ApplicationWhereInput = {
-      job: { companyId },
+      job: { companyId: cid },
       expectedSalary: { not: null },
       ...(from || to
         ? {
@@ -102,10 +107,11 @@ export class AnalyticsRepository {
     return Array.from(agg.values()).map((v) => ({ city: v.city, title: v.title, avgExpectedSalary: v.n ? Math.round(v.sum / v.n) : 0, samples: v.n }));
   }
 
-  static async topCitiesByApplications(params: { companyId: string; from?: Date; to?: Date }) {
+  static async topCitiesByApplications(params: { companyId: string | number; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
     const where: Prisma.ApplicationWhereInput = {
-      job: { companyId },
+      job: { companyId: cid },
       ...(from || to
         ? {
             createdAt: {
@@ -124,10 +130,11 @@ export class AnalyticsRepository {
     return Array.from(map.entries()).map(([city, count]) => ({ city, count })).sort((a, b) => b.count - a.count);
   }
 
-  static async companyReviewSalaryStats(companyId: string) {
+  static async companyReviewSalaryStats(companyId: string | number) {
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
     // Reviews linked via Employment -> CompanyReview
     const reviews = await prisma.companyReview.findMany({
-      where: { employment: { companyId } },
+      where: { employment: { companyId: cid } },
     });
     if (!reviews.length) return { avgSalaryEstimate: null, samples: 0 };
     const has = reviews.filter((r) => r.salaryEstimate != null);

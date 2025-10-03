@@ -1,19 +1,19 @@
 export declare class JobRepository {
-    static getCompany(companyId: string): Promise<{
+    static getCompany(companyId: string | number): Promise<{
         name: string;
         email: string | null;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: string;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;
         logo: string | null;
         adminId: number | null;
     } | null>;
-    static createJob(companyId: string, data: {
+    static createJob(companyId: string | number, data: {
         title: string;
         description: string;
         banner?: string | null;
@@ -28,8 +28,8 @@ export declare class JobRepository {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: string;
-        companyId: string;
+        id: number;
+        companyId: number;
         description: string;
         title: string;
         category: string;
@@ -40,7 +40,7 @@ export declare class JobRepository {
         deadline: Date | null;
         isPublished: boolean;
     }>;
-    static updateJob(companyId: string, jobId: string, data: Partial<{
+    static updateJob(companyId: string | number, jobId: string | number, data: Partial<{
         title: string;
         description: string;
         banner?: string | null;
@@ -55,8 +55,8 @@ export declare class JobRepository {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: string;
-        companyId: string;
+        id: number;
+        companyId: number;
         description: string;
         title: string;
         category: string;
@@ -67,7 +67,7 @@ export declare class JobRepository {
         deadline: Date | null;
         isPublished: boolean;
     }>;
-    static getJobById(companyId: string, jobId: string): Promise<({
+    static getJobById(companyId: string | number, jobId: string | number): Promise<({
         applications: ({
             user: {
                 role: import("../../generated/prisma").$Enums.UserRole;
@@ -92,7 +92,7 @@ export declare class JobRepository {
             id: number;
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            jobId: string;
+            jobId: number;
             cvFile: string;
             expectedSalary: number | null;
             reviewNote: string | null;
@@ -112,15 +112,15 @@ export declare class JobRepository {
             createdAt: Date;
             id: number;
             isActive: boolean;
-            jobId: string;
+            jobId: number;
             passingScore: number | null;
         }) | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: string;
-        companyId: string;
+        id: number;
+        companyId: number;
         description: string;
         title: string;
         category: string;
@@ -131,12 +131,12 @@ export declare class JobRepository {
         deadline: Date | null;
         isPublished: boolean;
     }) | null>;
-    static togglePublish(jobId: string, isPublished: boolean): Promise<{
+    static togglePublish(jobId: string | number, isPublished: boolean): Promise<{
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: string;
-        companyId: string;
+        id: number;
+        companyId: number;
         description: string;
         title: string;
         category: string;
@@ -147,12 +147,12 @@ export declare class JobRepository {
         deadline: Date | null;
         isPublished: boolean;
     }>;
-    static deleteJob(companyId: string, jobId: string): Promise<{
+    static deleteJob(companyId: string | number, jobId: string | number): Promise<{
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: string;
-        companyId: string;
+        id: number;
+        companyId: number;
         description: string;
         title: string;
         category: string;
@@ -164,7 +164,7 @@ export declare class JobRepository {
         isPublished: boolean;
     }>;
     static listJobs(params: {
-        companyId: string;
+        companyId: string | number;
         title?: string;
         category?: string;
         sortBy?: "createdAt" | "deadline";
@@ -180,8 +180,8 @@ export declare class JobRepository {
             createdAt: Date;
             updatedAt: Date;
             city: string;
-            id: string;
-            companyId: string;
+            id: number;
+            companyId: number;
             description: string;
             title: string;
             category: string;
@@ -209,8 +209,8 @@ export declare class JobRepository {
             createdAt: Date;
             updatedAt: Date;
             city: string;
-            id: string;
-            companyId: string;
+            id: number;
+            companyId: number;
             description: string;
             title: string;
             category: string;
@@ -225,16 +225,16 @@ export declare class JobRepository {
         limit: number;
         offset: number;
     }>;
-    static getJobPublic(jobId: string): Promise<{
-        id: string;
-        companyId: string;
+    static getJobPublic(jobId: string | number): Promise<{
+        id: number;
+        companyId: number;
         title: string;
         deadline: Date | null;
         isPublished: boolean;
     } | null>;
     static listApplicantsForJob(params: {
-        companyId: string;
-        jobId: string;
+        companyId: string | number;
+        jobId: string | number;
         name?: string;
         education?: string;
         ageMin?: number;
@@ -270,7 +270,7 @@ export declare class JobRepository {
             id: number;
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            jobId: string;
+            jobId: number;
             cvFile: string;
             expectedSalary: number | null;
             reviewNote: string | null;

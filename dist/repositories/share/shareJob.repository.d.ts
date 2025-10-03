@@ -6,29 +6,29 @@ export declare const SharePlatform: {
 };
 export type SharePlatform = (typeof SharePlatform)[keyof typeof SharePlatform];
 export declare class JobShareRepo {
-    static createShare(userId: number, jobId: string, platform: SharePlatform, sharedUrl?: string, customMessage?: string): Promise<{
+    static createShare(userId: number, jobId: string | number, platform: SharePlatform, sharedUrl?: string, customMessage?: string): Promise<{
         createdAt: Date;
         id: number;
         userId: number;
-        jobId: string;
+        jobId: number;
         platform: import("../../generated/prisma").$Enums.SharePlatform;
         sharedUrl: string | null;
         customMessage: string | null;
     }>;
-    static findSharesByJob(jobId: string): Promise<({
+    static findSharesByJob(jobId: string | number): Promise<({
         user: {
             name: string;
             id: number;
         };
         job: {
-            id: string;
+            id: number;
             title: string;
         };
     } & {
         createdAt: Date;
         id: number;
         userId: number;
-        jobId: string;
+        jobId: number;
         platform: import("../../generated/prisma").$Enums.SharePlatform;
         sharedUrl: string | null;
         customMessage: string | null;

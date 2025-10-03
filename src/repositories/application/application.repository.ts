@@ -3,23 +3,23 @@ import { prisma } from "../../config/prisma";
 export class ApplicationRepo {
   public static async createApplication(data: {
     userId: number;
-    jobId: string;
+    jobId: number | string;
     cvFile: string;
     expectedSalary?: number;
   }) {
     return prisma.application.create({
       data: {
         userId: data.userId,
-        jobId: data.jobId,
+        jobId: typeof data.jobId === 'string' ? Number(data.jobId) : data.jobId,
         cvFile: data.cvFile,
         expectedSalary:
           typeof data.expectedSalary === "number" ? data.expectedSalary : null,
       },
     });
   }
-  public static async findExisting(userId: number, jobId: string) {
+  public static async findExisting(userId: number, jobId: number | string) {
     return prisma.application.findFirst({
-      where: { userId, jobId },
+      where: { userId, jobId: typeof jobId === 'string' ? Number(jobId) : jobId },
     });
   }
   public static async getApplicationWithOwnership(applicationId: number) {

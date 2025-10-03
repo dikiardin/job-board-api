@@ -6,7 +6,8 @@ const prisma_2 = require("../../config/prisma");
 const interview_repository_1 = require("../../repositories/interview/interview.repository");
 const interviewEmail_service_1 = require("./interviewEmail.service");
 async function assertCompanyOwnershipByJob(jobId, requesterId) {
-    const job = await prisma_2.prisma.job.findUnique({ where: { id: jobId }, include: { company: true } });
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const job = await prisma_2.prisma.job.findUnique({ where: { id: jid }, include: { company: true } });
     if (!job)
         throw { status: 404, message: "Job not found" };
     if (job.company.adminId !== requesterId)
@@ -73,8 +74,9 @@ class InterviewCommandService {
         }
     }
     static async getApplicationsForJob(jobId, items) {
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         return await prisma_2.prisma.application.findMany({
-            where: { jobId, userId: { in: items.map((i) => i.applicantId) } },
+            where: { jobId: jid, userId: { in: items.map((i) => i.applicantId) } },
             include: { user: true },
         });
     }

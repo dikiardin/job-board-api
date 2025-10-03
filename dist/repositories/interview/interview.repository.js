@@ -79,11 +79,13 @@ class InterviewRepository {
     }
     static async list(params) {
         const { companyId, jobId, applicantId, status, dateFrom, dateTo, limit = 10, offset = 0 } = params;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         const where = {
             application: {
                 job: {
-                    companyId,
-                    ...(jobId ? { id: jobId } : {}),
+                    companyId: cid,
+                    ...(jid ? { id: jid } : {}),
                 },
                 ...(applicantId ? { userId: applicantId } : {}),
             },

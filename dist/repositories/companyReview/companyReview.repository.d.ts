@@ -18,15 +18,15 @@ export interface UpdateReviewData {
     comment?: string;
 }
 export interface GetReviewsParams {
-    companyId: string;
+    companyId: number | string;
     limit: number;
     offset: number;
     sortBy: string;
     sortOrder: string;
 }
 export declare class CompanyReviewRepository {
-    static checkCompanyExists(companyId: string): Promise<boolean>;
-    static getUserEmployment(userId: number, companyId: string): Promise<{
+    static checkCompanyExists(companyId: number | string): Promise<boolean>;
+    static getUserEmployment(userId: number, companyId: number | string): Promise<{
         id: number;
         startDate: Date | null;
         endDate: Date | null;
@@ -88,20 +88,20 @@ export declare class CompanyReviewRepository {
         careerRating: import("../../generated/prisma/runtime/library").Decimal | null;
         comment: string | null;
     }[]>;
-    static getCompanyReviewsCount(companyId: string): Promise<number>;
-    static getCompanyReviewStats(companyId: string): Promise<{
+    static getCompanyReviewsCount(companyId: number | string): Promise<number>;
+    static getCompanyReviewStats(companyId: number | string): Promise<{
         totalReviews: number;
-        avgCultureRating: string | undefined;
-        avgWorklifeRating: string | undefined;
-        avgFacilityRating: string | undefined;
-        avgCareerRating: string | undefined;
+        avgCultureRating: any;
+        avgWorklifeRating: any;
+        avgFacilityRating: any;
+        avgCareerRating: any;
         avgOverallRating: string;
         ratingDistribution: {
             rating: number;
             count: number;
         }[];
     }>;
-    static getSalaryEstimates(companyId: string): Promise<{
+    static getSalaryEstimates(companyId: number | string): Promise<{
         position: string;
         count: number;
         averageSalary: string;

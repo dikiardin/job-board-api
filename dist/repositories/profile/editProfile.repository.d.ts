@@ -23,7 +23,7 @@ export declare class EditProfileRepository {
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: string;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;
