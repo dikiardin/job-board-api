@@ -313,7 +313,7 @@ model Payment {
 model Employment {
   id        Int            @id @default(autoincrement())
   userId    Int
-  companyId String?
+  companyId String?        @db.Uuid
   startDate DateTime?
   endDate   DateTime?
   createdAt DateTime       @default(now())
