@@ -20,9 +20,6 @@ export class EditProfileController {
       const uploadedFile =
         (files.profilePicture && files.profilePicture[0]) ||
         (files.logo && files.logo[0]);
-      if (!uploadedFile) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
 
       const updatedProfile = await EditProfileService.editProfile(
         userId,
