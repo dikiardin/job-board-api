@@ -8,12 +8,11 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const prisma_1 = require("../config/prisma");
 const authMiddleware = async (req, res, next) => {
     try {
-        const token = req.header('Authorization')?.replace('Bearer ', '');
+        const token = req.header("Authorization")?.replace("Bearer ", "");
         if (!token) {
-            return res.status(401).json({ message: 'Access denied. No token provided.' });
+            return res.status(401).json({ message: "Access denied. No token provided." });
         }
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        // Get user from database to ensure they still exist and are verified
         const user = await prisma_1.prisma.user.findUnique({
             where: { id: decoded.userId },
             select: {
@@ -21,20 +20,26 @@ const authMiddleware = async (req, res, next) => {
                 email: true,
                 name: true,
                 role: true,
-                isVerified: true
-            }
+                emailVerifiedAt: true,
+            },
         });
         if (!user) {
-            return res.status(401).json({ message: 'Invalid token. User not found.' });
+            return res.status(401).json({ message: "Invalid token. User not found." });
         }
-        if (!user.isVerified) {
-            return res.status(401).json({ message: 'Account not verified.' });
+        if (!user.emailVerifiedAt) {
+            return res.status(401).json({ message: "Account not verified." });
         }
-        req.user = user;
+        req.user = {
+            id: user.id,
+            email: user.email,
+            name: user.name ?? "",
+            role: user.role,
+            emailVerified: Boolean(user.emailVerifiedAt),
+        };
         next();
     }
     catch (error) {
-        res.status(401).json({ message: 'Invalid token.' });
+        res.status(401).json({ message: "Invalid token." });
     }
 };
 exports.authMiddleware = authMiddleware;

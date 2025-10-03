@@ -6,7 +6,8 @@ import { PreselectionRepository } from "../../repositories/preselection/preselec
 async function assertCompanyOwnership(companyId: string | number, requesterId: number) {
   const company = await JobRepository.getCompany(companyId);
   if (!company) throw { status: 404, message: "Company not found" };
-  if (company.adminId !== requesterId) throw { status: 403, message: "You don't own this company" };
+  const ownerId = (company as any).ownerAdminId ?? (company as any).adminId;
+  if (ownerId !== requesterId) throw { status: 403, message: "You don't own this company" };
   return company;
 }
 
@@ -100,7 +101,7 @@ export class JobApplicantsService {
           appliedAt: a.createdAt,
           expectedSalary: a.expectedSalary ?? null,
           status: a.status,
-          cvFile: a.cvFile,
+          cvFile: a.cvUrl ?? null,
           testScore: score,
           preselectionPassed,
           user: {

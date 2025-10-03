@@ -2,19 +2,28 @@ export declare class SocialAuthService {
     static socialLogin(provider: "GOOGLE", token: string, role: "ADMIN" | "USER"): Promise<{
         token: string;
         role: import("../../generated/prisma").$Enums.UserRole;
-        name: string;
         email: string;
         passwordHash: string | null;
+        name: string | null;
         phone: string | null;
         gender: string | null;
         dob: Date | null;
         education: string | null;
         address: string | null;
+        city: string | null;
         profilePicture: string | null;
-        isVerified: boolean;
+        emailVerifiedAt: Date | null;
+        verificationToken: string | null;
+        verificationTokenExpiresAt: Date | null;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        emailChangeToken: string | null;
+        emailChangeNewEmail: string | null;
+        emailChangeExpiresAt: Date | null;
+        lastLoginAt: Date | null;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
     }>;
 }

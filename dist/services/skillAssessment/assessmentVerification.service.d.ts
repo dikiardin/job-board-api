@@ -5,7 +5,7 @@ export declare class AssessmentVerificationService {
         certificate: {
             id: number;
             certificateCode: string | null;
-            userName: string;
+            userName: string | null;
             userEmail: string;
             assessmentTitle: string;
             assessmentDescription: any;
@@ -122,7 +122,7 @@ export declare class AssessmentVerificationService {
             certificate: {
                 id: number;
                 certificateCode: string | null;
-                userName: string;
+                userName: string | null;
                 userEmail: string;
                 assessmentTitle: string;
                 assessmentDescription: any;

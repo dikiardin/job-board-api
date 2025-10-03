@@ -27,7 +27,7 @@ export declare class AssessmentExecutionService {
     };
     static checkUserSubscription(userId: number): Promise<boolean>;
     static getUserInfo(userId: number): Promise<{
-        name: string;
+        name: string | null;
         email: string;
     }>;
     static validateSubmission(data: {
@@ -73,14 +73,20 @@ export declare class AssessmentExecutionService {
             icon: string | null;
         } | null;
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }>;
     static getPassingScore(): number;

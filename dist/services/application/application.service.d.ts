@@ -6,9 +6,14 @@ export declare class ApplicationService {
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
         jobId: number;
-        cvFile: string;
+        cvUrl: string;
+        cvFileName: string | null;
+        cvFileSize: number | null;
         expectedSalary: number | null;
+        expectedSalaryCurrency: string | null;
         reviewNote: string | null;
+        reviewUpdatedAt: Date | null;
+        referralSource: string | null;
     }>;
     static getApplicationsByUserId(userId: number): Promise<({
         job: {
@@ -17,13 +22,37 @@ export declare class ApplicationService {
             company: {
                 name: string;
                 id: number;
-                logo: string | null;
+                slug: string;
+                logoUrl: string | null;
             };
+            slug: string;
             title: string;
             category: string;
             salaryMin: number | null;
             salaryMax: number | null;
         };
+        interviews: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            status: import("../../generated/prisma").$Enums.InterviewStatus;
+            notes: string | null;
+            applicationId: number;
+            createdById: number | null;
+            startsAt: Date;
+            endsAt: Date | null;
+            locationOrLink: string | null;
+            reminderSentAt: Date | null;
+            updatedById: number | null;
+        }[];
+        timeline: {
+            createdAt: Date;
+            id: number;
+            status: import("../../generated/prisma").$Enums.ApplicationStatus;
+            applicationId: number;
+            note: string | null;
+            createdById: number | null;
+        }[];
     } & {
         createdAt: Date;
         updatedAt: Date;
@@ -31,9 +60,14 @@ export declare class ApplicationService {
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
         jobId: number;
-        cvFile: string;
+        cvUrl: string;
+        cvFileName: string | null;
+        cvFileSize: number | null;
         expectedSalary: number | null;
+        expectedSalaryCurrency: string | null;
         reviewNote: string | null;
+        reviewUpdatedAt: Date | null;
+        referralSource: string | null;
     })[]>;
 }
 //# sourceMappingURL=application.service.d.ts.map

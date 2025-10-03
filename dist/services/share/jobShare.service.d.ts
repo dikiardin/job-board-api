@@ -11,7 +11,7 @@ export declare class JobShareService {
     }>;
     static getSharesByJob(jobId: string): Promise<({
         user: {
-            name: string;
+            name: string | null;
             id: number;
         };
         job: {

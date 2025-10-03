@@ -1,17 +1,20 @@
 export declare class CompanyRepo {
     static findByAdminId(adminId: number): Promise<{
         name: string;
-        email: string | null;
-        phone: string | null;
+        address: string | null;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
-        location: string | null;
+        slug: string;
         description: string | null;
+        logoUrl: string | null;
+        bannerUrl: string | null;
         website: string | null;
-        logo: string | null;
-        adminId: number | null;
+        locationCity: string | null;
+        locationProvince: string | null;
+        locationCountry: string | null;
+        socials: import("../../generated/prisma/runtime/library").JsonValue | null;
+        ownerAdminId: number | null;
     } | null>;
     static updateCompany(companyId: string | number, data: Partial<{
         email: string;
@@ -21,17 +24,20 @@ export declare class CompanyRepo {
         website: string;
     }>): Promise<{
         name: string;
-        email: string | null;
-        phone: string | null;
+        address: string | null;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
-        location: string | null;
+        slug: string;
         description: string | null;
+        logoUrl: string | null;
+        bannerUrl: string | null;
         website: string | null;
-        logo: string | null;
-        adminId: number | null;
+        locationCity: string | null;
+        locationProvince: string | null;
+        locationCountry: string | null;
+        socials: import("../../generated/prisma/runtime/library").JsonValue | null;
+        ownerAdminId: number | null;
     }>;
 }
 //# sourceMappingURL=company.repository.d.ts.map

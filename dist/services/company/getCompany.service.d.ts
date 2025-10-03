@@ -8,45 +8,39 @@ export declare class GetCompanyService {
     static getAllCompanies(params: GetAllCompaniesParams): Promise<{
         data: {
             name: string;
-            email: string | null;
-            phone: string | null;
+            address: string | null;
             createdAt: Date;
             updatedAt: Date;
-            city: string | null;
             id: number;
-            _count: {
-                jobs: number;
-            };
-            location: string | null;
+            slug: string;
             description: string | null;
+            logoUrl: string | null;
+            bannerUrl: string | null;
             website: string | null;
-            logo: string | null;
+            locationCity: string | null;
+            locationProvince: string | null;
+            locationCountry: string | null;
+            socials: import("../../generated/prisma/runtime/library").JsonValue | null;
+            ownerAdminId: number | null;
         }[];
         total: number;
     }>;
     static getCompanyById(companyId: string | number): Promise<{
         name: string;
-        email: string | null;
-        phone: string | null;
+        address: string | null;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
-        location: string | null;
+        slug: string;
         description: string | null;
+        logoUrl: string | null;
+        bannerUrl: string | null;
         website: string | null;
-        logo: string | null;
-        jobs: {
-            city: string;
-            id: number;
-            title: string;
-            category: string;
-            salaryMin: number | null;
-            salaryMax: number | null;
-            tags: string[];
-            banner: string | null;
-            deadline: Date | null;
-        }[];
+        locationCity: string | null;
+        locationProvince: string | null;
+        locationCountry: string | null;
+        socials: import("../../generated/prisma/runtime/library").JsonValue | null;
+        ownerAdminId: number | null;
     } | null>;
 }
 export {};

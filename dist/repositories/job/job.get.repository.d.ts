@@ -6,43 +6,51 @@ export declare class GetJobRepository {
         offset?: number;
     }): Promise<{
         city: string;
+        createdAt: Date;
+        updatedAt: Date;
         id: number;
-        company: {
-            name: string;
-            logo: string | null;
-        };
+        companyId: number;
+        slug: string;
+        description: string;
+        bannerUrl: string | null;
         title: string;
         category: string;
+        employmentType: string | null;
+        experienceLevel: string | null;
+        province: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
+        salaryCurrency: string | null;
         tags: string[];
+        applyDeadline: Date | null;
+        isPublished: boolean;
+        publishedAt: Date | null;
     }[]>;
     static countJobs(filters?: {
         keyword?: string;
         city?: string;
     }): Promise<number>;
-    static findById(jobId: string | number): Promise<({
-        company: {
-            name: string;
-            id: number;
-            location: string | null;
-            logo: string | null;
-        };
-    } & {
+    static findById(jobId: string | number): Promise<{
+        city: string;
         createdAt: Date;
         updatedAt: Date;
-        city: string;
         id: number;
         companyId: number;
+        slug: string;
         description: string;
+        bannerUrl: string | null;
         title: string;
         category: string;
+        employmentType: string | null;
+        experienceLevel: string | null;
+        province: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
+        salaryCurrency: string | null;
         tags: string[];
-        banner: string | null;
-        deadline: Date | null;
+        applyDeadline: Date | null;
         isPublished: boolean;
-    }) | null>;
+        publishedAt: Date | null;
+    } | null>;
 }
 //# sourceMappingURL=job.get.repository.d.ts.map

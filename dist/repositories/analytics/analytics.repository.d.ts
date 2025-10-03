@@ -2,17 +2,20 @@ import { Prisma } from "../../generated/prisma";
 export declare class AnalyticsRepository {
     static getCompany(companyId: string | number): Promise<{
         name: string;
-        email: string | null;
-        phone: string | null;
+        address: string | null;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
-        location: string | null;
+        slug: string;
         description: string | null;
+        logoUrl: string | null;
+        bannerUrl: string | null;
         website: string | null;
-        logo: string | null;
-        adminId: number | null;
+        locationCity: string | null;
+        locationProvince: string | null;
+        locationCountry: string | null;
+        socials: Prisma.JsonValue | null;
+        ownerAdminId: number | null;
     } | null>;
     static getCompanyApplications(params: {
         companyId: string | number;
@@ -21,36 +24,51 @@ export declare class AnalyticsRepository {
     }): Promise<({
         user: {
             role: import("../../generated/prisma").$Enums.UserRole;
-            name: string;
             email: string;
             passwordHash: string | null;
+            name: string | null;
             phone: string | null;
             gender: string | null;
             dob: Date | null;
             education: string | null;
             address: string | null;
+            city: string | null;
             profilePicture: string | null;
-            isVerified: boolean;
+            emailVerifiedAt: Date | null;
+            verificationToken: string | null;
+            verificationTokenExpiresAt: Date | null;
+            passwordResetToken: string | null;
+            passwordResetExpiresAt: Date | null;
+            emailChangeToken: string | null;
+            emailChangeNewEmail: string | null;
+            emailChangeExpiresAt: Date | null;
+            lastLoginAt: Date | null;
+            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            city: string | null;
             id: number;
         };
         job: {
+            city: string;
             createdAt: Date;
             updatedAt: Date;
-            city: string;
             id: number;
             companyId: number;
+            slug: string;
             description: string;
+            bannerUrl: string | null;
             title: string;
             category: string;
+            employmentType: string | null;
+            experienceLevel: string | null;
+            province: string | null;
             salaryMin: number | null;
             salaryMax: number | null;
+            salaryCurrency: string | null;
             tags: string[];
-            banner: string | null;
-            deadline: Date | null;
+            applyDeadline: Date | null;
             isPublished: boolean;
+            publishedAt: Date | null;
         };
     } & {
         createdAt: Date;
@@ -59,9 +77,14 @@ export declare class AnalyticsRepository {
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
         jobId: number;
-        cvFile: string;
+        cvUrl: string;
+        cvFileName: string | null;
+        cvFileSize: number | null;
         expectedSalary: number | null;
+        expectedSalaryCurrency: string | null;
         reviewNote: string | null;
+        reviewUpdatedAt: Date | null;
+        referralSource: string | null;
     })[]>;
     static applicationStatusCounts(params: {
         companyId: string | number;

@@ -38,33 +38,42 @@ export declare class InterviewQueryService {
             job: {
                 company: {
                     name: string;
-                    email: string | null;
-                    phone: string | null;
+                    address: string | null;
                     createdAt: Date;
                     updatedAt: Date;
-                    city: string | null;
                     id: number;
-                    location: string | null;
+                    slug: string;
                     description: string | null;
+                    logoUrl: string | null;
+                    bannerUrl: string | null;
                     website: string | null;
-                    logo: string | null;
-                    adminId: number | null;
+                    locationCity: string | null;
+                    locationProvince: string | null;
+                    locationCountry: string | null;
+                    socials: import("../../generated/prisma/runtime/library").JsonValue | null;
+                    ownerAdminId: number | null;
                 };
             } & {
+                city: string;
                 createdAt: Date;
                 updatedAt: Date;
-                city: string;
                 id: number;
                 companyId: number;
+                slug: string;
                 description: string;
+                bannerUrl: string | null;
                 title: string;
                 category: string;
+                employmentType: string | null;
+                experienceLevel: string | null;
+                province: string | null;
                 salaryMin: number | null;
                 salaryMax: number | null;
+                salaryCurrency: string | null;
                 tags: string[];
-                banner: string | null;
-                deadline: Date | null;
+                applyDeadline: Date | null;
                 isPublished: boolean;
+                publishedAt: Date | null;
             };
         } & {
             createdAt: Date;
@@ -73,20 +82,28 @@ export declare class InterviewQueryService {
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
             jobId: number;
-            cvFile: string;
+            cvUrl: string;
+            cvFileName: string | null;
+            cvFileSize: number | null;
             expectedSalary: number | null;
+            expectedSalaryCurrency: string | null;
             reviewNote: string | null;
+            reviewUpdatedAt: Date | null;
+            referralSource: string | null;
         };
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         status: import("../../generated/prisma").$Enums.InterviewStatus;
-        applicationId: number;
-        scheduleDate: Date;
-        locationOrLink: string | null;
         notes: string | null;
+        applicationId: number;
+        createdById: number | null;
+        startsAt: Date;
+        endsAt: Date | null;
+        locationOrLink: string | null;
         reminderSentAt: Date | null;
+        updatedById: number | null;
     }>;
 }
 //# sourceMappingURL=interview.query.service.d.ts.map

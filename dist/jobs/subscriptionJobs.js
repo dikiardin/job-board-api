@@ -7,36 +7,33 @@ exports.startSubscriptionJobs = startSubscriptionJobs;
 const node_cron_1 = __importDefault(require("node-cron"));
 const subscription_repository_1 = require("../repositories/subscription/subscription.repository");
 const email_service_1 = require("../services/subscription/email.service");
+const prisma_1 = require("../generated/prisma");
 function startSubscriptionJobs() {
-    // Job to check subscriptions expiring in 24 hours (daily at 9 AM)
+    // Reminder H-24 (daily at 09:00)
     node_cron_1.default.schedule("0 9 * * *", async () => {
         console.log("[CRON] Checking subscriptions expiring in 24 hours...");
         try {
-            // Find subscriptions expiring in 24 hours
-            const expiringSubscriptions = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInMinutes(24 * 60);
-            // Send email for each expiring subscription
-            for (const subscription of expiringSubscriptions) {
-                await email_service_1.EmailService.sendSubscriptionExpirationEmail(subscription.user.email, subscription.user.name, subscription.plan.planName, subscription.endDate);
+            const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringWithinHours(24);
+            for (const subscription of expiring) {
+                await email_service_1.EmailService.sendSubscriptionExpirationEmail(subscription.user.email, subscription.user.name, subscription.plan.name, subscription.expiresAt);
             }
-            console.log(`[CRON] Sent ${expiringSubscriptions.length} expiration reminder emails (24 hours before expiry)`);
+            console.log(`[CRON] Sent ${expiring.length} expiration reminder emails (H-24)`);
         }
         catch (error) {
             console.error("[CRON] Failed to send expiration reminders:", error);
         }
     });
-    // Job to deactivate expired subscriptions (daily at 10 AM)
+    // Deactivate expired subscriptions (daily at 10:00)
     node_cron_1.default.schedule("0 10 * * *", async () => {
         console.log("[CRON] Checking for expired subscriptions...");
         try {
-            // Find expired subscriptions
-            const expiredSubscriptions = await subscription_repository_1.SubscriptionRepo.getExpiredSubscriptions();
-            // Deactivate expired subscriptions
-            for (const subscription of expiredSubscriptions) {
+            const expired = await subscription_repository_1.SubscriptionRepo.getExpiredSubscriptions();
+            for (const subscription of expired) {
                 await subscription_repository_1.SubscriptionRepo.updateSubscription(subscription.id, {
-                    isActive: false,
+                    status: prisma_1.SubscriptionStatus.EXPIRED,
                 });
             }
-            console.log(`[CRON] Deactivated ${expiredSubscriptions.length} expired subscriptions`);
+            console.log(`[CRON] Deactivated ${expired.length} expired subscriptions`);
         }
         catch (error) {
             console.error("[CRON] Failed to deactivate expired subscriptions:", error);

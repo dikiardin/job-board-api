@@ -10,31 +10,17 @@ export declare class SkillAssessmentCrudRepository {
             answer: string;
         }>;
     }): Promise<{
-        questions: {
-            id: number;
-            options: import("../../generated/prisma/runtime/library").JsonValue;
-            question: string;
-            answer: string;
-            assessmentId: number;
-        }[];
-        badgeTemplate: {
-            name: string;
-            id: number;
-            description: string | null;
-            category: string | null;
-            icon: string | null;
-        } | null;
-        creator: {
-            name: string;
-            email: string;
-            id: number;
-        };
-    } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }>;
     static getAllAssessments(page?: number, limit?: number): Promise<{
@@ -43,15 +29,21 @@ export declare class SkillAssessmentCrudRepository {
                 results: number;
             };
             creator: {
-                name: string;
+                name: string | null;
                 id: number;
             };
         } & {
+            isActive: boolean;
             createdAt: Date;
+            updatedAt: Date;
             id: number;
+            slug: string;
             description: string | null;
             title: string;
+            category: string;
+            timeLimitMinutes: number;
             createdBy: number;
+            passScore: number;
             badgeTemplateId: number | null;
         })[];
         pagination: {
@@ -68,15 +60,21 @@ export declare class SkillAssessmentCrudRepository {
             question: string;
         }[];
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }) | null>;
     static getAssessmentWithAnswers(assessmentId: number): Promise<({
@@ -85,14 +83,21 @@ export declare class SkillAssessmentCrudRepository {
             options: import("../../generated/prisma/runtime/library").JsonValue;
             question: string;
             answer: string;
+            orderIndex: number;
             assessmentId: number;
         }[];
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }) | null>;
     static updateAssessment(assessmentId: number, createdBy: number, data: {
@@ -110,6 +115,7 @@ export declare class SkillAssessmentCrudRepository {
             options: import("../../generated/prisma/runtime/library").JsonValue;
             question: string;
             answer: string;
+            orderIndex: number;
             assessmentId: number;
         }[];
         badgeTemplate: {
@@ -120,23 +126,35 @@ export declare class SkillAssessmentCrudRepository {
             icon: string | null;
         } | null;
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     }) | null>;
     static deleteAssessment(assessmentId: number, createdBy: number): Promise<{
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     } | null>;
     static getDeveloperAssessments(createdBy: number): Promise<({
@@ -151,11 +169,17 @@ export declare class SkillAssessmentCrudRepository {
             icon: string | null;
         } | null;
     } & {
+        isActive: boolean;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         title: string;
+        category: string;
+        timeLimitMinutes: number;
         createdBy: number;
+        passScore: number;
         badgeTemplateId: number | null;
     })[]>;
 }

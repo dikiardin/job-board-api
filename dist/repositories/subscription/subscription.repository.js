@@ -2,140 +2,102 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionRepo = void 0;
 const prisma_1 = require("../../config/prisma");
+const prisma_2 = require("../../generated/prisma");
 class SubscriptionRepo {
-    // Get all subscriptions
     static async getAllSubscriptions() {
         return prisma_1.prisma.subscription.findMany({
             include: {
-                user: {
-                    select: { id: true, name: true, email: true },
-                },
+                user: { select: { id: true, name: true, email: true } },
                 plan: true,
-                payments: {
-                    orderBy: { createdAt: "desc" },
-                },
+                payments: { orderBy: { createdAt: "desc" } },
+                usage: true,
             },
             orderBy: { createdAt: "desc" },
         });
     }
-    // Get subscription by ID
     static async getSubscriptionById(id) {
         return prisma_1.prisma.subscription.findUnique({
             where: { id },
             include: {
-                user: {
-                    select: { id: true, name: true, email: true },
-                },
+                user: { select: { id: true, name: true, email: true } },
                 plan: true,
-                payments: {
-                    orderBy: { createdAt: "desc" },
-                },
+                payments: { orderBy: { createdAt: "desc" } },
+                usage: true,
             },
         });
     }
-    // Get user's subscriptions
     static async getUserSubscriptions(userId) {
         return prisma_1.prisma.subscription.findMany({
             where: { userId },
             include: {
                 plan: true,
-                payments: {
-                    orderBy: { createdAt: "desc" },
-                },
+                payments: { orderBy: { createdAt: "desc" } },
+                usage: true,
             },
             orderBy: { createdAt: "desc" },
         });
     }
-    // Get user's active subscription
     static async getUserActiveSubscription(userId) {
         return prisma_1.prisma.subscription.findFirst({
             where: {
                 userId,
-                isActive: true,
-                endDate: { gte: new Date() },
+                status: prisma_2.SubscriptionStatus.ACTIVE,
+                expiresAt: { gt: new Date() },
             },
-            include: {
-                plan: true,
-            },
+            include: { plan: true, usage: true },
         });
     }
-    // Create new subscription
     static async createSubscription(data) {
         return prisma_1.prisma.subscription.create({
             data,
-            include: {
-                plan: true,
-            },
+            include: { plan: true },
         });
     }
-    // Update subscription
     static async updateSubscription(id, data) {
         return prisma_1.prisma.subscription.update({
             where: { id },
             data,
-            include: {
-                plan: true,
-            },
+            include: { plan: true, usage: true },
         });
     }
-    // Get subscriptions expiring tomorrow (H-1)
-    static async getSubscriptionsExpiringTomorrow() {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-        const nextDay = new Date(tomorrow);
-        nextDay.setDate(nextDay.getDate() + 1);
-        return prisma_1.prisma.subscription.findMany({
-            where: {
-                isActive: true,
-                endDate: {
-                    gte: tomorrow,
-                    lt: nextDay,
-                },
-            },
-            include: {
-                user: {
-                    select: { id: true, name: true, email: true },
-                },
-                plan: true,
-            },
-        });
-    }
-    // Get subscriptions expiring in X minutes (for testing)
     static async getSubscriptionsExpiringInMinutes(minutes) {
         const now = new Date();
-        const targetTime = new Date(now.getTime() + minutes * 60 * 1000);
-        const nextMinute = new Date(targetTime.getTime() + 1 * 60 * 1000);
+        const windowStart = new Date(now.getTime() + minutes * 60 * 1000);
+        const windowEnd = new Date(windowStart.getTime() + 60 * 1000);
         return prisma_1.prisma.subscription.findMany({
             where: {
-                isActive: true,
-                endDate: {
-                    gte: targetTime,
-                    lt: nextMinute,
-                },
+                status: prisma_2.SubscriptionStatus.ACTIVE,
+                expiresAt: { gte: windowStart, lt: windowEnd },
             },
             include: {
-                user: {
-                    select: { id: true, name: true, email: true },
-                },
+                user: { select: { id: true, name: true, email: true } },
                 plan: true,
             },
         });
     }
-    // Get expired subscriptions
-    static async getExpiredSubscriptions() {
-        const now = new Date(); // Use current time, not start of day
+    static async getSubscriptionsExpiringWithinHours(hours) {
+        const now = new Date();
+        const windowStart = new Date(now.getTime() + hours * 60 * 60 * 1000);
+        const windowEnd = new Date(windowStart.getTime() + 60 * 60 * 1000);
         return prisma_1.prisma.subscription.findMany({
             where: {
-                isActive: true,
-                endDate: {
-                    lt: now, // Check if endDate is less than current time
-                },
+                status: prisma_2.SubscriptionStatus.ACTIVE,
+                expiresAt: { gte: windowStart, lt: windowEnd },
             },
             include: {
-                user: {
-                    select: { id: true, name: true, email: true },
-                },
+                user: { select: { id: true, name: true, email: true } },
+                plan: true,
+            },
+        });
+    }
+    static async getExpiredSubscriptions() {
+        return prisma_1.prisma.subscription.findMany({
+            where: {
+                status: prisma_2.SubscriptionStatus.ACTIVE,
+                expiresAt: { lt: new Date() },
+            },
+            include: {
+                user: { select: { id: true, name: true, email: true } },
                 plan: true,
             },
         });

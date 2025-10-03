@@ -2,17 +2,20 @@ import { UserRole } from "../../generated/prisma";
 export declare class AnalyticsService {
     static assertCompanyOwnership(companyId: string | number, requesterId: number, requesterRole: UserRole): Promise<{
         name: string;
-        email: string | null;
-        phone: string | null;
+        address: string | null;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
-        location: string | null;
+        slug: string;
         description: string | null;
+        logoUrl: string | null;
+        bannerUrl: string | null;
         website: string | null;
-        logo: string | null;
-        adminId: number | null;
+        locationCity: string | null;
+        locationProvince: string | null;
+        locationCountry: string | null;
+        socials: import("../../generated/prisma/runtime/library").JsonValue | null;
+        ownerAdminId: number | null;
     }>;
     static demographics(params: {
         companyId: string | number;

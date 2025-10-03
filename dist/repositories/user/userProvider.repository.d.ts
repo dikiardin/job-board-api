@@ -2,23 +2,33 @@ export declare class UserProviderRepo {
     static findByProvider(provider: "GOOGLE", providerId: string): Promise<({
         user: {
             role: import("../../generated/prisma").$Enums.UserRole;
-            name: string;
             email: string;
             passwordHash: string | null;
+            name: string | null;
             phone: string | null;
             gender: string | null;
             dob: Date | null;
             education: string | null;
             address: string | null;
+            city: string | null;
             profilePicture: string | null;
-            isVerified: boolean;
+            emailVerifiedAt: Date | null;
+            verificationToken: string | null;
+            verificationTokenExpiresAt: Date | null;
+            passwordResetToken: string | null;
+            passwordResetExpiresAt: Date | null;
+            emailChangeToken: string | null;
+            emailChangeNewEmail: string | null;
+            emailChangeExpiresAt: Date | null;
+            lastLoginAt: Date | null;
+            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            city: string | null;
             id: number;
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
         provider: import("../../generated/prisma").$Enums.ProviderType;
@@ -34,47 +44,55 @@ export declare class UserProviderRepo {
         role: "USER" | "ADMIN";
         profilePicture?: string | null;
     }): Promise<{
-        providers: {
-            createdAt: Date;
-            id: number;
-            userId: number;
-            provider: import("../../generated/prisma").$Enums.ProviderType;
-            providerId: string;
-            accessToken: string | null;
-            refreshToken: string | null;
-        }[];
-    } & {
         role: import("../../generated/prisma").$Enums.UserRole;
-        name: string;
         email: string;
         passwordHash: string | null;
+        name: string | null;
         phone: string | null;
         gender: string | null;
         dob: Date | null;
         education: string | null;
         address: string | null;
+        city: string | null;
         profilePicture: string | null;
-        isVerified: boolean;
+        emailVerifiedAt: Date | null;
+        verificationToken: string | null;
+        verificationTokenExpiresAt: Date | null;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        emailChangeToken: string | null;
+        emailChangeNewEmail: string | null;
+        emailChangeExpiresAt: Date | null;
+        lastLoginAt: Date | null;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
     }>;
     static updateProfilePicture(userId: number, profilePicture: string): Promise<{
         role: import("../../generated/prisma").$Enums.UserRole;
-        name: string;
         email: string;
         passwordHash: string | null;
+        name: string | null;
         phone: string | null;
         gender: string | null;
         dob: Date | null;
         education: string | null;
         address: string | null;
+        city: string | null;
         profilePicture: string | null;
-        isVerified: boolean;
+        emailVerifiedAt: Date | null;
+        verificationToken: string | null;
+        verificationTokenExpiresAt: Date | null;
+        passwordResetToken: string | null;
+        passwordResetExpiresAt: Date | null;
+        emailChangeToken: string | null;
+        emailChangeNewEmail: string | null;
+        emailChangeExpiresAt: Date | null;
+        lastLoginAt: Date | null;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
     }>;
 }

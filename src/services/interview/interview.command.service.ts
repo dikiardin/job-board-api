@@ -6,7 +6,7 @@ async function assertCompanyOwnershipByJob(jobId: string | number, requesterId: 
   const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
   const job = await prisma.job.findUnique({ where: { id: jid }, include: { company: true } });
   if (!job) throw { status: 404, message: "Job not found" };
-  if (job.company.adminId !== requesterId) throw { status: 403, message: "You don't own this company" };
+  if ((job.company as any).ownerAdminId !== requesterId) throw { status: 403, message: "You don't own this company" };
   return job.companyId;
 }
 async function assertCompanyOwnershipByInterview(interviewId: number, requesterId: number) {
@@ -15,7 +15,7 @@ async function assertCompanyOwnershipByInterview(interviewId: number, requesterI
     include: { application: { include: { job: { include: { company: true } } } } },
   });
   if (!interview) throw { status: 404, message: "Interview not found" };
-  if (interview.application.job.company.adminId !== requesterId) throw { status: 403, message: "You don't own this company" };
+  if (((interview.application.job.company) as any).ownerAdminId !== requesterId) throw { status: 403, message: "You don't own this company" };
   return interview;
 }
 function validatePayload(payload: any, isUpdate = false) {

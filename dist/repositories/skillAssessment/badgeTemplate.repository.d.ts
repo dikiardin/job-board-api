@@ -11,13 +11,14 @@ export declare class BadgeTemplateRepository {
             assessments: number;
         };
         creator: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
         };
     } & {
         name: string;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         description: string | null;
         category: string | null;
@@ -31,12 +32,13 @@ export declare class BadgeTemplateRepository {
                 assessments: number;
             };
             creator: {
-                name: string;
+                name: string | null;
                 id: number;
             };
         } & {
             name: string;
             createdAt: Date;
+            updatedAt: Date;
             id: number;
             description: string | null;
             category: string | null;
@@ -56,8 +58,8 @@ export declare class BadgeTemplateRepository {
             assessments: number;
         };
         creator: {
-            name: string;
             email: string;
+            name: string | null;
             id: number;
         };
         assessments: {
@@ -67,6 +69,7 @@ export declare class BadgeTemplateRepository {
     } & {
         name: string;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         description: string | null;
         category: string | null;
@@ -81,6 +84,7 @@ export declare class BadgeTemplateRepository {
     } & {
         name: string;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         description: string | null;
         category: string | null;
@@ -106,12 +110,13 @@ export declare class BadgeTemplateRepository {
             assessments: number;
         };
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
     } & {
         name: string;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         description: string | null;
         category: string | null;
@@ -121,6 +126,7 @@ export declare class BadgeTemplateRepository {
     static getBadgeTemplateByName(name: string): Promise<{
         name: string;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         description: string | null;
         category: string | null;
@@ -133,12 +139,13 @@ export declare class BadgeTemplateRepository {
             assessments: number;
         };
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
     } & {
         name: string;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         description: string | null;
         category: string | null;
@@ -151,12 +158,13 @@ export declare class BadgeTemplateRepository {
             assessments: number;
         };
         creator: {
-            name: string;
+            name: string | null;
             id: number;
         };
     } & {
         name: string;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         description: string | null;
         category: string | null;
@@ -167,6 +175,7 @@ export declare class BadgeTemplateRepository {
     static findByName(name: string): Promise<{
         name: string;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         description: string | null;
         category: string | null;
@@ -176,6 +185,7 @@ export declare class BadgeTemplateRepository {
     static findByNameExcluding(name: string, excludeId: number): Promise<{
         name: string;
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         description: string | null;
         category: string | null;

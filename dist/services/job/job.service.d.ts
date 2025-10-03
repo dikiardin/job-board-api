@@ -2,17 +2,20 @@ import { UserRole } from "../../generated/prisma";
 export declare class JobService {
     static assertCompanyOwnership(companyId: string, requesterId: number): Promise<{
         name: string;
-        email: string | null;
-        phone: string | null;
+        address: string | null;
         createdAt: Date;
         updatedAt: Date;
-        city: string | null;
         id: number;
-        location: string | null;
+        slug: string;
         description: string | null;
+        logoUrl: string | null;
+        bannerUrl: string | null;
         website: string | null;
-        logo: string | null;
-        adminId: number | null;
+        locationCity: string | null;
+        locationProvince: string | null;
+        locationCountry: string | null;
+        socials: import("../../generated/prisma/runtime/library").JsonValue | null;
+        ownerAdminId: number | null;
     }>;
     static validateJobPayload(payload: any, isUpdate?: boolean): void;
     static createJob(params: {
@@ -32,20 +35,26 @@ export declare class JobService {
             isPublished?: boolean;
         };
     }): Promise<{
+        city: string;
         createdAt: Date;
         updatedAt: Date;
-        city: string;
         id: number;
         companyId: number;
+        slug: string;
         description: string;
+        bannerUrl: string | null;
         title: string;
         category: string;
+        employmentType: string | null;
+        experienceLevel: string | null;
+        province: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
+        salaryCurrency: string | null;
         tags: string[];
-        banner: string | null;
-        deadline: Date | null;
+        applyDeadline: Date | null;
         isPublished: boolean;
+        publishedAt: Date | null;
     }>;
     static updateJob(params: {
         companyId: string;
@@ -54,20 +63,26 @@ export declare class JobService {
         requesterRole: UserRole;
         body: any;
     }): Promise<{
+        city: string;
         createdAt: Date;
         updatedAt: Date;
-        city: string;
         id: number;
         companyId: number;
+        slug: string;
         description: string;
+        bannerUrl: string | null;
         title: string;
         category: string;
+        employmentType: string | null;
+        experienceLevel: string | null;
+        province: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
+        salaryCurrency: string | null;
         tags: string[];
-        banner: string | null;
-        deadline: Date | null;
+        applyDeadline: Date | null;
         isPublished: boolean;
+        publishedAt: Date | null;
     }>;
     static togglePublish(params: {
         companyId: string;
@@ -76,20 +91,26 @@ export declare class JobService {
         requesterRole: UserRole;
         isPublished?: boolean;
     }): Promise<{
+        city: string;
         createdAt: Date;
         updatedAt: Date;
-        city: string;
         id: number;
         companyId: number;
+        slug: string;
         description: string;
+        bannerUrl: string | null;
         title: string;
         category: string;
+        employmentType: string | null;
+        experienceLevel: string | null;
+        province: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
+        salaryCurrency: string | null;
         tags: string[];
-        banner: string | null;
-        deadline: Date | null;
+        applyDeadline: Date | null;
         isPublished: boolean;
+        publishedAt: Date | null;
     }>;
     static deleteJob(params: {
         companyId: string;
@@ -154,29 +175,17 @@ export declare class JobService {
         id: number;
         title: string;
         description: string;
-        banner: string | null;
+        banner: any;
         category: string;
         city: string;
         salaryMin: number | null;
         salaryMax: number | null;
         tags: string[];
-        deadline: Date | null;
+        deadline: any;
         isPublished: boolean;
         createdAt: Date;
         applicantsCount: any;
-        applicants: {
-            applicationId: number;
-            userId: number;
-            userName: any;
-            userEmail: any;
-            profilePicture: any;
-            expectedSalary: any;
-            cvFile: any;
-            score: number | null;
-            preselectionPassed: boolean | undefined;
-            status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            appliedAt: Date;
-        }[];
+        applicants: any;
     }>;
 }
 //# sourceMappingURL=job.service.d.ts.map

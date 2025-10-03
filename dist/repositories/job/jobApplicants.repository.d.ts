@@ -16,19 +16,28 @@ export declare class JobApplicantsRepository {
         items: ({
             user: {
                 role: import("../../generated/prisma").$Enums.UserRole;
-                name: string;
                 email: string;
                 passwordHash: string | null;
+                name: string | null;
                 phone: string | null;
                 gender: string | null;
                 dob: Date | null;
                 education: string | null;
                 address: string | null;
+                city: string | null;
                 profilePicture: string | null;
-                isVerified: boolean;
+                emailVerifiedAt: Date | null;
+                verificationToken: string | null;
+                verificationTokenExpiresAt: Date | null;
+                passwordResetToken: string | null;
+                passwordResetExpiresAt: Date | null;
+                emailChangeToken: string | null;
+                emailChangeNewEmail: string | null;
+                emailChangeExpiresAt: Date | null;
+                lastLoginAt: Date | null;
+                isActive: boolean;
                 createdAt: Date;
                 updatedAt: Date;
-                city: string | null;
                 id: number;
             };
         } & {
@@ -38,9 +47,14 @@ export declare class JobApplicantsRepository {
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
             jobId: number;
-            cvFile: string;
+            cvUrl: string;
+            cvFileName: string | null;
+            cvFileSize: number | null;
             expectedSalary: number | null;
+            expectedSalaryCurrency: string | null;
             reviewNote: string | null;
+            reviewUpdatedAt: Date | null;
+            referralSource: string | null;
         })[];
         total: number;
         limit: number;

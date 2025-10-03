@@ -65,15 +65,18 @@ export declare class AssessmentTakingService {
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
         userId: number;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
         score: number;
         assessmentId: number;
         isPassed: boolean;
-        certificateUrl: string | null;
-        certificateCode: string | null;
         startedAt: Date | null;
         finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
     }>;
     static getAssessmentLeaderboard(assessmentId: number, limit?: number): Promise<{
         leaderboard: never[];

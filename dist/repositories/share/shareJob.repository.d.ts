@@ -17,7 +17,7 @@ export declare class JobShareRepo {
     }>;
     static findSharesByJob(jobId: string | number): Promise<({
         user: {
-            name: string;
+            name: string | null;
             id: number;
         };
         job: {
