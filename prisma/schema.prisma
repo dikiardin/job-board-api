@@ -117,7 +117,7 @@ model Application {
 model SavedJob {
   id        Int      @id @default(autoincrement())
   userId    Int
-  jobId     String   @db.Uuid
+  jobId     String            @db.Uuid
   createdAt DateTime @default(now())
   job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -313,7 +313,7 @@ model Payment {
 model Employment {
   id        Int            @id @default(autoincrement())
   userId    Int
-  companyId String?        @db.Uuid
+  companyId String? @db.Uuid
   startDate DateTime?
   endDate   DateTime?
   createdAt DateTime       @default(now())
@@ -342,7 +342,7 @@ model CompanyReview {
 model JobShare {
   id            Int           @id @default(autoincrement())
   userId        Int
-  jobId         String        @db.Uuid
+  jobId         String            @db.Uuid
   platform      SharePlatform
   sharedUrl     String?
   customMessage String?
@@ -396,4 +396,5 @@ enum SharePlatform {
 
 enum ProviderType {
   GOOGLE
+  FACEBOOK
 }
