@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { CertificateVerificationService } from "../../services/skillAssessment/certificateVerification.service";
-import { BadgeManagementService } from "../../services/skillAssessment/badgeManagement.service";
+import { BadgeCoreService } from "../../services/skillAssessment/badgeCore.service";
+import { BadgeVerificationService } from "../../services/skillAssessment/badgeVerification.service";
+import { BadgeProgressService } from "../../services/skillAssessment/badgeProgress.service";
 import { CustomError } from "../../utils/customError";
 
 export class CertificateBadgeController {
@@ -155,7 +157,7 @@ export class CertificateBadgeController {
     try {
       const { userId } = res.locals.decrypt;
 
-      const result = await BadgeManagementService.getUserBadges(userId);
+      const result = await BadgeCoreService.getUserBadges(userId);
 
       res.status(200).json({
         success: true,
@@ -176,7 +178,7 @@ export class CertificateBadgeController {
     try {
       const badgeId = parseInt(req.params.badgeId || '0');
 
-      const result = await BadgeManagementService.getBadgeDetails(badgeId);
+      const result = await BadgeCoreService.getBadgeDetails(badgeId);
 
       res.status(200).json({
         success: true,
@@ -198,7 +200,7 @@ export class CertificateBadgeController {
       const badgeId = parseInt(req.params.badgeId || '0');
       const { userId } = res.locals.decrypt;
 
-      const result = await BadgeManagementService.verifyBadge(badgeId, userId);
+      const result = await BadgeVerificationService.verifyBadge(badgeId, userId);
 
       res.status(200).json({
         success: true,
@@ -219,7 +221,7 @@ export class CertificateBadgeController {
     try {
       const { role } = res.locals.decrypt;
 
-      const result = await BadgeManagementService.getBadgeAnalytics(role);
+      const result = await BadgeProgressService.getBadgeAnalytics(role);
 
       res.status(200).json({
         success: true,
@@ -241,7 +243,7 @@ export class CertificateBadgeController {
       const badgeTemplateId = parseInt(req.params.badgeTemplateId || '0');
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const result = await BadgeManagementService.getBadgeLeaderboard(
+      const result = await BadgeProgressService.getBadgeLeaderboard(
         badgeTemplateId,
         limit
       );
@@ -265,7 +267,7 @@ export class CertificateBadgeController {
     try {
       const { userId } = res.locals.decrypt;
 
-      const result = await BadgeManagementService.getUserBadgeProgress(userId);
+      const result = await BadgeProgressService.getUserBadgeProgress(userId);
 
       res.status(200).json({
         success: true,
@@ -292,7 +294,7 @@ export class CertificateBadgeController {
         throw new CustomError("Social media platform is required", 400);
       }
 
-      const result = await BadgeManagementService.shareBadge(badgeId, platform, userId);
+      const result = await BadgeVerificationService.shareBadge(badgeId, platform, userId);
 
       res.status(200).json({
         success: true,

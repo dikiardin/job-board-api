@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { PlanService } from "../../services/subscription/plan.service";
+import { ControllerHelper } from "../../utils/controllerHelper";
 
 export class PlanController {
   public static async getAllPlans(
@@ -21,8 +22,8 @@ export class PlanController {
     next: NextFunction
   ) {
     try {
-      const { id } = req.params;
-      const plan = await PlanService.getPlanById(parseInt(id!));
+      const id = ControllerHelper.parseId(req.params.id);
+      const plan = await PlanService.getPlanById(id);
       res.status(200).json(plan);
     } catch (error) {
       next(error);
@@ -36,12 +37,11 @@ export class PlanController {
   ) {
     try {
       const { planName, planPrice, planDescription } = req.body;
-
-      if (!planName || !planPrice || !planDescription) {
-        return res
-          .status(400)
-          .json({ message: "Plan name, price, and description are required" });
-      }
+      
+      ControllerHelper.validateRequired(
+        { planName, planPrice, planDescription },
+        "Plan name, price, and description are required"
+      );
 
       const plan = await PlanService.createPlan({
         planName,
@@ -61,24 +61,16 @@ export class PlanController {
     next: NextFunction
   ) {
     try {
-      const { id } = req.params;
-      const { planName, planPrice, planDescription } = req.body;
+      const id = ControllerHelper.parseId(req.params.id);
+      const updateData = ControllerHelper.buildUpdateData(req.body, [
+        'planName', 'planPrice', 'planDescription'
+      ]);
+      
+      if (updateData.planPrice) {
+        updateData.planPrice = parseFloat(updateData.planPrice);
+      }
 
-      const updateData: {
-        planName?: string;
-        planPrice?: number;
-        planDescription?: string;
-      } = {};
-
-      if (planName) updateData.planName = planName;
-      if (planPrice) updateData.planPrice = parseFloat(planPrice);
-      if (planDescription) updateData.planDescription = planDescription;
-
-      const plan = await PlanService.updatePlan(
-        parseInt(id!),
-        updateData
-      );
-
+      const plan = await PlanService.updatePlan(id, updateData);
       res.status(200).json(plan);
     } catch (error) {
       next(error);
@@ -91,12 +83,9 @@ export class PlanController {
     next: NextFunction
   ) {
     try {
-      const { id } = req.params;
-      await PlanService.deletePlan(parseInt(id!));
-
-      res
-        .status(200)
-        .json({ message: "Subscription plan deleted successfully" });
+      const id = ControllerHelper.parseId(req.params.id);
+      await PlanService.deletePlan(id);
+      res.status(200).json({ message: "Subscription plan deleted successfully" });
     } catch (error) {
       next(error);
     }

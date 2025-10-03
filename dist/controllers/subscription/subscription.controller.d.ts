@@ -4,7 +4,7 @@ export declare class SubscriptionController {
     static getSubscriptionById(req: Request, res: Response, next: NextFunction): Promise<void>;
     static getUserSubscriptions(req: Request, res: Response, next: NextFunction): Promise<void>;
     static getUserActiveSubscription(req: Request, res: Response, next: NextFunction): Promise<void>;
-    static subscribe(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
+    static subscribe(req: Request, res: Response, next: NextFunction): Promise<void>;
     static updateSubscription(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 //# sourceMappingURL=subscription.controller.d.ts.map

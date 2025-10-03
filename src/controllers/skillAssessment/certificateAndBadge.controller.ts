@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CertificateVerificationService } from "../../services/skillAssessment/certificateVerification.service";
-import { BadgeManagementService } from "../../services/skillAssessment/badgeManagement.service";
+import { BadgeCoreService } from "../../services/skillAssessment/badgeCore.service";
 import { AssessmentSubmissionService } from "../../services/skillAssessment/assessmentSubmission.service";
 import { CustomError } from "../../utils/customError";
 
@@ -119,7 +119,7 @@ export class CertificateAndBadgeController {
     try {
       const { userId } = res.locals.decrypt;
 
-      const result = await BadgeManagementService.getUserBadges(userId);
+      const result = await BadgeCoreService.getUserBadges(userId);
 
       res.status(200).json({
         success: true,

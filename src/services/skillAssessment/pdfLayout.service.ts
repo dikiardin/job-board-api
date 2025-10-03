@@ -1,6 +1,4 @@
 import * as PDFKit from "pdfkit";
-import { QRCodeGenerationService } from "./qrCodeGeneration.service";
-import { PDFContentService } from "./pdfContent.service";
 
 export class PDFLayoutService {
   public static async generateCertificatePDF(data: {
@@ -18,33 +16,34 @@ export class PDFLayoutService {
     // Create PDF document
     const doc = new PDFKit.default({
       size: "A4",
-      layout: "landscape",
-      margins: { top: 40, bottom: 40, left: 60, right: 60 },
-      bufferPages: true,
+      margin: 50,
     });
 
-    // Add header and content using PDFContentService
-    await PDFContentService.addHeader(doc, data.badgeIcon);
-    PDFContentService.addCertificateBody(doc, data);
-    PDFContentService.addScoreSection(doc, data);
-    PDFContentService.addDatesSection(doc, data);
+    // Add certificate content
+    doc.fontSize(24).text("Certificate of Achievement", { align: "center" });
+    doc.moveDown();
     
-    // Add QR code
-    const qrY = PDFContentService.calculateQRPosition(data);
-    await QRCodeGenerationService.addQRCodeToPDF(doc, data.certificateCode, qrY);
+    doc.fontSize(16).text("This is to certify that", { align: "center" });
+    doc.fontSize(20).text(data.userName, { align: "center" });
+    doc.moveDown();
     
-    // Add footer
-    PDFContentService.addFooter(doc, qrY);
+    doc.fontSize(14).text("has successfully completed the assessment:", { align: "center" });
+    doc.fontSize(16).text(data.assessmentTitle, { align: "center" });
+    doc.moveDown();
+    
+    doc.fontSize(12).text(`Score: ${data.score}/${data.totalQuestions}`, { align: "center" });
+    doc.text(`Completed on: ${data.completedAt.toDateString()}`, { align: "center" });
+    doc.text(`Certificate Code: ${data.certificateCode}`, { align: "center" });
 
-    // Ensure single page
-    if (doc.bufferedPageRange().count > 1) {
-      console.warn("Certificate generated multiple pages, content may be too large");
-    }
-
-    // End the document
+    // Finalize PDF
     doc.end();
 
-    // Convert PDF to buffer
-    return PDFContentService.convertToBuffer(doc);
+    // Convert to buffer
+    const chunks: Buffer[] = [];
+    return new Promise((resolve, reject) => {
+      doc.on("data", (chunk) => chunks.push(chunk));
+      doc.on("end", () => resolve(Buffer.concat(chunks)));
+      doc.on("error", reject);
+    });
   }
 }

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlanController = void 0;
 const plan_service_1 = require("../../services/subscription/plan.service");
+const controllerHelper_1 = require("../../utils/controllerHelper");
 class PlanController {
     static async getAllPlans(req, res, next) {
         try {
@@ -14,8 +15,8 @@ class PlanController {
     }
     static async getPlanById(req, res, next) {
         try {
-            const { id } = req.params;
-            const plan = await plan_service_1.PlanService.getPlanById(parseInt(id));
+            const id = controllerHelper_1.ControllerHelper.parseId(req.params.id);
+            const plan = await plan_service_1.PlanService.getPlanById(id);
             res.status(200).json(plan);
         }
         catch (error) {
@@ -25,11 +26,7 @@ class PlanController {
     static async createPlan(req, res, next) {
         try {
             const { planName, planPrice, planDescription } = req.body;
-            if (!planName || !planPrice || !planDescription) {
-                return res
-                    .status(400)
-                    .json({ message: "Plan name, price, and description are required" });
-            }
+            controllerHelper_1.ControllerHelper.validateRequired({ planName, planPrice, planDescription }, "Plan name, price, and description are required");
             const plan = await plan_service_1.PlanService.createPlan({
                 planName,
                 planPrice: parseFloat(planPrice),
@@ -43,16 +40,14 @@ class PlanController {
     }
     static async updatePlan(req, res, next) {
         try {
-            const { id } = req.params;
-            const { planName, planPrice, planDescription } = req.body;
-            const updateData = {};
-            if (planName)
-                updateData.planName = planName;
-            if (planPrice)
-                updateData.planPrice = parseFloat(planPrice);
-            if (planDescription)
-                updateData.planDescription = planDescription;
-            const plan = await plan_service_1.PlanService.updatePlan(parseInt(id), updateData);
+            const id = controllerHelper_1.ControllerHelper.parseId(req.params.id);
+            const updateData = controllerHelper_1.ControllerHelper.buildUpdateData(req.body, [
+                'planName', 'planPrice', 'planDescription'
+            ]);
+            if (updateData.planPrice) {
+                updateData.planPrice = parseFloat(updateData.planPrice);
+            }
+            const plan = await plan_service_1.PlanService.updatePlan(id, updateData);
             res.status(200).json(plan);
         }
         catch (error) {
@@ -61,11 +56,9 @@ class PlanController {
     }
     static async deletePlan(req, res, next) {
         try {
-            const { id } = req.params;
-            await plan_service_1.PlanService.deletePlan(parseInt(id));
-            res
-                .status(200)
-                .json({ message: "Subscription plan deleted successfully" });
+            const id = controllerHelper_1.ControllerHelper.parseId(req.params.id);
+            await plan_service_1.PlanService.deletePlan(id);
+            res.status(200).json({ message: "Subscription plan deleted successfully" });
         }
         catch (error) {
             next(error);
