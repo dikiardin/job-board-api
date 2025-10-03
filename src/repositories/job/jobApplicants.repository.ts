@@ -2,8 +2,8 @@ import { prisma } from "../../config/prisma";
 
 export class JobApplicantsRepository {
   static async listApplicantsForJob(params: {
-    companyId: number;
-    jobId: number;
+    companyId: string;
+    jobId: string;
     name?: string;
     education?: string;
     ageMin?: number;

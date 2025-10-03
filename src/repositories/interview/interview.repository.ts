@@ -91,8 +91,8 @@ export class InterviewRepository {
   }
 
   static async list(params: {
-    companyId: number;
-    jobId?: number;
+    companyId: string;
+    jobId?: string;
     applicantId?: number;
     status?: InterviewStatus;
     dateFrom?: Date;

@@ -2,11 +2,11 @@ import { prisma } from "../../config/prisma";
 import { Prisma } from "../../generated/prisma";
 
 export class AnalyticsRepository {
-  static async getCompany(companyId: number) {
+  static async getCompany(companyId: string) {
     return prisma.company.findUnique({ where: { id: companyId } });
   }
 
-  static async getCompanyApplications(params: { companyId: number; from?: Date; to?: Date }) {
+  static async getCompanyApplications(params: { companyId: string; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
     const where: Prisma.ApplicationWhereInput = {
       job: { companyId },
@@ -26,7 +26,7 @@ export class AnalyticsRepository {
     });
   }
 
-  static async applicationStatusCounts(params: { companyId: number; from?: Date; to?: Date }) {
+  static async applicationStatusCounts(params: { companyId: string; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
     const where: Prisma.ApplicationWhereInput = {
       job: { companyId },
@@ -48,7 +48,7 @@ export class AnalyticsRepository {
     return grouped;
   }
 
-  static async applicationsByCategory(params: { companyId: number; from?: Date; to?: Date }) {
+  static async applicationsByCategory(params: { companyId: string; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
     const where: Prisma.ApplicationWhereInput = {
       job: { companyId },
@@ -71,7 +71,7 @@ export class AnalyticsRepository {
     return Array.from(map.entries()).map(([category, count]) => ({ category, count }));
   }
 
-  static async expectedSalaryByCityAndTitle(params: { companyId: number; from?: Date; to?: Date }) {
+  static async expectedSalaryByCityAndTitle(params: { companyId: string; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
     const where: Prisma.ApplicationWhereInput = {
       job: { companyId },
@@ -102,7 +102,7 @@ export class AnalyticsRepository {
     return Array.from(agg.values()).map((v) => ({ city: v.city, title: v.title, avgExpectedSalary: v.n ? Math.round(v.sum / v.n) : 0, samples: v.n }));
   }
 
-  static async topCitiesByApplications(params: { companyId: number; from?: Date; to?: Date }) {
+  static async topCitiesByApplications(params: { companyId: string; from?: Date; to?: Date }) {
     const { companyId, from, to } = params;
     const where: Prisma.ApplicationWhereInput = {
       job: { companyId },
@@ -124,7 +124,7 @@ export class AnalyticsRepository {
     return Array.from(map.entries()).map(([city, count]) => ({ city, count })).sort((a, b) => b.count - a.count);
   }
 
-  static async companyReviewSalaryStats(companyId: number) {
+  static async companyReviewSalaryStats(companyId: string) {
     // Reviews linked via Employment -> CompanyReview
     const reviews = await prisma.companyReview.findMany({
       where: { employment: { companyId } },

@@ -3,7 +3,7 @@ import { prisma } from "../../config/prisma";
 export class ApplicationRepo {
   public static async createApplication(data: {
     userId: number;
-    jobId: number;
+    jobId: string;
     cvFile: string;
     expectedSalary?: number;
   }) {
@@ -17,7 +17,7 @@ export class ApplicationRepo {
       },
     });
   }
-  public static async findExisting(userId: number, jobId: number) {
+  public static async findExisting(userId: number, jobId: string) {
     return prisma.application.findFirst({
       where: { userId, jobId },
     });

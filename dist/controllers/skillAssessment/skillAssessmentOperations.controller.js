@@ -76,6 +76,7 @@ class SkillAssessmentOperationsController {
             const result = await skillAssessment_service_1.SkillAssessmentService.submitAssessment({
                 assessmentId: parseInt(assessmentId),
                 userId,
+                startedAt: new Date(Date.now() - (Number(timeSpent) || 0) * 1000).toISOString(),
                 answers,
             });
             res.status(200).json({

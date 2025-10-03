@@ -1,12 +1,53 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PDFContentService = void 0;
+const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
 class PDFContentService {
     // Add header section
-    static addHeader(doc) {
+    static async addHeader(doc, badgeIcon) {
         // Background border
         doc.rect(20, 20, 802, 515).strokeColor("#2563eb").lineWidth(3).stroke();
         doc.rect(30, 30, 782, 495).strokeColor("#e5e7eb").lineWidth(1).stroke();
+        // Add website logo (left top corner)
+        await this.addWebsiteLogo(doc);
+        // Add badge logo (right top corner) if provided
+        if (badgeIcon) {
+            await this.addBadgeLogo(doc, badgeIcon);
+        }
         // Company name
         doc
             .fontSize(18)
@@ -99,7 +140,10 @@ class PDFContentService {
             .fontSize(12)
             .font("Helvetica-Bold")
             .fillColor(achievement.color)
-            .text(achievement.level, 60, scoreY + 20, { align: "center", width: 722 });
+            .text(achievement.level, 60, scoreY + 20, {
+            align: "center",
+            width: 722,
+        });
     }
     // Add dates section
     static addDatesSection(doc, data) {
@@ -203,6 +247,79 @@ class PDFContentService {
             });
             doc.on("error", reject);
         });
+    }
+    // Add website logo to left top corner
+    static async addWebsiteLogo(doc) {
+        try {
+            const logoPath = path.join(process.cwd(), "img_logo_pdf", "nobg_logo.png");
+            // Check if logo file exists
+            if (fs.existsSync(logoPath)) {
+                const logoSize = 80; // Increased from 50 to 80
+                const logoX = 40;
+                const logoY = 40;
+                doc.image(logoPath, logoX, logoY, {
+                    width: logoSize,
+                    height: logoSize,
+                    fit: [logoSize, logoSize],
+                    align: "center",
+                    valign: "center",
+                });
+            }
+            else {
+                console.warn("Website logo not found at:", logoPath);
+            }
+        }
+        catch (error) {
+            console.error("Error adding website logo:", error);
+        }
+    }
+    // Add badge logo to right top corner
+    static async addBadgeLogo(doc, badgeIconUrl) {
+        try {
+            // For now, we'll use a local badge logo file
+            // In the future, you could download the badge icon from URL and use it
+            const badgeLogoPath = path.join(process.cwd(), "img_logo_pdf", "badge-logo.png");
+            // Check if badge logo file exists
+            if (fs.existsSync(badgeLogoPath)) {
+                const logoSize = 50;
+                const logoX = 842 - 40 - logoSize; // Page width - margin - logo size
+                const logoY = 40;
+                doc.image(badgeLogoPath, logoX, logoY, {
+                    width: logoSize,
+                    height: logoSize,
+                    fit: [logoSize, logoSize],
+                    align: "center",
+                    valign: "center",
+                });
+            }
+            else {
+                console.warn("Badge logo not found at:", badgeLogoPath);
+                // Fallback: try to use the badge icon URL directly (if it's a local file or supported format)
+                if (badgeIconUrl &&
+                    (badgeIconUrl.includes(".png") ||
+                        badgeIconUrl.includes(".jpg") ||
+                        badgeIconUrl.includes(".jpeg"))) {
+                    try {
+                        const logoSize = 50;
+                        const logoX = 842 - 40 - logoSize;
+                        const logoY = 40;
+                        doc.image(badgeIconUrl, logoX, logoY, {
+                            width: logoSize,
+                            height: logoSize,
+                            fit: [logoSize, logoSize],
+                            align: "center",
+                            valign: "center",
+                        });
+                    }
+                    catch (urlError) {
+                        console.error("Error loading badge icon from URL:", urlError);
+                    }
+                }
+            }
+        }
+        catch (error) {
+            console.error("Error adding badge logo:", error);
+        }
     }
 }
 exports.PDFContentService = PDFContentService;

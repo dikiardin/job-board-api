@@ -11,7 +11,7 @@ class ApplicationController {
             if (!jobIdParam) {
                 throw new customError_1.CustomError("Job ID is required", 400);
             }
-            const jobId = parseInt(jobIdParam, 10);
+            const jobId = jobIdParam;
             const { expectedSalary } = req.body;
             if (!req.file) {
                 throw new customError_1.CustomError("CV file is required", 400);

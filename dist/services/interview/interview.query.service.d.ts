@@ -1,11 +1,11 @@
 import { InterviewStatus, UserRole } from "../../generated/prisma";
 export declare class InterviewQueryService {
     static list(params: {
-        companyId: number;
+        companyId: string;
         requesterId: number;
         requesterRole: UserRole;
         query: {
-            jobId?: number;
+            jobId?: string;
             applicantId?: number;
             status?: InterviewStatus;
             dateFrom?: string;
@@ -29,7 +29,7 @@ export declare class InterviewQueryService {
         }[];
     }>;
     static detail(params: {
-        companyId: number;
+        companyId: string;
         id: number;
         requesterId: number;
         requesterRole: UserRole;
@@ -43,7 +43,7 @@ export declare class InterviewQueryService {
                     createdAt: Date;
                     updatedAt: Date;
                     city: string | null;
-                    id: number;
+                    id: string;
                     location: string | null;
                     description: string | null;
                     website: string | null;
@@ -54,8 +54,8 @@ export declare class InterviewQueryService {
                 createdAt: Date;
                 updatedAt: Date;
                 city: string;
-                id: number;
-                companyId: number;
+                id: string;
+                companyId: string;
                 description: string;
                 title: string;
                 category: string;
@@ -72,7 +72,7 @@ export declare class InterviewQueryService {
             id: number;
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            jobId: number;
+            jobId: string;
             cvFile: string;
             expectedSalary: number | null;
             reviewNote: string | null;

@@ -14,19 +14,18 @@ class SkillAssessmentService {
         if (data.userRole !== prisma_1.UserRole.DEVELOPER) {
             throw new customError_1.CustomError("Only developers can create assessments", 403);
         }
-        // Validate questions count (min 1)
-        if (data.questions.length < 1) {
-            throw new customError_1.CustomError("Assessment must have at least 1 question", 400);
+        // Validate questions if provided
+        if (data.questions.length > 0) {
+            // Validate each question
+            data.questions.forEach((q, index) => {
+                if (!q.question || q.options.length !== 4 || !q.answer) {
+                    throw new customError_1.CustomError(`Question ${index + 1} is invalid`, 400);
+                }
+                if (!q.options.includes(q.answer)) {
+                    throw new customError_1.CustomError(`Question ${index + 1} answer must be one of the options`, 400);
+                }
+            });
         }
-        // Validate each question
-        data.questions.forEach((q, index) => {
-            if (!q.question || q.options.length !== 4 || !q.answer) {
-                throw new customError_1.CustomError(`Question ${index + 1} is invalid`, 400);
-            }
-            if (!q.options.includes(q.answer)) {
-                throw new customError_1.CustomError(`Question ${index + 1} answer must be one of the options`, 400);
-            }
-        });
         return await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.createAssessment(data);
     }
     // Get all assessments for discovery
@@ -48,78 +47,99 @@ class SkillAssessmentService {
     }
     // Submit assessment answers
     static async submitAssessment(data) {
-        // Check if user already took this assessment
-        const existingResult = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getUserResult(data.userId, data.assessmentId);
-        if (existingResult) {
-            throw new customError_1.CustomError("You have already taken this assessment", 400);
-        }
-        // Get assessment with correct answers
-        const assessment = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentById(data.assessmentId);
-        if (!assessment) {
-            throw new customError_1.CustomError("Assessment not found", 404);
-        }
-        // Set finished time (no time limit validation since we removed startedAt)
-        const finishedAt = new Date();
-        // Validate all questions answered
-        if (data.answers.length !== 25) {
-            throw new customError_1.CustomError("All 25 questions must be answered", 400);
-        }
-        // Calculate score
-        let correctAnswers = 0;
-        const questionMap = new Map(assessment.questions.map((q) => [q.id, q.answer]));
-        for (const answer of data.answers) {
-            const correctAnswer = questionMap.get(answer.questionId);
-            if (correctAnswer === answer.selectedAnswer) {
-                correctAnswers++;
+        try {
+            // Check if user already took this assessment
+            const existingResult = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getUserResult(data.userId, data.assessmentId);
+            if (existingResult) {
+                throw new customError_1.CustomError("You have already taken this assessment", 400);
             }
-        }
-        // Convert to 100-point scale
-        const score = Math.round((correctAnswers / 25) * 100);
-        const isPassed = score >= 75; // 75% passing grade
-        let certificateUrl;
-        let certificateCode;
-        // Generate certificate if passed
-        if (isPassed) {
-            const user = await this.getUserInfo(data.userId);
-            const certificateData = {
-                userName: user.name,
-                userEmail: user.email,
-                assessmentTitle: assessment.title,
-                score,
-                totalQuestions: 25,
-                completedAt: finishedAt,
+            // Get assessment with correct answers
+            const assessment = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentById(data.assessmentId);
+            if (!assessment) {
+                throw new customError_1.CustomError("Assessment not found", 404);
+            }
+            // Get start and finish times
+            const startedAt = new Date(data.startedAt);
+            const finishedAt = new Date();
+            // Validate 30-minute time limit
+            const timeDiff = finishedAt.getTime() - startedAt.getTime();
+            const minutesDiff = timeDiff / (1000 * 60);
+            if (minutesDiff > 32) {
+                throw new customError_1.CustomError(`Assessment submission time exceeded maximum allowed duration of 30 minutes. Time taken: ${Math.round(minutesDiff * 100) / 100} minutes`, 400);
+            }
+            // Basic answer validation - just check for valid structure
+            const totalQuestions = assessment.questions.length;
+            // Allow any number of answers (0 to totalQuestions)
+            if (data.answers.length > totalQuestions) {
+                throw new customError_1.CustomError(`Too many answers provided. Expected max ${totalQuestions}, got ${data.answers.length}`, 400);
+            }
+            // Calculate score
+            let correctAnswers = 0;
+            const questionMap = new Map(assessment.questions.map((q) => [q.id, q.answer]));
+            for (const answer of data.answers) {
+                const correctAnswer = questionMap.get(answer.questionId);
+                if (correctAnswer === answer.selectedAnswer) {
+                    correctAnswers++;
+                }
+            }
+            // Convert to 100-point scale
+            const score = Math.round((correctAnswers / totalQuestions) * 100);
+            const isPassed = score >= 75; // 75% passing grade
+            let certificateUrl;
+            let certificateCode;
+            // Generate certificate if passed
+            if (isPassed) {
+                const user = await this.getUserInfo(data.userId);
+                const certificateData = {
+                    userName: user.name,
+                    userEmail: user.email,
+                    assessmentTitle: assessment.title,
+                    score,
+                    totalQuestions: totalQuestions,
+                    completedAt: finishedAt,
+                    userId: data.userId,
+                };
+                if (assessment.description) {
+                    certificateData.assessmentDescription = assessment.description;
+                }
+                // Add badge icon if assessment has badge template
+                if (assessment.badgeTemplate && assessment.badgeTemplate.icon) {
+                    certificateData.badgeIcon = assessment.badgeTemplate.icon;
+                }
+                const certificate = await certificate_service_1.CertificateService.generateCertificate(certificateData);
+                certificateUrl = certificate.certificateUrl;
+                certificateCode = certificate.certificateCode;
+            }
+            // Create result record
+            const resultData = {
                 userId: data.userId,
+                assessmentId: data.assessmentId,
+                score,
+                isPassed,
+                startedAt,
+                finishedAt,
             };
-            if (assessment.description) {
-                certificateData.assessmentDescription = assessment.description;
+            if (certificateUrl)
+                resultData.certificateUrl = certificateUrl;
+            const result = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.saveAssessmentResult(resultData);
+            // Award badge if passed
+            if (isPassed) {
+                try {
+                    await badge_service_1.BadgeService.awardBadgeFromAssessment(data.userId, data.assessmentId, correctAnswers, totalQuestions);
+                    await badge_service_1.BadgeService.checkMilestoneBadges(data.userId);
+                }
+                catch (error) {
+                    // Badge awarding failed, but assessment submission should still succeed
+                }
             }
-            const certificate = await certificate_service_1.CertificateService.generateCertificate(certificateData);
-            certificateUrl = certificate.certificateUrl;
-            certificateCode = certificate.certificateCode;
+            return {
+                ...result,
+                percentage: score, // Score is already in 100-point scale
+            };
         }
-        // Create result record
-        const resultData = {
-            userId: data.userId,
-            assessmentId: data.assessmentId,
-            score,
-            isPassed,
-            startedAt: finishedAt, // Use finishedAt as startedAt since we don't track start time
-            finishedAt,
-        };
-        if (certificateUrl)
-            resultData.certificateUrl = certificateUrl;
-        if (certificateCode)
-            resultData.certificateCode = certificateCode;
-        const result = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.saveAssessmentResult(resultData);
-        // Award badge if passed
-        if (isPassed) {
-            await badge_service_1.BadgeService.awardBadgeFromAssessment(data.userId, data.assessmentId, correctAnswers, 25);
-            await badge_service_1.BadgeService.checkMilestoneBadges(data.userId);
+        catch (error) {
+            throw error;
         }
-        return {
-            ...result,
-            percentage: score, // Score is already in 100-point scale
-        };
     }
     // Get user's assessment results
     static async getUserResults(userId) {
@@ -191,6 +211,41 @@ class SkillAssessmentService {
             throw new customError_1.CustomError("Assessment not found or you don't have permission", 404);
         }
         return { message: "Assessment updated successfully" };
+    }
+    // Save individual question (Developer only)
+    static async saveQuestion(data) {
+        if (data.userRole !== prisma_1.UserRole.DEVELOPER) {
+            throw new customError_1.CustomError("Only developers can save questions", 403);
+        }
+        // Validate question data
+        if (!data.question.trim()) {
+            throw new customError_1.CustomError("Question text is required", 400);
+        }
+        if (data.options.length !== 4) {
+            throw new customError_1.CustomError("Exactly 4 options are required", 400);
+        }
+        if (data.options.some(opt => !opt.trim())) {
+            throw new customError_1.CustomError("All options must be filled", 400);
+        }
+        if (!data.answer.trim()) {
+            throw new customError_1.CustomError("Correct answer is required", 400);
+        }
+        if (!data.options.includes(data.answer)) {
+            throw new customError_1.CustomError("Answer must match one of the options", 400);
+        }
+        // Check if assessment exists and belongs to the developer
+        const assessment = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentByIdForDeveloper(data.assessmentId, data.userId);
+        if (!assessment) {
+            throw new customError_1.CustomError("Assessment not found or you don't have permission", 404);
+        }
+        // Save the question
+        const savedQuestion = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.saveQuestion({
+            assessmentId: data.assessmentId,
+            question: data.question,
+            options: data.options,
+            answer: data.answer
+        });
+        return savedQuestion;
     }
     // Delete assessment (Developer only)
     static async deleteAssessment(assessmentId, userId, userRole) {

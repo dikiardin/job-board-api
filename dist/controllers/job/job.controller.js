@@ -6,7 +6,7 @@ const job_applicants_service_1 = require("../../services/job/job.applicants.serv
 class JobController {
     static async create(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
+            const companyId = req.params.companyId;
             const requester = res.locals.decrypt;
             const job = await job_service_1.JobService.createJob({
                 companyId,
@@ -22,7 +22,7 @@ class JobController {
     }
     static async list(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
+            const companyId = req.params.companyId;
             const requester = res.locals.decrypt;
             const { title, category, sortBy, sortOrder, limit, offset } = res.locals.validatedQuery || req.query;
             const query = {};
@@ -77,8 +77,8 @@ class JobController {
     }
     static async detail(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
-            const jobId = Number(req.params.jobId);
+            const companyId = req.params.companyId;
+            const jobId = req.params.jobId;
             const requester = res.locals.decrypt;
             const data = await job_service_1.JobService.jobDetail({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role });
             res.status(200).json({ success: true, data });
@@ -89,8 +89,8 @@ class JobController {
     }
     static async update(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
-            const jobId = Number(req.params.jobId);
+            const companyId = req.params.companyId;
+            const jobId = req.params.jobId;
             const requester = res.locals.decrypt;
             const job = await job_service_1.JobService.updateJob({
                 companyId,
@@ -107,8 +107,8 @@ class JobController {
     }
     static async togglePublish(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
-            const jobId = Number(req.params.jobId);
+            const companyId = req.params.companyId;
+            const jobId = req.params.jobId;
             const requester = res.locals.decrypt;
             const desired = req.body?.isPublished;
             const args = { companyId, jobId, requesterId: requester.userId, requesterRole: requester.role };
@@ -123,8 +123,8 @@ class JobController {
     }
     static async remove(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
-            const jobId = Number(req.params.jobId);
+            const companyId = req.params.companyId;
+            const jobId = req.params.jobId;
             const requester = res.locals.decrypt;
             const result = await job_service_1.JobService.deleteJob({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role });
             res.status(200).json({ success: true, data: result });
@@ -135,8 +135,8 @@ class JobController {
     }
     static async applicantsList(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
-            const jobId = Number(req.params.jobId);
+            const companyId = req.params.companyId;
+            const jobId = req.params.jobId;
             const requester = res.locals.decrypt;
             const { name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy, sortOrder, limit, offset } = req.query;
             const query = {};
@@ -169,8 +169,8 @@ class JobController {
     }
     static async updateApplicantStatus(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
-            const jobId = Number(req.params.jobId);
+            const companyId = req.params.companyId;
+            const jobId = req.params.jobId;
             const applicationId = Number(req.params.applicationId);
             const requester = res.locals.decrypt;
             const data = await job_applicants_service_1.JobApplicantsService.updateApplicantStatus({

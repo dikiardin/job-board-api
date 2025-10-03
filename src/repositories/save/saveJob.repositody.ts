@@ -1,7 +1,7 @@
 import { prisma } from "../../config/prisma";
 
 export class SavedJobRepo {
-  public static async saveJob(userId: number, jobId: number) {
+  public static async saveJob(userId: number, jobId: string) {
     return prisma.savedJob.create({
       data: {
         userId,
@@ -49,7 +49,7 @@ export class SavedJobRepo {
     });
   }
 
-  public static async unsaveJob(userId: number, jobId: number) {
+  public static async unsaveJob(userId: number, jobId: string) {
     return prisma.savedJob.delete({
       where: { userId_jobId: { userId, jobId } },
     });

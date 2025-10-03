@@ -6,7 +6,7 @@ import { UserRole } from "../../generated/prisma";
 export class JobController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
+      const companyId = req.params.companyId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 
       const job = await JobService.createJob({
@@ -24,7 +24,7 @@ export class JobController {
 
   static async list(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
+      const companyId = req.params.companyId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
       
       const { title, category, sortBy, sortOrder, limit, offset } = res.locals.validatedQuery || req.query as Record<string, any>;
@@ -70,8 +70,8 @@ export class JobController {
 
   static async detail(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
-      const jobId = Number(req.params.jobId);
+      const companyId = req.params.companyId as string;
+      const jobId = req.params.jobId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 
       const data = await JobService.jobDetail({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role });
@@ -83,8 +83,8 @@ export class JobController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
-      const jobId = Number(req.params.jobId);
+      const companyId = req.params.companyId as string;
+      const jobId = req.params.jobId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 
       const job = await JobService.updateJob({
@@ -103,8 +103,8 @@ export class JobController {
 
   static async togglePublish(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
-      const jobId = Number(req.params.jobId);
+      const companyId = req.params.companyId as string;
+      const jobId = req.params.jobId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
       const desired = (req.body as any)?.isPublished as boolean | undefined;
       const args: any = { companyId, jobId, requesterId: requester.userId, requesterRole: requester.role };
@@ -118,8 +118,8 @@ export class JobController {
 
   static async remove(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
-      const jobId = Number(req.params.jobId);
+      const companyId = req.params.companyId as string;
+      const jobId = req.params.jobId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 
       const result = await JobService.deleteJob({ companyId, jobId, requesterId: requester.userId, requesterRole: requester.role });
@@ -131,8 +131,8 @@ export class JobController {
 
   static async applicantsList(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
-      const jobId = Number(req.params.jobId);
+      const companyId = req.params.companyId as string;
+      const jobId = req.params.jobId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 
       const { name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy, sortOrder, limit, offset } = req.query as Record<string, any>;
@@ -157,8 +157,8 @@ export class JobController {
 
   static async updateApplicantStatus(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
-      const jobId = Number(req.params.jobId);
+      const companyId = req.params.companyId as string;
+      const jobId = req.params.jobId as string;
       const applicationId = Number(req.params.applicationId);
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 

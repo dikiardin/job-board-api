@@ -26,18 +26,13 @@ export class JobShareController {
         return res.status(400).json({ message: "Job ID is required" });
       }
 
-      const jobIdNum = parseInt(jobId, 10);
-      if (isNaN(jobIdNum)) {
-        return res.status(400).json({ message: "Invalid Job ID" });
-      }
-
       if (!platform || !mapping[platform as SharePlatformString]) {
         return res.status(400).json({ message: "Invalid platform" });
       }
 
       const share = await JobShareService.shareJob(
         userId,
-        jobIdNum,
+        jobId as string,
         mapping[platform as SharePlatformString],
         sharedUrl ?? undefined,
         customMessage ?? undefined
@@ -64,12 +59,7 @@ export class JobShareController {
         return res.status(400).json({ message: "Job ID is required" });
       }
 
-      const jobIdNum = parseInt(jobId, 10);
-      if (isNaN(jobIdNum)) {
-        return res.status(400).json({ message: "Invalid Job ID" });
-      }
-
-      const shares = await JobShareService.getSharesByJob(jobIdNum);
+      const shares = await JobShareService.getSharesByJob(jobId as string);
 
       res.status(200).json({
         message: "Shares fetched successfully",

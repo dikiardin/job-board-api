@@ -3,7 +3,7 @@ import { UserRole } from "../../generated/prisma";
 
 export class PreselectionService {
   static async createOrUpdateTest(params: {
-    jobId: number;
+    jobId: string;
     requesterId: number;
     requesterRole: UserRole;
     questions: Array<{ question: string; options: string[]; answer: string }>;
@@ -30,7 +30,7 @@ export class PreselectionService {
     }
   }
 
-  private static async validateJobOwnership(jobId: number, requesterId: number): Promise<void> {
+  private static async validateJobOwnership(jobId: string, requesterId: number): Promise<void> {
     const job = await PreselectionRepository.getJob(jobId);
     if (!job) throw { status: 404, message: "Job not found" };
     if (!job.company || job.company.adminId !== requesterId) {
@@ -68,7 +68,7 @@ export class PreselectionService {
     }
   }
 
-  static async getTestForJob(jobId: number, requesterRole?: UserRole) {
+  static async getTestForJob(jobId: string, requesterRole?: UserRole) {
     const test = await PreselectionRepository.getTestByJobId(jobId);
     if (!test) throw { status: 404, message: "Test not found" };
     // Hide answers for non-admins
@@ -142,7 +142,7 @@ export class PreselectionService {
     };
   }
 
-  static async getJobResults(params: { jobId: number; requesterId: number; requesterRole: UserRole }) {
+  static async getJobResults(params: { jobId: string; requesterId: number; requesterRole: UserRole }) {
     const { jobId, requesterId, requesterRole } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can view results" };
 
@@ -166,7 +166,7 @@ export class PreselectionService {
     };
   }
 
-  static async statusForUser(params: { jobId: number; userId: number }) {
+  static async statusForUser(params: { jobId: string; userId: number }) {
     const { jobId, userId } = params;
     const test = await PreselectionRepository.getTestByJobId(jobId);
     if (!test || !test.isActive) {

@@ -12,7 +12,7 @@ export class GetCompanyService {
     return GetCompanyRepository.getAllCompanies(params);
   }
 
-  public static async getCompanyById(companyId: number) {
+  public static async getCompanyById(companyId: string) {
     return GetCompanyRepository.getCompanyById(companyId);
   }
 }

@@ -1,7 +1,7 @@
 import { UserRole } from "../../generated/prisma";
 export declare class PreselectionService {
     static createOrUpdateTest(params: {
-        jobId: number;
+        jobId: string;
         requesterId: number;
         requesterRole: UserRole;
         questions: Array<{
@@ -23,7 +23,7 @@ export declare class PreselectionService {
         createdAt: Date;
         id: number;
         isActive: boolean;
-        jobId: number;
+        jobId: string;
         passingScore: number | null;
     }>;
     private static validateAdminAccess;
@@ -31,9 +31,9 @@ export declare class PreselectionService {
     private static validateQuestions;
     private static validateQuestion;
     private static validatePassingScore;
-    static getTestForJob(jobId: number, requesterRole?: UserRole): Promise<{
+    static getTestForJob(jobId: string, requesterRole?: UserRole): Promise<{
         id: number;
-        jobId: number;
+        jobId: string;
         isActive: boolean;
         passingScore: number | null;
         createdAt: Date;
@@ -60,15 +60,15 @@ export declare class PreselectionService {
         isPassed: boolean | undefined;
     }>;
     static getJobResults(params: {
-        jobId: number;
+        jobId: string;
         requesterId: number;
         requesterRole: UserRole;
     }): Promise<{
-        jobId: number;
+        jobId: string;
         results: never[];
         testId?: never;
     } | {
-        jobId: number;
+        jobId: string;
         testId: number;
         results: {
             resultId: number;
@@ -82,7 +82,7 @@ export declare class PreselectionService {
         }[];
     }>;
     static statusForUser(params: {
-        jobId: number;
+        jobId: string;
         userId: number;
     }): Promise<{
         required: boolean;

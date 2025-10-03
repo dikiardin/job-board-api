@@ -11,12 +11,7 @@ export class SavedJobController {
         return res.status(400).json({ message: "Job ID is required" });
       }
 
-      const jobIdNumber = parseInt(jobId, 10);
-      if (isNaN(jobIdNumber)) {
-        return res.status(400).json({ message: "Invalid job ID" });
-      }
-
-      const savedJob = await SavedJobService.saveJob(userId, jobIdNumber);
+      const savedJob = await SavedJobService.saveJob(userId, jobId as string);
       res.status(201).json({
         message: "Job saved successfully",
         data: savedJob,
@@ -62,12 +57,7 @@ export class SavedJobController {
         return res.status(400).json({ message: "Job ID is required" });
       }
 
-      const jobIdNumber = parseInt(jobId, 10);
-      if (isNaN(jobIdNumber)) {
-        return res.status(400).json({ message: "Invalid job ID" });
-      }
-
-      await SavedJobService.unsaveJob(userId, jobIdNumber);
+      await SavedJobService.unsaveJob(userId, jobId as string);
       res.status(200).json({ message: "Job unsaved successfully" });
     } catch (err) {
       next(err);

@@ -2,7 +2,7 @@ import { InterviewStatus, UserRole } from "../../generated/prisma";
 import { prisma } from "../../config/prisma";
 import { InterviewRepository } from "../../repositories/interview/interview.repository";
 
-async function assertCompanyOwnershipByCompanyId(companyId: number, requesterId: number, requesterRole: UserRole) {
+async function assertCompanyOwnershipByCompanyId(companyId: string, requesterId: number, requesterRole: UserRole) {
   if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can view schedules" };
   const company = await prisma.company.findUnique({ where: { id: companyId } });
   if (!company) throw { status: 404, message: "Company not found" };
@@ -22,10 +22,10 @@ async function assertCompanyOwnershipByInterview(interviewId: number, requesterI
 
 export class InterviewQueryService {
   static async list(params: {
-    companyId: number;
+    companyId: string;
     requesterId: number;
     requesterRole: UserRole;
-    query: { jobId?: number; applicantId?: number; status?: InterviewStatus; dateFrom?: string; dateTo?: string; limit?: number; offset?: number };
+    query: { jobId?: string; applicantId?: number; status?: InterviewStatus; dateFrom?: string; dateTo?: string; limit?: number; offset?: number };
   }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await assertCompanyOwnershipByCompanyId(companyId, requesterId, requesterRole);
@@ -34,7 +34,7 @@ export class InterviewQueryService {
     const dateTo = query.dateTo ? new Date(query.dateTo) : undefined;
 
     const listParams: any = { companyId };
-    if (typeof query.jobId === "number") listParams.jobId = query.jobId;
+    if (typeof query.jobId === "string") listParams.jobId = query.jobId;
     if (typeof query.applicantId === "number") listParams.applicantId = query.applicantId;
     if (query.status) listParams.status = query.status;
     if (dateFrom) listParams.dateFrom = dateFrom;
@@ -61,7 +61,7 @@ export class InterviewQueryService {
     };
   }
 
-  static async detail(params: { companyId: number; id: number; requesterId: number; requesterRole: UserRole }) {
+  static async detail(params: { companyId: string; id: number; requesterId: number; requesterRole: UserRole }) {
     const { id, requesterId } = params;
     const interview = await assertCompanyOwnershipByInterview(id, requesterId);
     return interview;

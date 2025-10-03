@@ -6,8 +6,8 @@ import { InterviewStatus, UserRole } from "../../generated/prisma";
 export class InterviewController {
   static async createMany(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
-      const jobId = Number(req.params.jobId);
+      const companyId = req.params.companyId as string;
+      const jobId = req.params.jobId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 
       const created = await InterviewCommandService.createMany({
@@ -26,12 +26,12 @@ export class InterviewController {
 
   static async list(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
+      const companyId = req.params.companyId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 
       const { jobId, applicantId, status, dateFrom, dateTo, limit, offset } = req.query as Record<string, any>;
-      const query: { jobId?: number; applicantId?: number; status?: InterviewStatus; dateFrom?: string; dateTo?: string; limit?: number; offset?: number } = {};
-      if (typeof jobId === "string") query.jobId = Number(jobId);
+      const query: { jobId?: string; applicantId?: number; status?: InterviewStatus; dateFrom?: string; dateTo?: string; limit?: number; offset?: number } = {};
+      if (typeof jobId === "string") query.jobId = jobId;
       if (typeof applicantId === "string") query.applicantId = Number(applicantId);
       if (status === "SCHEDULED" || status === "COMPLETED" || status === "CANCELLED" || status === "NO_SHOW") query.status = status as InterviewStatus;
       if (typeof dateFrom === "string") query.dateFrom = dateFrom;
@@ -48,7 +48,7 @@ export class InterviewController {
 
   static async detail(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
+      const companyId = req.params.companyId as string;
       const id = Number(req.params.id);
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
 

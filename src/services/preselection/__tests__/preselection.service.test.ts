@@ -3,8 +3,8 @@ import { UserRole } from '../../../generated/prisma';
 
 jest.mock('../../../repositories/preselection/preselection.repository', () => ({
   PreselectionRepository: {
-    upsertTest: jest.fn(async (jobId: number, questions: any[], passingScore?: number, isActive?: boolean) => ({ jobId, questions, passingScore, isActive })),
-    getJob: jest.fn(async (jobId: number) => ({ id: jobId, company: { adminId: 1 } })),
+    upsertTest: jest.fn(async (jobId: string, questions: any[], passingScore?: number, isActive?: boolean) => ({ jobId, questions, passingScore, isActive })),
+    getJob: jest.fn(async (jobId: string) => ({ id: jobId, company: { adminId: 1 } })),
     getTestByJobId: jest.fn(),
     getTestById: jest.fn(),
     getResult: jest.fn(),
@@ -20,22 +20,22 @@ function makeQuestions(n: number) {
 
 describe('PreselectionService.createOrUpdateTest', () => {
   it('rejects non-admin', async () => {
-    await expect(PreselectionService.createOrUpdateTest({ jobId: 10, requesterId: 1, requesterRole: UserRole.USER, questions: makeQuestions(25), passingScore: 20, isActive: true }))
+    await expect(PreselectionService.createOrUpdateTest({ jobId: "job-10", requesterId: 1, requesterRole: UserRole.USER, questions: makeQuestions(25), passingScore: 20, isActive: true }))
       .rejects.toMatchObject({ status: 401 });
   });
 
   it('validates exactly 25 questions when active', async () => {
-    await expect(PreselectionService.createOrUpdateTest({ jobId: 10, requesterId: 1, requesterRole: UserRole.ADMIN, questions: makeQuestions(20), passingScore: 18, isActive: true }))
+    await expect(PreselectionService.createOrUpdateTest({ jobId: "job-10", requesterId: 1, requesterRole: UserRole.ADMIN, questions: makeQuestions(20), passingScore: 18, isActive: true }))
       .rejects.toMatchObject({ status: 400 });
   });
 
   it('allows disabling without 25 questions', async () => {
-    const res = await PreselectionService.createOrUpdateTest({ jobId: 10, requesterId: 1, requesterRole: UserRole.ADMIN, questions: [], isActive: false });
+    const res = await PreselectionService.createOrUpdateTest({ jobId: "job-10", requesterId: 1, requesterRole: UserRole.ADMIN, questions: [], isActive: false });
     expect(res.isActive).toBe(false);
   });
 
   it('calls repository upsert when valid', async () => {
-    const res = await PreselectionService.createOrUpdateTest({ jobId: 10, requesterId: 1, requesterRole: UserRole.ADMIN, questions: makeQuestions(25), passingScore: 20, isActive: true });
+    const res = await PreselectionService.createOrUpdateTest({ jobId: "job-10", requesterId: 1, requesterRole: UserRole.ADMIN, questions: makeQuestions(25), passingScore: 20, isActive: true });
     expect(res.passingScore).toBe(20);
     expect(PreselectionRepository.upsertTest).toHaveBeenCalled();
   });

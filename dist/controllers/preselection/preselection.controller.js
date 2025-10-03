@@ -5,7 +5,7 @@ const preselection_service_1 = require("../../services/preselection/preselection
 class PreselectionController {
     static async createTest(req, res, next) {
         try {
-            const jobId = Number(req.params.jobId);
+            const jobId = req.params.jobId;
             const { questions, passingScore, isActive } = req.body;
             const requester = res.locals.decrypt;
             const created = await preselection_service_1.PreselectionService.createOrUpdateTest({
@@ -24,7 +24,7 @@ class PreselectionController {
     }
     static async getTest(req, res, next) {
         try {
-            const jobId = Number(req.params.jobId);
+            const jobId = req.params.jobId;
             const requester = res.locals.decrypt;
             const data = await preselection_service_1.PreselectionService.getTestForJob(jobId, requester?.role);
             res.status(200).json({ success: true, data });
@@ -54,7 +54,7 @@ class PreselectionController {
     }
     static async getJobResults(req, res, next) {
         try {
-            const jobId = Number(req.params.jobId);
+            const jobId = req.params.jobId;
             const requester = res.locals.decrypt;
             const data = await preselection_service_1.PreselectionService.getJobResults({ jobId, requesterId: requester.userId, requesterRole: requester.role });
             res.status(200).json({ success: true, data });
@@ -65,7 +65,7 @@ class PreselectionController {
     }
     static async myStatus(req, res, next) {
         try {
-            const jobId = Number(req.params.jobId);
+            const jobId = req.params.jobId;
             const requester = res.locals.decrypt;
             const data = await preselection_service_1.PreselectionService.statusForUser({ jobId, userId: requester.userId });
             res.status(200).json({ success: true, data });

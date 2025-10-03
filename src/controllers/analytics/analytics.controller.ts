@@ -5,7 +5,7 @@ import { UserRole } from "../../generated/prisma";
 export class AnalyticsController {
   static async demographics(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
+      const companyId = req.params.companyId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
       const data = await AnalyticsService.demographics({
         companyId,
@@ -21,7 +21,7 @@ export class AnalyticsController {
 
   static async salaryTrends(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
+      const companyId = req.params.companyId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
       const data = await AnalyticsService.salaryTrends({
         companyId,
@@ -37,7 +37,7 @@ export class AnalyticsController {
 
   static async interests(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
+      const companyId = req.params.companyId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
       const data = await AnalyticsService.interests({
         companyId,
@@ -53,7 +53,7 @@ export class AnalyticsController {
 
   static async overview(req: Request, res: Response, next: NextFunction) {
     try {
-      const companyId = Number(req.params.companyId);
+      const companyId = req.params.companyId as string;
       const requester = res.locals.decrypt as { userId: number; role: UserRole };
       const data = await AnalyticsService.overview({
         companyId,

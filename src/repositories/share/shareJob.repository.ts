@@ -12,7 +12,7 @@ export type SharePlatform = (typeof SharePlatform)[keyof typeof SharePlatform];
 export class JobShareRepo {
   public static async createShare(
     userId: number,
-    jobId: number,
+    jobId: string,
     platform: SharePlatform,
     sharedUrl?: string,
     customMessage?: string
@@ -28,7 +28,7 @@ export class JobShareRepo {
     });
   }
 
-  public static async findSharesByJob(jobId: number) {
+  public static async findSharesByJob(jobId: string) {
     return prisma.jobShare.findMany({
       where: { jobId },
       include: {

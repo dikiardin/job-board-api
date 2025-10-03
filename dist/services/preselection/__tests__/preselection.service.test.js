@@ -18,19 +18,19 @@ function makeQuestions(n) {
 }
 describe('PreselectionService.createOrUpdateTest', () => {
     it('rejects non-admin', async () => {
-        await expect(preselection_service_1.PreselectionService.createOrUpdateTest({ jobId: 10, requesterId: 1, requesterRole: prisma_1.UserRole.USER, questions: makeQuestions(25), passingScore: 20, isActive: true }))
+        await expect(preselection_service_1.PreselectionService.createOrUpdateTest({ jobId: "job-10", requesterId: 1, requesterRole: prisma_1.UserRole.USER, questions: makeQuestions(25), passingScore: 20, isActive: true }))
             .rejects.toMatchObject({ status: 401 });
     });
     it('validates exactly 25 questions when active', async () => {
-        await expect(preselection_service_1.PreselectionService.createOrUpdateTest({ jobId: 10, requesterId: 1, requesterRole: prisma_1.UserRole.ADMIN, questions: makeQuestions(20), passingScore: 18, isActive: true }))
+        await expect(preselection_service_1.PreselectionService.createOrUpdateTest({ jobId: "job-10", requesterId: 1, requesterRole: prisma_1.UserRole.ADMIN, questions: makeQuestions(20), passingScore: 18, isActive: true }))
             .rejects.toMatchObject({ status: 400 });
     });
     it('allows disabling without 25 questions', async () => {
-        const res = await preselection_service_1.PreselectionService.createOrUpdateTest({ jobId: 10, requesterId: 1, requesterRole: prisma_1.UserRole.ADMIN, questions: [], isActive: false });
+        const res = await preselection_service_1.PreselectionService.createOrUpdateTest({ jobId: "job-10", requesterId: 1, requesterRole: prisma_1.UserRole.ADMIN, questions: [], isActive: false });
         expect(res.isActive).toBe(false);
     });
     it('calls repository upsert when valid', async () => {
-        const res = await preselection_service_1.PreselectionService.createOrUpdateTest({ jobId: 10, requesterId: 1, requesterRole: prisma_1.UserRole.ADMIN, questions: makeQuestions(25), passingScore: 20, isActive: true });
+        const res = await preselection_service_1.PreselectionService.createOrUpdateTest({ jobId: "job-10", requesterId: 1, requesterRole: prisma_1.UserRole.ADMIN, questions: makeQuestions(25), passingScore: 20, isActive: true });
         expect(res.passingScore).toBe(20);
         expect(PreselectionRepository.upsertTest).toHaveBeenCalled();
     });

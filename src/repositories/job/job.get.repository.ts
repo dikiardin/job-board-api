@@ -73,7 +73,7 @@ export class GetJobRepository {
     });
   }
 
-  public static async findById(jobId: number) {
+  public static async findById(jobId: string) {
     return prisma.job.findUnique({
       where: { id: jobId },
       include: {

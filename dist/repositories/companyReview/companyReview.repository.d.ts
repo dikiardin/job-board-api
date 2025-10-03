@@ -18,15 +18,15 @@ export interface UpdateReviewData {
     comment?: string;
 }
 export interface GetReviewsParams {
-    companyId: number;
+    companyId: string;
     limit: number;
     offset: number;
     sortBy: string;
     sortOrder: string;
 }
 export declare class CompanyReviewRepository {
-    static checkCompanyExists(companyId: number): Promise<boolean>;
-    static getUserEmployment(userId: number, companyId: number): Promise<{
+    static checkCompanyExists(companyId: string): Promise<boolean>;
+    static getUserEmployment(userId: number, companyId: string): Promise<{
         id: number;
         startDate: Date | null;
         endDate: Date | null;
@@ -88,8 +88,8 @@ export declare class CompanyReviewRepository {
         careerRating: import("../../generated/prisma/runtime/library").Decimal | null;
         comment: string | null;
     }[]>;
-    static getCompanyReviewsCount(companyId: number): Promise<number>;
-    static getCompanyReviewStats(companyId: number): Promise<{
+    static getCompanyReviewsCount(companyId: string): Promise<number>;
+    static getCompanyReviewStats(companyId: string): Promise<{
         totalReviews: number;
         avgCultureRating: string | undefined;
         avgWorklifeRating: string | undefined;
@@ -101,7 +101,7 @@ export declare class CompanyReviewRepository {
             count: number;
         }[];
     }>;
-    static getSalaryEstimates(companyId: number): Promise<{
+    static getSalaryEstimates(companyId: string): Promise<{
         position: string;
         count: number;
         averageSalary: string;

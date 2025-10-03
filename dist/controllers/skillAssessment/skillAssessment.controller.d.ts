@@ -12,6 +12,7 @@ export declare class SkillAssessmentController {
     static getAssessmentResults(req: Request, res: Response, next: NextFunction): Promise<void>;
     static getUserBadges(req: Request, res: Response, next: NextFunction): Promise<void>;
     static updateAssessment(req: Request, res: Response, next: NextFunction): Promise<void>;
+    static saveQuestion(req: Request, res: Response, next: NextFunction): Promise<void>;
     static deleteAssessment(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 //# sourceMappingURL=skillAssessment.controller.d.ts.map

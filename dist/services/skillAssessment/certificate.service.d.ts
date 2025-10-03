@@ -8,6 +8,7 @@ export declare class CertificateService {
         totalQuestions: number;
         completedAt: Date;
         userId: number;
+        badgeIcon?: string;
     }): Promise<{
         certificateUrl: string;
         certificateCode: string;

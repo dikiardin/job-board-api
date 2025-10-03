@@ -4,7 +4,7 @@ import { SharePlatform } from "../../repositories/share/shareJob.repository";
 export class JobShareService {
   public static async shareJob(
     userId: number,
-    jobId: number,
+    jobId: string,
     platform: SharePlatform,
     sharedUrl?: string,
     customMessage?: string
@@ -18,7 +18,7 @@ export class JobShareService {
     );
   }
 
-  public static async getSharesByJob(jobId: number) {
+  public static async getSharesByJob(jobId: string) {
     return JobShareRepo.findSharesByJob(jobId);
   }
 }

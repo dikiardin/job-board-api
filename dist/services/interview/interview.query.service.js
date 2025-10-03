@@ -32,7 +32,7 @@ class InterviewQueryService {
         const dateFrom = query.dateFrom ? new Date(query.dateFrom) : undefined;
         const dateTo = query.dateTo ? new Date(query.dateTo) : undefined;
         const listParams = { companyId };
-        if (typeof query.jobId === "number")
+        if (typeof query.jobId === "string")
             listParams.jobId = query.jobId;
         if (typeof query.applicantId === "number")
             listParams.applicantId = query.applicantId;

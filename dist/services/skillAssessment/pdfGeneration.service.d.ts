@@ -9,6 +9,7 @@ export declare class PDFGenerationService {
         completedAt: Date;
         userId: number;
         certificateCode: string;
+        badgeIcon?: string;
     }): Promise<Buffer>;
 }
 //# sourceMappingURL=pdfGeneration.service.d.ts.map
