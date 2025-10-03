@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { SubscriptionService } from "../../services/subscription/subscription.service";
+import { ControllerHelper } from "../../utils/controllerHelper";
 
 export class SubscriptionController {
   public static async getAllSubscriptions(
@@ -21,10 +22,8 @@ export class SubscriptionController {
     next: NextFunction
   ) {
     try {
-      const { id } = req.params;
-      const subscription = await SubscriptionService.getSubscriptionById(
-        parseInt(id!)
-      );
+      const id = ControllerHelper.parseId(req.params.id);
+      const subscription = await SubscriptionService.getSubscriptionById(id);
       res.status(200).json(subscription);
     } catch (error) {
       next(error);
@@ -37,10 +36,8 @@ export class SubscriptionController {
     next: NextFunction
   ) {
     try {
-      const userId = parseInt(res.locals.decrypt.userId);
-      const subscriptions = await SubscriptionService.getUserSubscriptions(
-        userId
-      );
+      const userId = ControllerHelper.getUserId(res);
+      const subscriptions = await SubscriptionService.getUserSubscriptions(userId);
       res.status(200).json(subscriptions);
     } catch (error) {
       next(error);
@@ -53,10 +50,8 @@ export class SubscriptionController {
     next: NextFunction
   ) {
     try {
-      const userId = parseInt(res.locals.decrypt.userId);
-      const subscription = await SubscriptionService.getUserActiveSubscription(
-        userId
-      );
+      const userId = ControllerHelper.getUserId(res);
+      const subscription = await SubscriptionService.getUserActiveSubscription(userId);
       res.status(200).json(subscription);
     } catch (error) {
       next(error);
@@ -69,13 +64,11 @@ export class SubscriptionController {
     next: NextFunction
   ) {
     try {
-      const userId = parseInt(res.locals.decrypt.userId);
+      const userId = ControllerHelper.getUserId(res);
       const { planId } = req.body;
 
-      if (!planId) {
-        return res.status(400).json({ message: "Plan ID is required" });
-      }
-
+      ControllerHelper.validateRequired({ planId }, "Plan ID is required");
+      
       const result = await SubscriptionService.subscribeUser(
         userId,
         parseInt(planId)
@@ -93,24 +86,12 @@ export class SubscriptionController {
     next: NextFunction
   ) {
     try {
-      const { id } = req.params;
-      const { isActive, startDate, endDate } = req.body;
+      const id = ControllerHelper.parseId(req.params.id);
+      const updateData = ControllerHelper.buildUpdateData(req.body, [
+        'isActive', 'startDate', 'endDate'
+      ]);
 
-      const updateData: {
-        isActive?: boolean;
-        startDate?: Date;
-        endDate?: Date;
-      } = {};
-
-      if (isActive !== undefined) updateData.isActive = isActive;
-      if (startDate) updateData.startDate = new Date(startDate);
-      if (endDate) updateData.endDate = new Date(endDate);
-
-      const subscription = await SubscriptionService.updateSubscription(
-        parseInt(id!),
-        updateData
-      );
-
+      const subscription = await SubscriptionService.updateSubscription(id, updateData);
       res.status(200).json(subscription);
     } catch (error) {
       next(error);

@@ -1,20 +1,14 @@
 import { Router } from "express";
-import { SkillAssessmentController } from "../controllers/skillAssessment/skillAssessment.controller";
+import { AssessmentManagementController } from "../controllers/skillAssessment/assessmentManagement.controller";
+import { AssessmentTakingController } from "../controllers/skillAssessment/assessmentTaking.controller";
+import { QuestionManagementController } from "../controllers/skillAssessment/questionManagement.controller";
+import { CertificateManagementController } from "../controllers/skillAssessment/certificateManagement.controller";
 import { BadgeTemplateController } from "../controllers/skillAssessment/badgeTemplate.controller";
 import { verifyToken } from "../middlewares/verifyToken";
 import { verifySubscription, checkAssessmentLimits } from "../middlewares/verifySubscription";
 import { UserRole } from "../generated/prisma";
 import { uploadSingle } from "../middlewares/uploadImage";
-import {
-  validateCreateAssessment,
-  validateUpdateAssessment,
-  validateSubmitAssessment,
-  validateAssessmentId,
-  validatePagination,
-  validateCertificateCode,
-  validateResultId,
-  validateSaveQuestion,
-} from "../middlewares/validator/skillAssessment.validator";
+import { SkillAssessmentValidator } from "../middlewares/validator/skillAssessment.validator";
 import {
   validateCreateBadgeTemplate,
   validateUpdateBadgeTemplate,
@@ -36,8 +30,8 @@ class SkillAssessmentRouter {
     // Public routes
     this.route.get(
       "/verify/:certificateCode",
-      validateCertificateCode,
-      SkillAssessmentController.verifyCertificate
+      SkillAssessmentValidator.validateCertificateCode,
+      CertificateManagementController.verifyCertificate
     );
 
     // Certificate download (authenticated)
@@ -45,15 +39,15 @@ class SkillAssessmentRouter {
       "/certificates/:resultId/download",
       verifyToken,
       verifyRole([UserRole.USER]),
-      validateResultId,
-      SkillAssessmentController.downloadCertificate
+      SkillAssessmentValidator.validateResultId,
+      CertificateManagementController.downloadCertificate
     );
 
     // Assessment discovery (public)
     this.route.get(
       "/assessments",
-      validatePagination,
-      SkillAssessmentController.getAssessments
+      SkillAssessmentValidator.validatePagination,
+      AssessmentManagementController.getAssessments
     );
 
     // Developer routes (create and manage assessments)
@@ -61,8 +55,8 @@ class SkillAssessmentRouter {
       "/assessments",
       verifyToken,
       verifyRole([UserRole.DEVELOPER]),
-      validateCreateAssessment,
-      SkillAssessmentController.createAssessment
+      SkillAssessmentValidator.validateCreateAssessment,
+      AssessmentManagementController.createAssessment
     );
 
     // Get single assessment by ID (for editing) - MUST BE BEFORE general list
@@ -70,32 +64,32 @@ class SkillAssessmentRouter {
       "/developer/assessments/:assessmentId",
       verifyToken,
       verifyRole([UserRole.DEVELOPER]),
-      validateAssessmentId,
-      SkillAssessmentController.getAssessmentById
+      SkillAssessmentValidator.validateAssessmentId,
+      AssessmentManagementController.getAssessmentById
     );
 
     this.route.get(
       "/developer/assessments",
       verifyToken,
       verifyRole([UserRole.DEVELOPER]),
-      SkillAssessmentController.getDeveloperAssessments
+      AssessmentManagementController.getDeveloperAssessments
     );
 
     this.route.patch(
       "/assessments/:assessmentId",
       verifyToken,
       verifyRole([UserRole.DEVELOPER]),
-      validateAssessmentId,
-      validateUpdateAssessment,
-      SkillAssessmentController.updateAssessment
+      SkillAssessmentValidator.validateAssessmentId,
+      SkillAssessmentValidator.validateUpdateAssessment,
+      AssessmentManagementController.updateAssessment
     );
 
     this.route.delete(
       "/assessments/:assessmentId",
       verifyToken,
       verifyRole([UserRole.DEVELOPER]),
-      validateAssessmentId,
-      SkillAssessmentController.deleteAssessment
+      SkillAssessmentValidator.validateAssessmentId,
+      AssessmentManagementController.deleteAssessment
     );
 
     // Save individual question
@@ -103,16 +97,16 @@ class SkillAssessmentRouter {
       "/assessments/questions",
       verifyToken,
       verifyRole([UserRole.DEVELOPER]),
-      validateSaveQuestion,
-      SkillAssessmentController.saveQuestion
+      SkillAssessmentValidator.validateSaveQuestion,
+      QuestionManagementController.saveQuestion
     );
 
     this.route.get(
       "/assessments/:assessmentId/results",
       verifyToken,
       verifyRole([UserRole.DEVELOPER]),
-      validateAssessmentId,
-      SkillAssessmentController.getAssessmentResults
+      SkillAssessmentValidator.validateAssessmentId,
+      AssessmentTakingController.getAssessmentResults
     );
 
     // User routes (take assessments - subscription required)
@@ -121,8 +115,8 @@ class SkillAssessmentRouter {
       verifyToken,
       verifyRole([UserRole.USER]),
       verifySubscription,
-      validateAssessmentId,
-      SkillAssessmentController.getAssessmentForUser
+      SkillAssessmentValidator.validateAssessmentId,
+      AssessmentTakingController.getAssessmentForUser
     );
 
     this.route.post(
@@ -131,16 +125,16 @@ class SkillAssessmentRouter {
       verifyRole([UserRole.USER]),
       verifySubscription,
       checkAssessmentLimits,
-      validateAssessmentId,
-      validateSubmitAssessment,
-      SkillAssessmentController.submitAssessment
+      SkillAssessmentValidator.validateAssessmentId,
+      SkillAssessmentValidator.validateSubmitAssessment,
+      AssessmentTakingController.submitAssessment
     );
 
     this.route.get(
       "/user/results",
       verifyToken,
       verifyRole([UserRole.USER]),
-      SkillAssessmentController.getUserResults
+      AssessmentTakingController.getUserResults
     );
 
     // Alias for user results (singular)
@@ -148,14 +142,14 @@ class SkillAssessmentRouter {
       "/user/result",
       verifyToken,
       verifyRole([UserRole.USER]),
-      SkillAssessmentController.getUserResults
+      AssessmentTakingController.getUserResults
     );
 
     this.route.get(
       "/user/badges",
       verifyToken,
       verifyRole([UserRole.USER]),
-      SkillAssessmentController.getUserBadges
+      CertificateManagementController.getUserBadges
     );
 
     // Badge Template Management Routes (Developer only)

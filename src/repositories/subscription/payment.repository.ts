@@ -99,4 +99,14 @@ export class PaymentRepo {
       orderBy: { createdAt: "desc" },
     });
   }
+
+  // Approve payment
+  public static async approvePayment(id: number) {
+    return this.updatePaymentStatus(id, "APPROVED", new Date());
+  }
+
+  // Reject payment
+  public static async rejectPayment(id: number) {
+    return this.updatePaymentStatus(id, "REJECTED");
+  }
 }

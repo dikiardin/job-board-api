@@ -68,6 +68,7 @@ export class AssessmentCrudRepository {
         questions: true,
         creator: { select: { id: true, name: true } },
         badgeTemplate: { select: { id: true, name: true, icon: true, description: true, category: true } },
+        _count: { select: { results: true, questions: true } },
       },
     });
   }

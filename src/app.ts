@@ -219,6 +219,7 @@ class App {
     this.app.use("/company", companyRouter.getRouter());
     this.app.use("/reviews", companyReviewRouter.getRouter());
     this.app.use("/skill-assessment", skillAssessmentRouter.getRouter());
+    
     this.app.use("/share", shareRouter.getRouter());
     this.app.use("/save", saveRouter.getRouter());
   
