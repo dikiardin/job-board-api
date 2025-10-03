@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionController = void 0;
 const subscription_service_1 = require("../../services/subscription/subscription.service");
+const controllerHelper_1 = require("../../utils/controllerHelper");
 class SubscriptionController {
     static async getAllSubscriptions(req, res, next) {
         try {
@@ -14,8 +15,8 @@ class SubscriptionController {
     }
     static async getSubscriptionById(req, res, next) {
         try {
-            const { id } = req.params;
-            const subscription = await subscription_service_1.SubscriptionService.getSubscriptionById(parseInt(id));
+            const id = controllerHelper_1.ControllerHelper.parseId(req.params.id);
+            const subscription = await subscription_service_1.SubscriptionService.getSubscriptionById(id);
             res.status(200).json(subscription);
         }
         catch (error) {
@@ -24,7 +25,7 @@ class SubscriptionController {
     }
     static async getUserSubscriptions(req, res, next) {
         try {
-            const userId = parseInt(res.locals.decrypt.userId);
+            const userId = controllerHelper_1.ControllerHelper.getUserId(res);
             const subscriptions = await subscription_service_1.SubscriptionService.getUserSubscriptions(userId);
             res.status(200).json(subscriptions);
         }
@@ -34,7 +35,7 @@ class SubscriptionController {
     }
     static async getUserActiveSubscription(req, res, next) {
         try {
-            const userId = parseInt(res.locals.decrypt.userId);
+            const userId = controllerHelper_1.ControllerHelper.getUserId(res);
             const subscription = await subscription_service_1.SubscriptionService.getUserActiveSubscription(userId);
             res.status(200).json(subscription);
         }
@@ -44,11 +45,9 @@ class SubscriptionController {
     }
     static async subscribe(req, res, next) {
         try {
-            const userId = parseInt(res.locals.decrypt.userId);
+            const userId = controllerHelper_1.ControllerHelper.getUserId(res);
             const { planId } = req.body;
-            if (!planId) {
-                return res.status(400).json({ message: "Plan ID is required" });
-            }
+            controllerHelper_1.ControllerHelper.validateRequired({ planId }, "Plan ID is required");
             const result = await subscription_service_1.SubscriptionService.subscribeUser(userId, parseInt(planId));
             res.status(201).json(result);
         }
@@ -58,16 +57,11 @@ class SubscriptionController {
     }
     static async updateSubscription(req, res, next) {
         try {
-            const { id } = req.params;
-            const { isActive, startDate, endDate } = req.body;
-            const updateData = {};
-            if (isActive !== undefined)
-                updateData.isActive = isActive;
-            if (startDate)
-                updateData.startDate = new Date(startDate);
-            if (endDate)
-                updateData.endDate = new Date(endDate);
-            const subscription = await subscription_service_1.SubscriptionService.updateSubscription(parseInt(id), updateData);
+            const id = controllerHelper_1.ControllerHelper.parseId(req.params.id);
+            const updateData = controllerHelper_1.ControllerHelper.buildUpdateData(req.body, [
+                'isActive', 'startDate', 'endDate'
+            ]);
+            const subscription = await subscription_service_1.SubscriptionService.updateSubscription(id, updateData);
             res.status(200).json(subscription);
         }
         catch (error) {

@@ -83,6 +83,14 @@ class PaymentRepo {
             orderBy: { createdAt: "desc" },
         });
     }
+    // Approve payment
+    static async approvePayment(id) {
+        return this.updatePaymentStatus(id, "APPROVED", new Date());
+    }
+    // Reject payment
+    static async rejectPayment(id) {
+        return this.updatePaymentStatus(id, "REJECTED");
+    }
 }
 exports.PaymentRepo = PaymentRepo;
 //# sourceMappingURL=payment.repository.js.map

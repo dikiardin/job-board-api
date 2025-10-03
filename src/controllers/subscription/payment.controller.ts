@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { PaymentService } from "../../services/subscription/payment.service";
 import { cloudinaryUpload } from "../../config/cloudinary";
+import { ControllerHelper } from "../../utils/controllerHelper";
 
 export class PaymentController {
   public static async getPendingPayments(
@@ -22,8 +23,8 @@ export class PaymentController {
     next: NextFunction
   ) {
     try {
-      const { id } = req.params;
-      const payment = await PaymentService.getPaymentById(parseInt(id!));
+      const id = ControllerHelper.parseId(req.params.id);
+      const payment = await PaymentService.getPaymentById(id);
       res.status(200).json(payment);
     } catch (error) {
       next(error);
@@ -36,22 +37,12 @@ export class PaymentController {
     next: NextFunction
   ) {
     try {
-      const { paymentId } = req.params;
-
-      // Check if file was uploaded
-      if (!req.file) {
-        return res
-          .status(400)
-          .json({ message: "Payment proof image is required" });
-      }
-
-      // Upload to Cloudinary
-      const cloudinaryResult = await cloudinaryUpload(req.file);
-
-      const payment = await PaymentService.uploadPaymentProof(
-        parseInt(paymentId!),
-        cloudinaryResult.secure_url
-      );
+      const paymentId = ControllerHelper.parseId(req.params.paymentId);
+      
+      ControllerHelper.validateRequired({ file: req.file }, "Payment proof image is required");
+      
+      const cloudinaryResult = await cloudinaryUpload(req.file!);
+      const payment = await PaymentService.uploadPaymentProof(paymentId, cloudinaryResult.secure_url);
 
       res.status(200).json({
         ...payment,
@@ -64,7 +55,6 @@ export class PaymentController {
         },
       });
     } catch (error) {
-      console.error("Upload payment proof error:", error);
       next(error);
     }
   }
@@ -75,9 +65,8 @@ export class PaymentController {
     next: NextFunction
   ) {
     try {
-      const { id } = req.params;
-      const payment = await PaymentService.approvePayment(parseInt(id!));
-
+      const id = ControllerHelper.parseId(req.params.id);
+      const payment = await PaymentService.approvePayment(id);
       res.status(200).json(payment);
     } catch (error) {
       next(error);
@@ -90,9 +79,8 @@ export class PaymentController {
     next: NextFunction
   ) {
     try {
-      const { id } = req.params;
-      const payment = await PaymentService.rejectPayment(parseInt(id!));
-
+      const id = ControllerHelper.parseId(req.params.id);
+      const payment = await PaymentService.rejectPayment(id);
       res.status(200).json(payment);
     } catch (error) {
       next(error);
@@ -105,11 +93,8 @@ export class PaymentController {
     next: NextFunction
   ) {
     try {
-      const { subscriptionId } = req.params;
-      const payments = await PaymentService.getPaymentsBySubscriptionId(
-        parseInt(subscriptionId!)
-      );
-
+      const subscriptionId = ControllerHelper.parseId(req.params.subscriptionId);
+      const payments = await PaymentService.getPaymentsBySubscriptionId(subscriptionId);
       res.status(200).json(payments);
     } catch (error) {
       next(error);

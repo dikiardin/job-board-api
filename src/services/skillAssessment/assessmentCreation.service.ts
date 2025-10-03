@@ -1,9 +1,9 @@
 import { AssessmentCrudRepository } from "../../repositories/skillAssessment/assessmentCrud.repository";
+import { AssessmentValidationService } from "./assessmentValidation.service";
 import { CustomError } from "../../utils/customError";
 import { UserRole } from "../../generated/prisma";
 
 export class AssessmentCreationService {
-  // Create assessment (Developer only)
   public static async createAssessment(data: {
     title: string;
     description?: string;
@@ -16,26 +16,9 @@ export class AssessmentCreationService {
       answer: string;
     }>;
   }) {
-    // Validate developer role
-    if (data.userRole !== UserRole.DEVELOPER) {
-      throw new CustomError("Only developers can create assessments", 403);
-    }
-
-    // Validate questions count (min 1)
-    if (data.questions.length < 1) {
-      throw new CustomError("Assessment must have at least 1 question", 400);
-    }
-
-    // Validate each question structure
-    data.questions.forEach((q, index) => {
-      if (!q.question || q.options.length !== 4 || !q.answer) {
-        throw new CustomError(`Question ${index + 1} is invalid`, 400);
-      }
-      if (!q.options.includes(q.answer)) {
-        throw new CustomError(`Question ${index + 1} answer must be one of the options`, 400);
-      }
-    });
-
+    AssessmentValidationService.validateDeveloperRole(data.userRole);
+    AssessmentValidationService.validateQuestions(data.questions);
+    
     return await AssessmentCrudRepository.createAssessment(data);
   }
 
@@ -50,9 +33,8 @@ export class AssessmentCreationService {
       throw new CustomError("Only developers can access assessment details", 403);
     }
 
-    // Use getAllAssessments to get assessment by ID (mock implementation)
-    const assessments = await AssessmentCrudRepository.getAllAssessments(1, 1000);
-    const assessment = assessments.assessments.find((a: any) => a.id === assessmentId);
+    // Use direct repository method to get assessment by ID
+    const assessment = await AssessmentCrudRepository.getAssessmentById(assessmentId);
     if (!assessment) {
       throw new CustomError("Assessment not found", 404);
     }
