@@ -51,9 +51,10 @@ public static async getAllCompanies({ page, limit, keyword, city }: GetAllCompan
   return { data: companies, total };
 }
 
-  public static async getCompanyById(companyId: string) {
+  public static async getCompanyById(companyId: string | number) {
+    const id = typeof companyId === 'string' ? Number(companyId) : companyId;
     return prisma.company.findUnique({
-      where: { id: companyId },
+      where: { id },
       select: {
         id: true,
         name: true,

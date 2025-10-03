@@ -42,8 +42,9 @@ class GetCompanyRepository {
         return { data: companies, total };
     }
     static async getCompanyById(companyId) {
+        const id = typeof companyId === 'string' ? Number(companyId) : companyId;
         return prisma_1.prisma.company.findUnique({
-            where: { id: companyId },
+            where: { id },
             select: {
                 id: true,
                 name: true,

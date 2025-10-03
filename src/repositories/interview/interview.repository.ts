@@ -91,8 +91,8 @@ export class InterviewRepository {
   }
 
   static async list(params: {
-    companyId: string;
-    jobId?: string;
+    companyId: string | number;
+    jobId?: string | number;
     applicantId?: number;
     status?: InterviewStatus;
     dateFrom?: Date;
@@ -101,12 +101,14 @@ export class InterviewRepository {
     offset?: number;
   }) {
     const { companyId, jobId, applicantId, status, dateFrom, dateTo, limit = 10, offset = 0 } = params;
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
 
     const where: Prisma.InterviewWhereInput = {
       application: {
         job: {
-          companyId,
-          ...(jobId ? { id: jobId } : {}),
+          companyId: cid,
+          ...(jid ? { id: jid } : {}),
         },
         ...(applicantId ? { userId: applicantId } : {}),
       },

@@ -66,8 +66,9 @@ class GetJobRepository {
         });
     }
     static async findById(jobId) {
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
         return prisma_1.prisma.job.findUnique({
-            where: { id: jobId },
+            where: { id: jid },
             include: {
                 company: {
                     select: {

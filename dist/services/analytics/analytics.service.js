@@ -117,10 +117,10 @@ class AnalyticsService {
         // Totals
         const [usersTotal, jobsTotal, appsTotal] = await Promise.all([
             prisma_1.prisma.user.count(),
-            prisma_1.prisma.job.count({ where: { companyId } }),
+            prisma_1.prisma.job.count({ where: { companyId: (typeof companyId === 'string' ? Number(companyId) : companyId) } }),
             prisma_1.prisma.application.count({
                 where: {
-                    job: { companyId },
+                    job: { companyId: (typeof companyId === 'string' ? Number(companyId) : companyId) },
                     ...(from || to
                         ? {
                             createdAt: {

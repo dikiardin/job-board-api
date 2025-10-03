@@ -4,7 +4,7 @@ export declare class JobShareService {
         createdAt: Date;
         id: number;
         userId: number;
-        jobId: string;
+        jobId: number;
         platform: import("../../generated/prisma").$Enums.SharePlatform;
         sharedUrl: string | null;
         customMessage: string | null;
@@ -15,14 +15,14 @@ export declare class JobShareService {
             id: number;
         };
         job: {
-            id: string;
+            id: number;
             title: string;
         };
     } & {
         createdAt: Date;
         id: number;
         userId: number;
-        jobId: string;
+        jobId: number;
         platform: import("../../generated/prisma").$Enums.SharePlatform;
         sharedUrl: string | null;
         customMessage: string | null;

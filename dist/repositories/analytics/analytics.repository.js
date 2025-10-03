@@ -4,12 +4,14 @@ exports.AnalyticsRepository = void 0;
 const prisma_1 = require("../../config/prisma");
 class AnalyticsRepository {
     static async getCompany(companyId) {
-        return prisma_1.prisma.company.findUnique({ where: { id: companyId } });
+        const id = typeof companyId === 'string' ? Number(companyId) : companyId;
+        return prisma_1.prisma.company.findUnique({ where: { id } });
     }
     static async getCompanyApplications(params) {
         const { companyId, from, to } = params;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
-            job: { companyId },
+            job: { companyId: cid },
             ...(from || to
                 ? {
                     createdAt: {
@@ -26,8 +28,9 @@ class AnalyticsRepository {
     }
     static async applicationStatusCounts(params) {
         const { companyId, from, to } = params;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
-            job: { companyId },
+            job: { companyId: cid },
             ...(from || to
                 ? {
                     createdAt: {
@@ -46,8 +49,9 @@ class AnalyticsRepository {
     }
     static async applicationsByCategory(params) {
         const { companyId, from, to } = params;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
-            job: { companyId },
+            job: { companyId: cid },
             ...(from || to
                 ? {
                     createdAt: {
@@ -67,8 +71,9 @@ class AnalyticsRepository {
     }
     static async expectedSalaryByCityAndTitle(params) {
         const { companyId, from, to } = params;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
-            job: { companyId },
+            job: { companyId: cid },
             expectedSalary: { not: null },
             ...(from || to
                 ? {
@@ -95,8 +100,9 @@ class AnalyticsRepository {
     }
     static async topCitiesByApplications(params) {
         const { companyId, from, to } = params;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
-            job: { companyId },
+            job: { companyId: cid },
             ...(from || to
                 ? {
                     createdAt: {
@@ -115,9 +121,10 @@ class AnalyticsRepository {
         return Array.from(map.entries()).map(([city, count]) => ({ city, count })).sort((a, b) => b.count - a.count);
     }
     static async companyReviewSalaryStats(companyId) {
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         // Reviews linked via Employment -> CompanyReview
         const reviews = await prisma_1.prisma.companyReview.findMany({
-            where: { employment: { companyId } },
+            where: { employment: { companyId: cid } },
         });
         if (!reviews.length)
             return { avgSalaryEstimate: null, samples: 0 };

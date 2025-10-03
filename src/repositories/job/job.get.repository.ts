@@ -73,9 +73,10 @@ export class GetJobRepository {
     });
   }
 
-  public static async findById(jobId: string) {
+  public static async findById(jobId: string | number) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
     return prisma.job.findUnique({
-      where: { id: jobId },
+      where: { id: jid },
       include: {
         company: {
           select: {

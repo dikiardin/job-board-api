@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { PrismaClient, ApplicationStatus, InterviewStatus, PaymentMethod, PaymentStatus, ProviderType, SharePlatform, UserRole } from "../generated/prisma";
 import { hashPassword } from "../utils/hashPassword";
 
@@ -493,7 +495,7 @@ async function seed() {
   });
 
   // Preselection tests helper with more realistic questions
-  async function addPreselection(jobId: string, questionCount = 5, passingScore = 4, jobTitle: string) {
+  async function addPreselection(jobId: number, questionCount = 5, passingScore = 4, jobTitle: string) {
     const test = await prisma.preselectionTest.create({
       data: {
         jobId,

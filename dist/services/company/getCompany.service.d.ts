@@ -13,7 +13,7 @@ export declare class GetCompanyService {
             createdAt: Date;
             updatedAt: Date;
             city: string | null;
-            id: string;
+            id: number;
             _count: {
                 jobs: number;
             };
@@ -24,21 +24,21 @@ export declare class GetCompanyService {
         }[];
         total: number;
     }>;
-    static getCompanyById(companyId: string): Promise<{
+    static getCompanyById(companyId: string | number): Promise<{
         name: string;
         email: string | null;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: string;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;
         logo: string | null;
         jobs: {
             city: string;
-            id: string;
+            id: number;
             title: string;
             category: string;
             salaryMin: number | null;

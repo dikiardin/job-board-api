@@ -26,7 +26,7 @@ class GetCompanyController {
     }
     static async getCompanyById(req, res, next) {
         try {
-            const companyId = req.params.companyId;
+            const companyId = Number(req.params.companyId);
             const company = await getCompany_service_1.GetCompanyService.getCompanyById(companyId);
             if (!company) {
                 return res.status(404).json({ message: "Company not found" });

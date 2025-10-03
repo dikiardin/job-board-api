@@ -56,14 +56,35 @@ class App {
     }
 
     // CORS configuration
+    const devOrigins = new Set(
+      [process.env.FE_URL, "http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"].filter(
+        Boolean
+      ) as string[]
+    );
+
     this.app.use(
       cors({
-        origin: process.env.NODE_ENV === 'production' 
-          ? ['https://yourdomain.com'] 
-          : ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"],
+        origin: (origin, callback) => {
+          // Allow server-to-server or tools with no origin
+          if (!origin) return callback(null, true);
+
+          if (process.env.NODE_ENV === "production") {
+            const allowed = ["https://yourdomain.com", process.env.FE_URL].filter(Boolean) as string[];
+            return allowed.includes(origin)
+              ? callback(null, true)
+              : callback(new Error(`CORS blocked for origin: ${origin}`));
+          }
+
+          // Development: optionally allow file:// (Origin: null) and common localhost variants
+          if (origin === "null") return callback(null, true);
+          return devOrigins.has(origin)
+            ? callback(null, true)
+            : callback(new Error(`CORS blocked for origin: ${origin}`));
+        },
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         credentials: true,
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+        optionsSuccessStatus: 204,
       } as CorsOptions)
     );
 
@@ -88,7 +109,7 @@ class App {
 
     this.app.get("/test-jobs/:companyId", async (req: Request, res: Response) => {
       try {
-        const companyId = req.params.companyId as string;
+        const companyId = Number(req.params.companyId);
         const jobs = await prisma.job.findMany({ where: { companyId } });
         const company = await prisma.company.findUnique({ where: { id: companyId } });
         res.status(200).json({ success: true, company, jobs });
@@ -101,7 +122,7 @@ class App {
       try {
         const job = await prisma.job.create({
           data: {
-            companyId: "16",
+            companyId: 16,
             title: "Senior Frontend Developer",
             description: "We are looking for a senior frontend developer with React experience",
             category: "Engineering",
@@ -122,7 +143,7 @@ class App {
       try {
         const { JobService } = await import("./services/job/job.service");
         const data = await JobService.listJobs({
-          companyId: "16",
+          companyId: 16 as any,
           requesterId: 77,
           requesterRole: "ADMIN" as any,
           query: { limit: 5, offset: 0 }
@@ -137,7 +158,7 @@ class App {
       try {
         const { JobController } = await import("./controllers/job/job.controller");
         const mockReq = {
-          params: { companyId: "16" },
+          params: { companyId: 16 },
           query: { limit: "5", offset: "0" }
         } as any;
         const mockRes = {
@@ -161,7 +182,7 @@ class App {
     this.app.get("/test-simple-jobs", async (req: Request, res: Response) => {
       try {
         const jobs = await prisma.job.findMany({ 
-          where: { companyId: "16" },
+          where: { companyId: 16 },
           include: {
             _count: { select: { applications: true } }
           }

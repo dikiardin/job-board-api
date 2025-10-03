@@ -12,15 +12,16 @@ export type SharePlatform = (typeof SharePlatform)[keyof typeof SharePlatform];
 export class JobShareRepo {
   public static async createShare(
     userId: number,
-    jobId: string,
+    jobId: string | number,
     platform: SharePlatform,
     sharedUrl?: string,
     customMessage?: string
   ) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
     return prisma.jobShare.create({
       data: {
         userId,
-        jobId,
+        jobId: jid,
         platform,
         ...(sharedUrl ? { sharedUrl } : {}),
         ...(customMessage ? { customMessage } : {}),
@@ -28,9 +29,10 @@ export class JobShareRepo {
     });
   }
 
-  public static async findSharesByJob(jobId: string) {
+  public static async findSharesByJob(jobId: string | number) {
+    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
     return prisma.jobShare.findMany({
-      where: { jobId },
+      where: { jobId: jid },
       include: {
         user: { select: { id: true, name: true } },
         job: { select: { id: true, title: true } },

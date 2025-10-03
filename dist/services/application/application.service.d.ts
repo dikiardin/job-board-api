@@ -5,7 +5,7 @@ export declare class ApplicationService {
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: string;
+        jobId: number;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;
@@ -13,10 +13,10 @@ export declare class ApplicationService {
     static getApplicationsByUserId(userId: number): Promise<({
         job: {
             city: string;
-            id: string;
+            id: number;
             company: {
                 name: string;
-                id: string;
+                id: number;
                 logo: string | null;
             };
             title: string;
@@ -30,7 +30,7 @@ export declare class ApplicationService {
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: string;
+        jobId: number;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;

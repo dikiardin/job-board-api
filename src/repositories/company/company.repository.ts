@@ -7,9 +7,10 @@ export class CompanyRepo {
     });
   }
 
-  static async updateCompany(companyId: string, data: Partial<{ email: string; name: string; location: string; description: string; website: string }>) {
+  static async updateCompany(companyId: string | number, data: Partial<{ email: string; name: string; location: string; description: string; website: string }>) {
+    const id = typeof companyId === 'string' ? Number(companyId) : companyId;
     return prisma.company.update({
-      where: { id: companyId },
+      where: { id },
       data,
     });
   }

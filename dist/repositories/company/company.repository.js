@@ -9,8 +9,9 @@ class CompanyRepo {
         });
     }
     static async updateCompany(companyId, data) {
+        const id = typeof companyId === 'string' ? Number(companyId) : companyId;
         return prisma_1.prisma.company.update({
-            where: { id: companyId },
+            where: { id },
             data,
         });
     }

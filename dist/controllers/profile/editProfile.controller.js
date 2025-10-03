@@ -14,9 +14,6 @@ class EditProfileController {
             const files = req.files;
             const uploadedFile = (files.profilePicture && files.profilePicture[0]) ||
                 (files.logo && files.logo[0]);
-            if (!uploadedFile) {
-                return res.status(400).json({ message: "No file uploaded" });
-            }
             const updatedProfile = await editProfile_service_1.EditProfileService.editProfile(userId, role, req.body, uploadedFile);
             res.status(200).json({
                 message: "Profile completed successfully",

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CompanyController = void 0;
 const createCompany_repository_1 = require("../../repositories/company/createCompany.repository");
+const user_repository_1 = require("../../repositories/user/user.repository");
 class CompanyController {
     static async getCompanyByAdmin(req, res, next) {
         try {
@@ -11,10 +12,22 @@ class CompanyController {
             if (!adminId) {
                 return res.status(401).json({ message: "Admin ID not found in token" });
             }
-            const company = await createCompany_repository_1.CreateCompanyRepo.findByAdminId(adminId);
+            let company = await createCompany_repository_1.CreateCompanyRepo.findByAdminId(adminId);
             console.log("Found company:", company);
             if (!company) {
-                return res.status(404).json({ message: "Company not found for this admin" });
+                // Auto-provision a default company for this admin to avoid broken admin flows
+                const admin = await user_repository_1.UserRepo.findById(adminId);
+                const defaultName = admin?.name ? `${admin.name} Company` : `Company ${adminId}`;
+                const defaultEmail = admin?.email;
+                company = await createCompany_repository_1.CreateCompanyRepo.createCompany({
+                    name: defaultName,
+                    email: defaultEmail,
+                    adminId,
+                    city: "Jakarta",
+                    location: "Jakarta, Indonesia",
+                    description: "Auto-created company",
+                    website: "",
+                });
             }
             res.status(200).json(company);
         }

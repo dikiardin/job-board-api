@@ -1,7 +1,7 @@
 export declare class ApplicationRepo {
     static createApplication(data: {
         userId: number;
-        jobId: string;
+        jobId: number | string;
         cvFile: string;
         expectedSalary?: number;
     }): Promise<{
@@ -10,18 +10,18 @@ export declare class ApplicationRepo {
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: string;
+        jobId: number;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;
     }>;
-    static findExisting(userId: number, jobId: string): Promise<{
+    static findExisting(userId: number, jobId: number | string): Promise<{
         createdAt: Date;
         updatedAt: Date;
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: string;
+        jobId: number;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;
@@ -52,7 +52,7 @@ export declare class ApplicationRepo {
                 createdAt: Date;
                 updatedAt: Date;
                 city: string | null;
-                id: string;
+                id: number;
                 location: string | null;
                 description: string | null;
                 website: string | null;
@@ -63,8 +63,8 @@ export declare class ApplicationRepo {
             createdAt: Date;
             updatedAt: Date;
             city: string;
-            id: string;
-            companyId: string;
+            id: number;
+            companyId: number;
             description: string;
             title: string;
             category: string;
@@ -81,7 +81,7 @@ export declare class ApplicationRepo {
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: string;
+        jobId: number;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;
@@ -92,7 +92,7 @@ export declare class ApplicationRepo {
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: string;
+        jobId: number;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;
@@ -100,10 +100,10 @@ export declare class ApplicationRepo {
     static getApplicationsByUserId(userId: number): Promise<({
         job: {
             city: string;
-            id: string;
+            id: number;
             company: {
                 name: string;
-                id: string;
+                id: number;
                 logo: string | null;
             };
             title: string;
@@ -117,7 +117,7 @@ export declare class ApplicationRepo {
         id: number;
         userId: number;
         status: import("../../generated/prisma").$Enums.ApplicationStatus;
-        jobId: string;
+        jobId: number;
         cvFile: string;
         expectedSalary: number | null;
         reviewNote: string | null;

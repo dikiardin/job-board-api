@@ -20,7 +20,9 @@ class JobApplicantsService {
             throw { status: 401, message: "Only company admin can update applicant status" };
         await assertCompanyOwnership(companyId, requesterId);
         const app = await application_repository_1.ApplicationRepo.getApplicationWithOwnership(applicationId);
-        if (!app || app.jobId !== jobId || app.job.companyId !== companyId)
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+        if (!app || app.jobId !== jid || app.job.companyId !== cid)
             throw { status: 404, message: "Application not found" };
         const allowed = [
             prisma_1.ApplicationStatus.IN_REVIEW,

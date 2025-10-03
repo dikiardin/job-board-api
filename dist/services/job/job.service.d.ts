@@ -7,7 +7,7 @@ export declare class JobService {
         createdAt: Date;
         updatedAt: Date;
         city: string | null;
-        id: string;
+        id: number;
         location: string | null;
         description: string | null;
         website: string | null;
@@ -35,8 +35,8 @@ export declare class JobService {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: string;
-        companyId: string;
+        id: number;
+        companyId: number;
         description: string;
         title: string;
         category: string;
@@ -57,8 +57,8 @@ export declare class JobService {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: string;
-        companyId: string;
+        id: number;
+        companyId: number;
         description: string;
         title: string;
         category: string;
@@ -79,8 +79,8 @@ export declare class JobService {
         createdAt: Date;
         updatedAt: Date;
         city: string;
-        id: string;
-        companyId: string;
+        id: number;
+        companyId: number;
         description: string;
         title: string;
         category: string;
@@ -151,7 +151,7 @@ export declare class JobService {
         requesterId: number;
         requesterRole: UserRole;
     }): Promise<{
-        id: string;
+        id: number;
         title: string;
         description: string;
         banner: string | null;
