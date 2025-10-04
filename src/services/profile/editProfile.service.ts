@@ -89,11 +89,11 @@ export class EditProfileService {
       const [companyResult, userResult] = await Promise.all([
         EditProfileRepository.updateCompanyProfile(userId, {
           phone,
-          location,
-          city,
+          address: location,
+          locationCity: city,
           description,
           website,
-          ...(profilePictureUrl && { logo: profilePictureUrl }),
+          ...(profilePictureUrl && { logoUrl: profilePictureUrl }),
         }),
         EditProfileRepository.updateUserProfile(userId, {
           phone,
