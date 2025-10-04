@@ -57,6 +57,9 @@ public static async getAllCompanies({ page, limit, keyword, city }: GetAllCompan
       select: {
         id: true,
         name: true,
+        phone:true,
+        email:true,
+        address:true,
         description: true,
         website: true,
         locationCity: true,
