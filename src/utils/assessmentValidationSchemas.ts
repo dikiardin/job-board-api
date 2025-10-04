@@ -7,6 +7,10 @@ export class AssessmentValidationSchemas {
       "any.required": "Title is required",
     }),
     description: Joi.string().optional(),
+    category: Joi.string().min(1).required().messages({
+      "string.min": "Category is required",
+      "any.required": "Category is required",
+    }),
     badgeTemplateId: Joi.number().integer().positive().optional().messages({
       "number.positive": "Badge template ID must be a positive number",
     }),
@@ -67,6 +71,7 @@ export class AssessmentValidationSchemas {
   public static updateAssessmentSchema = Joi.object({
     title: Joi.string().min(1).optional(),
     description: Joi.string().optional(),
+    category: Joi.string().min(1).optional(),
     badgeTemplateId: Joi.number().integer().positive().optional(),
     questions: Joi.array()
       .items(
