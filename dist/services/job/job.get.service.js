@@ -20,8 +20,8 @@ class GetJobService {
                 : job.salaryMin
                     ? `${job.salaryMin}+`
                     : "Not specified",
-            companyName: job.company.name,
-            companyLogo: job.company.logo,
+            companyName: job.company?.name,
+            companyLogo: job.company?.logoUrl,
         }));
         return { jobs: formattedJobs, total };
     }

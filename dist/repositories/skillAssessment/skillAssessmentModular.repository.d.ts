@@ -2,6 +2,27 @@ import { AssessmentCrudRepository } from "./assessmentCrud.repository";
 import { AssessmentResultsRepository } from "./assessmentResults.repository";
 export declare class SkillAssessmentModularRepository {
     static createAssessment(data: any): Promise<{
+        questions: {
+            id: number;
+            options: import("../../generated/prisma/runtime/library").JsonValue;
+            question: string;
+            answer: string;
+            orderIndex: number;
+            assessmentId: number;
+        }[];
+        badgeTemplate: {
+            name: string;
+            id: number;
+            description: string | null;
+            category: string | null;
+            icon: string | null;
+        } | null;
+        creator: {
+            email: string;
+            name: string | null;
+            id: number;
+        };
+    } & {
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -54,6 +75,10 @@ export declare class SkillAssessmentModularRepository {
         };
     }>;
     static getAssessmentById(assessmentId: number): Promise<({
+        _count: {
+            questions: number;
+            results: number;
+        };
         questions: {
             id: number;
             options: import("../../generated/prisma/runtime/library").JsonValue;
@@ -471,6 +496,10 @@ export declare class SkillAssessmentModularRepository {
     }>;
     static getAssessmentWithResults(assessmentId: number): Promise<{
         assessment: ({
+            _count: {
+                questions: number;
+                results: number;
+            };
             questions: {
                 id: number;
                 options: import("../../generated/prisma/runtime/library").JsonValue;

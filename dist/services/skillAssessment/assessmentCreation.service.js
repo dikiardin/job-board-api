@@ -2,29 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssessmentCreationService = void 0;
 const assessmentCrud_repository_1 = require("../../repositories/skillAssessment/assessmentCrud.repository");
+const assessmentValidation_service_1 = require("./assessmentValidation.service");
 const customError_1 = require("../../utils/customError");
 const prisma_1 = require("../../generated/prisma");
 class AssessmentCreationService {
-    // Create assessment (Developer only)
     static async createAssessment(data) {
-        // Validate developer role
-        if (data.userRole !== prisma_1.UserRole.DEVELOPER) {
-            throw new customError_1.CustomError("Only developers can create assessments", 403);
-        }
-        // Validate questions count (min 1)
-        if (data.questions.length < 1) {
-            throw new customError_1.CustomError("Assessment must have at least 1 question", 400);
-        }
-        // Validate each question structure
-        data.questions.forEach((q, index) => {
-            if (!q.question || q.options.length !== 4 || !q.answer) {
-                throw new customError_1.CustomError(`Question ${index + 1} is invalid`, 400);
-            }
-            if (!q.options.includes(q.answer)) {
-                throw new customError_1.CustomError(`Question ${index + 1} answer must be one of the options`, 400);
-            }
-        });
-        return await assessmentCrud_repository_1.AssessmentCrudRepository.createAssessment(data);
+        assessmentValidation_service_1.AssessmentValidationService.validateDeveloperRole(data.userRole);
+        assessmentValidation_service_1.AssessmentValidationService.validateQuestions(data.questions);
+        const { userRole, ...assessmentData } = data;
+        return await assessmentCrud_repository_1.AssessmentCrudRepository.createAssessment(assessmentData);
     }
     // Get all assessments for management (Developer only)
     static async getAssessments(page = 1, limit = 10) {
@@ -35,9 +21,8 @@ class AssessmentCreationService {
         if (userRole !== prisma_1.UserRole.DEVELOPER) {
             throw new customError_1.CustomError("Only developers can access assessment details", 403);
         }
-        // Use getAllAssessments to get assessment by ID (mock implementation)
-        const assessments = await assessmentCrud_repository_1.AssessmentCrudRepository.getAllAssessments(1, 1000);
-        const assessment = assessments.assessments.find((a) => a.id === assessmentId);
+        // Use direct repository method to get assessment by ID
+        const assessment = await assessmentCrud_repository_1.AssessmentCrudRepository.getAssessmentById(assessmentId);
         if (!assessment) {
             throw new customError_1.CustomError("Assessment not found", 404);
         }

@@ -1,15 +1,20 @@
 export declare class CreateCompanyRepo {
     static createCompany(data: {
         name: string;
-        email?: string;
-        phone?: string;
-        location?: string;
+        email: string;
         description?: string;
         website?: string;
-        logo?: string;
-        adminId: number;
+        locationCity?: string;
+        locationProvince?: string;
+        address?: string;
+        logoUrl?: string;
+        bannerUrl?: string;
+        socials?: any;
+        ownerAdminId: number;
     }): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -25,8 +30,10 @@ export declare class CreateCompanyRepo {
         socials: import("../../generated/prisma/runtime/library").JsonValue | null;
         ownerAdminId: number | null;
     }>;
-    static findByAdminId(adminId: number): Promise<{
+    static findByAdminId(ownerAdminId: number): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;

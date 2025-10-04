@@ -9,9 +9,9 @@ class EditProfileRepository {
             data,
         });
     }
-    static async updateCompanyProfile(adminId, data) {
+    static async updateCompanyProfile(ownerAdminId, data) {
         return prisma_1.prisma.company.update({
-            where: { adminId: adminId },
+            where: { ownerAdminId: ownerAdminId },
             data,
         });
     }

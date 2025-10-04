@@ -48,8 +48,8 @@ export class SubscriptionQueryRepo {
     return prisma.subscription.findFirst({
       where: {
         userId,
-        isActive: true,
-        endDate: { gte: new Date() },
+        status: "ACTIVE",
+        expiresAt: { gte: new Date() },
       },
       include: {
         plan: true,

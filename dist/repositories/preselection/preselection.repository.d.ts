@@ -2,7 +2,9 @@ import { Prisma } from "../../generated/prisma";
 export declare class PreselectionRepository {
     static getJob(jobId: string | number): Promise<({
         company: {
+            email: string;
             name: string;
+            phone: string | null;
             address: string | null;
             createdAt: Date;
             updatedAt: Date;
@@ -62,7 +64,9 @@ export declare class PreselectionRepository {
     static getTestById(testId: number): Promise<({
         job: {
             company: {
+                email: string;
                 name: string;
+                phone: string | null;
                 address: string | null;
                 createdAt: Date;
                 updatedAt: Date;

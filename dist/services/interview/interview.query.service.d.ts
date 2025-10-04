@@ -37,7 +37,9 @@ export declare class InterviewQueryService {
         application: {
             job: {
                 company: {
+                    email: string;
                     name: string;
+                    phone: string | null;
                     address: string | null;
                     createdAt: Date;
                     updatedAt: Date;

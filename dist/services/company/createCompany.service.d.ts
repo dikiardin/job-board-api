@@ -1,6 +1,8 @@
 export declare class CreateCompanyService {
-    static createCompanyForAdmin(adminId: number, name: string, email: string): Promise<{
+    static createCompanyForAdmin(ownerAdminId: number, name: string, email: string, description?: string, website?: string, locationCity?: string, locationProvince?: string): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;

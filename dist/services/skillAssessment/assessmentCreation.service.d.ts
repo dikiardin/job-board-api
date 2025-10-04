@@ -3,6 +3,7 @@ export declare class AssessmentCreationService {
     static createAssessment(data: {
         title: string;
         description?: string;
+        category: string;
         badgeTemplateId?: number;
         createdBy: number;
         userRole: UserRole;
@@ -12,6 +13,27 @@ export declare class AssessmentCreationService {
             answer: string;
         }>;
     }): Promise<{
+        questions: {
+            id: number;
+            options: import("../../generated/prisma/runtime/library").JsonValue;
+            question: string;
+            answer: string;
+            orderIndex: number;
+            assessmentId: number;
+        }[];
+        badgeTemplate: {
+            name: string;
+            id: number;
+            description: string | null;
+            category: string | null;
+            icon: string | null;
+        } | null;
+        creator: {
+            email: string;
+            name: string | null;
+            id: number;
+        };
+    } & {
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -68,6 +90,14 @@ export declare class AssessmentCreationService {
             questions: number;
             results: number;
         };
+        questions: {
+            id: number;
+            options: import("../../generated/prisma/runtime/library").JsonValue;
+            question: string;
+            answer: string;
+            orderIndex: number;
+            assessmentId: number;
+        }[];
         badgeTemplate: {
             name: string;
             id: number;
@@ -96,6 +126,7 @@ export declare class AssessmentCreationService {
     static updateAssessment(assessmentId: number, userId: number, data: {
         title?: string;
         description?: string;
+        category?: string;
         badgeTemplateId?: number;
         questions?: Array<{
             question: string;

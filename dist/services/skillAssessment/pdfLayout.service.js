@@ -35,35 +35,34 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PDFLayoutService = void 0;
 const PDFKit = __importStar(require("pdfkit"));
-const qrCodeGeneration_service_1 = require("./qrCodeGeneration.service");
-const pdfContent_service_1 = require("./pdfContent.service");
 class PDFLayoutService {
     static async generateCertificatePDF(data) {
         // Create PDF document
         const doc = new PDFKit.default({
             size: "A4",
-            layout: "landscape",
-            margins: { top: 40, bottom: 40, left: 60, right: 60 },
-            bufferPages: true,
+            margin: 50,
         });
-        // Add header and content using PDFContentService
-        await pdfContent_service_1.PDFContentService.addHeader(doc, data.badgeIcon);
-        pdfContent_service_1.PDFContentService.addCertificateBody(doc, data);
-        pdfContent_service_1.PDFContentService.addScoreSection(doc, data);
-        pdfContent_service_1.PDFContentService.addDatesSection(doc, data);
-        // Add QR code
-        const qrY = pdfContent_service_1.PDFContentService.calculateQRPosition(data);
-        await qrCodeGeneration_service_1.QRCodeGenerationService.addQRCodeToPDF(doc, data.certificateCode, qrY);
-        // Add footer
-        pdfContent_service_1.PDFContentService.addFooter(doc, qrY);
-        // Ensure single page
-        if (doc.bufferedPageRange().count > 1) {
-            console.warn("Certificate generated multiple pages, content may be too large");
-        }
-        // End the document
+        // Add certificate content
+        doc.fontSize(24).text("Certificate of Achievement", { align: "center" });
+        doc.moveDown();
+        doc.fontSize(16).text("This is to certify that", { align: "center" });
+        doc.fontSize(20).text(data.userName, { align: "center" });
+        doc.moveDown();
+        doc.fontSize(14).text("has successfully completed the assessment:", { align: "center" });
+        doc.fontSize(16).text(data.assessmentTitle, { align: "center" });
+        doc.moveDown();
+        doc.fontSize(12).text(`Score: ${data.score}/${data.totalQuestions}`, { align: "center" });
+        doc.text(`Completed on: ${data.completedAt.toDateString()}`, { align: "center" });
+        doc.text(`Certificate Code: ${data.certificateCode}`, { align: "center" });
+        // Finalize PDF
         doc.end();
-        // Convert PDF to buffer
-        return pdfContent_service_1.PDFContentService.convertToBuffer(doc);
+        // Convert to buffer
+        const chunks = [];
+        return new Promise((resolve, reject) => {
+            doc.on("data", (chunk) => chunks.push(chunk));
+            doc.on("end", () => resolve(Buffer.concat(chunks)));
+            doc.on("error", reject);
+        });
     }
 }
 exports.PDFLayoutService = PDFLayoutService;

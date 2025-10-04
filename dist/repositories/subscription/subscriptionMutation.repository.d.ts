@@ -1,24 +1,38 @@
 export declare class SubscriptionMutationRepo {
     static createSubscription(data: {
         userId: number;
-        subscriptionPlanId: number;
+        planId: number;
         startDate: Date;
-        endDate: Date;
+        expiresAt: Date;
     }): Promise<{
         plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
             id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date | null;
         userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
     }>;
     static updateSubscription(id: number, data: {
         isActive?: boolean;
@@ -26,19 +40,33 @@ export declare class SubscriptionMutationRepo {
         endDate?: Date;
     }): Promise<{
         plan: {
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
             id: number;
-            planName: string;
-            planPrice: import("../../generated/prisma/runtime/library").Decimal;
-            planDescription: string | null;
+            description: string | null;
+            code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+            priceIdr: number;
+            perks: string[];
+            monthlyAssessmentQuota: number | null;
+            priorityCvReview: boolean;
+            cvGeneratorEnabled: boolean;
         };
     } & {
         createdAt: Date;
+        updatedAt: Date;
         id: number;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date | null;
         userId: number;
-        subscriptionPlanId: number;
-        isActive: boolean;
+        planId: number;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        paidAt: Date | null;
+        expiresAt: Date | null;
+        cancelledAt: Date | null;
+        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+        proofUrl: string | null;
+        approvedByDeveloperId: number | null;
+        lastReminderSentAt: Date | null;
     }>;
 }
 //# sourceMappingURL=subscriptionMutation.repository.d.ts.map

@@ -24,14 +24,14 @@ export class CompanyRepo {
     return prisma.company.update({
       where: { id },
       data: {
-        name: data.name,
-        description: data.description,
-        locationCity: data.locationCity,
-        locationProvince: data.locationProvince,
-        website: data.website,
-        socials: data.socials as any,
-        bannerUrl: data.bannerUrl ?? undefined,
-        logoUrl: data.logoUrl ?? undefined,
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.locationCity !== undefined && { locationCity: data.locationCity }),
+        ...(data.locationProvince !== undefined && { locationProvince: data.locationProvince }),
+        ...(data.website !== undefined && { website: data.website }),
+        ...(data.socials !== undefined && { socials: data.socials as any }),
+        ...(data.bannerUrl !== undefined && { bannerUrl: data.bannerUrl }),
+        ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
       },
     });
   }

@@ -5,14 +5,23 @@ const prisma_1 = require("../../config/prisma");
 class CompanyRepo {
     static async findByAdminId(adminId) {
         return prisma_1.prisma.company.findFirst({
-            where: { adminId },
+            where: { ownerAdminId: adminId },
         });
     }
     static async updateCompany(companyId, data) {
-        const id = typeof companyId === 'string' ? Number(companyId) : companyId;
+        const id = typeof companyId === "string" ? Number(companyId) : companyId;
         return prisma_1.prisma.company.update({
             where: { id },
-            data,
+            data: {
+                ...(data.name !== undefined && { name: data.name }),
+                ...(data.description !== undefined && { description: data.description }),
+                ...(data.locationCity !== undefined && { locationCity: data.locationCity }),
+                ...(data.locationProvince !== undefined && { locationProvince: data.locationProvince }),
+                ...(data.website !== undefined && { website: data.website }),
+                ...(data.socials !== undefined && { socials: data.socials }),
+                ...(data.bannerUrl !== undefined && { bannerUrl: data.bannerUrl }),
+                ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
+            },
         });
     }
 }

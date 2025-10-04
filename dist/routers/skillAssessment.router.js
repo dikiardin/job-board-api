@@ -1,7 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const skillAssessment_controller_1 = require("../controllers/skillAssessment/skillAssessment.controller");
+const assessmentManagement_controller_1 = require("../controllers/skillAssessment/assessmentManagement.controller");
+const assessmentTaking_controller_1 = require("../controllers/skillAssessment/assessmentTaking.controller");
+const questionManagement_controller_1 = require("../controllers/skillAssessment/questionManagement.controller");
+const certificateManagement_controller_1 = require("../controllers/skillAssessment/certificateManagement.controller");
 const badgeTemplate_controller_1 = require("../controllers/skillAssessment/badgeTemplate.controller");
 const verifyToken_1 = require("../middlewares/verifyToken");
 const verifySubscription_1 = require("../middlewares/verifySubscription");
@@ -17,28 +20,28 @@ class SkillAssessmentRouter {
     }
     initializeRoutes() {
         // Public routes
-        this.route.get("/verify/:certificateCode", skillAssessment_validator_1.validateCertificateCode, skillAssessment_controller_1.SkillAssessmentController.verifyCertificate);
+        this.route.get("/verify/:certificateCode", skillAssessment_validator_1.SkillAssessmentValidator.validateCertificateCode, certificateManagement_controller_1.CertificateManagementController.verifyCertificate);
         // Certificate download (authenticated)
-        this.route.get("/certificates/:resultId/download", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), skillAssessment_validator_1.validateResultId, skillAssessment_controller_1.SkillAssessmentController.downloadCertificate);
+        this.route.get("/certificates/:resultId/download", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), skillAssessment_validator_1.SkillAssessmentValidator.validateResultId, certificateManagement_controller_1.CertificateManagementController.downloadCertificate);
         // Assessment discovery (public)
-        this.route.get("/assessments", skillAssessment_validator_1.validatePagination, skillAssessment_controller_1.SkillAssessmentController.getAssessments);
+        this.route.get("/assessments", skillAssessment_validator_1.SkillAssessmentValidator.validatePagination, assessmentManagement_controller_1.AssessmentManagementController.getAssessments);
         // Developer routes (create and manage assessments)
-        this.route.post("/assessments", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.validateCreateAssessment, skillAssessment_controller_1.SkillAssessmentController.createAssessment);
+        this.route.post("/assessments", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.SkillAssessmentValidator.validateCreateAssessment, assessmentManagement_controller_1.AssessmentManagementController.createAssessment);
         // Get single assessment by ID (for editing) - MUST BE BEFORE general list
-        this.route.get("/developer/assessments/:assessmentId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.validateAssessmentId, skillAssessment_controller_1.SkillAssessmentController.getAssessmentById);
-        this.route.get("/developer/assessments", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_controller_1.SkillAssessmentController.getDeveloperAssessments);
-        this.route.patch("/assessments/:assessmentId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.validateAssessmentId, skillAssessment_validator_1.validateUpdateAssessment, skillAssessment_controller_1.SkillAssessmentController.updateAssessment);
-        this.route.delete("/assessments/:assessmentId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.validateAssessmentId, skillAssessment_controller_1.SkillAssessmentController.deleteAssessment);
+        this.route.get("/developer/assessments/:assessmentId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.SkillAssessmentValidator.validateAssessmentId, assessmentManagement_controller_1.AssessmentManagementController.getAssessmentById);
+        this.route.get("/developer/assessments", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), assessmentManagement_controller_1.AssessmentManagementController.getDeveloperAssessments);
+        this.route.patch("/assessments/:assessmentId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.SkillAssessmentValidator.validateAssessmentId, skillAssessment_validator_1.SkillAssessmentValidator.validateUpdateAssessment, assessmentManagement_controller_1.AssessmentManagementController.updateAssessment);
+        this.route.delete("/assessments/:assessmentId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.SkillAssessmentValidator.validateAssessmentId, assessmentManagement_controller_1.AssessmentManagementController.deleteAssessment);
         // Save individual question
-        this.route.post("/assessments/questions", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.validateSaveQuestion, skillAssessment_controller_1.SkillAssessmentController.saveQuestion);
-        this.route.get("/assessments/:assessmentId/results", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.validateAssessmentId, skillAssessment_controller_1.SkillAssessmentController.getAssessmentResults);
+        this.route.post("/assessments/questions", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.SkillAssessmentValidator.validateSaveQuestion, questionManagement_controller_1.QuestionManagementController.saveQuestion);
+        this.route.get("/assessments/:assessmentId/results", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.SkillAssessmentValidator.validateAssessmentId, assessmentTaking_controller_1.AssessmentTakingController.getAssessmentResults);
         // User routes (take assessments - subscription required)
-        this.route.get("/assessments/:assessmentId/take", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, skillAssessment_validator_1.validateAssessmentId, skillAssessment_controller_1.SkillAssessmentController.getAssessmentForUser);
-        this.route.post("/assessments/:assessmentId/submit", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, verifySubscription_1.checkAssessmentLimits, skillAssessment_validator_1.validateAssessmentId, skillAssessment_validator_1.validateSubmitAssessment, skillAssessment_controller_1.SkillAssessmentController.submitAssessment);
-        this.route.get("/user/results", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), skillAssessment_controller_1.SkillAssessmentController.getUserResults);
+        this.route.get("/assessments/:assessmentId/take", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, skillAssessment_validator_1.SkillAssessmentValidator.validateAssessmentId, assessmentTaking_controller_1.AssessmentTakingController.getAssessmentForUser);
+        this.route.post("/assessments/:assessmentId/submit", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, verifySubscription_1.checkAssessmentLimits, skillAssessment_validator_1.SkillAssessmentValidator.validateAssessmentId, skillAssessment_validator_1.SkillAssessmentValidator.validateSubmitAssessment, assessmentTaking_controller_1.AssessmentTakingController.submitAssessment);
+        this.route.get("/user/results", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), assessmentTaking_controller_1.AssessmentTakingController.getUserResults);
         // Alias for user results (singular)
-        this.route.get("/user/result", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), skillAssessment_controller_1.SkillAssessmentController.getUserResults);
-        this.route.get("/user/badges", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), skillAssessment_controller_1.SkillAssessmentController.getUserBadges);
+        this.route.get("/user/result", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), assessmentTaking_controller_1.AssessmentTakingController.getUserResults);
+        this.route.get("/user/badges", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), certificateManagement_controller_1.CertificateManagementController.getUserBadges);
         // Badge Template Management Routes (Developer only)
         this.route.post("/badge-templates", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), (0, uploadImage_1.uploadSingle)("icon"), // File upload for badge icon
         badgeTemplate_controller_1.BadgeTemplateController.createBadgeTemplate);

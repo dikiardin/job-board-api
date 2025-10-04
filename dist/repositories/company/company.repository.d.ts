@@ -1,6 +1,8 @@
 export declare class CompanyRepo {
     static findByAdminId(adminId: number): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -17,13 +19,18 @@ export declare class CompanyRepo {
         ownerAdminId: number | null;
     } | null>;
     static updateCompany(companyId: string | number, data: Partial<{
+        name: string;
+        description: string;
+        locationCity: string;
+        locationProvince: string;
+        website: string;
+        socials: unknown;
+        bannerUrl: string | null;
+        logoUrl: string | null;
+    }>): Promise<{
         email: string;
         name: string;
-        location: string;
-        description: string;
-        website: string;
-    }>): Promise<{
-        name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;

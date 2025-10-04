@@ -18,6 +18,13 @@ export declare class GetJobService {
         total: number;
     }>;
     static getJobById(jobId: string): Promise<{
+        company: {
+            name: string;
+            id: number;
+            logoUrl: string | null;
+            locationCity: string | null;
+        };
+    } & {
         city: string;
         createdAt: Date;
         updatedAt: Date;

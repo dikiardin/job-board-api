@@ -22,7 +22,7 @@ class ForgotPasswordService {
                 from: process.env.MAIL_SENDER,
                 to: email,
                 subject: "Workoo | Reset Your Password",
-                html: (0, emailTemplateResetPass_1.buildResetPasswordEmail)(user.name, token),
+                html: (0, emailTemplateResetPass_1.buildResetPasswordEmail)(user.name || "User", token),
             });
         }
         catch (err) {

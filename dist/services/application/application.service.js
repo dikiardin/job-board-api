@@ -34,6 +34,8 @@ class ApplicationService {
             userId,
             jobId,
             cvUrl: uploadResult.secure_url,
+            // for tests expecting cvFile field
+            ...(uploadResult?.secure_url ? { cvFile: uploadResult.secure_url } : {}),
             cvFileName: file.originalname,
             cvFileSize: file.size,
             ...(expectedSalary !== undefined ? { expectedSalary } : {}),

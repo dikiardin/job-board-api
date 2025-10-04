@@ -14,13 +14,13 @@ class JobRepository {
                 companyId: cid,
                 title: data.title,
                 description: data.description,
-                banner: data.banner ?? null,
+                bannerUrl: data.banner ?? null,
                 category: data.category,
                 city: data.city,
                 salaryMin: data.salaryMin ?? null,
                 salaryMax: data.salaryMax ?? null,
                 tags: data.tags,
-                deadline: data.deadline ?? null,
+                applyDeadline: data.deadline ?? null,
                 isPublished: data.isPublished ?? false,
             },
         });
@@ -31,6 +31,8 @@ class JobRepository {
             where: { id: jid },
             data: {
                 ...data,
+                ...(data.banner !== undefined ? { bannerUrl: data.banner } : {}),
+                ...(data.deadline !== undefined ? { applyDeadline: data.deadline } : {}),
             },
         });
     }
@@ -47,7 +49,7 @@ class JobRepository {
                     },
                     orderBy: { createdAt: "asc" },
                 },
-                preselectionTests: {
+                preselectionTest: {
                     include: {
                         results: true,
                     },
@@ -74,7 +76,7 @@ class JobRepository {
         const [items, total] = await Promise.all([
             prisma_1.prisma.job.findMany({
                 where,
-                orderBy: sortBy === "deadline" ? { deadline: sortOrder } : { createdAt: sortOrder },
+                orderBy: sortBy === "deadline" ? { applyDeadline: sortOrder } : { createdAt: sortOrder },
                 skip: offset,
                 take: limit,
                 include: {
@@ -95,14 +97,14 @@ class JobRepository {
             ...(city ? { city: { contains: city, mode: "insensitive" } } : {}),
             // Optional: exclude expired by deadline if provided
             OR: [
-                { deadline: null },
-                { deadline: { gte: now } },
+                { applyDeadline: null },
+                { applyDeadline: { gte: now } },
             ],
         };
         const [items, total] = await Promise.all([
             prisma_1.prisma.job.findMany({
                 where,
-                orderBy: sortBy === "deadline" ? { deadline: sortOrder } : { createdAt: sortOrder },
+                orderBy: sortBy === "deadline" ? { applyDeadline: sortOrder } : { createdAt: sortOrder },
                 skip: offset,
                 take: limit,
             }),
@@ -117,9 +119,9 @@ class JobRepository {
             where: {
                 id: jid,
                 isPublished: true,
-                OR: [{ deadline: null }, { deadline: { gte: now } }],
+                OR: [{ applyDeadline: null }, { applyDeadline: { gte: now } }],
             },
-            select: { id: true, title: true, companyId: true, deadline: true, isPublished: true },
+            select: { id: true, title: true, companyId: true, applyDeadline: true, isPublished: true },
         });
     }
     static async listApplicantsForJob(params) {

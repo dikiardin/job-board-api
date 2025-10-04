@@ -6,7 +6,7 @@ class PlanRepo {
     // Get all subscription plans
     static async getAllPlans() {
         return prisma_1.prisma.subscriptionPlan.findMany({
-            orderBy: { planPrice: "asc" },
+            orderBy: { priceIdr: "asc" },
         });
     }
     // Get plan by ID
@@ -37,7 +37,7 @@ class PlanRepo {
     // Get all subscriptions (for checking if plan is in use)
     static async getAllSubscriptions() {
         return prisma_1.prisma.subscription.findMany({
-            select: { subscriptionPlanId: true },
+            select: { planId: true },
         });
     }
 }

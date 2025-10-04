@@ -20,7 +20,7 @@ class SubscriptionService {
         const plan = await subscriptionManagement_service_1.SubscriptionManagementService.validatePlanExists(planId);
         await subscriptionManagement_service_1.SubscriptionManagementService.checkActiveSubscription(userId);
         const subscription = await subscriptionManagement_service_1.SubscriptionManagementService.createSubscription(userId, planId);
-        const payment = await paymentManagement_service_1.PaymentManagementService.createPaymentRecord(subscription.id, Number(plan.planPrice));
+        const payment = await paymentManagement_service_1.PaymentManagementService.createPaymentRecord(subscription.id, Number(plan.priceIdr));
         return { subscription, payment };
     }
     static async updateSubscription(id, data) {

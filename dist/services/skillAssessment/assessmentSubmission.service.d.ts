@@ -1,5 +1,4 @@
 export declare class AssessmentSubmissionService {
-    private static readonly PASSING_SCORE;
     static submitAssessment(data: {
         assessmentId: number;
         userId: number;
@@ -22,17 +21,10 @@ export declare class AssessmentSubmissionService {
             certificateUrl: string;
             certificateCode: string;
         } | null;
-        badge: {
-            id: number;
-            userId: number;
-            badgeTemplateId: number;
-            assessmentId: number;
-            score: number;
-            earnedAt: Date;
-        } | null;
     }>;
+    private static validateSubmission;
+    private static generateCertificate;
     private static saveAssessmentResult;
-    private static awardBadge;
     static getUserResults(userId: number, page?: number, limit?: number): Promise<{
         results: never[];
         pagination: {
@@ -63,33 +55,40 @@ export declare class AssessmentSubmissionService {
         certificateUrl: string | null;
         certificateCode: string | null;
     }>;
-    static isAssessmentPassed(score: number): boolean;
-    static getAchievementLevel(score: number): {
-        level: string;
-        color: string;
-        description: string;
-    };
-    static calculateTimeEfficiency(timeSpent: number, timeLimit: number): number;
-    static getResultAnalysis(data: {
-        score: number;
-        correctAnswers: number;
-        totalQuestions: number;
-        timeSpent: number;
-    }): {
-        score: number;
-        accuracy: number;
-        timeEfficiency: number;
-        achievement: {
-            level: string;
-            color: string;
-            description: string;
+    static getAllAssessmentResults(assessmentId: number): Promise<{
+        results: ({
+            user: {
+                email: string;
+                name: string | null;
+                id: number;
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
+            score: number;
+            assessmentId: number;
+            isPassed: boolean;
+            startedAt: Date | null;
+            finishedAt: Date | null;
+            durationSeconds: number | null;
+            certificateUrl: string | null;
+            certificateCode: string | null;
+        })[];
+        summary: {
+            totalAttempts: number;
+            averageScore: number;
+            passRate: number;
+            completionRate: number;
         };
-        passed: boolean;
-        correctAnswers: number;
-        totalQuestions: number;
-        timeSpent: number;
-        recommendations: string[];
-    };
-    private static getRecommendations;
+        assessment: {
+            id: number;
+            title: string;
+            totalQuestions: number;
+        };
+    }>;
+    static isAssessmentPassed(score: number): boolean;
 }
 //# sourceMappingURL=assessmentSubmission.service.d.ts.map

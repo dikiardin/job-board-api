@@ -10,7 +10,7 @@ class GetCompanyRepository {
             where.name = { contains: keyword, mode: "insensitive" };
         }
         if (city) {
-            where.city = { contains: city, mode: "insensitive" };
+            where.locationCity = { contains: city, mode: "insensitive" };
         }
         const [companies, total] = await prisma_1.prisma.$transaction([
             prisma_1.prisma.company.findMany({
@@ -20,13 +20,12 @@ class GetCompanyRepository {
                 select: {
                     id: true,
                     name: true,
-                    email: true,
-                    phone: true,
-                    location: true,
-                    city: true,
                     description: true,
                     website: true,
-                    logo: true,
+                    locationCity: true,
+                    locationProvince: true,
+                    logoUrl: true,
+                    bannerUrl: true,
                     createdAt: true,
                     updatedAt: true,
                     _count: {
@@ -48,13 +47,15 @@ class GetCompanyRepository {
             select: {
                 id: true,
                 name: true,
-                email: true,
                 phone: true,
-                location: true,
-                city: true,
+                email: true,
+                address: true,
                 description: true,
                 website: true,
-                logo: true,
+                locationCity: true,
+                locationProvince: true,
+                logoUrl: true,
+                bannerUrl: true,
                 createdAt: true,
                 updatedAt: true,
                 jobs: {
@@ -67,8 +68,8 @@ class GetCompanyRepository {
                         salaryMin: true,
                         salaryMax: true,
                         tags: true,
-                        banner: true,
-                        deadline: true,
+                        bannerUrl: true,
+                        applyDeadline: true,
                     },
                     orderBy: {
                         createdAt: "desc",

@@ -1,7 +1,9 @@
 import { UserRole } from "../../generated/prisma";
 export declare class AnalyticsService {
     static assertCompanyOwnership(companyId: string | number, requesterId: number, requesterRole: UserRole): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;

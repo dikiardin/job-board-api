@@ -124,12 +124,12 @@ class AnalyticsRepository {
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         // Reviews linked via Employment -> CompanyReview
         const reviews = await prisma_1.prisma.companyReview.findMany({
-            where: { employment: { companyId: cid } },
+            where: { companyId: cid },
         });
         if (!reviews.length)
             return { avgSalaryEstimate: null, samples: 0 };
-        const has = reviews.filter((r) => r.salaryEstimate != null);
-        const avg = has.length ? Math.round(has.reduce((s, r) => s + r.salaryEstimate, 0) / has.length) : null;
+        const has = reviews.filter((r) => (r.salaryEstimateMin != null && r.salaryEstimateMax != null));
+        const avg = has.length ? Math.round(has.reduce((s, r) => s + Math.round((r.salaryEstimateMin + r.salaryEstimateMax) / 2), 0) / has.length) : null;
         return { avgSalaryEstimate: avg, samples: has.length };
     }
 }

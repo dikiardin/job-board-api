@@ -1,7 +1,9 @@
 import { Prisma } from "../../generated/prisma";
 export declare class JobRepository {
     static getCompany(companyId: string | number): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -83,7 +85,73 @@ export declare class JobRepository {
         isPublished: boolean;
         publishedAt: Date | null;
     }>;
-    static getJobById(companyId: string | number, jobId: string | number): Promise<{
+    static getJobById(companyId: string | number, jobId: string | number): Promise<({
+        applications: ({
+            user: {
+                role: import("../../generated/prisma").$Enums.UserRole;
+                email: string;
+                passwordHash: string | null;
+                name: string | null;
+                phone: string | null;
+                gender: string | null;
+                dob: Date | null;
+                education: string | null;
+                address: string | null;
+                city: string | null;
+                profilePicture: string | null;
+                emailVerifiedAt: Date | null;
+                verificationToken: string | null;
+                verificationTokenExpiresAt: Date | null;
+                passwordResetToken: string | null;
+                passwordResetExpiresAt: Date | null;
+                emailChangeToken: string | null;
+                emailChangeNewEmail: string | null;
+                emailChangeExpiresAt: Date | null;
+                lastLoginAt: Date | null;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            status: import("../../generated/prisma").$Enums.ApplicationStatus;
+            jobId: number;
+            cvUrl: string;
+            cvFileName: string | null;
+            cvFileSize: number | null;
+            expectedSalary: number | null;
+            expectedSalaryCurrency: string | null;
+            reviewNote: string | null;
+            reviewUpdatedAt: Date | null;
+            referralSource: string | null;
+        })[];
+        _count: {
+            applications: number;
+        };
+        preselectionTest: ({
+            results: {
+                createdAt: Date;
+                id: number;
+                userId: number;
+                testId: number;
+                score: number;
+                passed: boolean;
+            }[];
+        } & {
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            jobId: number;
+            passingScore: number | null;
+            questionCount: number;
+            timeLimitMinutes: number;
+        }) | null;
+    } & {
         city: string;
         createdAt: Date;
         updatedAt: Date;
@@ -104,7 +172,7 @@ export declare class JobRepository {
         applyDeadline: Date | null;
         isPublished: boolean;
         publishedAt: Date | null;
-    } | null>;
+    }) | null>;
     static togglePublish(jobId: string | number, isPublished: boolean): Promise<{
         city: string;
         createdAt: Date;
@@ -158,7 +226,11 @@ export declare class JobRepository {
         limit?: number;
         offset?: number;
     }): Promise<{
-        items: {
+        items: ({
+            _count: {
+                applications: number;
+            };
+        } & {
             city: string;
             createdAt: Date;
             updatedAt: Date;
@@ -179,7 +251,7 @@ export declare class JobRepository {
             applyDeadline: Date | null;
             isPublished: boolean;
             publishedAt: Date | null;
-        }[];
+        })[];
         total: number;
         limit: number;
         offset: number;
@@ -220,26 +292,11 @@ export declare class JobRepository {
         offset: number;
     }>;
     static getJobPublic(jobId: string | number): Promise<{
-        city: string;
-        createdAt: Date;
-        updatedAt: Date;
         id: number;
         companyId: number;
-        slug: string;
-        description: string;
-        bannerUrl: string | null;
         title: string;
-        category: string;
-        employmentType: string | null;
-        experienceLevel: string | null;
-        province: string | null;
-        salaryMin: number | null;
-        salaryMax: number | null;
-        salaryCurrency: string | null;
-        tags: string[];
         applyDeadline: Date | null;
         isPublished: boolean;
-        publishedAt: Date | null;
     } | null>;
     static listApplicantsForJob(params: {
         companyId: string | number;

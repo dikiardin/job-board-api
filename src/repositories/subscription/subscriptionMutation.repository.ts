@@ -3,9 +3,9 @@ import { prisma } from "../../config/prisma";
 export class SubscriptionMutationRepo {
   public static async createSubscription(data: {
     userId: number;
-    subscriptionPlanId: number;
+    planId: number;
     startDate: Date;
-    endDate: Date;
+    expiresAt: Date;
   }) {
     return prisma.subscription.create({
       data,

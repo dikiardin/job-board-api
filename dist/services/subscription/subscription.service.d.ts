@@ -305,9 +305,11 @@ export declare class SubscriptionService {
         };
     }>;
     static updateSubscription(id: number, data: {
-        isActive?: boolean;
+        status?: any;
         startDate?: Date;
-        endDate?: Date;
+        expiresAt?: Date;
+        paidAt?: Date;
+        approvedByDeveloperId?: number;
     }): Promise<{
         plan: {
             name: string;

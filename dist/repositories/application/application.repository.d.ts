@@ -67,7 +67,9 @@ export declare class ApplicationRepo {
         };
         job: {
             company: {
+                email: string;
                 name: string;
+                phone: string | null;
                 address: string | null;
                 createdAt: Date;
                 updatedAt: Date;

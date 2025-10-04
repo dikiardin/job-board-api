@@ -1,3 +1,4 @@
+import { SubscriptionPlanCode } from "../../generated/prisma";
 export declare class PlanRepo {
     static getAllPlans(): Promise<{
         name: string;
@@ -26,9 +27,14 @@ export declare class PlanRepo {
         cvGeneratorEnabled: boolean;
     } | null>;
     static createPlan(data: {
-        planName: string;
-        planPrice: number;
-        planDescription: string;
+        code: SubscriptionPlanCode;
+        name: string;
+        priceIdr: number;
+        description?: string;
+        perks?: string[];
+        monthlyAssessmentQuota?: number;
+        priorityCvReview?: boolean;
+        cvGeneratorEnabled?: boolean;
     }): Promise<{
         name: string;
         createdAt: Date;
@@ -43,9 +49,13 @@ export declare class PlanRepo {
         cvGeneratorEnabled: boolean;
     }>;
     static updatePlan(id: number, data: {
-        planName?: string;
-        planPrice?: number;
-        planDescription?: string;
+        name?: string;
+        priceIdr?: number;
+        description?: string;
+        perks?: string[];
+        monthlyAssessmentQuota?: number;
+        priorityCvReview?: boolean;
+        cvGeneratorEnabled?: boolean;
     }): Promise<{
         name: string;
         createdAt: Date;
@@ -73,20 +83,7 @@ export declare class PlanRepo {
         cvGeneratorEnabled: boolean;
     }>;
     static getAllSubscriptions(): Promise<{
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
-        startDate: Date | null;
-        userId: number;
         planId: number;
-        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
-        paidAt: Date | null;
-        expiresAt: Date | null;
-        cancelledAt: Date | null;
-        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
-        proofUrl: string | null;
-        approvedByDeveloperId: number | null;
-        lastReminderSentAt: Date | null;
     }[]>;
 }
 //# sourceMappingURL=plan.repository.d.ts.map

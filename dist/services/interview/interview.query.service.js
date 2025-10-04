@@ -11,7 +11,8 @@ async function assertCompanyOwnershipByCompanyId(companyId, requesterId, request
     const company = await prisma_2.prisma.company.findUnique({ where: { id } });
     if (!company)
         throw { status: 404, message: "Company not found" };
-    if (company.adminId !== requesterId)
+    const ownerId = company.ownerAdminId ?? company.adminId;
+    if (ownerId !== requesterId)
         throw { status: 403, message: "You don't own this company" };
     return company;
 }
@@ -22,7 +23,7 @@ async function assertCompanyOwnershipByInterview(interviewId, requesterId) {
     });
     if (!interview)
         throw { status: 404, message: "Interview not found" };
-    if (interview.application.job.company.adminId !== requesterId)
+    if ((interview.application.job.company).ownerAdminId !== requesterId)
         throw { status: 403, message: "You don't own this company" };
     return interview;
 }
