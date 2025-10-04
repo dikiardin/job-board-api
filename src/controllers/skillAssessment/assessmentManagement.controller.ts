@@ -12,6 +12,15 @@ export class AssessmentManagementController {
       const { userId, role } = res.locals.decrypt;
       const { title, description, category, questions, badgeTemplateId } = req.body;
 
+      console.log('=== CREATE ASSESSMENT DEBUG ===');
+      console.log('User ID:', userId);
+      console.log('User Role:', role);
+      console.log('Request Body:', JSON.stringify(req.body, null, 2));
+      console.log('Title:', title);
+      console.log('Category:', category);
+      console.log('Questions:', questions);
+      console.log('================================');
+
       ControllerHelper.validateRequired({ title, category }, "Title and category are required");
       
       if (!Array.isArray(questions)) {
