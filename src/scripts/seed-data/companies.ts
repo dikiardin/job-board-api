@@ -18,9 +18,9 @@ interface SeedCompaniesOptions {
 type AdminKey = keyof SeedUsersResult["admins"];
 
 const companySeeds = [
-  { key: "techCorp" as const, ownerKey: "tech" as AdminKey, name: "TechCorp Indonesia", description: "Enterprise technology provider focusing on cloud-native solutions.", logoUrl: "https://placehold.co/120x120?text=TechCorp", bannerUrl: "https://placehold.co/1200x400?text=TechCorp", website: "https://techcorp.id", locationCity: "Jakarta", locationProvince: "DKI Jakarta", address: "Jl. Gatot Subroto No. 1, Jakarta", socials: { linkedin: "https://linkedin.com/company/techcorp", instagram: "https://instagram.com/techcorp" } as Prisma.JsonObject },
-  { key: "creativeStudio" as const, ownerKey: "creative" as AdminKey, name: "Creative Studio", description: "Design agency delivering delightful user experiences.", logoUrl: "https://placehold.co/120x120?text=Creative", bannerUrl: "https://placehold.co/1200x400?text=Creative", website: "https://creativestudio.id", locationCity: "Bandung", locationProvince: "Jawa Barat", address: "Jl. Riau No. 5, Bandung", socials: { dribbble: "https://dribbble.com/creativestudio", instagram: "https://instagram.com/creativestudio" } as Prisma.JsonObject },
-  { key: "fintechLabs" as const, ownerKey: "fintech" as AdminKey, name: "Fintech Labs", description: "Digital financial services powering SMEs.", logoUrl: "https://placehold.co/120x120?text=Fintech", bannerUrl: "https://placehold.co/1200x400?text=Fintech", website: "https://fintechlabs.id", locationCity: "Surabaya", locationProvince: "Jawa Timur", address: "Jl. Tunjungan No. 20, Surabaya", socials: { linkedin: "https://linkedin.com/company/fintechlabs", twitter: "https://twitter.com/fintechlabs" } as Prisma.JsonObject },
+  { key: "techCorp" as const, ownerKey: "tech" as AdminKey, name: "TechCorp Indonesia", email: "contact@techcorp.id", description: "Enterprise technology provider focusing on cloud-native solutions.", logoUrl: "https://placehold.co/120x120?text=TechCorp", bannerUrl: "https://placehold.co/1200x400?text=TechCorp", website: "https://techcorp.id", locationCity: "Jakarta", locationProvince: "DKI Jakarta", address: "Jl. Gatot Subroto No. 1, Jakarta", socials: { linkedin: "https://linkedin.com/company/techcorp", instagram: "https://instagram.com/techcorp" } as Prisma.JsonObject },
+  { key: "creativeStudio" as const, ownerKey: "creative" as AdminKey, name: "Creative Studio", email: "hello@creativestudio.id", description: "Design agency delivering delightful user experiences.", logoUrl: "https://placehold.co/120x120?text=Creative", bannerUrl: "https://placehold.co/1200x400?text=Creative", website: "https://creativestudio.id", locationCity: "Bandung", locationProvince: "Jawa Barat", address: "Jl. Riau No. 5, Bandung", socials: { dribbble: "https://dribbble.com/creativestudio", instagram: "https://instagram.com/creativestudio" } as Prisma.JsonObject },
+  { key: "fintechLabs" as const, ownerKey: "fintech" as AdminKey, name: "Fintech Labs", email: "info@fintechlabs.id", description: "Digital financial services powering SMEs.", logoUrl: "https://placehold.co/120x120?text=Fintech", bannerUrl: "https://placehold.co/1200x400?text=Fintech", website: "https://fintechlabs.id", locationCity: "Surabaya", locationProvince: "Jawa Timur", address: "Jl. Tunjungan No. 20, Surabaya", socials: { linkedin: "https://linkedin.com/company/fintechlabs", twitter: "https://twitter.com/fintechlabs" } as Prisma.JsonObject },
 ] as const;
 
 const jobSeeds = [
@@ -64,6 +64,7 @@ export async function seedCompaniesAndJobs({
         data: {
           ownerAdminId: seed.ownerKey ? users.admins[seed.ownerKey].id : null,
           name: seed.name,
+          email: seed.email,
           description: seed.description,
           logoUrl: seed.logoUrl,
           bannerUrl: seed.bannerUrl,
