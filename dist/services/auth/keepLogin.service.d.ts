@@ -4,7 +4,7 @@ export declare class KeepLoginService {
         name: string | null;
         email: string;
         role: import("../../generated/prisma").$Enums.UserRole;
-        isVerified: any;
+        isVerified: boolean;
         token: string;
         profilePicture: string | null;
     }>;

@@ -54,7 +54,7 @@ class BasicAuthService {
         if (!user) {
             throw new customError_1.CustomError("User not found", 404);
         }
-        if (user.isVerified) {
+        if (user.emailVerifiedAt) {
             const jwt = (0, createToken_1.createToken)({ userId: user.id, email: user.email, role: user.role }, "7d");
             return { message: "User already verified", token: jwt, user };
         }
@@ -80,7 +80,7 @@ class BasicAuthService {
         const isMatch = await (0, comparePassword_1.comparePassword)(password, user.passwordHash);
         if (!isMatch)
             throw new customError_1.CustomError("Wrong password", 400);
-        if (!user.isVerified) {
+        if (!user.emailVerifiedAt) {
             throw new customError_1.CustomError("Please verify your email before logging in", 400);
         }
         const token = (0, createToken_1.createToken)({ userId: user.id, role: user.role }, "7d");

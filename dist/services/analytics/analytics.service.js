@@ -26,7 +26,8 @@ class AnalyticsService {
         const company = await analytics_repository_1.AnalyticsRepository.getCompany(companyId);
         if (!company)
             throw { status: 404, message: "Company not found" };
-        if (company.adminId !== requesterId)
+        const ownerId = company.ownerAdminId ?? company.adminId;
+        if (ownerId !== requesterId)
             throw { status: 403, message: "You don't own this company" };
         return company;
     }

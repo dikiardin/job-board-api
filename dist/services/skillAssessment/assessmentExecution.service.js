@@ -69,7 +69,7 @@ class AssessmentExecutionService {
         const subscription = await prisma_1.prisma.subscription.findFirst({
             where: {
                 userId,
-                endDate: {
+                expiresAt: {
                     gte: new Date(),
                 },
             },

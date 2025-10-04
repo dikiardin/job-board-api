@@ -8,39 +8,46 @@ export declare class GetCompanyService {
     static getAllCompanies(params: GetAllCompaniesParams): Promise<{
         data: {
             name: string;
-            address: string | null;
             createdAt: Date;
             updatedAt: Date;
             id: number;
-            slug: string;
+            _count: {
+                jobs: number;
+            };
             description: string | null;
             logoUrl: string | null;
             bannerUrl: string | null;
             website: string | null;
             locationCity: string | null;
             locationProvince: string | null;
-            locationCountry: string | null;
-            socials: import("../../generated/prisma/runtime/library").JsonValue | null;
-            ownerAdminId: number | null;
         }[];
         total: number;
     }>;
     static getCompanyById(companyId: string | number): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;
         id: number;
-        slug: string;
         description: string | null;
         logoUrl: string | null;
         bannerUrl: string | null;
         website: string | null;
         locationCity: string | null;
         locationProvince: string | null;
-        locationCountry: string | null;
-        socials: import("../../generated/prisma/runtime/library").JsonValue | null;
-        ownerAdminId: number | null;
+        jobs: {
+            city: string;
+            id: number;
+            bannerUrl: string | null;
+            title: string;
+            category: string;
+            salaryMin: number | null;
+            salaryMax: number | null;
+            tags: string[];
+            applyDeadline: Date | null;
+        }[];
     } | null>;
 }
 export {};

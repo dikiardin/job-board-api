@@ -26,7 +26,9 @@ export declare class EditProfileService {
         id: number;
     } | {
         company: {
+            email: string;
             name: string;
+            phone: string | null;
             address: string | null;
             createdAt: Date;
             updatedAt: Date;
@@ -96,7 +98,9 @@ export declare class EditProfileService {
         id: number;
     } | {
         company: {
+            email: string;
             name: string;
+            phone: string | null;
             address: string | null;
             createdAt: Date;
             updatedAt: Date;

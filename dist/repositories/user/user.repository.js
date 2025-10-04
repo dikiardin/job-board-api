@@ -17,7 +17,7 @@ class UserRepo {
     static async verifyUser(id) {
         return prisma_1.prisma.user.update({
             where: { id },
-            data: { isVerified: true },
+            data: { emailVerifiedAt: new Date() },
         });
     }
     static async updateUser(id, data) {

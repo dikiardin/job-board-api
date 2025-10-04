@@ -9,8 +9,8 @@ class ProfileService {
             throw new Error("User not found");
         return user;
     }
-    static async getCompanyProfile(adminId) {
-        const company = await profile_repository_1.ProfileRepository.getCompanyProfile(adminId);
+    static async getCompanyProfile(ownerAdminId) {
+        const company = await profile_repository_1.ProfileRepository.getCompanyProfile(ownerAdminId);
         if (!company)
             throw new Error("Company not found");
         return company;

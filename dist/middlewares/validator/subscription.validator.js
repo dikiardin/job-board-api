@@ -17,7 +17,7 @@ SubscriptionValidator.validateSubscribeRequest = (req, res, next) => {
     if (error) {
         return res.status(400).json({
             message: "Validation error",
-            details: error.details[0].message,
+            details: error.details?.[0]?.message || "Invalid request data",
         });
     }
     next();
@@ -33,7 +33,7 @@ SubscriptionValidator.validateUpdateRequest = (req, res, next) => {
     if (error) {
         return res.status(400).json({
             message: "Validation error",
-            details: error.details[0].message,
+            details: error.details?.[0]?.message || "Invalid request data",
         });
     }
     next();
@@ -49,7 +49,7 @@ SubscriptionValidator.validatePlanCreation = (req, res, next) => {
     if (error) {
         return res.status(400).json({
             message: "Validation error",
-            details: error.details[0].message,
+            details: error.details?.[0]?.message || "Invalid request data",
         });
     }
     next();
@@ -65,7 +65,7 @@ SubscriptionValidator.validatePlanUpdate = (req, res, next) => {
     if (error) {
         return res.status(400).json({
             message: "Validation error",
-            details: error.details[0].message,
+            details: error.details?.[0]?.message || "Invalid request data",
         });
     }
     next();

@@ -16,7 +16,7 @@ class UserProviderRepo {
                 email: data.email,
                 passwordHash: null,
                 role: data.role,
-                isVerified: true,
+                emailVerifiedAt: new Date(),
                 profilePicture: data.profilePicture ?? null,
                 providers: {
                     create: {

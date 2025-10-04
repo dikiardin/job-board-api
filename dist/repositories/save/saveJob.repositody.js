@@ -16,7 +16,7 @@ class SavedJobRepo {
                         id: true,
                         title: true,
                         company: {
-                            select: { id: true, name: true, logo: true },
+                            select: { id: true, name: true, logoUrl: true },
                         },
                         city: true,
                         category: true,
@@ -37,7 +37,7 @@ class SavedJobRepo {
                         id: true,
                         title: true,
                         company: {
-                            select: { id: true, name: true, logo: true },
+                            select: { id: true, name: true, logoUrl: true },
                         },
                         city: true,
                         category: true,

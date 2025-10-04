@@ -2,7 +2,6 @@ export declare class ProfileRepository {
     static getUserProfile(userId: number): Promise<{
         role: import("../../generated/prisma").$Enums.UserRole;
         email: string;
-        passwordHash: string | null;
         name: string | null;
         phone: string | null;
         gender: string | null;
@@ -12,20 +11,11 @@ export declare class ProfileRepository {
         city: string | null;
         profilePicture: string | null;
         emailVerifiedAt: Date | null;
-        verificationToken: string | null;
-        verificationTokenExpiresAt: Date | null;
-        passwordResetToken: string | null;
-        passwordResetExpiresAt: Date | null;
-        emailChangeToken: string | null;
-        emailChangeNewEmail: string | null;
-        emailChangeExpiresAt: Date | null;
-        lastLoginAt: Date | null;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
         id: number;
     } | null>;
-    static getCompanyProfile(adminId: number): Promise<{
+    static getCompanyProfile(ownerAdminId: number): Promise<{
         name: string;
         address: string | null;
         createdAt: Date;
@@ -39,7 +29,7 @@ export declare class ProfileRepository {
         locationCity: string | null;
         locationProvince: string | null;
         locationCountry: string | null;
-        socials: import("../../generated/prisma/runtime/library").JsonValue | null;
+        socials: import("../../generated/prisma/runtime/library").JsonValue;
         ownerAdminId: number | null;
     } | null>;
 }

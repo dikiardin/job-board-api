@@ -8,7 +8,8 @@ class JobService {
         const company = await job_repository_1.JobRepository.getCompany(companyId);
         if (!company)
             throw { status: 404, message: "Company not found" };
-        if (company.adminId !== requesterId)
+        const ownerId = company.ownerAdminId ?? company.adminId;
+        if (ownerId !== requesterId)
             throw { status: 403, message: "You don't own this company" };
         return company;
     }
@@ -176,9 +177,9 @@ class JobService {
         const job = await job_repository_1.JobRepository.getJobById(companyId, jobId);
         if (!job)
             throw { status: 404, message: "Job not found" };
-        const test = job.preselectionTests || null;
+        const test = job.preselectionTest || null;
         const passingScore = test?.passingScore ?? null;
-        const applicants = job.applications.map((a) => {
+        const applicants = (job.applications ?? []).map((a) => {
             let preselectionPassed = undefined;
             if (test) {
                 const result = test.results.find((r) => r.userId === a.userId);
@@ -196,7 +197,7 @@ class JobService {
                 userEmail: a.user?.email,
                 profilePicture: a.user?.profilePicture ?? null,
                 expectedSalary: a.expectedSalary ?? null,
-                cvFile: a.cvFile ?? null,
+                cvFile: a.cvUrl ?? null,
                 score: test ? test.results.find((r) => r.userId === a.userId)?.score ?? null : null,
                 preselectionPassed,
                 status: a.status,
@@ -207,16 +208,16 @@ class JobService {
             id: job.id,
             title: job.title,
             description: job.description,
-            banner: job.banner,
+            banner: job.bannerUrl ?? null,
             category: job.category,
             city: job.city,
             salaryMin: job.salaryMin,
             salaryMax: job.salaryMax,
             tags: job.tags,
-            deadline: job.deadline,
+            deadline: job.applyDeadline ?? null,
             isPublished: job.isPublished,
             createdAt: job.createdAt,
-            applicantsCount: job._count?.applications ?? job.applications.length,
+            applicantsCount: job._count?.applications ?? (job.applications?.length ?? 0),
             applicants,
         };
     }

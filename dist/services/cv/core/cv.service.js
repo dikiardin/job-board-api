@@ -59,7 +59,12 @@ class CVService {
                             assessment: true,
                         },
                     },
-                    userBadges: true,
+                    userBadges: {
+                        include: {
+                            badgeTemplate: true,
+                            badge: true,
+                        },
+                    },
                 },
             });
             if (!user) {
@@ -68,7 +73,7 @@ class CVService {
             // Prepare CV data
             const cvData = {
                 personalInfo: {
-                    name: user.name,
+                    name: user.name || "User",
                     email: user.email,
                     phone: user.phone,
                     address: user.address,
@@ -83,9 +88,9 @@ class CVService {
                 })),
                 skills: user.skillResults.map((result) => result.assessment.title),
                 badges: user.userBadges.map((badge) => ({
-                    name: badge.badgeName,
-                    icon: badge.badgeIcon,
-                    awardedAt: badge.awardedAt,
+                    name: badge.badgeTemplate?.name || badge.badge?.name || "Badge",
+                    icon: badge.badgeTemplate?.icon || badge.badge?.icon || "🏆",
+                    awardedAt: badge.earnedAt,
                 })),
                 additionalInfo,
             };
@@ -140,7 +145,12 @@ class CVService {
                             assessment: true,
                         },
                     },
-                    userBadges: true,
+                    userBadges: {
+                        include: {
+                            badgeTemplate: true,
+                            badge: true,
+                        },
+                    },
                 },
             });
             if (!user) {
@@ -149,7 +159,7 @@ class CVService {
             // Prepare updated CV data
             const cvData = {
                 personalInfo: {
-                    name: user.name,
+                    name: user.name || "User",
                     email: user.email,
                     phone: user.phone,
                     address: user.address,
@@ -164,9 +174,9 @@ class CVService {
                 })),
                 skills: user.skillResults.map((result) => result.assessment.title),
                 badges: user.userBadges.map((badge) => ({
-                    name: badge.badgeName,
-                    icon: badge.badgeIcon,
-                    awardedAt: badge.awardedAt,
+                    name: badge.badgeTemplate?.name || badge.badge?.name || "Badge",
+                    icon: badge.badgeTemplate?.icon || badge.badge?.icon || "🏆",
+                    awardedAt: badge.earnedAt,
                 })),
                 additionalInfo,
             };

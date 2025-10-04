@@ -8,8 +8,8 @@ export class SubscriptionExpiryRepo {
 
     return prisma.subscription.findMany({
       where: {
-        isActive: true,
-        endDate: {
+        status: "ACTIVE",
+        expiresAt: {
           gte: tomorrow,
           lt: nextDay,
         },
@@ -29,8 +29,8 @@ export class SubscriptionExpiryRepo {
 
     return prisma.subscription.findMany({
       where: {
-        isActive: true,
-        endDate: {
+        status: "ACTIVE",
+        expiresAt: {
           gte: targetTime,
           lt: nextMinute,
         },
@@ -49,8 +49,8 @@ export class SubscriptionExpiryRepo {
 
     return prisma.subscription.findMany({
       where: {
-        isActive: true,
-        endDate: {
+        status: "ACTIVE",
+        expiresAt: {
           lt: now,
         },
       },

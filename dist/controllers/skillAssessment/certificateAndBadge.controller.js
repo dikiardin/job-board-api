@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CertificateAndBadgeController = void 0;
 const certificateVerification_service_1 = require("../../services/skillAssessment/certificateVerification.service");
-const badgeManagement_service_1 = require("../../services/skillAssessment/badgeManagement.service");
+const badgeCore_service_1 = require("../../services/skillAssessment/badgeCore.service");
 const assessmentSubmission_service_1 = require("../../services/skillAssessment/assessmentSubmission.service");
 const customError_1 = require("../../utils/customError");
 class CertificateAndBadgeController {
@@ -83,7 +83,7 @@ class CertificateAndBadgeController {
     static async getUserBadges(req, res, next) {
         try {
             const { userId } = res.locals.decrypt;
-            const result = await badgeManagement_service_1.BadgeManagementService.getUserBadges(userId);
+            const result = await badgeCore_service_1.BadgeCoreService.getUserBadges(userId);
             res.status(200).json({
                 success: true,
                 message: "User badges retrieved successfully",

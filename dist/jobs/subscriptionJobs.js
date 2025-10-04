@@ -15,7 +15,9 @@ function startSubscriptionJobs() {
         try {
             const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringWithinHours(24);
             for (const subscription of expiring) {
-                await email_service_1.EmailService.sendSubscriptionExpirationEmail(subscription.user.email, subscription.user.name, subscription.plan.name, subscription.expiresAt);
+                if (subscription.expiresAt) {
+                    await email_service_1.EmailService.sendSubscriptionExpirationEmail(subscription.user.email, subscription.user.name ?? subscription.user.email, subscription.plan.name, subscription.expiresAt);
+                }
             }
             console.log(`[CRON] Sent ${expiring.length} expiration reminder emails (H-24)`);
         }

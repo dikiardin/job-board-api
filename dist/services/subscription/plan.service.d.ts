@@ -29,6 +29,9 @@ export declare class PlanService {
         planName: string;
         planPrice: number;
         planDescription: string;
+        planCode?: any;
+        perks?: string[];
+        monthlyAssessmentQuota?: number;
     }): Promise<{
         name: string;
         createdAt: Date;
@@ -46,6 +49,8 @@ export declare class PlanService {
         planName?: string;
         planPrice?: number;
         planDescription?: string;
+        perks?: string[];
+        monthlyAssessmentQuota?: number;
     }): Promise<{
         name: string;
         createdAt: Date;

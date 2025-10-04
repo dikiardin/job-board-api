@@ -37,6 +37,7 @@ async function createAdmin() {
     const company = await prisma.company.create({
       data: {
         name: "Demo Company",
+        email: "admin@democompany.com",
         description: "A demo company for testing purposes",
         website: "https://democompany.com",
         locationCity: "Jakarta",

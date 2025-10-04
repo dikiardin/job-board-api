@@ -44,6 +44,17 @@ export declare class UserProviderRepo {
         role: "USER" | "ADMIN";
         profilePicture?: string | null;
     }): Promise<{
+        providers: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            provider: import("../../generated/prisma").$Enums.ProviderType;
+            providerId: string;
+            accessToken: string | null;
+            refreshToken: string | null;
+        }[];
+    } & {
         role: import("../../generated/prisma").$Enums.UserRole;
         email: string;
         passwordHash: string | null;

@@ -9,6 +9,7 @@ class AssessmentCrudRepository {
             data: {
                 title: data.title,
                 description: data.description || null,
+                category: data.category,
                 badgeTemplateId: data.badgeTemplateId || null,
                 createdBy: data.createdBy,
                 ...(data.questions.length > 0 && {
@@ -57,6 +58,7 @@ class AssessmentCrudRepository {
                 questions: true,
                 creator: { select: { id: true, name: true } },
                 badgeTemplate: { select: { id: true, name: true, icon: true, description: true, category: true } },
+                _count: { select: { results: true, questions: true } },
             },
         });
     }
@@ -73,6 +75,7 @@ class AssessmentCrudRepository {
                     data: {
                         title: data.title,
                         description: data.description,
+                        category: data.category,
                         badgeTemplateId: data.badgeTemplateId,
                         questions: {
                             create: data.questions.map((q) => ({
@@ -96,6 +99,8 @@ class AssessmentCrudRepository {
                 updateData.title = data.title;
             if (data.description !== undefined)
                 updateData.description = data.description;
+            if (data.category !== undefined)
+                updateData.category = data.category;
             if (data.badgeTemplateId !== undefined)
                 updateData.badgeTemplateId = data.badgeTemplateId;
             return await prisma_1.prisma.skillAssessment.updateMany({

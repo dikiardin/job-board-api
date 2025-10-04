@@ -111,7 +111,7 @@ export declare class UserRepo {
     }>;
     static updateUser(id: number, data: Partial<{
         email: string;
-        isVerified: boolean;
+        emailVerifiedAt: Date | null;
     }>): Promise<{
         role: import("../../generated/prisma").$Enums.UserRole;
         email: string;

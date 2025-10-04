@@ -1,7 +1,9 @@
 import { UserRole } from "../../generated/prisma";
 export declare class JobService {
     static assertCompanyOwnership(companyId: string, requesterId: number): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;

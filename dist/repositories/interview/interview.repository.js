@@ -11,7 +11,7 @@ class InterviewRepository {
                 const rec = await tx.interview.create({
                     data: {
                         applicationId: item.applicationId,
-                        scheduleDate: item.scheduleDate,
+                        startsAt: item.scheduleDate,
                         locationOrLink: item.locationOrLink ?? null,
                         notes: item.notes ?? null,
                     },
@@ -19,7 +19,7 @@ class InterviewRepository {
                         application: {
                             include: {
                                 user: true,
-                                job: { include: { company: { include: { admin: true } } } },
+                                job: { include: { company: { include: { owner: true } } } },
                             },
                         },
                     },
@@ -33,7 +33,7 @@ class InterviewRepository {
         return prisma_1.prisma.interview.create({
             data: {
                 applicationId: data.applicationId,
-                scheduleDate: data.scheduleDate,
+                startsAt: data.scheduleDate,
                 locationOrLink: data.locationOrLink ?? null,
                 notes: data.notes ?? null,
             },
@@ -41,7 +41,7 @@ class InterviewRepository {
                 application: {
                     include: {
                         user: true,
-                        job: { include: { company: { include: { admin: true } } } },
+                        job: { include: { company: { include: { owner: true } } } },
                     },
                 },
             },
@@ -55,7 +55,7 @@ class InterviewRepository {
                 application: {
                     include: {
                         user: true,
-                        job: { include: { company: { include: { admin: true } } } },
+                        job: { include: { company: { include: { owner: true } } } },
                     },
                 },
             },
@@ -71,7 +71,7 @@ class InterviewRepository {
                 application: {
                     include: {
                         user: true,
-                        job: { include: { company: { include: { admin: true } } } },
+                        job: { include: { company: { include: { owner: true } } } },
                     },
                 },
             },
@@ -102,12 +102,12 @@ class InterviewRepository {
         const [items, total] = await Promise.all([
             prisma_1.prisma.interview.findMany({
                 where,
-                orderBy: { scheduleDate: "asc" },
+                orderBy: { startsAt: "asc" },
                 skip: offset,
                 take: limit,
                 include: {
                     application: {
-                        include: { user: true, job: { include: { company: { include: { admin: true } } } } },
+                        include: { user: true, job: { include: { company: { include: { owner: true } } } } },
                     },
                 },
             }),
@@ -120,7 +120,7 @@ class InterviewRepository {
             where: {
                 applicationId,
                 status: { in: [prisma_2.InterviewStatus.SCHEDULED, prisma_2.InterviewStatus.COMPLETED] },
-                scheduleDate: { gte: start, lte: end },
+                startsAt: { gte: start, lte: end },
             },
         });
     }
@@ -129,11 +129,11 @@ class InterviewRepository {
             where: {
                 status: prisma_2.InterviewStatus.SCHEDULED,
                 reminderSentAt: null,
-                scheduleDate: { gte: windowStart, lt: windowEnd },
+                startsAt: { gte: windowStart, lt: windowEnd },
             },
             include: {
                 application: {
-                    include: { user: true, job: { include: { company: { include: { admin: true } } } } },
+                    include: { user: true, job: { include: { company: { include: { owner: true } } } } },
                 },
             },
         });

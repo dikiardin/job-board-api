@@ -25,8 +25,10 @@ export declare class EditProfileRepository {
         updatedAt: Date;
         id: number;
     }>;
-    static updateCompanyProfile(adminId: number, data: any): Promise<{
+    static updateCompanyProfile(ownerAdminId: number, data: any): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;

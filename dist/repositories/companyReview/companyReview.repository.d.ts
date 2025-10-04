@@ -1,21 +1,25 @@
 export interface CreateReviewData {
-    employmentId: number;
-    position: string;
-    salaryEstimate?: number;
-    cultureRating: number;
-    worklifeRating: number;
-    facilityRating: number;
-    careerRating: number;
-    comment?: string;
+    companyId: number;
+    employmentId?: number;
+    reviewerUserId: number;
+    positionTitle: string;
+    salaryEstimateMin?: number;
+    salaryEstimateMax?: number;
+    ratingCulture: number;
+    ratingWorkLife: number;
+    ratingFacilities: number;
+    ratingCareer: number;
+    body?: string;
 }
 export interface UpdateReviewData {
-    position: string;
-    salaryEstimate?: number;
-    cultureRating: number;
-    worklifeRating: number;
-    facilityRating: number;
-    careerRating: number;
-    comment?: string;
+    positionTitle: string;
+    salaryEstimateMin?: number;
+    salaryEstimateMax?: number;
+    ratingCulture: number;
+    ratingWorkLife: number;
+    ratingFacilities: number;
+    ratingCareer: number;
+    body?: string;
 }
 export interface GetReviewsParams {
     companyId: number | string;
@@ -33,63 +37,39 @@ export declare class CompanyReviewRepository {
     } | null>;
     static getExistingReview(employmentId: number): Promise<{
         createdAt: Date;
-        updatedAt: Date;
         id: number;
         positionTitle: string;
-        companyId: number;
         body: string | null;
-        employmentId: number | null;
-        reviewerUserId: number;
-        isVerifiedEmployee: boolean;
-        isAnonymous: boolean;
         ratingCulture: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingWorkLife: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingFacilities: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingCareer: import("../../generated/prisma/runtime/library").Decimal | null;
         salaryEstimateMin: number | null;
         salaryEstimateMax: number | null;
-        currency: string | null;
-        reviewerSnapshot: string | null;
     } | null>;
     static createReview(data: CreateReviewData): Promise<{
         createdAt: Date;
-        updatedAt: Date;
         id: number;
         positionTitle: string;
-        companyId: number;
         body: string | null;
-        employmentId: number | null;
-        reviewerUserId: number;
-        isVerifiedEmployee: boolean;
-        isAnonymous: boolean;
         ratingCulture: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingWorkLife: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingFacilities: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingCareer: import("../../generated/prisma/runtime/library").Decimal | null;
         salaryEstimateMin: number | null;
         salaryEstimateMax: number | null;
-        currency: string | null;
-        reviewerSnapshot: string | null;
     }>;
     static updateReview(reviewId: number, data: UpdateReviewData): Promise<{
         createdAt: Date;
-        updatedAt: Date;
         id: number;
         positionTitle: string;
-        companyId: number;
         body: string | null;
-        employmentId: number | null;
-        reviewerUserId: number;
-        isVerifiedEmployee: boolean;
-        isAnonymous: boolean;
         ratingCulture: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingWorkLife: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingFacilities: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingCareer: import("../../generated/prisma/runtime/library").Decimal | null;
         salaryEstimateMin: number | null;
         salaryEstimateMax: number | null;
-        currency: string | null;
-        reviewerSnapshot: string | null;
     }>;
     static deleteReview(reviewId: number): Promise<{
         createdAt: Date;
@@ -113,23 +93,15 @@ export declare class CompanyReviewRepository {
     }>;
     static getCompanyReviews(params: GetReviewsParams): Promise<{
         createdAt: Date;
-        updatedAt: Date;
         id: number;
         positionTitle: string;
-        companyId: number;
         body: string | null;
-        employmentId: number | null;
-        reviewerUserId: number;
-        isVerifiedEmployee: boolean;
-        isAnonymous: boolean;
         ratingCulture: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingWorkLife: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingFacilities: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingCareer: import("../../generated/prisma/runtime/library").Decimal | null;
         salaryEstimateMin: number | null;
         salaryEstimateMax: number | null;
-        currency: string | null;
-        reviewerSnapshot: string | null;
     }[]>;
     static getCompanyReviewsCount(companyId: number | string): Promise<number>;
     static getCompanyReviewStats(companyId: number | string): Promise<{

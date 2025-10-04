@@ -1,4 +1,4 @@
-import { InterviewStatus } from "../../generated/prisma";
+import { InterviewStatus, Prisma } from "../../generated/prisma";
 export declare class InterviewRepository {
     static createMany(interviews: Array<{
         applicationId: number;
@@ -12,6 +12,119 @@ export declare class InterviewRepository {
         locationOrLink?: string | null;
         notes?: string | null;
     }): Promise<{
+        application: {
+            user: {
+                role: import("../../generated/prisma").$Enums.UserRole;
+                email: string;
+                passwordHash: string | null;
+                name: string | null;
+                phone: string | null;
+                gender: string | null;
+                dob: Date | null;
+                education: string | null;
+                address: string | null;
+                city: string | null;
+                profilePicture: string | null;
+                emailVerifiedAt: Date | null;
+                verificationToken: string | null;
+                verificationTokenExpiresAt: Date | null;
+                passwordResetToken: string | null;
+                passwordResetExpiresAt: Date | null;
+                emailChangeToken: string | null;
+                emailChangeNewEmail: string | null;
+                emailChangeExpiresAt: Date | null;
+                lastLoginAt: Date | null;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+            };
+            job: {
+                company: {
+                    owner: {
+                        role: import("../../generated/prisma").$Enums.UserRole;
+                        email: string;
+                        passwordHash: string | null;
+                        name: string | null;
+                        phone: string | null;
+                        gender: string | null;
+                        dob: Date | null;
+                        education: string | null;
+                        address: string | null;
+                        city: string | null;
+                        profilePicture: string | null;
+                        emailVerifiedAt: Date | null;
+                        verificationToken: string | null;
+                        verificationTokenExpiresAt: Date | null;
+                        passwordResetToken: string | null;
+                        passwordResetExpiresAt: Date | null;
+                        emailChangeToken: string | null;
+                        emailChangeNewEmail: string | null;
+                        emailChangeExpiresAt: Date | null;
+                        lastLoginAt: Date | null;
+                        isActive: boolean;
+                        createdAt: Date;
+                        updatedAt: Date;
+                        id: number;
+                    } | null;
+                } & {
+                    email: string;
+                    name: string;
+                    phone: string | null;
+                    address: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    id: number;
+                    slug: string;
+                    description: string | null;
+                    logoUrl: string | null;
+                    bannerUrl: string | null;
+                    website: string | null;
+                    locationCity: string | null;
+                    locationProvince: string | null;
+                    locationCountry: string | null;
+                    socials: Prisma.JsonValue | null;
+                    ownerAdminId: number | null;
+                };
+            } & {
+                city: string;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+                companyId: number;
+                slug: string;
+                description: string;
+                bannerUrl: string | null;
+                title: string;
+                category: string;
+                employmentType: string | null;
+                experienceLevel: string | null;
+                province: string | null;
+                salaryMin: number | null;
+                salaryMax: number | null;
+                salaryCurrency: string | null;
+                tags: string[];
+                applyDeadline: Date | null;
+                isPublished: boolean;
+                publishedAt: Date | null;
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            status: import("../../generated/prisma").$Enums.ApplicationStatus;
+            jobId: number;
+            cvUrl: string;
+            cvFileName: string | null;
+            cvFileSize: number | null;
+            expectedSalary: number | null;
+            expectedSalaryCurrency: string | null;
+            reviewNote: string | null;
+            reviewUpdatedAt: Date | null;
+            referralSource: string | null;
+        };
+    } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -31,6 +144,119 @@ export declare class InterviewRepository {
         notes: string | null;
         status: InterviewStatus;
     }>): Promise<{
+        application: {
+            user: {
+                role: import("../../generated/prisma").$Enums.UserRole;
+                email: string;
+                passwordHash: string | null;
+                name: string | null;
+                phone: string | null;
+                gender: string | null;
+                dob: Date | null;
+                education: string | null;
+                address: string | null;
+                city: string | null;
+                profilePicture: string | null;
+                emailVerifiedAt: Date | null;
+                verificationToken: string | null;
+                verificationTokenExpiresAt: Date | null;
+                passwordResetToken: string | null;
+                passwordResetExpiresAt: Date | null;
+                emailChangeToken: string | null;
+                emailChangeNewEmail: string | null;
+                emailChangeExpiresAt: Date | null;
+                lastLoginAt: Date | null;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+            };
+            job: {
+                company: {
+                    owner: {
+                        role: import("../../generated/prisma").$Enums.UserRole;
+                        email: string;
+                        passwordHash: string | null;
+                        name: string | null;
+                        phone: string | null;
+                        gender: string | null;
+                        dob: Date | null;
+                        education: string | null;
+                        address: string | null;
+                        city: string | null;
+                        profilePicture: string | null;
+                        emailVerifiedAt: Date | null;
+                        verificationToken: string | null;
+                        verificationTokenExpiresAt: Date | null;
+                        passwordResetToken: string | null;
+                        passwordResetExpiresAt: Date | null;
+                        emailChangeToken: string | null;
+                        emailChangeNewEmail: string | null;
+                        emailChangeExpiresAt: Date | null;
+                        lastLoginAt: Date | null;
+                        isActive: boolean;
+                        createdAt: Date;
+                        updatedAt: Date;
+                        id: number;
+                    } | null;
+                } & {
+                    email: string;
+                    name: string;
+                    phone: string | null;
+                    address: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    id: number;
+                    slug: string;
+                    description: string | null;
+                    logoUrl: string | null;
+                    bannerUrl: string | null;
+                    website: string | null;
+                    locationCity: string | null;
+                    locationProvince: string | null;
+                    locationCountry: string | null;
+                    socials: Prisma.JsonValue | null;
+                    ownerAdminId: number | null;
+                };
+            } & {
+                city: string;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+                companyId: number;
+                slug: string;
+                description: string;
+                bannerUrl: string | null;
+                title: string;
+                category: string;
+                employmentType: string | null;
+                experienceLevel: string | null;
+                province: string | null;
+                salaryMin: number | null;
+                salaryMax: number | null;
+                salaryCurrency: string | null;
+                tags: string[];
+                applyDeadline: Date | null;
+                isPublished: boolean;
+                publishedAt: Date | null;
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            status: import("../../generated/prisma").$Enums.ApplicationStatus;
+            jobId: number;
+            cvUrl: string;
+            cvFileName: string | null;
+            cvFileSize: number | null;
+            expectedSalary: number | null;
+            expectedSalaryCurrency: string | null;
+            reviewNote: string | null;
+            reviewUpdatedAt: Date | null;
+            referralSource: string | null;
+        };
+    } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -58,7 +284,120 @@ export declare class InterviewRepository {
         reminderSentAt: Date | null;
         updatedById: number | null;
     }>;
-    static getById(id: number): Promise<{
+    static getById(id: number): Promise<({
+        application: {
+            user: {
+                role: import("../../generated/prisma").$Enums.UserRole;
+                email: string;
+                passwordHash: string | null;
+                name: string | null;
+                phone: string | null;
+                gender: string | null;
+                dob: Date | null;
+                education: string | null;
+                address: string | null;
+                city: string | null;
+                profilePicture: string | null;
+                emailVerifiedAt: Date | null;
+                verificationToken: string | null;
+                verificationTokenExpiresAt: Date | null;
+                passwordResetToken: string | null;
+                passwordResetExpiresAt: Date | null;
+                emailChangeToken: string | null;
+                emailChangeNewEmail: string | null;
+                emailChangeExpiresAt: Date | null;
+                lastLoginAt: Date | null;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+            };
+            job: {
+                company: {
+                    owner: {
+                        role: import("../../generated/prisma").$Enums.UserRole;
+                        email: string;
+                        passwordHash: string | null;
+                        name: string | null;
+                        phone: string | null;
+                        gender: string | null;
+                        dob: Date | null;
+                        education: string | null;
+                        address: string | null;
+                        city: string | null;
+                        profilePicture: string | null;
+                        emailVerifiedAt: Date | null;
+                        verificationToken: string | null;
+                        verificationTokenExpiresAt: Date | null;
+                        passwordResetToken: string | null;
+                        passwordResetExpiresAt: Date | null;
+                        emailChangeToken: string | null;
+                        emailChangeNewEmail: string | null;
+                        emailChangeExpiresAt: Date | null;
+                        lastLoginAt: Date | null;
+                        isActive: boolean;
+                        createdAt: Date;
+                        updatedAt: Date;
+                        id: number;
+                    } | null;
+                } & {
+                    email: string;
+                    name: string;
+                    phone: string | null;
+                    address: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    id: number;
+                    slug: string;
+                    description: string | null;
+                    logoUrl: string | null;
+                    bannerUrl: string | null;
+                    website: string | null;
+                    locationCity: string | null;
+                    locationProvince: string | null;
+                    locationCountry: string | null;
+                    socials: Prisma.JsonValue | null;
+                    ownerAdminId: number | null;
+                };
+            } & {
+                city: string;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+                companyId: number;
+                slug: string;
+                description: string;
+                bannerUrl: string | null;
+                title: string;
+                category: string;
+                employmentType: string | null;
+                experienceLevel: string | null;
+                province: string | null;
+                salaryMin: number | null;
+                salaryMax: number | null;
+                salaryCurrency: string | null;
+                tags: string[];
+                applyDeadline: Date | null;
+                isPublished: boolean;
+                publishedAt: Date | null;
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            status: import("../../generated/prisma").$Enums.ApplicationStatus;
+            jobId: number;
+            cvUrl: string;
+            cvFileName: string | null;
+            cvFileSize: number | null;
+            expectedSalary: number | null;
+            expectedSalaryCurrency: string | null;
+            reviewNote: string | null;
+            reviewUpdatedAt: Date | null;
+            referralSource: string | null;
+        };
+    } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -71,7 +410,7 @@ export declare class InterviewRepository {
         locationOrLink: string | null;
         reminderSentAt: Date | null;
         updatedById: number | null;
-    } | null>;
+    }) | null>;
     static list(params: {
         companyId: string | number;
         jobId?: string | number;
@@ -82,7 +421,120 @@ export declare class InterviewRepository {
         limit?: number;
         offset?: number;
     }): Promise<{
-        items: {
+        items: ({
+            application: {
+                user: {
+                    role: import("../../generated/prisma").$Enums.UserRole;
+                    email: string;
+                    passwordHash: string | null;
+                    name: string | null;
+                    phone: string | null;
+                    gender: string | null;
+                    dob: Date | null;
+                    education: string | null;
+                    address: string | null;
+                    city: string | null;
+                    profilePicture: string | null;
+                    emailVerifiedAt: Date | null;
+                    verificationToken: string | null;
+                    verificationTokenExpiresAt: Date | null;
+                    passwordResetToken: string | null;
+                    passwordResetExpiresAt: Date | null;
+                    emailChangeToken: string | null;
+                    emailChangeNewEmail: string | null;
+                    emailChangeExpiresAt: Date | null;
+                    lastLoginAt: Date | null;
+                    isActive: boolean;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    id: number;
+                };
+                job: {
+                    company: {
+                        owner: {
+                            role: import("../../generated/prisma").$Enums.UserRole;
+                            email: string;
+                            passwordHash: string | null;
+                            name: string | null;
+                            phone: string | null;
+                            gender: string | null;
+                            dob: Date | null;
+                            education: string | null;
+                            address: string | null;
+                            city: string | null;
+                            profilePicture: string | null;
+                            emailVerifiedAt: Date | null;
+                            verificationToken: string | null;
+                            verificationTokenExpiresAt: Date | null;
+                            passwordResetToken: string | null;
+                            passwordResetExpiresAt: Date | null;
+                            emailChangeToken: string | null;
+                            emailChangeNewEmail: string | null;
+                            emailChangeExpiresAt: Date | null;
+                            lastLoginAt: Date | null;
+                            isActive: boolean;
+                            createdAt: Date;
+                            updatedAt: Date;
+                            id: number;
+                        } | null;
+                    } & {
+                        email: string;
+                        name: string;
+                        phone: string | null;
+                        address: string | null;
+                        createdAt: Date;
+                        updatedAt: Date;
+                        id: number;
+                        slug: string;
+                        description: string | null;
+                        logoUrl: string | null;
+                        bannerUrl: string | null;
+                        website: string | null;
+                        locationCity: string | null;
+                        locationProvince: string | null;
+                        locationCountry: string | null;
+                        socials: Prisma.JsonValue | null;
+                        ownerAdminId: number | null;
+                    };
+                } & {
+                    city: string;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    id: number;
+                    companyId: number;
+                    slug: string;
+                    description: string;
+                    bannerUrl: string | null;
+                    title: string;
+                    category: string;
+                    employmentType: string | null;
+                    experienceLevel: string | null;
+                    province: string | null;
+                    salaryMin: number | null;
+                    salaryMax: number | null;
+                    salaryCurrency: string | null;
+                    tags: string[];
+                    applyDeadline: Date | null;
+                    isPublished: boolean;
+                    publishedAt: Date | null;
+                };
+            } & {
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+                userId: number;
+                status: import("../../generated/prisma").$Enums.ApplicationStatus;
+                jobId: number;
+                cvUrl: string;
+                cvFileName: string | null;
+                cvFileSize: number | null;
+                expectedSalary: number | null;
+                expectedSalaryCurrency: string | null;
+                reviewNote: string | null;
+                reviewUpdatedAt: Date | null;
+                referralSource: string | null;
+            };
+        } & {
             createdAt: Date;
             updatedAt: Date;
             id: number;
@@ -95,7 +547,7 @@ export declare class InterviewRepository {
             locationOrLink: string | null;
             reminderSentAt: Date | null;
             updatedById: number | null;
-        }[];
+        })[];
         total: number;
         limit: number;
         offset: number;
@@ -114,7 +566,120 @@ export declare class InterviewRepository {
         reminderSentAt: Date | null;
         updatedById: number | null;
     } | null>;
-    static getDueReminders(windowStart: Date, windowEnd: Date): Promise<{
+    static getDueReminders(windowStart: Date, windowEnd: Date): Promise<({
+        application: {
+            user: {
+                role: import("../../generated/prisma").$Enums.UserRole;
+                email: string;
+                passwordHash: string | null;
+                name: string | null;
+                phone: string | null;
+                gender: string | null;
+                dob: Date | null;
+                education: string | null;
+                address: string | null;
+                city: string | null;
+                profilePicture: string | null;
+                emailVerifiedAt: Date | null;
+                verificationToken: string | null;
+                verificationTokenExpiresAt: Date | null;
+                passwordResetToken: string | null;
+                passwordResetExpiresAt: Date | null;
+                emailChangeToken: string | null;
+                emailChangeNewEmail: string | null;
+                emailChangeExpiresAt: Date | null;
+                lastLoginAt: Date | null;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+            };
+            job: {
+                company: {
+                    owner: {
+                        role: import("../../generated/prisma").$Enums.UserRole;
+                        email: string;
+                        passwordHash: string | null;
+                        name: string | null;
+                        phone: string | null;
+                        gender: string | null;
+                        dob: Date | null;
+                        education: string | null;
+                        address: string | null;
+                        city: string | null;
+                        profilePicture: string | null;
+                        emailVerifiedAt: Date | null;
+                        verificationToken: string | null;
+                        verificationTokenExpiresAt: Date | null;
+                        passwordResetToken: string | null;
+                        passwordResetExpiresAt: Date | null;
+                        emailChangeToken: string | null;
+                        emailChangeNewEmail: string | null;
+                        emailChangeExpiresAt: Date | null;
+                        lastLoginAt: Date | null;
+                        isActive: boolean;
+                        createdAt: Date;
+                        updatedAt: Date;
+                        id: number;
+                    } | null;
+                } & {
+                    email: string;
+                    name: string;
+                    phone: string | null;
+                    address: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    id: number;
+                    slug: string;
+                    description: string | null;
+                    logoUrl: string | null;
+                    bannerUrl: string | null;
+                    website: string | null;
+                    locationCity: string | null;
+                    locationProvince: string | null;
+                    locationCountry: string | null;
+                    socials: Prisma.JsonValue | null;
+                    ownerAdminId: number | null;
+                };
+            } & {
+                city: string;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+                companyId: number;
+                slug: string;
+                description: string;
+                bannerUrl: string | null;
+                title: string;
+                category: string;
+                employmentType: string | null;
+                experienceLevel: string | null;
+                province: string | null;
+                salaryMin: number | null;
+                salaryMax: number | null;
+                salaryCurrency: string | null;
+                tags: string[];
+                applyDeadline: Date | null;
+                isPublished: boolean;
+                publishedAt: Date | null;
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            status: import("../../generated/prisma").$Enums.ApplicationStatus;
+            jobId: number;
+            cvUrl: string;
+            cvFileName: string | null;
+            cvFileSize: number | null;
+            expectedSalary: number | null;
+            expectedSalaryCurrency: string | null;
+            reviewNote: string | null;
+            reviewUpdatedAt: Date | null;
+            referralSource: string | null;
+        };
+    } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -127,7 +692,7 @@ export declare class InterviewRepository {
         locationOrLink: string | null;
         reminderSentAt: Date | null;
         updatedById: number | null;
-    }[]>;
+    })[]>;
     static markReminderSent(id: number): Promise<{
         createdAt: Date;
         updatedAt: Date;

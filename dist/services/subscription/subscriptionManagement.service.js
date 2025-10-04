@@ -39,9 +39,9 @@ class SubscriptionManagementService {
         const placeholderDate = dateHelper_1.DateHelper.getPlaceholderDate();
         return await subscription_repository_1.SubscriptionRepo.createSubscription({
             userId,
-            subscriptionPlanId: planId,
+            planId: planId,
             startDate: placeholderDate,
-            endDate: placeholderDate,
+            expiresAt: placeholderDate,
         });
     }
     static async updateSubscription(id, data) {

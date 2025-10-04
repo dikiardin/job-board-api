@@ -6,17 +6,14 @@ const nodemailer_1 = require("../../config/nodemailer");
 const createToken_1 = require("../../utils/createToken");
 const customError_1 = require("../../utils/customError");
 const emailTemplateVerifyEmailChange_1 = require("../../utils/emailTemplateVerifyEmailChange");
-const company_repository_1 = require("../../repositories/company/company.repository");
 class ChangeEmailService {
     static async changeEmail(userId, newEmail) {
         const existing = await user_repository_1.UserRepo.findByEmail(newEmail);
         if (existing)
             throw new customError_1.CustomError("Email already in use", 409);
-        await user_repository_1.UserRepo.updateUser(userId, { email: newEmail, isVerified: false });
-        const company = await company_repository_1.CompanyRepo.findByAdminId(userId);
-        if (company) {
-            await company_repository_1.CompanyRepo.updateCompany(company.id, { email: newEmail });
-        }
+        await user_repository_1.UserRepo.updateUser(userId, { email: newEmail, emailVerifiedAt: null });
+        // Company email is handled through the owner admin's email
+        // No need to update company table as it doesn't have an email field
         const token = (0, createToken_1.createToken)({ userId, email: newEmail }, "3d");
         try {
             await nodemailer_1.transport.sendMail({

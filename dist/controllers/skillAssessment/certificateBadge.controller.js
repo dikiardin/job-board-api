@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CertificateBadgeController = void 0;
 const certificateVerification_service_1 = require("../../services/skillAssessment/certificateVerification.service");
-const badgeManagement_service_1 = require("../../services/skillAssessment/badgeManagement.service");
+const badgeCore_service_1 = require("../../services/skillAssessment/badgeCore.service");
+const badgeVerification_service_1 = require("../../services/skillAssessment/badgeVerification.service");
+const badgeProgress_service_1 = require("../../services/skillAssessment/badgeProgress.service");
 const customError_1 = require("../../utils/customError");
 class CertificateBadgeController {
     // ===== CERTIFICATE MANAGEMENT =====
@@ -105,7 +107,7 @@ class CertificateBadgeController {
     static async getUserBadges(req, res, next) {
         try {
             const { userId } = res.locals.decrypt;
-            const result = await badgeManagement_service_1.BadgeManagementService.getUserBadges(userId);
+            const result = await badgeCore_service_1.BadgeCoreService.getUserBadges(userId);
             res.status(200).json({
                 success: true,
                 message: "User badges retrieved successfully",
@@ -120,7 +122,7 @@ class CertificateBadgeController {
     static async getBadgeDetails(req, res, next) {
         try {
             const badgeId = parseInt(req.params.badgeId || '0');
-            const result = await badgeManagement_service_1.BadgeManagementService.getBadgeDetails(badgeId);
+            const result = await badgeCore_service_1.BadgeCoreService.getBadgeDetails(badgeId);
             res.status(200).json({
                 success: true,
                 message: "Badge details retrieved successfully",
@@ -136,7 +138,7 @@ class CertificateBadgeController {
         try {
             const badgeId = parseInt(req.params.badgeId || '0');
             const { userId } = res.locals.decrypt;
-            const result = await badgeManagement_service_1.BadgeManagementService.verifyBadge(badgeId, userId);
+            const result = await badgeVerification_service_1.BadgeVerificationService.verifyBadge(badgeId, userId);
             res.status(200).json({
                 success: true,
                 message: "Badge verification completed",
@@ -151,7 +153,7 @@ class CertificateBadgeController {
     static async getBadgeAnalytics(req, res, next) {
         try {
             const { role } = res.locals.decrypt;
-            const result = await badgeManagement_service_1.BadgeManagementService.getBadgeAnalytics(role);
+            const result = await badgeProgress_service_1.BadgeProgressService.getBadgeAnalytics(role);
             res.status(200).json({
                 success: true,
                 message: "Badge analytics retrieved successfully",
@@ -167,7 +169,7 @@ class CertificateBadgeController {
         try {
             const badgeTemplateId = parseInt(req.params.badgeTemplateId || '0');
             const limit = parseInt(req.query.limit) || 10;
-            const result = await badgeManagement_service_1.BadgeManagementService.getBadgeLeaderboard(badgeTemplateId, limit);
+            const result = await badgeProgress_service_1.BadgeProgressService.getBadgeLeaderboard(badgeTemplateId, limit);
             res.status(200).json({
                 success: true,
                 message: "Badge leaderboard retrieved successfully",
@@ -182,7 +184,7 @@ class CertificateBadgeController {
     static async getUserBadgeProgress(req, res, next) {
         try {
             const { userId } = res.locals.decrypt;
-            const result = await badgeManagement_service_1.BadgeManagementService.getUserBadgeProgress(userId);
+            const result = await badgeProgress_service_1.BadgeProgressService.getUserBadgeProgress(userId);
             res.status(200).json({
                 success: true,
                 message: "User badge progress retrieved successfully",
@@ -202,7 +204,7 @@ class CertificateBadgeController {
             if (!platform) {
                 throw new customError_1.CustomError("Social media platform is required", 400);
             }
-            const result = await badgeManagement_service_1.BadgeManagementService.shareBadge(badgeId, platform, userId);
+            const result = await badgeVerification_service_1.BadgeVerificationService.shareBadge(badgeId, platform, userId);
             res.status(200).json({
                 success: true,
                 message: "Badge share link generated",

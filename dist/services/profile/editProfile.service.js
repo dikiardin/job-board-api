@@ -52,7 +52,7 @@ class EditProfileService {
         const user = await editProfile_repository_1.EditProfileRepository.findUserById(userId);
         if (!user)
             throw new customError_1.CustomError("User not found", 404);
-        if (!user.isVerified)
+        if (!user.emailVerifiedAt)
             throw new customError_1.CustomError("User is not verified", 403);
         let profilePictureUrl;
         if (file) {
@@ -76,11 +76,11 @@ class EditProfileService {
             const [companyResult, userResult] = await Promise.all([
                 editProfile_repository_1.EditProfileRepository.updateCompanyProfile(userId, {
                     phone,
-                    location,
-                    city,
+                    address: location,
+                    locationCity: city,
                     description,
                     website,
-                    ...(profilePictureUrl && { logo: profilePictureUrl }),
+                    ...(profilePictureUrl && { logoUrl: profilePictureUrl }),
                 }),
                 editProfile_repository_1.EditProfileRepository.updateUserProfile(userId, {
                     phone,

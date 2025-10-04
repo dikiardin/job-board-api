@@ -20,23 +20,15 @@ export declare class CompanyReviewService {
     static getCompanyReviews(params: GetReviewsParams): Promise<{
         reviews: {
             createdAt: Date;
-            updatedAt: Date;
             id: number;
             positionTitle: string;
-            companyId: number;
             body: string | null;
-            employmentId: number | null;
-            reviewerUserId: number;
-            isVerifiedEmployee: boolean;
-            isAnonymous: boolean;
             ratingCulture: import("../../generated/prisma/runtime/library").Decimal | null;
             ratingWorkLife: import("../../generated/prisma/runtime/library").Decimal | null;
             ratingFacilities: import("../../generated/prisma/runtime/library").Decimal | null;
             ratingCareer: import("../../generated/prisma/runtime/library").Decimal | null;
             salaryEstimateMin: number | null;
             salaryEstimateMax: number | null;
-            currency: string | null;
-            reviewerSnapshot: string | null;
         }[];
         pagination: {
             page: number;
@@ -61,23 +53,15 @@ export declare class CompanyReviewService {
     }>;
     static createReview(data: CreateReviewData): Promise<{
         createdAt: Date;
-        updatedAt: Date;
         id: number;
         positionTitle: string;
-        companyId: number;
         body: string | null;
-        employmentId: number | null;
-        reviewerUserId: number;
-        isVerifiedEmployee: boolean;
-        isAnonymous: boolean;
         ratingCulture: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingWorkLife: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingFacilities: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingCareer: import("../../generated/prisma/runtime/library").Decimal | null;
         salaryEstimateMin: number | null;
         salaryEstimateMax: number | null;
-        currency: string | null;
-        reviewerSnapshot: string | null;
     }>;
     static checkReviewEligibility(userId: number, companyId: string): Promise<{
         canReview: boolean;
@@ -96,43 +80,27 @@ export declare class CompanyReviewService {
     }>;
     static getUserReview(userId: number, companyId: string): Promise<{
         createdAt: Date;
-        updatedAt: Date;
         id: number;
         positionTitle: string;
-        companyId: number;
         body: string | null;
-        employmentId: number | null;
-        reviewerUserId: number;
-        isVerifiedEmployee: boolean;
-        isAnonymous: boolean;
         ratingCulture: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingWorkLife: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingFacilities: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingCareer: import("../../generated/prisma/runtime/library").Decimal | null;
         salaryEstimateMin: number | null;
         salaryEstimateMax: number | null;
-        currency: string | null;
-        reviewerSnapshot: string | null;
     }>;
     static updateReview(data: CreateReviewData): Promise<{
         createdAt: Date;
-        updatedAt: Date;
         id: number;
         positionTitle: string;
-        companyId: number;
         body: string | null;
-        employmentId: number | null;
-        reviewerUserId: number;
-        isVerifiedEmployee: boolean;
-        isAnonymous: boolean;
         ratingCulture: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingWorkLife: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingFacilities: import("../../generated/prisma/runtime/library").Decimal | null;
         ratingCareer: import("../../generated/prisma/runtime/library").Decimal | null;
         salaryEstimateMin: number | null;
         salaryEstimateMax: number | null;
-        currency: string | null;
-        reviewerSnapshot: string | null;
     }>;
     static deleteReview(userId: number, companyId: string): Promise<void>;
     static getSalaryEstimates(companyId: string): Promise<{

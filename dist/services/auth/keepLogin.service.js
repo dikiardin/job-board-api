@@ -15,7 +15,7 @@ class KeepLoginService {
             name: user.name,
             email: user.email,
             role: user.role,
-            isVerified: user.isVerified,
+            isVerified: !!user.emailVerifiedAt,
             token: newToken,
             profilePicture: user.profilePicture,
         };

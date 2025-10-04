@@ -9,8 +9,8 @@ class SubscriptionExpiryRepo {
         const nextDay = dateHelper_1.DateHelper.getNextDayDate(tomorrow);
         return prisma_1.prisma.subscription.findMany({
             where: {
-                isActive: true,
-                endDate: {
+                status: "ACTIVE",
+                expiresAt: {
                     gte: tomorrow,
                     lt: nextDay,
                 },
@@ -28,8 +28,8 @@ class SubscriptionExpiryRepo {
         const nextMinute = dateHelper_1.DateHelper.getExpirationInMinutes(minutes + 1);
         return prisma_1.prisma.subscription.findMany({
             where: {
-                isActive: true,
-                endDate: {
+                status: "ACTIVE",
+                expiresAt: {
                     gte: targetTime,
                     lt: nextMinute,
                 },
@@ -46,8 +46,8 @@ class SubscriptionExpiryRepo {
         const now = dateHelper_1.DateHelper.getCurrentTime();
         return prisma_1.prisma.subscription.findMany({
             where: {
-                isActive: true,
-                endDate: {
+                status: "ACTIVE",
+                expiresAt: {
                     lt: now,
                 },
             },
