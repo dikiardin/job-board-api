@@ -145,8 +145,8 @@ export class JobRepository {
       ...(city ? { city: { contains: city, mode: "insensitive" } } : {}),
       // Optional: exclude expired by deadline if provided
       OR: [
-        { deadline: null },
-        { deadline: { gte: now } },
+        { applyDeadline: null },
+        { applyDeadline: { gte: now } },
       ],
     };
 

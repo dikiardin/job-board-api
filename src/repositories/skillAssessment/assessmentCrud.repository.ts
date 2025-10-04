@@ -5,6 +5,7 @@ export class AssessmentCrudRepository {
   public static async createAssessment(data: {
     title: string;
     description?: string;
+    category: string;
     badgeTemplateId?: number;
     createdBy: number;
     questions: Array<{
@@ -17,6 +18,7 @@ export class AssessmentCrudRepository {
       data: {
         title: data.title,
         description: data.description || null,
+        category: data.category,
         badgeTemplateId: data.badgeTemplateId || null,
         createdBy: data.createdBy,
         ...(data.questions.length > 0 && {
@@ -87,6 +89,7 @@ export class AssessmentCrudRepository {
           data: {
             title: data.title,
             description: data.description,
+            category: data.category,
             badgeTemplateId: data.badgeTemplateId,
             questions: {
               create: data.questions!.map((q: any) => ({
@@ -107,6 +110,7 @@ export class AssessmentCrudRepository {
       const updateData: any = {};
       if (data.title !== undefined) updateData.title = data.title;
       if (data.description !== undefined) updateData.description = data.description;
+      if (data.category !== undefined) updateData.category = data.category;
       if (data.badgeTemplateId !== undefined) updateData.badgeTemplateId = data.badgeTemplateId;
 
       return await prisma.skillAssessment.updateMany({

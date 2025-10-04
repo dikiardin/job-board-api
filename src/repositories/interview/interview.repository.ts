@@ -14,7 +14,7 @@ export class InterviewRepository {
         const rec = await tx.interview.create({
           data: {
             applicationId: item.applicationId,
-            scheduleDate: item.scheduleDate,
+            startsAt: item.scheduleDate,
             locationOrLink: item.locationOrLink ?? null,
             notes: item.notes ?? null,
           },
@@ -22,7 +22,7 @@ export class InterviewRepository {
             application: {
               include: {
                 user: true,
-                job: { include: { company: { include: { admin: true } } } },
+                job: { include: { company: { include: { owner: true } } } },
               },
             },
           },
@@ -42,7 +42,7 @@ export class InterviewRepository {
     return prisma.interview.create({
       data: {
         applicationId: data.applicationId,
-        scheduleDate: data.scheduleDate,
+        startsAt: data.scheduleDate,
         locationOrLink: data.locationOrLink ?? null,
         notes: data.notes ?? null,
       },
@@ -50,7 +50,7 @@ export class InterviewRepository {
         application: {
           include: {
             user: true,
-            job: { include: { company: { include: { admin: true } } } },
+            job: { include: { company: { include: { owner: true } } } },
           },
         },
       },
@@ -65,7 +65,7 @@ export class InterviewRepository {
         application: {
           include: {
             user: true,
-            job: { include: { company: { include: { admin: true } } } },
+            job: { include: { company: { include: { owner: true } } } },
           },
         },
       },
@@ -83,7 +83,7 @@ export class InterviewRepository {
         application: {
           include: {
             user: true,
-            job: { include: { company: { include: { admin: true } } } },
+            job: { include: { company: { include: { owner: true } } } },
           },
         },
       },
@@ -126,12 +126,12 @@ export class InterviewRepository {
     const [items, total] = await Promise.all([
       prisma.interview.findMany({
         where,
-        orderBy: { scheduleDate: "asc" },
+        orderBy: { startsAt: "asc" },
         skip: offset,
         take: limit,
         include: {
           application: {
-            include: { user: true, job: { include: { company: { include: { admin: true } } } } },
+            include: { user: true, job: { include: { company: { include: { owner: true } } } } },
           },
         },
       }),
@@ -146,7 +146,7 @@ export class InterviewRepository {
       where: {
         applicationId,
         status: { in: [InterviewStatus.SCHEDULED, InterviewStatus.COMPLETED] },
-        scheduleDate: { gte: start, lte: end },
+        startsAt: { gte: start, lte: end },
       },
     });
   }
@@ -156,11 +156,11 @@ export class InterviewRepository {
       where: {
         status: InterviewStatus.SCHEDULED,
         reminderSentAt: null,
-        scheduleDate: { gte: windowStart, lt: windowEnd },
+        startsAt: { gte: windowStart, lt: windowEnd },
       },
       include: {
         application: {
-          include: { user: true, job: { include: { company: { include: { admin: true } } } } },
+          include: { user: true, job: { include: { company: { include: { owner: true } } } } },
         },
       },
     });

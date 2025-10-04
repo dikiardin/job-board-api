@@ -27,7 +27,7 @@ async function createAdmin() {
         email: "admin@company.com",
         passwordHash,
         role: "ADMIN",
-        isVerified: true, // Skip email verification for demo
+        emailVerifiedAt: new Date(), // Skip email verification for demo
       }
     });
 
@@ -37,12 +37,13 @@ async function createAdmin() {
     const company = await prisma.company.create({
       data: {
         name: "Demo Company",
-        email: "admin@company.com",
-        phone: "+6281234567890",
-        location: "Jakarta, Indonesia",
         description: "A demo company for testing purposes",
         website: "https://democompany.com",
-        adminId: admin.id,
+        locationCity: "Jakarta",
+        locationProvince: "DKI Jakarta",
+        locationCountry: "ID",
+        address: "Jakarta, Indonesia",
+        ownerAdminId: admin.id,
       }
     });
 

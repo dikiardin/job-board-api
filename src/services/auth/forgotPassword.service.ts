@@ -25,7 +25,7 @@ export class ForgotPasswordService {
         from: process.env.MAIL_SENDER,
         to: email,
         subject: "Workoo | Reset Your Password",
-        html: buildResetPasswordEmail(user.name, token),
+        html: buildResetPasswordEmail(user.name || "User", token),
       });
     } catch (err) {
       console.error("Nodemailer Error:", err);

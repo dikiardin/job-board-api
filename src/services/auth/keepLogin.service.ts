@@ -1,9 +1,9 @@
- import { createToken } from "../../utils/createToken";
- import { CustomError } from "../../utils/customError";
- import { UserRepo } from "../../repositories/user/user.repository";
+import { createToken } from "../../utils/createToken";
+import { CustomError } from "../../utils/customError";
+import { UserRepo } from "../../repositories/user/user.repository";
 
- export class KeepLoginService {
- public static async keepLogin(userId: number) {
+export class KeepLoginService {
+  public static async keepLogin(userId: number) {
     const user = await UserRepo.findById(userId);
     if (!user) throw new CustomError("Account not found", 404);
 
@@ -14,7 +14,7 @@
       name: user.name,
       email: user.email,
       role: user.role,
-      isVerified: user.isVerified,
+      isVerified: !!user.emailVerifiedAt,
       token: newToken,
       profilePicture: user.profilePicture,
     };

@@ -15,7 +15,7 @@ export class PlanValidationService {
     const isNameExists = allPlans.some(
       (plan) => 
         plan.id !== excludeId &&
-        plan.planName.toLowerCase() === planName.toLowerCase()
+        plan.name.toLowerCase() === planName.toLowerCase()
     );
 
     if (isNameExists) {
@@ -26,7 +26,7 @@ export class PlanValidationService {
   public static async validatePlanNotInUse(id: number) {
     const allSubscriptions = await PlanRepo.getAllSubscriptions();
     const isPlanInUse = allSubscriptions.some(
-      (sub) => sub.subscriptionPlanId === id
+      (sub) => sub.planId === id
     );
 
     if (isPlanInUse) {

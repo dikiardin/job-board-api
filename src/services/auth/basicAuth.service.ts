@@ -67,7 +67,7 @@ export class BasicAuthService {
       throw new CustomError("User not found", 404);
     }
 
-    if (user.isVerified) {
+    if (user.emailVerifiedAt) {
       const jwt = createToken(
         { userId: user.id, email: user.email, role: user.role },
         "7d"
@@ -107,7 +107,7 @@ export class BasicAuthService {
     const isMatch = await comparePassword(password, user.passwordHash);
     if (!isMatch) throw new CustomError("Wrong password", 400);
 
-    if (!user.isVerified) {
+    if (!user.emailVerifiedAt) {
       throw new CustomError("Please verify your email before logging in", 400);
     }
 

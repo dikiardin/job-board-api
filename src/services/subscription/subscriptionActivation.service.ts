@@ -1,5 +1,6 @@
 import { SubscriptionRepo } from "../../repositories/subscription/subscription.repository";
 import { DateHelper } from "../../utils/dateHelper";
+import { SubscriptionStatus } from "../../generated/prisma";
 
 export class SubscriptionActivationService {
   public static async activateSubscription(subscriptionId: number) {
@@ -7,9 +8,9 @@ export class SubscriptionActivationService {
     const endDate = DateHelper.getSubscriptionEndDate(paymentDate);
 
     await SubscriptionRepo.updateSubscription(subscriptionId, {
-      isActive: true,
+      status: SubscriptionStatus.ACTIVE,
       startDate: paymentDate,
-      endDate: endDate,
+      expiresAt: endDate,
     });
   }
 

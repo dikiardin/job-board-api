@@ -7,6 +7,7 @@ export class AssessmentCreationService {
   public static async createAssessment(data: {
     title: string;
     description?: string;
+    category: string;
     badgeTemplateId?: number;
     createdBy: number;
     userRole: UserRole;
@@ -19,7 +20,8 @@ export class AssessmentCreationService {
     AssessmentValidationService.validateDeveloperRole(data.userRole);
     AssessmentValidationService.validateQuestions(data.questions);
     
-    return await AssessmentCrudRepository.createAssessment(data);
+    const { userRole, ...assessmentData } = data;
+    return await AssessmentCrudRepository.createAssessment(assessmentData);
   }
 
   // Get all assessments for management (Developer only)
@@ -49,6 +51,7 @@ export class AssessmentCreationService {
     data: {
       title?: string;
       description?: string;
+      category?: string;
       badgeTemplateId?: number;
       questions?: Array<{
         question: string;

@@ -1,24 +1,28 @@
 import { prisma } from "../../config/prisma";
 
 export interface CreateReviewData {
-  employmentId: number;
-  position: string;
-  salaryEstimate?: number;
-  cultureRating: number;
-  worklifeRating: number;
-  facilityRating: number;
-  careerRating: number;
-  comment?: string;
+  companyId: number;
+  employmentId?: number;
+  reviewerUserId: number;
+  positionTitle: string;
+  salaryEstimateMin?: number;
+  salaryEstimateMax?: number;
+  ratingCulture: number;
+  ratingWorkLife: number;
+  ratingFacilities: number;
+  ratingCareer: number;
+  body?: string;
 }
 
 export interface UpdateReviewData {
-  position: string;
-  salaryEstimate?: number;
-  cultureRating: number;
-  worklifeRating: number;
-  facilityRating: number;
-  careerRating: number;
-  comment?: string;
+  positionTitle: string;
+  salaryEstimateMin?: number;
+  salaryEstimateMax?: number;
+  ratingCulture: number;
+  ratingWorkLife: number;
+  ratingFacilities: number;
+  ratingCareer: number;
+  body?: string;
 }
 
 export interface GetReviewsParams {
@@ -62,13 +66,14 @@ export class CompanyReviewRepository {
       where: { employmentId },
       select: {
         id: true,
-        position: true,
-        salaryEstimate: true,
-        cultureRating: true,
-        worklifeRating: true,
-        facilityRating: true,
-        careerRating: true,
-        comment: true,
+        positionTitle: true,
+        salaryEstimateMin: true,
+        salaryEstimateMax: true,
+        ratingCulture: true,
+        ratingWorkLife: true,
+        ratingFacilities: true,
+        ratingCareer: true,
+        body: true,
         createdAt: true
       }
     });
@@ -78,24 +83,28 @@ export class CompanyReviewRepository {
   public static async createReview(data: CreateReviewData) {
     return await prisma.companyReview.create({
       data: {
-        employmentId: data.employmentId,
-        position: data.position,
-        salaryEstimate: data.salaryEstimate ?? null,
-        cultureRating: data.cultureRating,
-        worklifeRating: data.worklifeRating,
-        facilityRating: data.facilityRating,
-        careerRating: data.careerRating,
-        comment: data.comment ?? null
+        companyId: data.companyId,
+        employmentId: data.employmentId ?? null,
+        reviewerUserId: data.reviewerUserId,
+        positionTitle: data.positionTitle,
+        salaryEstimateMin: data.salaryEstimateMin ?? null,
+        salaryEstimateMax: data.salaryEstimateMax ?? null,
+        ratingCulture: data.ratingCulture,
+        ratingWorkLife: data.ratingWorkLife,
+        ratingFacilities: data.ratingFacilities,
+        ratingCareer: data.ratingCareer,
+        body: data.body ?? null
       },
       select: {
         id: true,
-        position: true,
-        salaryEstimate: true,
-        cultureRating: true,
-        worklifeRating: true,
-        facilityRating: true,
-        careerRating: true,
-        comment: true,
+        positionTitle: true,
+        salaryEstimateMin: true,
+        salaryEstimateMax: true,
+        ratingCulture: true,
+        ratingWorkLife: true,
+        ratingFacilities: true,
+        ratingCareer: true,
+        body: true,
         createdAt: true
       }
     });
@@ -106,23 +115,25 @@ export class CompanyReviewRepository {
     return await prisma.companyReview.update({
       where: { id: reviewId },
       data: {
-        position: data.position,
-        salaryEstimate: data.salaryEstimate ?? null,
-        cultureRating: data.cultureRating,
-        worklifeRating: data.worklifeRating,
-        facilityRating: data.facilityRating,
-        careerRating: data.careerRating,
-        comment: data.comment ?? null
+        positionTitle: data.positionTitle,
+        salaryEstimateMin: data.salaryEstimateMin ?? null,
+        salaryEstimateMax: data.salaryEstimateMax ?? null,
+        ratingCulture: data.ratingCulture,
+        ratingWorkLife: data.ratingWorkLife,
+        ratingFacilities: data.ratingFacilities,
+        ratingCareer: data.ratingCareer,
+        body: data.body ?? null
       },
       select: {
         id: true,
-        position: true,
-        salaryEstimate: true,
-        cultureRating: true,
-        worklifeRating: true,
-        facilityRating: true,
-        careerRating: true,
-        comment: true,
+        positionTitle: true,
+        salaryEstimateMin: true,
+        salaryEstimateMax: true,
+        ratingCulture: true,
+        ratingWorkLife: true,
+        ratingFacilities: true,
+        ratingCareer: true,
+        body: true,
         createdAt: true
       }
     });
@@ -156,13 +167,14 @@ export class CompanyReviewRepository {
       },
       select: {
         id: true,
-        position: true,
-        salaryEstimate: true,
-        cultureRating: true,
-        worklifeRating: true,
-        facilityRating: true,
-        careerRating: true,
-        comment: true,
+        positionTitle: true,
+        salaryEstimateMin: true,
+        salaryEstimateMax: true,
+        ratingCulture: true,
+        ratingWorkLife: true,
+        ratingFacilities: true,
+        ratingCareer: true,
+        body: true,
         createdAt: true
       },
       orderBy: orderBy,
@@ -193,10 +205,10 @@ export class CompanyReviewRepository {
         }
       },
       _avg: {
-        cultureRating: true,
-        worklifeRating: true,
-        facilityRating: true,
-        careerRating: true
+        ratingCulture: true,
+        ratingWorkLife: true,
+        ratingFacilities: true,
+        ratingCareer: true
       }
     });
 
@@ -204,10 +216,10 @@ export class CompanyReviewRepository {
 
     // Calculate overall average rating
     const avgRatings = stats._avg as any;
-    const overallRating = avgRatings?.cultureRating && avgRatings?.worklifeRating && 
-                         avgRatings?.facilityRating && avgRatings?.careerRating
-      ? (Number(avgRatings?.cultureRating) + Number(avgRatings?.worklifeRating) + 
-         Number(avgRatings?.facilityRating) + Number(avgRatings?.careerRating)) / 4
+    const overallRating = avgRatings?.ratingCulture && avgRatings?.ratingWorkLife && 
+                         avgRatings?.ratingFacilities && avgRatings?.ratingCareer
+      ? (Number(avgRatings?.ratingCulture) + Number(avgRatings?.ratingWorkLife) + 
+         Number(avgRatings?.ratingFacilities) + Number(avgRatings?.ratingCareer)) / 4
       : 0;
 
     // Get rating distribution
@@ -224,10 +236,10 @@ export class CompanyReviewRepository {
 
     return {
       totalReviews,
-      avgCultureRating: avgRatings?.cultureRating?.toFixed?.(1),
-      avgWorklifeRating: avgRatings?.worklifeRating?.toFixed?.(1),
-      avgFacilityRating: avgRatings?.facilityRating?.toFixed?.(1),
-      avgCareerRating: avgRatings?.careerRating?.toFixed?.(1),
+      avgCultureRating: avgRatings?.ratingCulture?.toFixed?.(1),
+      avgWorklifeRating: avgRatings?.ratingWorkLife?.toFixed?.(1),
+      avgFacilityRating: avgRatings?.ratingFacilities?.toFixed?.(1),
+      avgCareerRating: avgRatings?.ratingCareer?.toFixed?.(1),
       avgOverallRating: overallRating.toFixed(1),
       ratingDistribution: ratingDistribution.map(item => ({
         rating: Number(item.rating),

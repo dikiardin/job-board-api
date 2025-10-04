@@ -16,27 +16,30 @@ export class ProfileRepository {
         address: true,
         city:true,
         profilePicture: true,
-        isVerified: true,
+        emailVerifiedAt: true,
         createdAt: true,
         updatedAt: true,
       },
     });
   }
 
-  static async getCompanyProfile(adminId: number) {
+  static async getCompanyProfile(ownerAdminId: number) {
     return prisma.company.findUnique({
-      where: { adminId },
+      where: { ownerAdminId },
       select: {
         id: true,
+        slug: true,
         name: true,
-        email: true,
-        phone: true,
-        location: true,
-        city:true,
         description: true,
         website: true,
-        logo: true,
-        adminId: true,
+        locationCity: true,
+        locationProvince: true,
+        locationCountry: true,
+        address: true,
+        logoUrl: true,
+        bannerUrl: true,
+        socials: true,
+        ownerAdminId: true,
         createdAt: true,
         updatedAt: true,
       },

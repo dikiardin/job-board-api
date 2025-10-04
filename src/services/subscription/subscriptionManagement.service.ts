@@ -33,7 +33,9 @@ export class SubscriptionManagementService {
   }
 
   public static async checkActiveSubscription(userId: number) {
-    const activeSubscription = await SubscriptionRepo.getUserActiveSubscription(userId);
+    const activeSubscription = await SubscriptionRepo.getUserActiveSubscription(
+      userId
+    );
     if (activeSubscription) {
       throw new CustomError("User already has an active subscription", 400);
     }
@@ -41,21 +43,23 @@ export class SubscriptionManagementService {
 
   public static async createSubscription(userId: number, planId: number) {
     const placeholderDate = DateHelper.getPlaceholderDate();
-    
+
     return await SubscriptionRepo.createSubscription({
       userId,
-      subscriptionPlanId: planId,
+      planId: planId,
       startDate: placeholderDate,
-      endDate: placeholderDate,
+      expiresAt: placeholderDate,
     });
   }
 
   public static async updateSubscription(
     id: number,
     data: {
-      isActive?: boolean;
+      status?: any;
       startDate?: Date;
-      endDate?: Date;
+      expiresAt?: Date;
+      paidAt?: Date;
+      approvedByDeveloperId?: number;
     }
   ) {
     const existingSubscription = await SubscriptionRepo.getSubscriptionById(id);

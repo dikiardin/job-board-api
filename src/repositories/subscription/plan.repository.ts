@@ -1,10 +1,11 @@
 import { prisma } from "../../config/prisma";
+import { SubscriptionPlanCode } from "../../generated/prisma";
 
 export class PlanRepo {
   // Get all subscription plans
   public static async getAllPlans() {
     return prisma.subscriptionPlan.findMany({
-      orderBy: { planPrice: "asc" },
+      orderBy: { priceIdr: "asc" },
     });
   }
 
@@ -17,9 +18,14 @@ export class PlanRepo {
 
   // Create new subscription plan
   public static async createPlan(data: {
-    planName: string;
-    planPrice: number;
-    planDescription: string;
+    code: SubscriptionPlanCode;
+    name: string;
+    priceIdr: number;
+    description?: string;
+    perks?: string[];
+    monthlyAssessmentQuota?: number;
+    priorityCvReview?: boolean;
+    cvGeneratorEnabled?: boolean;
   }) {
     return prisma.subscriptionPlan.create({
       data,
@@ -30,9 +36,13 @@ export class PlanRepo {
   public static async updatePlan(
     id: number,
     data: {
-      planName?: string;
-      planPrice?: number;
-      planDescription?: string;
+      name?: string;
+      priceIdr?: number;
+      description?: string;
+      perks?: string[];
+      monthlyAssessmentQuota?: number;
+      priorityCvReview?: boolean;
+      cvGeneratorEnabled?: boolean;
     }
   ) {
     return prisma.subscriptionPlan.update({
@@ -51,7 +61,7 @@ export class PlanRepo {
   // Get all subscriptions (for checking if plan is in use)
   public static async getAllSubscriptions() {
     return prisma.subscription.findMany({
-      select: { subscriptionPlanId: true },
+      select: { planId: true },
     });
   }
 }

@@ -25,7 +25,7 @@ export class SubscriptionService {
     const subscription = await SubscriptionManagementService.createSubscription(userId, planId);
     const payment = await PaymentManagementService.createPaymentRecord(
       subscription.id, 
-      Number(plan.planPrice)
+      Number(plan.priceIdr)
     );
 
     return { subscription, payment };
@@ -34,9 +34,11 @@ export class SubscriptionService {
   public static async updateSubscription(
     id: number,
     data: {
-      isActive?: boolean;
+      status?: any;
       startDate?: Date;
-      endDate?: Date;
+      expiresAt?: Date;
+      paidAt?: Date;
+      approvedByDeveloperId?: number;
     }
   ) {
     return await SubscriptionManagementService.updateSubscription(id, data);

@@ -17,7 +17,7 @@ export interface CVUpdateData {
 export interface CVWithUser extends GeneratedCV {
   user?: {
     id: number;
-    name: string;
+    name: string | null;
     email: string;
     phone: string | null;
     address: string | null;

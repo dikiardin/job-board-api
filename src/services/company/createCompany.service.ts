@@ -3,19 +3,30 @@ import { CustomError } from "../../utils/customError";
 
 export class CreateCompanyService {
   public static async createCompanyForAdmin(
-    adminId: number,
+    ownerAdminId: number,
     name: string,
-    email: string
+    email: string,
+    description?: string,
+    website?: string,
+    locationCity?: string,
+    locationProvince?: string
   ) {
-    const existing = await CreateCompanyRepo.findByAdminId(adminId);
+    const existing = await CreateCompanyRepo.findByAdminId(ownerAdminId);
     if (existing) {
       throw new CustomError("This admin already manages a company", 400);
     }
 
-    return CreateCompanyRepo.createCompany({
+    const companyData: any = {
       name,
       email,
-      adminId,
-    });
+      ownerAdminId,
+    };
+
+    if (description) companyData.description = description;
+    if (website) companyData.website = website;
+    if (locationCity) companyData.locationCity = locationCity;
+    if (locationProvince) companyData.locationProvince = locationProvince;
+
+    return CreateCompanyRepo.createCompany(companyData);
   }
 }

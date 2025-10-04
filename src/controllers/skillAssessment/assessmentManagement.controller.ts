@@ -10,16 +10,16 @@ export class AssessmentManagementController {
   ) {
     try {
       const { userId, role } = res.locals.decrypt;
-      const { title, description, questions, badgeTemplateId } = req.body;
+      const { title, description, category, questions, badgeTemplateId } = req.body;
 
-      ControllerHelper.validateRequired({ title }, "Title is required");
+      ControllerHelper.validateRequired({ title, category }, "Title and category are required");
       
       if (!Array.isArray(questions)) {
         return res.status(400).json({ message: "Questions must be an array" });
       }
 
       const assessment = await AssessmentCreationService.createAssessment({
-        title, description, badgeTemplateId, createdBy: userId, userRole: role, questions,
+        title, description, category, badgeTemplateId, createdBy: userId, userRole: role, questions,
       });
 
       res.status(201).json({
@@ -82,10 +82,10 @@ export class AssessmentManagementController {
     try {
       const { userId, role } = res.locals.decrypt;
       const assessmentId = ControllerHelper.parseId(req.params.assessmentId);
-      const { title, description, badgeTemplateId, questions } = req.body;
+      const { title, description, category, badgeTemplateId, questions } = req.body;
 
       const result = await AssessmentCreationService.updateAssessment(
-        assessmentId, userId, { title, description, badgeTemplateId, questions }
+        assessmentId, userId, { title, description, category, badgeTemplateId, questions }
       );
 
       res.status(200).json({ success: true, ...result });

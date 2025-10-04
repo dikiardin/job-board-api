@@ -63,7 +63,7 @@ export class EditProfileService {
   ) {
     const user = await EditProfileRepository.findUserById(userId);
     if (!user) throw new CustomError("User not found", 404);
-    if (!user.isVerified) throw new CustomError("User is not verified", 403);
+    if (!user.emailVerifiedAt) throw new CustomError("User is not verified", 403);
 
     let profilePictureUrl: string | undefined;
     if (file) {

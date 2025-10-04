@@ -21,12 +21,12 @@ export class UserRepo {
   public static async verifyUser(id: number) {
     return prisma.user.update({
       where: { id },
-      data: { isVerified: true },
+      data: { emailVerifiedAt: new Date() },
     });
   }
   public static async updateUser(
     id: number,
-    data: Partial<{ email: string; isVerified: boolean }>
+    data: Partial<{ email: string; emailVerifiedAt: Date | null }>
   ) {
     return prisma.user.update({
       where: { id },

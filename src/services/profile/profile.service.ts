@@ -7,8 +7,8 @@ export class ProfileService {
     return user;
   }
 
-  static async getCompanyProfile(adminId: number) {
-    const company = await ProfileRepository.getCompanyProfile(adminId);
+  static async getCompanyProfile(ownerAdminId: number) {
+    const company = await ProfileRepository.getCompanyProfile(ownerAdminId);
     if (!company) throw new Error("Company not found");
     return company;
   }
