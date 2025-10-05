@@ -212,4 +212,25 @@ export class CompanyReviewController {
       next(error);
     }
   }
+
+  // Get company reviewers (authenticated users only - shows who reviewed)
+  public static async getCompanyReviewers(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const companyId = (req.params.companyId as string);
+
+      const reviewers = await CompanyReviewService.getCompanyReviewers(companyId);
+
+      res.status(200).json({
+        success: true,
+        message: "Company reviewers retrieved successfully",
+        data: reviewers
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

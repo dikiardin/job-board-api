@@ -4,13 +4,14 @@ import { CustomError } from "../../utils/customError";
 export interface CreateReviewData {
   userId: number;
   companyId: string;
-  position: string;
-  salaryEstimate?: number;
-  cultureRating: number;
-  worklifeRating: number;
-  facilityRating: number;
-  careerRating: number;
-  comment?: string;
+  positionTitle: string;
+  salaryEstimateMin?: number;
+  salaryEstimateMax?: number;
+  ratingCulture: number;
+  ratingWorkLife: number;
+  ratingFacilities: number;
+  ratingCareer: number;
+  body?: string;
 }
 
 export interface GetReviewsParams {
@@ -60,7 +61,6 @@ export class CompanyReviewService {
 
   // Get company review statistics
   public static async getCompanyReviewStats(companyId: string) {
-    // Check if company exists
     const companyExists = await CompanyReviewRepository.checkCompanyExists(companyId);
     if (!companyExists) {
       throw new CustomError("Company not found", 404);
@@ -69,64 +69,77 @@ export class CompanyReviewService {
     return await CompanyReviewRepository.getCompanyReviewStats(companyId);
   }
 
+  // Get company reviewers (shows who reviewed the company)
+  public static async getCompanyReviewers(companyId: string) {
+    // Check if company exists
+    const companyExists = await CompanyReviewRepository.checkCompanyExists(companyId);
+    if (!companyExists) {
+      throw new CustomError("Company not found", 404);
+    }
+
+    return await CompanyReviewRepository.getCompanyReviewers(companyId);
+  }
+
   // Create a new review
   public static async createReview(data: CreateReviewData) {
     const { userId, companyId } = data;
 
-    // Check if user is eligible to review this company
+    // Check eligibility
     const eligibility = await this.checkReviewEligibility(userId, companyId);
     if (!eligibility.canReview) {
       throw new CustomError(
-        eligibility.reason || "Not eligible to review this company",
+        eligibility.message || "Not eligible to review this company",
         403
       );
     }
 
-    // Validate rating values (1-5)
+    // Validate rating values (0.1-5.0)
     const ratings = [
-      data.cultureRating,
-      data.worklifeRating,
-      data.facilityRating,
-      data.careerRating,
+      data.ratingCulture,
+      data.ratingWorkLife,
+      data.ratingFacilities,
+      data.ratingCareer,
     ];
     for (const rating of ratings) {
-      if (rating < 1 || rating > 5) {
-        throw new CustomError("Rating values must be between 1 and 5", 400);
+      if (rating < 0.1 || rating > 5) {
+        throw new CustomError("Rating values must be between 0.1 and 5.0", 400);
       }
     }
 
     // Calculate company rating (average of 4 ratings)
     const companyRating = (
-      data.cultureRating + 
-      data.worklifeRating + 
-      data.facilityRating + 
-      data.careerRating
+      data.ratingCulture + 
+      data.ratingWorkLife + 
+      data.ratingFacilities + 
+      data.ratingCareer
     ) / 4;
 
-    // Create the review (UPDATED LOGIC - include employmentId and calculated companyRating)
+    // Create the review
     const reviewData: any = {
       companyId: parseInt(companyId),
-      employmentId: eligibility.employmentId, // Add employmentId from eligibility check
+      employmentId: eligibility.employmentId,
       reviewerUserId: userId,
-      positionTitle: data.position,
-      ratingCulture: data.cultureRating,
-      ratingWorkLife: data.worklifeRating,
-      ratingFacilities: data.facilityRating,
-      ratingCareer: data.careerRating,
-      companyRating: companyRating, // Auto-calculated average
+      positionTitle: data.positionTitle,
+      ratingCulture: data.ratingCulture,
+      ratingWorkLife: data.ratingWorkLife,
+      ratingFacilities: data.ratingFacilities,
+      ratingCareer: data.ratingCareer,
+      companyRating: companyRating,
     };
 
-    if (data.salaryEstimate !== undefined) {
-      reviewData.salaryEstimateMin = data.salaryEstimate;
-      reviewData.salaryEstimateMax = data.salaryEstimate;
+    if (data.salaryEstimateMin !== undefined) {
+      reviewData.salaryEstimateMin = data.salaryEstimateMin;
+    }
+    
+    if (data.salaryEstimateMax !== undefined) {
+      reviewData.salaryEstimateMax = data.salaryEstimateMax;
     }
 
-    if (data.comment !== undefined) {
-      reviewData.body = data.comment;
+    if (data.body !== undefined) {
+      reviewData.body = data.body;
     }
 
     const review = await CompanyReviewRepository.createReview(reviewData);
-
     return review;
   }
 
@@ -140,7 +153,12 @@ export class CompanyReviewService {
       companyId
     );
     if (!companyExists) {
-      return { canReview: false, reason: "Company not found" };
+      return { 
+        isEligible: false, 
+        canReview: false, 
+        hasExistingReview: false,
+        message: "Company not found" 
+      };
     }
 
     // Check if user has verified employment with this company (UPDATED LOGIC)
@@ -150,8 +168,10 @@ export class CompanyReviewService {
     );
     if (!verifiedEmployment) {
       return {
+        isEligible: false,
         canReview: false,
-        reason: "You must have verified employment with this company to leave a review",
+        hasExistingReview: false,
+        message: "You must have verified employment with this company to leave a review",
       };
     }
 
@@ -162,20 +182,31 @@ export class CompanyReviewService {
     );
     if (existingReview) {
       return {
+        isEligible: false,
         canReview: false,
-        reason: "You have already reviewed this company",
+        hasExistingReview: true,
+        existingReview: existingReview,
+        message: "You have already reviewed this company",
       };
     }
 
     return {
+      isEligible: true,
       canReview: true,
+      hasExistingReview: false,
       employmentId: verifiedEmployment.id,
       employment: {
-        companyName: verifiedEmployment.company?.name || "Unknown Company",
+        id: verifiedEmployment.id,
+        positionTitle: verifiedEmployment.positionTitle,
         startDate: verifiedEmployment.startDate,
         endDate: verifiedEmployment.endDate,
-        verifiedAt: verifiedEmployment.createdAt,
+        isCurrent: verifiedEmployment.isCurrent,
+        company: {
+          id: verifiedEmployment.company?.id || 0,
+          name: verifiedEmployment.company?.name || "Unknown Company",
+        }
       },
+      message: "You are eligible to review this company",
     };
   }
 
@@ -222,43 +253,46 @@ export class CompanyReviewService {
       throw new CustomError("Review not found", 404);
     }
 
-    // Validate rating values (1-5)
+    // Validate rating values (0.1-5.0)
     const ratings = [
-      data.cultureRating,
-      data.worklifeRating,
-      data.facilityRating,
-      data.careerRating,
+      data.ratingCulture,
+      data.ratingWorkLife,
+      data.ratingFacilities,
+      data.ratingCareer,
     ];
     for (const rating of ratings) {
-      if (rating < 1 || rating > 5) {
-        throw new CustomError("Rating values must be between 1 and 5", 400);
+      if (rating < 0.1 || rating > 5) {
+        throw new CustomError("Rating values must be between 0.1 and 5.0", 400);
       }
     }
 
     // Calculate company rating (average of 4 ratings)
     const companyRating = (
-      data.cultureRating + 
-      data.worklifeRating + 
-      data.facilityRating + 
-      data.careerRating
+      data.ratingCulture + 
+      data.ratingWorkLife + 
+      data.ratingFacilities + 
+      data.ratingCareer
     ) / 4;
 
     const updateData: any = {
-      positionTitle: data.position,
-      ratingCulture: data.cultureRating,
-      ratingWorkLife: data.worklifeRating,
-      ratingFacilities: data.facilityRating,
-      ratingCareer: data.careerRating,
-      companyRating: companyRating, // Auto-calculated average
+      positionTitle: data.positionTitle,
+      ratingCulture: data.ratingCulture,
+      ratingWorkLife: data.ratingWorkLife,
+      ratingFacilities: data.ratingFacilities,
+      ratingCareer: data.ratingCareer,
+      companyRating: companyRating,
     };
 
-    if (data.salaryEstimate !== undefined) {
-      updateData.salaryEstimateMin = data.salaryEstimate;
-      updateData.salaryEstimateMax = data.salaryEstimate;
+    if (data.salaryEstimateMin !== undefined) {
+      updateData.salaryEstimateMin = data.salaryEstimateMin;
+    }
+    
+    if (data.salaryEstimateMax !== undefined) {
+      updateData.salaryEstimateMax = data.salaryEstimateMax;
     }
 
-    if (data.comment !== undefined) {
-      updateData.body = data.comment;
+    if (data.body !== undefined) {
+      updateData.body = data.body;
     }
 
     const updatedReview = await CompanyReviewRepository.updateReview(
