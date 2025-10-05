@@ -31,21 +31,20 @@ export class GetJobController {
     }
   }
 
-  public static async getJobById(
+  public static async getJobBySlug(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const { jobId: jobIdParam } = req.params;
+      const { slug } = req.params;
 
-      if (!jobIdParam) {
-        return res.status(400).json({ message: "Job ID is required" });
+      if (!slug) {
+        return res.status(400).json({ message: "Job slug is required" });
       }
 
-      const jobId = jobIdParam as string;
+      const job = await GetJobService.getJobBySlug(slug);
 
-      const job = await GetJobService.getJobById(jobId);
       if (!job) {
         return res.status(404).json({ message: "Job not found" });
       }

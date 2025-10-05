@@ -5,18 +5,20 @@ import { PreselectionRepository } from "../../repositories/preselection/preselec
 import { JobRepository } from "../../repositories/job/job.repository";
 
 export class ApplicationService {
-  public static async submitApplication(
+  public static async submitApplicationBySlug(
     userId: number,
-    jobId: string,
+    jobSlug: string,
     file: Express.Multer.File,
     expectedSalary?: number
   ) {
     if (!file) throw new CustomError("CV file is required", 400);
 
-    const job = await JobRepository.getJobPublic(jobId);
+    const job = await JobRepository.getJobBySlug(jobSlug);
     if (!job) {
       throw new CustomError("This job is not open for applications", 400);
     }
+
+    const jobId = job.id;
 
     const existing = await ApplicationRepo.findExisting(userId, jobId);
     if (existing) {
@@ -49,15 +51,19 @@ export class ApplicationService {
       userId,
       jobId,
       cvUrl: uploadResult.secure_url,
-      // for tests expecting cvFile field
-      ...(uploadResult?.secure_url ? { cvFile: uploadResult.secure_url } : {} as any),
+      ...(uploadResult?.secure_url
+        ? { cvFile: uploadResult.secure_url }
+        : ({} as any)),
       cvFileName: file.originalname,
       cvFileSize: file.size,
       ...(expectedSalary !== undefined ? { expectedSalary } : {}),
     });
   }
-
-  public static async getApplicationsByUserId(userId: number) {
-    return ApplicationRepo.getApplicationsByUserId(userId);
+  public static async getApplicationsByUserId(
+    userId: number,
+    page = 1,
+    limit = 10
+  ) {
+    return ApplicationRepo.getApplicationsByUserId(userId, page, limit);
   }
 }

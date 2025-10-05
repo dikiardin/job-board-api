@@ -3,23 +3,26 @@ import { Prisma } from "../../generated/prisma";
 
 export class JobRepository {
   static async getCompany(companyId: string | number) {
-    const id = typeof companyId === 'string' ? Number(companyId) : companyId;
+    const id = typeof companyId === "string" ? Number(companyId) : companyId;
     return prisma.company.findUnique({ where: { id } });
   }
 
-  static async createJob(companyId: string | number, data: {
-    title: string;
-    description: string;
-    banner?: string | null;
-    category: string;
-    city: string;
-    salaryMin?: number | null;
-    salaryMax?: number | null;
-    tags: string[];
-    deadline?: Date | null;
-    isPublished?: boolean;
-  }) {
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+  static async createJob(
+    companyId: string | number,
+    data: {
+      title: string;
+      description: string;
+      banner?: string | null;
+      category: string;
+      city: string;
+      salaryMin?: number | null;
+      salaryMax?: number | null;
+      tags: string[];
+      deadline?: Date | null;
+      isPublished?: boolean;
+    }
+  ) {
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
     return prisma.job.create({
       data: {
         companyId: cid,
@@ -37,32 +40,38 @@ export class JobRepository {
     });
   }
 
-  static async updateJob(companyId: string | number, jobId: string | number, data: Partial<{
-    title: string;
-    description: string;
-    banner?: string | null;
-    category: string;
-    city: string;
-    salaryMin?: number | null;
-    salaryMax?: number | null;
-    tags: string[];
-    deadline?: Date | null;
-    isPublished?: boolean;
-  }>) {
-    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+  static async updateJob(
+    companyId: string | number,
+    jobId: string | number,
+    data: Partial<{
+      title: string;
+      description: string;
+      banner?: string | null;
+      category: string;
+      city: string;
+      salaryMin?: number | null;
+      salaryMax?: number | null;
+      tags: string[];
+      deadline?: Date | null;
+      isPublished?: boolean;
+    }>
+  ) {
+    const jid = typeof jobId === "string" ? Number(jobId) : jobId;
     return prisma.job.update({
       where: { id: jid },
       data: {
         ...data,
         ...(data.banner !== undefined ? { bannerUrl: data.banner } : {}),
-        ...(data.deadline !== undefined ? { applyDeadline: data.deadline } : {}),
+        ...(data.deadline !== undefined
+          ? { applyDeadline: data.deadline }
+          : {}),
       },
     });
   }
 
   static async getJobById(companyId: string | number, jobId: string | number) {
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
+    const jid = typeof jobId === "string" ? Number(jobId) : jobId;
     return prisma.job.findFirst({
       where: { id: jid, companyId: cid },
       include: {
@@ -82,13 +91,31 @@ export class JobRepository {
     });
   }
 
+  static async getJobBySlug(jobSlug: string) {
+    const now = new Date();
+    return prisma.job.findFirst({
+      where: {
+        slug: jobSlug,
+        isPublished: true,
+        OR: [{ applyDeadline: null }, { applyDeadline: { gte: now } }],
+      },
+      select: {
+        id: true,
+        title: true,
+        companyId: true,
+        applyDeadline: true,
+        isPublished: true,
+      },
+    });
+  }
+
   static async togglePublish(jobId: string | number, isPublished: boolean) {
-    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const jid = typeof jobId === "string" ? Number(jobId) : jobId;
     return prisma.job.update({ where: { id: jid }, data: { isPublished } });
   }
 
   static async deleteJob(companyId: string | number, jobId: string | number) {
-    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const jid = typeof jobId === "string" ? Number(jobId) : jobId;
     return prisma.job.delete({ where: { id: jid } });
   }
 
@@ -101,8 +128,16 @@ export class JobRepository {
     limit?: number;
     offset?: number;
   }) {
-    const { companyId, title, category, sortBy = "createdAt", sortOrder = "desc", limit = 10, offset = 0 } = params;
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+    const {
+      companyId,
+      title,
+      category,
+      sortBy = "createdAt",
+      sortOrder = "desc",
+      limit = 10,
+      offset = 0,
+    } = params;
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
 
     const where: Prisma.JobWhereInput = {
       companyId: cid,
@@ -113,7 +148,10 @@ export class JobRepository {
     const [items, total] = await Promise.all([
       prisma.job.findMany({
         where,
-        orderBy: sortBy === "deadline" ? { applyDeadline: sortOrder } : { createdAt: sortOrder },
+        orderBy:
+          sortBy === "deadline"
+            ? { applyDeadline: sortOrder }
+            : { createdAt: sortOrder },
         skip: offset,
         take: limit,
         include: {
@@ -135,7 +173,15 @@ export class JobRepository {
     limit?: number;
     offset?: number;
   }) {
-    const { title, category, city, sortBy = "createdAt", sortOrder = "desc", limit = 10, offset = 0 } = params;
+    const {
+      title,
+      category,
+      city,
+      sortBy = "createdAt",
+      sortOrder = "desc",
+      limit = 10,
+      offset = 0,
+    } = params;
 
     const now = new Date();
     const where: Prisma.JobWhereInput = {
@@ -144,16 +190,16 @@ export class JobRepository {
       ...(category ? { category: { equals: category } } : {}),
       ...(city ? { city: { contains: city, mode: "insensitive" } } : {}),
       // Optional: exclude expired by deadline if provided
-      OR: [
-        { applyDeadline: null },
-        { applyDeadline: { gte: now } },
-      ],
+      OR: [{ applyDeadline: null }, { applyDeadline: { gte: now } }],
     };
 
     const [items, total] = await Promise.all([
       prisma.job.findMany({
         where,
-        orderBy: sortBy === "deadline" ? { applyDeadline: sortOrder } : { createdAt: sortOrder },
+        orderBy:
+          sortBy === "deadline"
+            ? { applyDeadline: sortOrder }
+            : { createdAt: sortOrder },
         skip: offset,
         take: limit,
       }),
@@ -165,14 +211,20 @@ export class JobRepository {
 
   static async getJobPublic(jobId: string | number) {
     const now = new Date();
-    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const jid = typeof jobId === "string" ? Number(jobId) : jobId;
     return prisma.job.findFirst({
       where: {
         id: jid,
         isPublished: true,
         OR: [{ applyDeadline: null }, { applyDeadline: { gte: now } }],
       },
-      select: { id: true, title: true, companyId: true, applyDeadline: true, isPublished: true },
+      select: {
+        id: true,
+        title: true,
+        companyId: true,
+        applyDeadline: true,
+        isPublished: true,
+      },
     });
   }
   static async listApplicantsForJob(params: {
@@ -189,9 +241,22 @@ export class JobRepository {
     limit?: number;
     offset?: number;
   }) {
-    const { companyId, jobId, name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy = "appliedAt", sortOrder = "asc", limit = 10, offset = 0 } = params;
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const {
+      companyId,
+      jobId,
+      name,
+      education,
+      ageMin,
+      ageMax,
+      expectedSalaryMin,
+      expectedSalaryMax,
+      sortBy = "appliedAt",
+      sortOrder = "asc",
+      limit = 10,
+      offset = 0,
+    } = params;
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
+    const jid = typeof jobId === "string" ? Number(jobId) : jobId;
 
     // Build user where for name/education/age with input sanitization
     const userWhere: any = {};
@@ -201,7 +266,10 @@ export class JobRepository {
     }
     if (typeof education === "string" && education.trim() !== "") {
       const sanitizedEducation = education.trim().substring(0, 100); // Limit length
-      userWhere.education = { contains: sanitizedEducation, mode: "insensitive" };
+      userWhere.education = {
+        contains: sanitizedEducation,
+        mode: "insensitive",
+      };
     }
 
     // Age filter using dob between date ranges
@@ -233,8 +301,17 @@ export class JobRepository {
     const appWhere: any = {
       jobId: jid,
       job: { companyId: cid },
-      ...(expectedSalaryMin != null ? { expectedSalary: { gte: expectedSalaryMin } } : {}),
-      ...(expectedSalaryMax != null ? { expectedSalary: { lte: expectedSalaryMax, ...(expectedSalaryMin != null ? { gte: expectedSalaryMin } : {}) } } : {}),
+      ...(expectedSalaryMin != null
+        ? { expectedSalary: { gte: expectedSalaryMin } }
+        : {}),
+      ...(expectedSalaryMax != null
+        ? {
+            expectedSalary: {
+              lte: expectedSalaryMax,
+              ...(expectedSalaryMin != null ? { gte: expectedSalaryMin } : {}),
+            },
+          }
+        : {}),
     };
 
     const orderBy: any =

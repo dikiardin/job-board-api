@@ -85,7 +85,7 @@ class JobRouter {
       "/all",
       GetJobController.getAllJobs
     );
-    this.route.get("/:jobId", GetJobController.getJobById);
+    this.route.get("/:slug", GetJobController.getJobBySlug);
 
   }
 
