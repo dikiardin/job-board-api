@@ -48,7 +48,7 @@ class CompanyReviewRouter {
     );
 
     // Update user's review (authenticated users only)
-    this.route.put(
+    this.route.patch(
       "/companies/:companyId/reviews/my-review",
       verifyToken,
       validateCreateReview,
@@ -66,6 +66,12 @@ class CompanyReviewRouter {
     this.route.get(
       "/companies/:companyId/salary-estimates",
       CompanyReviewController.getSalaryEstimates
+    );
+
+    // Get overall company rating (public)
+    this.route.get(
+      "/companies/:companyId/rating",
+      CompanyReviewController.getCompanyRating
     );
   }
 

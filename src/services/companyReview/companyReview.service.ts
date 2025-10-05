@@ -61,28 +61,12 @@ export class CompanyReviewService {
   // Get company review statistics
   public static async getCompanyReviewStats(companyId: string) {
     // Check if company exists
-    const companyExists = await CompanyReviewRepository.checkCompanyExists(
-      companyId
-    );
+    const companyExists = await CompanyReviewRepository.checkCompanyExists(companyId);
     if (!companyExists) {
       throw new CustomError("Company not found", 404);
     }
 
-    const stats = await CompanyReviewRepository.getCompanyReviewStats(
-      companyId
-    );
-
-    return {
-      totalReviews: stats.totalReviews,
-      averageRatings: {
-        culture: parseFloat(stats.avgCultureRating || "0"),
-        worklife: parseFloat(stats.avgWorklifeRating || "0"),
-        facility: parseFloat(stats.avgFacilityRating || "0"),
-        career: parseFloat(stats.avgCareerRating || "0"),
-        overall: parseFloat(stats.avgOverallRating || "0"),
-      },
-      ratingDistribution: stats.ratingDistribution,
-    };
+    return await CompanyReviewRepository.getCompanyReviewStats(companyId);
   }
 
   // Create a new review
@@ -111,15 +95,25 @@ export class CompanyReviewService {
       }
     }
 
-    // Create the review (NEW LOGIC - no employmentId needed)
+    // Calculate company rating (average of 4 ratings)
+    const companyRating = (
+      data.cultureRating + 
+      data.worklifeRating + 
+      data.facilityRating + 
+      data.careerRating
+    ) / 4;
+
+    // Create the review (UPDATED LOGIC - include employmentId and calculated companyRating)
     const reviewData: any = {
       companyId: parseInt(companyId),
+      employmentId: eligibility.employmentId, // Add employmentId from eligibility check
       reviewerUserId: userId,
       positionTitle: data.position,
       ratingCulture: data.cultureRating,
       ratingWorkLife: data.worklifeRating,
       ratingFacilities: data.facilityRating,
       ratingCareer: data.careerRating,
+      companyRating: companyRating, // Auto-calculated average
     };
 
     if (data.salaryEstimate !== undefined) {
@@ -149,15 +143,15 @@ export class CompanyReviewService {
       return { canReview: false, reason: "Company not found" };
     }
 
-    // Check if user has been accepted by this company (NEW LOGIC)
-    const acceptedApplication = await CompanyReviewRepository.getUserAcceptedApplication(
+    // Check if user has verified employment with this company (UPDATED LOGIC)
+    const verifiedEmployment = await CompanyReviewRepository.getUserVerifiedEmployment(
       userId,
       companyId
     );
-    if (!acceptedApplication) {
+    if (!verifiedEmployment) {
       return {
         canReview: false,
-        reason: "You must have been accepted by this company to leave a review",
+        reason: "You must have verified employment with this company to leave a review",
       };
     }
 
@@ -175,25 +169,25 @@ export class CompanyReviewService {
 
     return {
       canReview: true,
-      applicationId: acceptedApplication.id,
-      application: {
-        jobTitle: acceptedApplication.job.title,
-        jobCategory: acceptedApplication.job.category,
-        companyName: acceptedApplication.job.company.name,
-        acceptedAt: acceptedApplication.createdAt,
+      employmentId: verifiedEmployment.id,
+      employment: {
+        companyName: verifiedEmployment.company?.name || "Unknown Company",
+        startDate: verifiedEmployment.startDate,
+        endDate: verifiedEmployment.endDate,
+        verifiedAt: verifiedEmployment.createdAt,
       },
     };
   }
 
   // Get user's own review for a company
   public static async getUserReview(userId: number, companyId: string) {
-    // Check if user has been accepted by this company
-    const acceptedApplication = await CompanyReviewRepository.getUserAcceptedApplication(
+    // Check if user has verified employment with this company
+    const verifiedEmployment = await CompanyReviewRepository.getUserVerifiedEmployment(
       userId,
       companyId
     );
-    if (!acceptedApplication) {
-      throw new CustomError("You must have been accepted by this company", 404);
+    if (!verifiedEmployment) {
+      throw new CustomError("You must have verified employment with this company", 404);
     }
 
     const review = await CompanyReviewRepository.getExistingReviewByUserAndCompany(
@@ -211,13 +205,13 @@ export class CompanyReviewService {
   public static async updateReview(data: CreateReviewData) {
     const { userId, companyId } = data;
 
-    // Check if user has been accepted by this company
-    const acceptedApplication = await CompanyReviewRepository.getUserAcceptedApplication(
+    // Check if user has verified employment with this company
+    const verifiedEmployment = await CompanyReviewRepository.getUserVerifiedEmployment(
       userId,
       companyId
     );
-    if (!acceptedApplication) {
-      throw new CustomError("You must have been accepted by this company", 404);
+    if (!verifiedEmployment) {
+      throw new CustomError("You must have verified employment with this company", 404);
     }
 
     const existingReview = await CompanyReviewRepository.getExistingReviewByUserAndCompany(
@@ -241,12 +235,21 @@ export class CompanyReviewService {
       }
     }
 
+    // Calculate company rating (average of 4 ratings)
+    const companyRating = (
+      data.cultureRating + 
+      data.worklifeRating + 
+      data.facilityRating + 
+      data.careerRating
+    ) / 4;
+
     const updateData: any = {
       positionTitle: data.position,
       ratingCulture: data.cultureRating,
       ratingWorkLife: data.worklifeRating,
       ratingFacilities: data.facilityRating,
       ratingCareer: data.careerRating,
+      companyRating: companyRating, // Auto-calculated average
     };
 
     if (data.salaryEstimate !== undefined) {
@@ -268,13 +271,13 @@ export class CompanyReviewService {
 
   // Delete user's review
   public static async deleteReview(userId: number, companyId: string) {
-    // Check if user has been accepted by this company
-    const acceptedApplication = await CompanyReviewRepository.getUserAcceptedApplication(
+    // Check if user has verified employment with this company
+    const verifiedEmployment = await CompanyReviewRepository.getUserVerifiedEmployment(
       userId,
       companyId
     );
-    if (!acceptedApplication) {
-      throw new CustomError("You must have been accepted by this company", 404);
+    if (!verifiedEmployment) {
+      throw new CustomError("You must have verified employment with this company", 404);
     }
 
     const existingReview = await CompanyReviewRepository.getExistingReviewByUserAndCompany(
@@ -297,7 +300,6 @@ export class CompanyReviewService {
     if (!companyExists) {
       throw new CustomError("Company not found", 404);
     }
-
     const salaryEstimates = await CompanyReviewRepository.getSalaryEstimates(
       companyId
     );
@@ -309,5 +311,16 @@ export class CompanyReviewService {
       minSalary: estimate.minSalary,
       maxSalary: estimate.maxSalary,
     }));
+  }
+
+  // Get overall company rating
+  public static async getCompanyRating(companyId: string) {
+    const result = await CompanyReviewRepository.getCompanyRating(companyId);
+    
+    if (!result) {
+      throw new CustomError("Company not found", 404);
+    }
+
+    return result;
   }
 }

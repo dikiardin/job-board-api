@@ -192,4 +192,24 @@ export class CompanyReviewController {
       next(error);
     }
   }
+
+  // Get overall company rating
+  public static async getCompanyRating(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const companyId = (req.params.companyId as string);
+      const companyRating = await CompanyReviewService.getCompanyRating(companyId);
+
+      res.status(200).json({
+        success: true,
+        message: "Company rating retrieved successfully",
+        data: companyRating
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

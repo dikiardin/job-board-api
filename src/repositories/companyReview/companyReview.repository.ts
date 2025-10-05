@@ -11,6 +11,7 @@ export interface CreateReviewData {
   ratingWorkLife: number;
   ratingFacilities: number;
   ratingCareer: number;
+  companyRating: number; // Auto-calculated average
   body?: string;
 }
 
@@ -22,6 +23,7 @@ export interface UpdateReviewData {
   ratingWorkLife: number;
   ratingFacilities: number;
   ratingCareer: number;
+  companyRating: number; // Auto-calculated average
   body?: string;
 }
 
@@ -35,58 +37,59 @@ export interface GetReviewsParams {
 
 export class CompanyReviewRepository {
   // Check if company exists
-  public static async checkCompanyExists(companyId: number | string): Promise<boolean> {
-    const id = typeof companyId === 'string' ? Number(companyId) : companyId;
+  public static async checkCompanyExists(
+    companyId: number | string
+  ): Promise<boolean> {
+    const id = typeof companyId === "string" ? Number(companyId) : companyId;
     const company = await prisma.company.findUnique({
       where: { id },
-      select: { id: true }
+      select: { id: true },
     });
     return !!company;
   }
 
   // Get user's employment record with a company
-  public static async getUserEmployment(userId: number, companyId: number | string) {
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+  public static async getUserEmployment(
+    userId: number,
+    companyId: number | string
+  ) {
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
     return await prisma.employment.findFirst({
       where: {
         userId,
-        companyId: cid
+        companyId: cid,
       },
       select: {
         id: true,
         startDate: true,
-        endDate: true
-      }
+        endDate: true,
+      },
     });
   }
 
-  // Get user's accepted application with a company (NEW LOGIC)
-  public static async getUserAcceptedApplication(userId: number, companyId: number | string) {
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-    return await prisma.application.findFirst({
+  // Get user's verified employment with a company (UPDATED LOGIC)
+  public static async getUserVerifiedEmployment(
+    userId: number,
+    companyId: number | string
+  ) {
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
+    return await prisma.employment.findFirst({
       where: {
         userId,
-        job: {
-          companyId: cid
-        },
-        status: 'ACCEPTED'
+        companyId: cid,
+        isVerified: true,
       },
       select: {
         id: true,
-        jobId: true,
+        startDate: true,
+        endDate: true,
         createdAt: true,
-        job: {
+        company: {
           select: {
-            title: true,
-            category: true,
-            company: {
-              select: {
-                name: true
-              }
-            }
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
   }
 
@@ -103,19 +106,23 @@ export class CompanyReviewRepository {
         ratingWorkLife: true,
         ratingFacilities: true,
         ratingCareer: true,
+        companyRating: true,
         body: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
   }
 
   // Get existing review by user and company (NEW LOGIC)
-  public static async getExistingReviewByUserAndCompany(userId: number, companyId: number | string) {
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+  public static async getExistingReviewByUserAndCompany(
+    userId: number,
+    companyId: number | string
+  ) {
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
     return await prisma.companyReview.findFirst({
       where: {
         reviewerUserId: userId,
-        companyId: cid
+        companyId: cid,
       },
       select: {
         id: true,
@@ -126,9 +133,10 @@ export class CompanyReviewRepository {
         ratingWorkLife: true,
         ratingFacilities: true,
         ratingCareer: true,
+        companyRating: true,
         body: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
   }
 
@@ -146,7 +154,9 @@ export class CompanyReviewRepository {
         ratingWorkLife: data.ratingWorkLife,
         ratingFacilities: data.ratingFacilities,
         ratingCareer: data.ratingCareer,
-        body: data.body ?? null
+        companyRating: data.companyRating,
+        body: data.body ?? null,
+        isVerifiedEmployee: data.employmentId ? true : false, // Set based on employmentId
       },
       select: {
         id: true,
@@ -157,9 +167,10 @@ export class CompanyReviewRepository {
         ratingWorkLife: true,
         ratingFacilities: true,
         ratingCareer: true,
+        companyRating: true,
         body: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
   }
 
@@ -175,7 +186,8 @@ export class CompanyReviewRepository {
         ratingWorkLife: data.ratingWorkLife,
         ratingFacilities: data.ratingFacilities,
         ratingCareer: data.ratingCareer,
-        body: data.body ?? null
+        companyRating: data.companyRating,
+        body: data.body ?? null,
       },
       select: {
         id: true,
@@ -186,37 +198,36 @@ export class CompanyReviewRepository {
         ratingWorkLife: true,
         ratingFacilities: true,
         ratingCareer: true,
+        companyRating: true,
         body: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
   }
 
   // Delete a review
   public static async deleteReview(reviewId: number) {
     return await prisma.companyReview.delete({
-      where: { id: reviewId }
+      where: { id: reviewId },
     });
   }
 
   // Get company reviews with pagination
   public static async getCompanyReviews(params: GetReviewsParams) {
     const { companyId, limit, offset, sortBy, sortOrder } = params;
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-    
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
+
     const orderBy: any = {};
-    if (sortBy === 'createdAt') {
+    if (sortBy === "createdAt") {
       orderBy.createdAt = sortOrder;
-    } else if (sortBy === 'rating') {
+    } else if (sortBy === "rating") {
       // Sort by overall rating (average of all ratings)
       orderBy.cultureRating = sortOrder;
     }
 
     return await prisma.companyReview.findMany({
       where: {
-        employment: {
-          companyId: cid
-        }
+        companyId: cid,
       },
       select: {
         id: true,
@@ -227,65 +238,72 @@ export class CompanyReviewRepository {
         ratingWorkLife: true,
         ratingFacilities: true,
         ratingCareer: true,
+        companyRating: true,
         body: true,
-        createdAt: true
+        createdAt: true,
       },
       orderBy: orderBy,
       take: limit,
-      skip: offset
+      skip: offset,
     });
   }
 
   // Get total count of reviews for a company
-  public static async getCompanyReviewsCount(companyId: number | string): Promise<number> {
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+  public static async getCompanyReviewsCount(
+    companyId: number | string
+  ): Promise<number> {
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
     return await prisma.companyReview.count({
       where: {
-        employment: {
-          companyId: cid
-        }
-      }
+        companyId: cid,
+      },
     });
   }
 
   // Get company review statistics
   public static async getCompanyReviewStats(companyId: number | string) {
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
     const stats = await prisma.companyReview.aggregate({
       where: {
-        employment: {
-          companyId: cid
-        }
+        companyId: cid,
       },
       _avg: {
         ratingCulture: true,
         ratingWorkLife: true,
         ratingFacilities: true,
-        ratingCareer: true
-      }
+        ratingCareer: true,
+        companyRating: true,
+      },
     });
 
-    const totalReviews = await prisma.companyReview.count({ where: { employment: { companyId: cid } } });
+    const totalReviews = await prisma.companyReview.count({
+      where: { companyId: cid },
+    });
 
     // Calculate overall average rating
     const avgRatings = stats._avg as any;
-    const overallRating = avgRatings?.ratingCulture && avgRatings?.ratingWorkLife && 
-                         avgRatings?.ratingFacilities && avgRatings?.ratingCareer
-      ? (Number(avgRatings?.ratingCulture) + Number(avgRatings?.ratingWorkLife) + 
-         Number(avgRatings?.ratingFacilities) + Number(avgRatings?.ratingCareer)) / 4
-      : 0;
+    const overallRating =
+      avgRatings?.ratingCulture &&
+      avgRatings?.ratingWorkLife &&
+      avgRatings?.ratingFacilities &&
+      avgRatings?.ratingCareer
+        ? (Number(avgRatings?.ratingCulture) +
+            Number(avgRatings?.ratingWorkLife) +
+            Number(avgRatings?.ratingFacilities) +
+            Number(avgRatings?.ratingCareer)) /
+          4
+        : 0;
 
     // Get rating distribution
-    const ratingDistribution = await prisma.$queryRaw`
+    const ratingDistribution = (await prisma.$queryRaw`
       SELECT 
         ROUND((culture_rating + worklife_rating + facility_rating + career_rating) / 4.0) as rating,
         COUNT(*) as count
       FROM company_review cr
-      JOIN employment e ON cr.employment_id = e.id
-      WHERE e.company_id = ${cid}
+      WHERE cr.company_id = ${cid}
       GROUP BY ROUND((culture_rating + worklife_rating + facility_rating + career_rating) / 4.0)
       ORDER BY rating DESC
-    ` as Array<{ rating: number; count: bigint }>;
+    `) as Array<{ rating: number; count: bigint }>;
 
     return {
       totalReviews,
@@ -293,30 +311,90 @@ export class CompanyReviewRepository {
       avgWorklifeRating: avgRatings?.ratingWorkLife?.toFixed?.(1),
       avgFacilityRating: avgRatings?.ratingFacilities?.toFixed?.(1),
       avgCareerRating: avgRatings?.ratingCareer?.toFixed?.(1),
+      avgCompanyRating: avgRatings?.companyRating?.toFixed?.(1), // Average of all companyRating
       avgOverallRating: overallRating.toFixed(1),
-      ratingDistribution: ratingDistribution.map(item => ({
+      ratingDistribution: ratingDistribution.map((item) => ({
         rating: Number(item.rating),
-        count: Number(item.count)
-      }))
+        count: Number(item.count),
+      })),
+    };
+  }
+
+  // Get overall company rating (average of all companyRating from reviews)
+  public static async getCompanyRating(companyId: number | string) {
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
+    
+    // Get company info and average rating
+    const result = await prisma.company.findUnique({
+      where: { id: cid },
+      select: {
+        id: true,
+        name: true,
+        reviews: {
+          select: {
+            id: true,
+            companyRating: true,
+            ratingCulture: true,
+            ratingWorkLife: true,
+            ratingFacilities: true,
+            ratingCareer: true,
+          },
+        },
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    // Calculate average companyRating from all reviews
+    const validRatings = result.reviews
+      .map(review => {
+        // If companyRating is null, calculate from individual ratings
+        if (review.companyRating === null) {
+          const individualRatings = [
+            review.ratingCulture,
+            review.ratingWorkLife,
+            review.ratingFacilities,
+            review.ratingCareer
+          ].filter(rating => rating !== null);
+          
+          if (individualRatings.length === 4) {
+            return individualRatings.reduce((sum, rating) => sum + Number(rating), 0) / 4;
+          }
+          return null;
+        }
+        return Number(review.companyRating);
+      })
+      .filter(rating => rating !== null);
+
+    const averageRating = validRatings.length > 0 
+      ? validRatings.reduce((sum, rating) => sum + rating, 0) / validRatings.length
+      : 0;
+
+    return {
+      companyId: result.id,
+      companyName: result.name,
+      companyRating: Number(averageRating.toFixed(2)),
+      totalReviews: validRatings.length,
     };
   }
 
   // Get salary estimates by position for a company
   public static async getSalaryEstimates(companyId: number | string) {
-    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-    const estimates = await prisma.$queryRaw`
+    const cid = typeof companyId === "string" ? Number(companyId) : companyId;
+    const estimates = (await prisma.$queryRaw`
       SELECT 
-        position,
+        position_title as position,
         COUNT(*) as count,
-        AVG(salary_estimate) as average_salary,
-        MIN(salary_estimate) as min_salary,
-        MAX(salary_estimate) as max_salary
+        AVG(salary_estimate_min) as average_salary,
+        MIN(salary_estimate_min) as min_salary,
+        MAX(salary_estimate_max) as max_salary
       FROM company_review cr
-      JOIN employment e ON cr.employment_id = e.id
-      WHERE e.company_id = ${cid} AND cr.salary_estimate IS NOT NULL
-      GROUP BY position
+      WHERE cr.company_id = ${cid} AND cr.salary_estimate_min IS NOT NULL
+      GROUP BY position_title
       ORDER BY count DESC, average_salary DESC
-    ` as Array<{
+    `) as Array<{
       position: string;
       count: bigint;
       average_salary: number;
@@ -324,12 +402,12 @@ export class CompanyReviewRepository {
       max_salary: number;
     }>;
 
-    return estimates.map(estimate => ({
+    return estimates.map((estimate) => ({
       position: estimate.position,
       count: Number(estimate.count),
       averageSalary: estimate.average_salary?.toFixed(0),
       minSalary: estimate.min_salary,
-      maxSalary: estimate.max_salary
+      maxSalary: estimate.max_salary,
     }));
   }
 }

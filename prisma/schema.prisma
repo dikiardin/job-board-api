@@ -575,6 +575,7 @@ model CompanyReview {
   ratingWorkLife     Decimal? @db.Decimal(3, 2)
   ratingFacilities   Decimal? @db.Decimal(3, 2)
   ratingCareer       Decimal? @db.Decimal(3, 2)
+  companyRating      Decimal? @db.Decimal(3, 2)
   salaryEstimateMin  Int?
   salaryEstimateMax  Int?
   currency           String?  @default("IDR")
