@@ -60,10 +60,63 @@ export class CompanyReviewRepository {
     });
   }
 
+  // Get user's accepted application with a company (NEW LOGIC)
+  public static async getUserAcceptedApplication(userId: number, companyId: number | string) {
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+    return await prisma.application.findFirst({
+      where: {
+        userId,
+        job: {
+          companyId: cid
+        },
+        status: 'ACCEPTED'
+      },
+      select: {
+        id: true,
+        jobId: true,
+        createdAt: true,
+        job: {
+          select: {
+            title: true,
+            category: true,
+            company: {
+              select: {
+                name: true
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
   // Get existing review for an employment
   public static async getExistingReview(employmentId: number) {
     return await prisma.companyReview.findUnique({
       where: { employmentId },
+      select: {
+        id: true,
+        positionTitle: true,
+        salaryEstimateMin: true,
+        salaryEstimateMax: true,
+        ratingCulture: true,
+        ratingWorkLife: true,
+        ratingFacilities: true,
+        ratingCareer: true,
+        body: true,
+        createdAt: true
+      }
+    });
+  }
+
+  // Get existing review by user and company (NEW LOGIC)
+  public static async getExistingReviewByUserAndCompany(userId: number, companyId: number | string) {
+    const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+    return await prisma.companyReview.findFirst({
+      where: {
+        reviewerUserId: userId,
+        companyId: cid
+      },
       select: {
         id: true,
         positionTitle: true,
