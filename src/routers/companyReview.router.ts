@@ -73,6 +73,13 @@ class CompanyReviewRouter {
       "/companies/:companyId/rating",
       CompanyReviewController.getCompanyRating
     );
+
+    // Get company reviewers list (authenticated users only - shows who reviewed)
+    this.route.get(
+      "/companies/:companyId/reviewers",
+      verifyToken,
+      CompanyReviewController.getCompanyReviewers
+    );
   }
 
   public getRouter(): Router {
