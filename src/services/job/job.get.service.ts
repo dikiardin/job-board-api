@@ -14,6 +14,7 @@ export class GetJobService {
     ]);
     const formattedJobs = jobs.map((job) => ({
       id: job.id,
+      slug: job.slug,
       title: job.title,
       category: job.category,
       city: job.city,
@@ -31,8 +32,8 @@ export class GetJobService {
     return { jobs: formattedJobs, total };
   }
 
-  public static async getJobById(jobId: string) {
-    const job = await GetJobRepository.findById(jobId);
+  public static async getJobBySlug(slug: string) {
+    const job = await GetJobRepository.findBySlug(slug);
     if (!job) {
       throw new CustomError("Job not found", 404);
     }

@@ -36,13 +36,22 @@ export class UserRepo {
   public static async findByIdWithPassword(id: number) {
     return prisma.user.findUnique({
       where: { id },
-      select: { id: true, email: true, passwordHash: true }, 
+      select: { id: true, email: true, passwordHash: true },
     });
   }
   public static async updatePassword(id: number, passwordHash: string) {
     return prisma.user.update({
       where: { id },
       data: { passwordHash },
+    });
+  }
+
+  public static async findWithCompany(userId: number) {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        ownedCompany: true, 
+      },
     });
   }
 }

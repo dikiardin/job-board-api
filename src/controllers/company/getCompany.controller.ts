@@ -29,15 +29,15 @@ export class GetCompanyController {
     }
   }
 
-  public static async getCompanyById(
-    req: Request<{ companyId: string }>,
+  public static async getCompanyBySlug(
+    req: Request<{ slug: string }>,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const companyId = Number(req.params.companyId);
+      const { slug } = req.params;
 
-      const company = await GetCompanyService.getCompanyById(companyId);
+      const company = await GetCompanyService.getCompanyBySlug(slug);
       if (!company) {
         return res.status(404).json({ message: "Company not found" });
       }

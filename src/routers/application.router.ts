@@ -15,7 +15,7 @@ class ApplicationRouter {
 
   private initializeRoutes(): void {
     this.route.post(
-      "/:jobId",
+      "/:jobSlug",
       verifyToken,
       verifyRole([UserRole.USER]),
       uploadSingleFile("cvFile"),

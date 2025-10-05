@@ -3,16 +3,26 @@ import { transport } from "../../config/nodemailer";
 import { createToken } from "../../utils/createToken";
 import { CustomError } from "../../utils/customError";
 import { buildVerificationEmailChange } from "../../utils/emailTemplateVerifyEmailChange";
+import { CompanyRepo } from "../../repositories/company/company.repository";
 
 export class ChangeEmailService {
   static async changeEmail(userId: number, newEmail: string) {
     const existing = await UserRepo.findByEmail(newEmail);
     if (existing) throw new CustomError("Email already in use", 409);
 
-    await UserRepo.updateUser(userId, { email: newEmail, emailVerifiedAt: null });
+    const user = await UserRepo.findWithCompany(userId);
+    if (!user) throw new CustomError("User not found", 404);
 
-    // Company email is handled through the owner admin's email
-    // No need to update company table as it doesn't have an email field
+    await UserRepo.updateUser(userId, {
+      email: newEmail,
+      emailVerifiedAt: null,
+    });
+
+    if (user.role === "ADMIN" && user.ownedCompany) {
+      await CompanyRepo.updateCompany(user.ownedCompany.id, {
+        email: newEmail,
+      });
+    }
 
     const token = createToken({ userId, email: newEmail }, "3d");
 

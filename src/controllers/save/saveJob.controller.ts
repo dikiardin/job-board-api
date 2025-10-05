@@ -28,16 +28,28 @@ export class SavedJobController {
   ) {
     try {
       const { userId } = req.params;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 9;
+
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
 
-      const jobs = await SavedJobService.getSavedJobsByUser(
-        parseInt(userId, 10)
+      const { jobs, total } = await SavedJobService.getSavedJobsByUser(
+        parseInt(userId, 10),
+        page,
+        limit
       );
+
       res.status(200).json({
         message: "Saved jobs fetched successfully",
         data: jobs,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
       });
     } catch (err) {
       next(err);

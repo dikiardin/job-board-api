@@ -10,20 +10,21 @@ export class ApplicationController {
   ) {
     try {
       const userId = res.locals.decrypt.userId;
-      const jobIdParam = req.params.jobId;
-      if (!jobIdParam) {
-        throw new CustomError("Job ID is required", 400);
+      const jobSlug = req.params.jobSlug;
+
+      if (!jobSlug) {
+        throw new CustomError("Job slug is required", 400);
       }
-      const jobId = jobIdParam as string;
+
       const { expectedSalary } = req.body;
 
       if (!req.file) {
         throw new CustomError("CV file is required", 400);
       }
 
-      const application = await ApplicationService.submitApplication(
+      const application = await ApplicationService.submitApplicationBySlug(
         userId,
-        jobId,
+        jobSlug,
         req.file,
         expectedSalary ? parseInt(expectedSalary) : undefined
       );
@@ -38,7 +39,12 @@ export class ApplicationController {
   }
 
   public static async getApplicationsByUserId(
-    req: Request<{ userId: string }>,
+    req: Request<
+      { userId: string },
+      any,
+      any,
+      { page?: string; limit?: string }
+    >,
     res: Response,
     next: NextFunction
   ) {
@@ -48,13 +54,21 @@ export class ApplicationController {
         return res.status(400).json({ message: "Invalid user id" });
       }
 
-      const applications = await ApplicationService.getApplicationsByUserId(
-        userId
-      );
+      const page = parseInt(req.query.page || "1", 10);
+      const limit = parseInt(req.query.limit || "10", 10);
+
+      const { applications, total } =
+        await ApplicationService.getApplicationsByUserId(userId, page, limit);
 
       res.status(200).json({
         message: "Applications fetched successfully",
         data: applications,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       });
     } catch (err) {
       next(err);

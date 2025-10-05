@@ -33,6 +33,7 @@ export class GetJobRepository {
       },
       select: {
         id: true,
+        slug: true,
         title: true,
         category: true,
         city: true,
@@ -73,14 +74,14 @@ export class GetJobRepository {
     });
   }
 
-  public static async findById(jobId: string | number) {
-    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+  public static async findBySlug(slug: string) {
     return prisma.job.findUnique({
-      where: { id: jid },
+      where: { slug },
       include: {
         company: {
           select: {
             id: true,
+            slug: true,
             name: true,
             logoUrl: true,
             locationCity: true,

@@ -21,7 +21,7 @@ class CompanyRouter {
     );
 
     this.route.get("/all", GetCompanyController.getAllCompanies);
-    this.route.get("/:companyId", GetCompanyController.getCompanyById);
+    this.route.get("/:slug", GetCompanyController.getCompanyBySlug);
   }
 
   public getRouter(): Router {
