@@ -142,10 +142,11 @@ export async function seedApplications({
     },
     {
       key: "ekoCustomerSuccess",
-      data: { userId: eko.id, jobId: jobs.customerSuccess.id, cvUrl: "https://res.cloudinary.com/demo/cv/eko-cs.pdf", cvFileName: "eko-cs.pdf", cvFileSize: 202_000, expectedSalary: 22_000_000, expectedSalaryCurrency: "IDR", status: ApplicationStatus.IN_REVIEW, referralSource: "Talent Pool" },
+      data: { userId: eko.id, jobId: jobs.customerSuccess.id, cvUrl: "https://res.cloudinary.com/demo/cv/eko-cs.pdf", cvFileName: "eko-cs.pdf", cvFileSize: 202_000, expectedSalary: 22_000_000, expectedSalaryCurrency: "IDR", status: ApplicationStatus.ACCEPTED, reviewNote: "Excellent leadership experience, offer extended", reviewUpdatedAt: now, referralSource: "Talent Pool" },
       timeline: [
         { status: ApplicationStatus.SUBMITTED, note: "Submitted for confidential opening", createdById: eko.id },
         { status: ApplicationStatus.IN_REVIEW, note: "Hiring manager reviewing leadership experience", createdById: admins.tech.id },
+        { status: ApplicationStatus.ACCEPTED, note: "Offer letter sent and accepted", createdById: admins.tech.id },
       ],
     },
   ];
