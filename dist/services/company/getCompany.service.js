@@ -6,8 +6,8 @@ class GetCompanyService {
     static async getAllCompanies(params) {
         return getCompany_repository_1.GetCompanyRepository.getAllCompanies(params);
     }
-    static async getCompanyById(companyId) {
-        return getCompany_repository_1.GetCompanyRepository.getCompanyById(companyId);
+    static async getCompanyBySlug(slug) {
+        return getCompany_repository_1.GetCompanyRepository.getCompanyBySlug(slug);
     }
 }
 exports.GetCompanyService = GetCompanyService;

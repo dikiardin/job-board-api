@@ -54,9 +54,9 @@ export class AssessmentValidationSchemas {
             "number.positive": "Question ID must be a positive number",
             "any.required": "Question ID is required",
           }),
-          selectedAnswer: Joi.string().min(1).required().messages({
-            "string.min": "Selected answer is required",
-            "any.required": "Selected answer is required",
+          answer: Joi.string().min(1).required().messages({
+            "string.min": "Answer is required",
+            "any.required": "Answer is required",
           }),
         })
       )

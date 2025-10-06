@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CompanyReviewService } from "../../services/companyReview/companyReview.service";
-import { CustomError } from "../../utils/customError";
+import { ControllerHelper } from "./helpers/ControllerHelper";
 
 export class CompanyReviewController {
   // Get all reviews for a company (public)
@@ -10,25 +10,15 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const companyId = (req.params.companyId as string);
-      const page = parseInt((req.query.page as string) || '1');
-      const limit = parseInt((req.query.limit as string) || '10');
-      const sortBy = (req.query.sortBy as string) || 'createdAt';
-      const sortOrder = (req.query.sortOrder as string) || 'desc';
+      const companyId = ControllerHelper.getCompanyId(req);
+      const paginationParams = ControllerHelper.getPaginationParams(req);
 
       const result = await CompanyReviewService.getCompanyReviews({
         companyId,
-        page,
-        limit,
-        sortBy,
-        sortOrder
+        ...paginationParams
       });
 
-      res.status(200).json({
-        success: true,
-        message: "Company reviews retrieved successfully",
-        data: result
-      });
+      ControllerHelper.sendSuccessResponse(res, "Company reviews retrieved successfully", result);
     } catch (error) {
       next(error);
     }
@@ -41,15 +31,9 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const companyId = (req.params.companyId as string);
-
+      const companyId = ControllerHelper.getCompanyId(req);
       const stats = await CompanyReviewService.getCompanyReviewStats(companyId);
-
-      res.status(200).json({
-        success: true,
-        message: "Company review statistics retrieved successfully",
-        data: stats
-      });
+      ControllerHelper.sendSuccessResponse(res, "Company review statistics retrieved successfully", stats);
     } catch (error) {
       next(error);
     }
@@ -62,8 +46,8 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const userId = res.locals.decrypt.userId;
-      const companyId = (req.params.companyId as string);
+      const userId = ControllerHelper.getUserId(res);
+      const companyId = ControllerHelper.getCompanyId(req);
       const reviewData = req.body;
 
       const review = await CompanyReviewService.createReview({
@@ -72,11 +56,7 @@ export class CompanyReviewController {
         ...reviewData
       });
 
-      res.status(201).json({
-        success: true,
-        message: "Review created successfully",
-        data: review
-      });
+      ControllerHelper.sendSuccessResponse(res, "Review created successfully", review, 201);
     } catch (error) {
       next(error);
     }
@@ -89,18 +69,10 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const userId = res.locals.decrypt.userId;
-      const companyId = (req.params.companyId as string);
-      const eligibility = await CompanyReviewService.checkReviewEligibility(
-        userId,
-        companyId
-      );
-
-      res.status(200).json({
-        success: true,
-        message: "Review eligibility checked successfully",
-        data: eligibility
-      });
+      const userId = ControllerHelper.getUserId(res);
+      const companyId = ControllerHelper.getCompanyId(req);
+      const eligibility = await CompanyReviewService.checkReviewEligibility(userId, companyId);
+      ControllerHelper.sendSuccessResponse(res, "Review eligibility checked successfully", eligibility);
     } catch (error) {
       next(error);
     }
@@ -113,15 +85,10 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const userId = res.locals.decrypt.userId;
-      const companyId = (req.params.companyId as string);
+      const userId = ControllerHelper.getUserId(res);
+      const companyId = ControllerHelper.getCompanyId(req);
       const review = await CompanyReviewService.getUserReview(userId, companyId);
-
-      res.status(200).json({
-        success: true,
-        message: "User review retrieved successfully",
-        data: review
-      });
+      ControllerHelper.sendSuccessResponse(res, "User review retrieved successfully", review);
     } catch (error) {
       next(error);
     }
@@ -134,20 +101,15 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const userId = res.locals.decrypt.userId;
-      const companyId = (req.params.companyId as string);
+      const userId = ControllerHelper.getUserId(res);
+      const companyId = ControllerHelper.getCompanyId(req);
       const reviewData = req.body;
       const review = await CompanyReviewService.updateReview({
         userId,
         companyId,
         ...reviewData
       });
-
-      res.status(200).json({
-        success: true,
-        message: "Review updated successfully",
-        data: review
-      });
+      ControllerHelper.sendSuccessResponse(res, "Review updated successfully", review);
     } catch (error) {
       next(error);
     }
@@ -160,14 +122,10 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const userId = res.locals.decrypt.userId;
-      const companyId = (req.params.companyId as string);
+      const userId = ControllerHelper.getUserId(res);
+      const companyId = ControllerHelper.getCompanyId(req);
       await CompanyReviewService.deleteReview(userId, companyId);
-
-      res.status(200).json({
-        success: true,
-        message: "Review deleted successfully"
-      });
+      ControllerHelper.sendDeleteResponse(res, "Review deleted successfully");
     } catch (error) {
       next(error);
     }
@@ -180,14 +138,9 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const companyId = (req.params.companyId as string);
+      const companyId = ControllerHelper.getCompanyId(req);
       const salaryEstimates = await CompanyReviewService.getSalaryEstimates(companyId);
-
-      res.status(200).json({
-        success: true,
-        message: "Salary estimates retrieved successfully",
-        data: salaryEstimates
-      });
+      ControllerHelper.sendSuccessResponse(res, "Salary estimates retrieved successfully", salaryEstimates);
     } catch (error) {
       next(error);
     }
@@ -200,14 +153,9 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const companyId = (req.params.companyId as string);
+      const companyId = ControllerHelper.getCompanyId(req);
       const companyRating = await CompanyReviewService.getCompanyRating(companyId);
-
-      res.status(200).json({
-        success: true,
-        message: "Company rating retrieved successfully",
-        data: companyRating
-      });
+      ControllerHelper.sendSuccessResponse(res, "Company rating retrieved successfully", companyRating);
     } catch (error) {
       next(error);
     }
@@ -220,15 +168,9 @@ export class CompanyReviewController {
     next: NextFunction
   ) {
     try {
-      const companyId = (req.params.companyId as string);
-
+      const companyId = ControllerHelper.getCompanyId(req);
       const reviewers = await CompanyReviewService.getCompanyReviewers(companyId);
-
-      res.status(200).json({
-        success: true,
-        message: "Company reviewers retrieved successfully",
-        data: reviewers
-      });
+      ControllerHelper.sendSuccessResponse(res, "Company reviewers retrieved successfully", reviewers);
     } catch (error) {
       next(error);
     }

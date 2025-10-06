@@ -8,5 +8,7 @@ export declare class CompanyReviewController {
     static updateReview(req: Request, res: Response, next: NextFunction): Promise<void>;
     static deleteReview(req: Request, res: Response, next: NextFunction): Promise<void>;
     static getSalaryEstimates(req: Request, res: Response, next: NextFunction): Promise<void>;
+    static getCompanyRating(req: Request, res: Response, next: NextFunction): Promise<void>;
+    static getCompanyReviewers(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 //# sourceMappingURL=companyReview.controller.d.ts.map

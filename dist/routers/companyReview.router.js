@@ -21,11 +21,15 @@ class CompanyReviewRouter {
         // Get user's own review for a company (authenticated users only)
         this.route.get("/companies/:companyId/reviews/my-review", verifyToken_1.verifyToken, companyReview_controller_1.CompanyReviewController.getUserReview);
         // Update user's review (authenticated users only)
-        this.route.put("/companies/:companyId/reviews/my-review", verifyToken_1.verifyToken, companyReview_validator_1.validateCreateReview, companyReview_controller_1.CompanyReviewController.updateReview);
+        this.route.patch("/companies/:companyId/reviews/my-review", verifyToken_1.verifyToken, companyReview_validator_1.validateCreateReview, companyReview_controller_1.CompanyReviewController.updateReview);
         // Delete user's review (authenticated users only)
         this.route.delete("/companies/:companyId/reviews/my-review", verifyToken_1.verifyToken, companyReview_controller_1.CompanyReviewController.deleteReview);
         // Get salary estimates by position for a company (public)
         this.route.get("/companies/:companyId/salary-estimates", companyReview_controller_1.CompanyReviewController.getSalaryEstimates);
+        // Get overall company rating (public)
+        this.route.get("/companies/:companyId/rating", companyReview_controller_1.CompanyReviewController.getCompanyRating);
+        // Get company reviewers list (authenticated users only - shows who reviewed)
+        this.route.get("/companies/:companyId/reviewers", verifyToken_1.verifyToken, companyReview_controller_1.CompanyReviewController.getCompanyReviewers);
     }
     getRouter() {
         return this.route;

@@ -56,10 +56,20 @@ export class SubscriptionRepo {
     startDate?: Date;
     expiresAt?: Date;
   }) {
-    return prisma.subscription.create({
-      data,
-      include: { plan: true },
-    });
+    try {
+      console.log("SubscriptionRepo.createSubscription called with data:", data);
+      
+      const result = await prisma.subscription.create({
+        data,
+        include: { plan: true },
+      });
+      
+      console.log("SubscriptionRepo.createSubscription result:", result);
+      return result;
+    } catch (error) {
+      console.error("Error in SubscriptionRepo.createSubscription:", error);
+      throw error;
+    }
   }
 
   public static async updateSubscription(

@@ -24,10 +24,10 @@ class GetCompanyController {
             next(err);
         }
     }
-    static async getCompanyById(req, res, next) {
+    static async getCompanyBySlug(req, res, next) {
         try {
-            const companyId = Number(req.params.companyId);
-            const company = await getCompany_service_1.GetCompanyService.getCompanyById(companyId);
+            const { slug } = req.params;
+            const company = await getCompany_service_1.GetCompanyService.getCompanyBySlug(slug);
             if (!company) {
                 return res.status(404).json({ message: "Company not found" });
             }

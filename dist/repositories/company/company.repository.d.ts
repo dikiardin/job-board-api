@@ -20,6 +20,7 @@ export declare class CompanyRepo {
     } | null>;
     static updateCompany(companyId: string | number, data: Partial<{
         name: string;
+        email: string;
         description: string;
         locationCity: string;
         locationProvince: string;

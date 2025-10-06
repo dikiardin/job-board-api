@@ -11,6 +11,7 @@ class GetJobService {
         ]);
         const formattedJobs = jobs.map((job) => ({
             id: job.id,
+            slug: job.slug,
             title: job.title,
             category: job.category,
             city: job.city,
@@ -25,8 +26,8 @@ class GetJobService {
         }));
         return { jobs: formattedJobs, total };
     }
-    static async getJobById(jobId) {
-        const job = await job_get_repository_1.GetJobRepository.findById(jobId);
+    static async getJobBySlug(slug) {
+        const job = await job_get_repository_1.GetJobRepository.findBySlug(slug);
         if (!job) {
             throw new customError_1.CustomError("Job not found", 404);
         }

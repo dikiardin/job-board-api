@@ -8,82 +8,86 @@ const joi_1 = __importDefault(require("joi"));
 const customError_1 = require("../../utils/customError");
 // Validation schema for creating/updating a review
 const createReviewSchema = joi_1.default.object({
-    position: joi_1.default.string()
+    positionTitle: joi_1.default.string()
         .min(2)
         .max(100)
         .required()
         .messages({
-        'string.empty': 'Position is required',
-        'string.min': 'Position must be at least 2 characters long',
-        'string.max': 'Position must not exceed 100 characters',
-        'any.required': 'Position is required'
+        'string.empty': 'Position title is required',
+        'string.min': 'Position title must be at least 2 characters long',
+        'string.max': 'Position title must not exceed 100 characters',
+        'any.required': 'Position title is required'
     }),
-    salaryEstimate: joi_1.default.number()
-        .integer()
-        .min(1000000) // Minimum 1 million IDR
+    salaryEstimateMin: joi_1.default.number()
+        .positive()
         .max(1000000000) // Maximum 1 billion IDR
         .optional()
         .allow(null)
         .messages({
-        'number.base': 'Salary estimate must be a number',
-        'number.integer': 'Salary estimate must be an integer',
-        'number.min': 'Salary estimate must be at least 1,000,000 IDR',
-        'number.max': 'Salary estimate must not exceed 1,000,000,000 IDR'
+        'number.base': 'Minimum salary estimate must be a number',
+        'number.positive': 'Minimum salary estimate must be positive',
+        'number.max': 'Minimum salary estimate must not exceed 1,000,000,000 IDR'
     }),
-    cultureRating: joi_1.default.number()
-        .integer()
-        .min(1)
+    salaryEstimateMax: joi_1.default.number()
+        .positive()
+        .max(1000000000) // Maximum 1 billion IDR
+        .optional()
+        .allow(null)
+        .messages({
+        'number.base': 'Maximum salary estimate must be a number',
+        'number.positive': 'Maximum salary estimate must be positive',
+        'number.max': 'Maximum salary estimate must not exceed 1,000,000,000 IDR'
+    }),
+    ratingCulture: joi_1.default.number()
+        .min(0.1)
         .max(5)
+        .precision(1)
         .required()
         .messages({
         'number.base': 'Culture rating must be a number',
-        'number.integer': 'Culture rating must be an integer',
-        'number.min': 'Culture rating must be at least 1',
+        'number.min': 'Culture rating must be at least 0.1',
         'number.max': 'Culture rating must not exceed 5',
         'any.required': 'Culture rating is required'
     }),
-    worklifeRating: joi_1.default.number()
-        .integer()
-        .min(1)
+    ratingWorkLife: joi_1.default.number()
+        .min(0.1)
         .max(5)
+        .precision(1)
         .required()
         .messages({
         'number.base': 'Work-life balance rating must be a number',
-        'number.integer': 'Work-life balance rating must be an integer',
-        'number.min': 'Work-life balance rating must be at least 1',
+        'number.min': 'Work-life balance rating must be at least 0.1',
         'number.max': 'Work-life balance rating must not exceed 5',
         'any.required': 'Work-life balance rating is required'
     }),
-    facilityRating: joi_1.default.number()
-        .integer()
-        .min(1)
+    ratingFacilities: joi_1.default.number()
+        .min(0.1)
         .max(5)
+        .precision(1)
         .required()
         .messages({
         'number.base': 'Facility rating must be a number',
-        'number.integer': 'Facility rating must be an integer',
-        'number.min': 'Facility rating must be at least 1',
+        'number.min': 'Facility rating must be at least 0.1',
         'number.max': 'Facility rating must not exceed 5',
         'any.required': 'Facility rating is required'
     }),
-    careerRating: joi_1.default.number()
-        .integer()
-        .min(1)
+    ratingCareer: joi_1.default.number()
+        .min(0.1)
         .max(5)
+        .precision(1)
         .required()
         .messages({
         'number.base': 'Career opportunity rating must be a number',
-        'number.integer': 'Career opportunity rating must be an integer',
-        'number.min': 'Career opportunity rating must be at least 1',
+        'number.min': 'Career opportunity rating must be at least 0.1',
         'number.max': 'Career opportunity rating must not exceed 5',
         'any.required': 'Career opportunity rating is required'
     }),
-    comment: joi_1.default.string()
+    body: joi_1.default.string()
         .max(1000)
         .optional()
         .allow('')
         .messages({
-        'string.max': 'Comment must not exceed 1000 characters'
+        'string.max': 'Review content must not exceed 1000 characters'
     })
 });
 // Validation schema for getting reviews (query parameters)
@@ -149,7 +153,8 @@ const validateGetReviews = (req, res, next) => {
         const errorMessages = error.details.map(detail => detail.message);
         throw new customError_1.CustomError(errorMessages.join(', '), 400);
     }
-    req.query = value;
+    // Update query parameters with validated values
+    Object.assign(req.query, value);
     next();
 };
 exports.validateGetReviews = validateGetReviews;

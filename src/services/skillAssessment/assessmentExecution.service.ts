@@ -193,23 +193,22 @@ export class AssessmentExecutionService {
 
   // Validate assessment exists and is active
   public static async validateAssessmentExists(assessmentId: number) {
-    const assessments = await SkillAssessmentModularRepository.getAllAssessments(1, 1000);
-    const assessment = assessments.assessments?.find((a: any) => a.id === assessmentId);
+    const assessment = await SkillAssessmentModularRepository.getAssessmentById(assessmentId);
     
     if (!assessment) {
       throw new CustomError("Assessment not found", 404);
     }
 
-    // Return assessment with mock questions for validation
-    return {
-      ...assessment,
-      questions: Array.from({ length: 25 }, (_, index) => ({
-        id: index + 1,
-        question: `Sample question ${index + 1}`,
-        answer: "Option A", // Mock answer for validation
-        options: ["Option A", "Option B", "Option C", "Option D"]
-      }))
-    };
+    console.log("=== ASSESSMENT DATA FOR SCORING ===");
+    console.log("Assessment ID:", assessment.id);
+    console.log("Questions count:", assessment.questions?.length || 0);
+    console.log("Questions data:", assessment.questions?.map(q => ({
+      id: q.id,
+      question: q.question?.substring(0, 50) + "...",
+      answer: q.answer
+    })));
+
+    return assessment;
   }
 
   // Get passing score threshold

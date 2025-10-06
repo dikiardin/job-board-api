@@ -11,6 +11,7 @@ export declare class GetJobRepository {
             name: string;
             logoUrl: string | null;
         };
+        slug: string;
         title: string;
         category: string;
         salaryMin: number | null;
@@ -21,10 +22,11 @@ export declare class GetJobRepository {
         keyword?: string;
         city?: string;
     }): Promise<number>;
-    static findById(jobId: string | number): Promise<({
+    static findBySlug(slug: string): Promise<({
         company: {
             name: string;
             id: number;
+            slug: string;
             logoUrl: string | null;
             locationCity: string | null;
         };

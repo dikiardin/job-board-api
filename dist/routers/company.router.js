@@ -13,7 +13,7 @@ class CompanyRouter {
     initializeRoutes() {
         this.route.get("/admin", verifyToken_1.verifyToken, this.companyController.getCompanyByAdmin);
         this.route.get("/all", getCompany_controller_1.GetCompanyController.getAllCompanies);
-        this.route.get("/:companyId", getCompany_controller_1.GetCompanyController.getCompanyById);
+        this.route.get("/:slug", getCompany_controller_1.GetCompanyController.getCompanyBySlug);
     }
     getRouter() {
         return this.route;

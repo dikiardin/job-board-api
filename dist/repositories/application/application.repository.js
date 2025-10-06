@@ -42,38 +42,41 @@ class ApplicationRepo {
             },
         });
     }
-    static async getApplicationsByUserId(userId) {
-        return prisma_1.prisma.application.findMany({
-            where: { userId },
-            include: {
-                job: {
-                    select: {
-                        id: true,
-                        slug: true,
-                        title: true,
-                        city: true,
-                        category: true,
-                        salaryMin: true,
-                        salaryMax: true,
-                        company: {
-                            select: {
-                                id: true,
-                                slug: true,
-                                name: true,
-                                logoUrl: true,
+    static async getApplicationsByUserId(userId, page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        const [applications, total] = await Promise.all([
+            prisma_1.prisma.application.findMany({
+                where: { userId },
+                include: {
+                    job: {
+                        select: {
+                            id: true,
+                            slug: true,
+                            title: true,
+                            city: true,
+                            category: true,
+                            salaryMin: true,
+                            salaryMax: true,
+                            company: {
+                                select: {
+                                    id: true,
+                                    slug: true,
+                                    name: true,
+                                    logoUrl: true,
+                                },
                             },
                         },
                     },
+                    timeline: { orderBy: { createdAt: "asc" } },
+                    interviews: { orderBy: { startsAt: "asc" } },
                 },
-                timeline: {
-                    orderBy: { createdAt: "asc" },
-                },
-                interviews: {
-                    orderBy: { startsAt: "asc" },
-                },
-            },
-            orderBy: { createdAt: "desc" },
-        });
+                orderBy: { createdAt: "desc" },
+                skip,
+                take: limit,
+            }),
+            prisma_1.prisma.application.count({ where: { userId } }),
+        ]);
+        return { applications, total };
     }
 }
 exports.ApplicationRepo = ApplicationRepo;

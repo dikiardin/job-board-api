@@ -5,6 +5,7 @@ import { PaymentController } from "../controllers/subscription/payment.controlle
 import { verifyToken } from "../middlewares/verifyToken";
 import { verifyRole } from "../middlewares/verifyRole";
 import { uploadSingle, uploadPaymentProofSingle } from "../middlewares/uploadImage";
+import { SubscriptionValidator } from "../middlewares/validator/subscription.validator";
 import { UserRole } from "../generated/prisma";
 
 class SubscriptionRouter {
@@ -86,6 +87,7 @@ class SubscriptionRouter {
     this.route.post(
       "/subscribe",
       verifyToken,
+      SubscriptionValidator.validateSubscribeRequest,
       this.subscriptionController.subscribe
     );
 

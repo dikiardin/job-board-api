@@ -13,7 +13,15 @@ export class AssessmentTakingController {
       const userId = ControllerHelper.getUserId(res);
       const assessmentId = ControllerHelper.parseId(req.params.assessmentId);
 
-      const assessment = await AssessmentSubmissionService.getAssessmentResult(userId, assessmentId);
+      // Check if assessment exists first
+      const assessmentExists = await AssessmentSubmissionService.checkAssessmentExists(assessmentId);
+      
+      if (!assessmentExists) {
+        throw new Error(`Assessment with ID ${assessmentId} not found`);
+      }
+      
+      // Get assessment for user (without answers)
+      const assessment = await AssessmentSubmissionService.getAssessmentForTaking(assessmentId);
 
       res.status(200).json({
         success: true,
@@ -21,6 +29,7 @@ export class AssessmentTakingController {
         data: assessment,
       });
     } catch (error) {
+      console.error("Error in getAssessmentForUser:", error);
       next(error);
     }
   }
@@ -56,8 +65,10 @@ export class AssessmentTakingController {
   ) {
     try {
       const userId = ControllerHelper.getUserId(res);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
 
-      const results = await AssessmentResultsService.getUserResults(userId);
+      const results = await AssessmentResultsService.getUserResults(userId, page, limit);
 
       res.status(200).json({
         success: true,

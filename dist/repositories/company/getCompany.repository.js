@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetCompanyRepository = void 0;
 const prisma_1 = require("../../config/prisma");
 class GetCompanyRepository {
-    static async getAllCompanies({ page, limit, keyword, city }) {
+    static async getAllCompanies({ page, limit, keyword, city, }) {
         const skip = (page - 1) * limit;
         const where = {};
         if (keyword) {
@@ -19,6 +19,7 @@ class GetCompanyRepository {
                 take: limit,
                 select: {
                     id: true,
+                    slug: true,
                     name: true,
                     description: true,
                     website: true,
@@ -40,12 +41,12 @@ class GetCompanyRepository {
         ]);
         return { data: companies, total };
     }
-    static async getCompanyById(companyId) {
-        const id = typeof companyId === 'string' ? Number(companyId) : companyId;
+    static async getCompanyBySlug(slug) {
         return prisma_1.prisma.company.findUnique({
-            where: { id },
+            where: { slug },
             select: {
                 id: true,
+                slug: true,
                 name: true,
                 phone: true,
                 email: true,
@@ -62,6 +63,7 @@ class GetCompanyRepository {
                     where: { isPublished: true },
                     select: {
                         id: true,
+                        slug: true,
                         title: true,
                         city: true,
                         category: true,
@@ -71,9 +73,7 @@ class GetCompanyRepository {
                         bannerUrl: true,
                         applyDeadline: true,
                     },
-                    orderBy: {
-                        createdAt: "desc",
-                    },
+                    orderBy: { createdAt: "desc" },
                 },
             },
         });

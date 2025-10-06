@@ -42,14 +42,28 @@ export class SubscriptionManagementService {
   }
 
   public static async createSubscription(userId: number, planId: number) {
-    const placeholderDate = DateHelper.getPlaceholderDate();
+    try {
+      const placeholderDate = DateHelper.getPlaceholderDate();
+      console.log("Creating subscription with data:", {
+        userId,
+        planId,
+        startDate: placeholderDate,
+        expiresAt: placeholderDate,
+      });
 
-    return await SubscriptionRepo.createSubscription({
-      userId,
-      planId: planId,
-      startDate: placeholderDate,
-      expiresAt: placeholderDate,
-    });
+      const result = await SubscriptionRepo.createSubscription({
+        userId,
+        planId: planId,
+        startDate: placeholderDate,
+        expiresAt: placeholderDate,
+      });
+      
+      console.log("Subscription creation result:", result);
+      return result;
+    } catch (error) {
+      console.error("Error in createSubscription:", error);
+      throw error;
+    }
   }
 
   public static async updateSubscription(

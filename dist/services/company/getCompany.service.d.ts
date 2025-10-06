@@ -14,6 +14,7 @@ export declare class GetCompanyService {
             _count: {
                 jobs: number;
             };
+            slug: string;
             description: string | null;
             logoUrl: string | null;
             bannerUrl: string | null;
@@ -23,7 +24,7 @@ export declare class GetCompanyService {
         }[];
         total: number;
     }>;
-    static getCompanyById(companyId: string | number): Promise<{
+    static getCompanyBySlug(slug: string): Promise<{
         email: string;
         name: string;
         phone: string | null;
@@ -31,6 +32,7 @@ export declare class GetCompanyService {
         createdAt: Date;
         updatedAt: Date;
         id: number;
+        slug: string;
         description: string | null;
         logoUrl: string | null;
         bannerUrl: string | null;
@@ -40,6 +42,7 @@ export declare class GetCompanyService {
         jobs: {
             city: string;
             id: number;
+            slug: string;
             bannerUrl: string | null;
             title: string;
             category: string;

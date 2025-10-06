@@ -1,4 +1,5 @@
 import { SkillAssessmentModularRepository } from "../../repositories/skillAssessment/skillAssessmentModular.repository";
+import { SkillAssessmentResultsRepository } from "../../repositories/skillAssessment/skillAssessmentResults.repository";
 import { CustomError } from "../../utils/customError";
 
 export class AssessmentResultsService {
@@ -6,19 +7,14 @@ export class AssessmentResultsService {
 
   // Get user's assessment results
   public static async getUserResults(userId: number, page: number = 1, limit: number = 10) {
-    // Calculate offset
-    const offset = (page - 1) * limit;
-    
-    // Mock implementation - would typically call repository
-    return {
-      results: [],
-      pagination: {
-        page,
-        limit,
-        total: 0,
-        totalPages: 0,
-      },
-    };
+    try {
+      // Repository already handles pagination
+      const result = await SkillAssessmentResultsRepository.getUserResults(userId, page, limit);
+      return result;
+    } catch (error) {
+      console.error("Error getting user results:", error);
+      throw new CustomError("Failed to retrieve assessment results", 500);
+    }
   }
 
   // Get specific assessment result

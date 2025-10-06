@@ -7,16 +7,15 @@ class ApplicationController {
     static async applyJob(req, res, next) {
         try {
             const userId = res.locals.decrypt.userId;
-            const jobIdParam = req.params.jobId;
-            if (!jobIdParam) {
-                throw new customError_1.CustomError("Job ID is required", 400);
+            const jobSlug = req.params.jobSlug;
+            if (!jobSlug) {
+                throw new customError_1.CustomError("Job slug is required", 400);
             }
-            const jobId = jobIdParam;
             const { expectedSalary } = req.body;
             if (!req.file) {
                 throw new customError_1.CustomError("CV file is required", 400);
             }
-            const application = await application_service_1.ApplicationService.submitApplication(userId, jobId, req.file, expectedSalary ? parseInt(expectedSalary) : undefined);
+            const application = await application_service_1.ApplicationService.submitApplicationBySlug(userId, jobSlug, req.file, expectedSalary ? parseInt(expectedSalary) : undefined);
             res.status(201).json({
                 message: "Application submitted successfully",
                 application,
@@ -32,10 +31,18 @@ class ApplicationController {
             if (isNaN(userId)) {
                 return res.status(400).json({ message: "Invalid user id" });
             }
-            const applications = await application_service_1.ApplicationService.getApplicationsByUserId(userId);
+            const page = parseInt(req.query.page || "1", 10);
+            const limit = parseInt(req.query.limit || "10", 10);
+            const { applications, total } = await application_service_1.ApplicationService.getApplicationsByUserId(userId, page, limit);
             res.status(200).json({
                 message: "Applications fetched successfully",
                 data: applications,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages: Math.ceil(total / limit),
+                },
             });
         }
         catch (err) {

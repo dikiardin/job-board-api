@@ -2,7 +2,7 @@ export class ScoringCalculationService {
   private static readonly PASSING_SCORE = 75;
 
   public static calculateScore(
-    questions: Array<{ answer: string }>,
+    questions: Array<{ id: number; answer: string }>,
     userAnswers: Array<{ questionId: number; answer: string }>
   ) {
     if (!questions || !userAnswers || questions.length === 0) {
@@ -17,16 +17,15 @@ export class ScoringCalculationService {
   }
 
   private static countCorrectAnswers(
-    questions: Array<{ answer: string }>,
+    questions: Array<{ id: number; answer: string }>,
     userAnswers: Array<{ questionId: number; answer: string }>
   ): number {
     const answerMap = new Map();
     userAnswers.forEach(ua => answerMap.set(ua.questionId, ua.answer));
 
     let correctAnswers = 0;
-    questions.forEach((question, index) => {
-      const questionId = index + 1;
-      const userAnswer = answerMap.get(questionId);
+    questions.forEach((question) => {
+      const userAnswer = answerMap.get(question.id);
       
       if (userAnswer && userAnswer.trim().toLowerCase() === question.answer.trim().toLowerCase()) {
         correctAnswers++;

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BadgeTemplateManagementController = void 0;
 const badgeTemplate_repository_1 = require("../../repositories/skillAssessment/badgeTemplate.repository");
+const BadgeTemplateHelper_1 = require("./helpers/BadgeTemplateHelper");
 const customError_1 = require("../../utils/customError");
 const prisma_1 = require("../../generated/prisma");
 const cloudinary_1 = require("../../config/cloudinary");
@@ -10,23 +11,9 @@ class BadgeTemplateManagementController {
     static async updateBadgeTemplate(req, res, next) {
         try {
             const { userId, role } = res.locals.decrypt;
-            const templateId = parseInt(req.params.id || '0');
-            // Handle potential key spacing issues in form-data
-            const bodyKeys = Object.keys(req.body);
-            const nameKey = bodyKeys.find(key => key.trim() === 'name') || 'name';
-            const descKey = bodyKeys.find(key => key.trim() === 'description') || 'description';
-            const catKey = bodyKeys.find(key => key.trim() === 'category') || 'category';
-            const name = req.body[nameKey];
-            const description = req.body[descKey];
-            const category = req.body[catKey];
-            const iconFile = req.file;
-            console.log('Extracted values:', { templateId, name, description, category, hasFile: !!iconFile });
-            if (role !== prisma_1.UserRole.DEVELOPER) {
-                throw new customError_1.CustomError("Only developers can update badge templates", 403);
-            }
-            if (isNaN(templateId) || templateId <= 0) {
-                throw new customError_1.CustomError("Invalid template ID", 400);
-            }
+            BadgeTemplateHelper_1.BadgeTemplateHelper.validateDeveloperRole(role);
+            const templateId = BadgeTemplateHelper_1.BadgeTemplateHelper.validateTemplateId(req.params.id || '0');
+            const { name, description, category, iconFile } = BadgeTemplateHelper_1.BadgeTemplateHelper.extractFormData(req);
             // Check if new name already exists (excluding current template)
             if (name) {
                 const existingTemplate = await badgeTemplate_repository_1.BadgeTemplateRepository.findByNameExcluding(name, templateId);
@@ -45,31 +32,11 @@ class BadgeTemplateManagementController {
             let iconUrl = currentTemplate.icon;
             // Handle icon update if new file provided
             if (iconFile) {
-                // Validate file type
-                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-                if (!allowedTypes.includes(iconFile.mimetype)) {
-                    throw new customError_1.CustomError("Only image files (JPEG, PNG, GIF, WebP) are allowed for badge icons", 400);
-                }
-                // Validate file size (max 1MB)
-                const maxSize = 1 * 1024 * 1024; // 1MB in bytes
-                if (iconFile.size > maxSize) {
-                    throw new customError_1.CustomError("Badge icon file size must be less than 1MB", 400);
-                }
-                // Upload new icon to Cloudinary
+                BadgeTemplateHelper_1.BadgeTemplateHelper.validateImageFile(iconFile);
                 const uploadResult = await (0, cloudinary_1.cloudinaryUpload)(iconFile);
                 iconUrl = uploadResult.secure_url;
             }
-            // Prepare update data
-            const updateData = {};
-            if (name !== undefined)
-                updateData.name = name;
-            if (description !== undefined)
-                updateData.description = description;
-            if (category !== undefined)
-                updateData.category = category;
-            if (iconUrl !== currentTemplate.icon)
-                updateData.iconUrl = iconUrl;
-            console.log('Update data:', updateData);
+            const updateData = BadgeTemplateHelper_1.BadgeTemplateHelper.buildUpdateData(name, description, category, iconUrl || undefined);
             // Update badge template
             const result = await badgeTemplate_repository_1.BadgeTemplateRepository.updateBadgeTemplate(templateId, userId, updateData);
             if (!result) {

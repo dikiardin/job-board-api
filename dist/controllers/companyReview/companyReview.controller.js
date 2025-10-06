@@ -2,27 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CompanyReviewController = void 0;
 const companyReview_service_1 = require("../../services/companyReview/companyReview.service");
+const ControllerHelper_1 = require("./helpers/ControllerHelper");
 class CompanyReviewController {
     // Get all reviews for a company (public)
     static async getCompanyReviews(req, res, next) {
         try {
-            const companyId = req.params.companyId;
-            const page = parseInt(req.query.page || '1');
-            const limit = parseInt(req.query.limit || '10');
-            const sortBy = req.query.sortBy || 'createdAt';
-            const sortOrder = req.query.sortOrder || 'desc';
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
+            const paginationParams = ControllerHelper_1.ControllerHelper.getPaginationParams(req);
             const result = await companyReview_service_1.CompanyReviewService.getCompanyReviews({
                 companyId,
-                page,
-                limit,
-                sortBy,
-                sortOrder
+                ...paginationParams
             });
-            res.status(200).json({
-                success: true,
-                message: "Company reviews retrieved successfully",
-                data: result
-            });
+            ControllerHelper_1.ControllerHelper.sendSuccessResponse(res, "Company reviews retrieved successfully", result);
         }
         catch (error) {
             next(error);
@@ -31,13 +22,9 @@ class CompanyReviewController {
     // Get company review statistics (public)
     static async getCompanyReviewStats(req, res, next) {
         try {
-            const companyId = req.params.companyId;
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
             const stats = await companyReview_service_1.CompanyReviewService.getCompanyReviewStats(companyId);
-            res.status(200).json({
-                success: true,
-                message: "Company review statistics retrieved successfully",
-                data: stats
-            });
+            ControllerHelper_1.ControllerHelper.sendSuccessResponse(res, "Company review statistics retrieved successfully", stats);
         }
         catch (error) {
             next(error);
@@ -46,19 +33,15 @@ class CompanyReviewController {
     // Create a new review (authenticated)
     static async createReview(req, res, next) {
         try {
-            const userId = res.locals.decrypt.userId;
-            const companyId = req.params.companyId;
+            const userId = ControllerHelper_1.ControllerHelper.getUserId(res);
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
             const reviewData = req.body;
             const review = await companyReview_service_1.CompanyReviewService.createReview({
                 userId,
                 companyId,
                 ...reviewData
             });
-            res.status(201).json({
-                success: true,
-                message: "Review created successfully",
-                data: review
-            });
+            ControllerHelper_1.ControllerHelper.sendSuccessResponse(res, "Review created successfully", review, 201);
         }
         catch (error) {
             next(error);
@@ -67,14 +50,10 @@ class CompanyReviewController {
     // Check if user can review company (authenticated)
     static async checkReviewEligibility(req, res, next) {
         try {
-            const userId = res.locals.decrypt.userId;
-            const companyId = req.params.companyId;
+            const userId = ControllerHelper_1.ControllerHelper.getUserId(res);
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
             const eligibility = await companyReview_service_1.CompanyReviewService.checkReviewEligibility(userId, companyId);
-            res.status(200).json({
-                success: true,
-                message: "Review eligibility checked successfully",
-                data: eligibility
-            });
+            ControllerHelper_1.ControllerHelper.sendSuccessResponse(res, "Review eligibility checked successfully", eligibility);
         }
         catch (error) {
             next(error);
@@ -83,14 +62,10 @@ class CompanyReviewController {
     // Get user's own review for a company (authenticated)
     static async getUserReview(req, res, next) {
         try {
-            const userId = res.locals.decrypt.userId;
-            const companyId = req.params.companyId;
+            const userId = ControllerHelper_1.ControllerHelper.getUserId(res);
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
             const review = await companyReview_service_1.CompanyReviewService.getUserReview(userId, companyId);
-            res.status(200).json({
-                success: true,
-                message: "User review retrieved successfully",
-                data: review
-            });
+            ControllerHelper_1.ControllerHelper.sendSuccessResponse(res, "User review retrieved successfully", review);
         }
         catch (error) {
             next(error);
@@ -99,19 +74,15 @@ class CompanyReviewController {
     // Update user's review (authenticated)
     static async updateReview(req, res, next) {
         try {
-            const userId = res.locals.decrypt.userId;
-            const companyId = req.params.companyId;
+            const userId = ControllerHelper_1.ControllerHelper.getUserId(res);
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
             const reviewData = req.body;
             const review = await companyReview_service_1.CompanyReviewService.updateReview({
                 userId,
                 companyId,
                 ...reviewData
             });
-            res.status(200).json({
-                success: true,
-                message: "Review updated successfully",
-                data: review
-            });
+            ControllerHelper_1.ControllerHelper.sendSuccessResponse(res, "Review updated successfully", review);
         }
         catch (error) {
             next(error);
@@ -120,13 +91,10 @@ class CompanyReviewController {
     // Delete user's review (authenticated)
     static async deleteReview(req, res, next) {
         try {
-            const userId = res.locals.decrypt.userId;
-            const companyId = req.params.companyId;
+            const userId = ControllerHelper_1.ControllerHelper.getUserId(res);
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
             await companyReview_service_1.CompanyReviewService.deleteReview(userId, companyId);
-            res.status(200).json({
-                success: true,
-                message: "Review deleted successfully"
-            });
+            ControllerHelper_1.ControllerHelper.sendDeleteResponse(res, "Review deleted successfully");
         }
         catch (error) {
             next(error);
@@ -135,13 +103,31 @@ class CompanyReviewController {
     // Get salary estimates by position for a company (public)
     static async getSalaryEstimates(req, res, next) {
         try {
-            const companyId = req.params.companyId;
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
             const salaryEstimates = await companyReview_service_1.CompanyReviewService.getSalaryEstimates(companyId);
-            res.status(200).json({
-                success: true,
-                message: "Salary estimates retrieved successfully",
-                data: salaryEstimates
-            });
+            ControllerHelper_1.ControllerHelper.sendSuccessResponse(res, "Salary estimates retrieved successfully", salaryEstimates);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    // Get overall company rating
+    static async getCompanyRating(req, res, next) {
+        try {
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
+            const companyRating = await companyReview_service_1.CompanyReviewService.getCompanyRating(companyId);
+            ControllerHelper_1.ControllerHelper.sendSuccessResponse(res, "Company rating retrieved successfully", companyRating);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    // Get company reviewers (authenticated users only - shows who reviewed)
+    static async getCompanyReviewers(req, res, next) {
+        try {
+            const companyId = ControllerHelper_1.ControllerHelper.getCompanyId(req);
+            const reviewers = await companyReview_service_1.CompanyReviewService.getCompanyReviewers(companyId);
+            ControllerHelper_1.ControllerHelper.sendSuccessResponse(res, "Company reviewers retrieved successfully", reviewers);
         }
         catch (error) {
             next(error);

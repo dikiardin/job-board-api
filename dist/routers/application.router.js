@@ -12,7 +12,7 @@ class ApplicationRouter {
         this.initializeRoutes();
     }
     initializeRoutes() {
-        this.route.post("/:jobId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), (0, uploadFile_1.uploadSingleFile)("cvFile"), application_controller_1.ApplicationController.applyJob);
+        this.route.post("/:jobSlug", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), (0, uploadFile_1.uploadSingleFile)("cvFile"), application_controller_1.ApplicationController.applyJob);
         this.route.get("/user/:userId", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), application_controller_1.ApplicationController.getApplicationsByUserId);
     }
     getRouter() {
