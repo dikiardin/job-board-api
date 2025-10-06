@@ -23,13 +23,21 @@ class SavedJobController {
     static async getSavedJobsByUser(req, res, next) {
         try {
             const { userId } = req.params;
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 9;
             if (!userId) {
                 return res.status(400).json({ message: "User ID is required" });
             }
-            const jobs = await saveJob_service_1.SavedJobService.getSavedJobsByUser(parseInt(userId, 10));
+            const { jobs, total } = await saveJob_service_1.SavedJobService.getSavedJobsByUser(parseInt(userId, 10), page, limit);
             res.status(200).json({
                 message: "Saved jobs fetched successfully",
                 data: jobs,
+                pagination: {
+                    total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(total / limit),
+                },
             });
         }
         catch (err) {

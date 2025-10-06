@@ -173,6 +173,13 @@ export declare class JobRepository {
         isPublished: boolean;
         publishedAt: Date | null;
     }) | null>;
+    static getJobBySlug(jobSlug: string): Promise<{
+        id: number;
+        companyId: number;
+        title: string;
+        applyDeadline: Date | null;
+        isPublished: boolean;
+    } | null>;
     static togglePublish(jobId: string | number, isPublished: boolean): Promise<{
         city: string;
         createdAt: Date;

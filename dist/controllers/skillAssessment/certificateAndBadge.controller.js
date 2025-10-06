@@ -50,7 +50,8 @@ class CertificateAndBadgeController {
             if (!code) {
                 throw new customError_1.CustomError("Certificate code is required", 400);
             }
-            const result = await certificateVerification_service_1.CertificateVerificationService.downloadCertificate(code, userId);
+            const resultId = parseInt(code || '0');
+            const result = await certificateVerification_service_1.CertificateVerificationService.downloadCertificate(userId, resultId);
             res.status(200).json({
                 success: true,
                 message: "Certificate downloaded successfully",

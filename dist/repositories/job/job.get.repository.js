@@ -28,6 +28,7 @@ class GetJobRepository {
             },
             select: {
                 id: true,
+                slug: true,
                 title: true,
                 category: true,
                 city: true,
@@ -65,14 +66,14 @@ class GetJobRepository {
             },
         });
     }
-    static async findById(jobId) {
-        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    static async findBySlug(slug) {
         return prisma_1.prisma.job.findUnique({
-            where: { id: jid },
+            where: { slug },
             include: {
                 company: {
                     select: {
                         id: true,
+                        slug: true,
                         name: true,
                         logoUrl: true,
                         locationCity: true,

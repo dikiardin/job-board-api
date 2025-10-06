@@ -7,6 +7,7 @@ export declare class GetJobService {
     }): Promise<{
         jobs: {
             id: number;
+            slug: string;
             title: string;
             category: string;
             city: string;
@@ -17,10 +18,11 @@ export declare class GetJobService {
         }[];
         total: number;
     }>;
-    static getJobById(jobId: string): Promise<{
+    static getJobBySlug(slug: string): Promise<{
         company: {
             name: string;
             id: number;
+            slug: string;
             logoUrl: string | null;
             locationCity: string | null;
         };

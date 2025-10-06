@@ -7,13 +7,14 @@ const customError_1 = require("../../utils/customError");
 const preselection_repository_1 = require("../../repositories/preselection/preselection.repository");
 const job_repository_1 = require("../../repositories/job/job.repository");
 class ApplicationService {
-    static async submitApplication(userId, jobId, file, expectedSalary) {
+    static async submitApplicationBySlug(userId, jobSlug, file, expectedSalary) {
         if (!file)
             throw new customError_1.CustomError("CV file is required", 400);
-        const job = await job_repository_1.JobRepository.getJobPublic(jobId);
+        const job = await job_repository_1.JobRepository.getJobBySlug(jobSlug);
         if (!job) {
             throw new customError_1.CustomError("This job is not open for applications", 400);
         }
+        const jobId = job.id;
         const existing = await application_repository_1.ApplicationRepo.findExisting(userId, jobId);
         if (existing) {
             throw new customError_1.CustomError("You already applied for this job", 400);
@@ -34,15 +35,16 @@ class ApplicationService {
             userId,
             jobId,
             cvUrl: uploadResult.secure_url,
-            // for tests expecting cvFile field
-            ...(uploadResult?.secure_url ? { cvFile: uploadResult.secure_url } : {}),
+            ...(uploadResult?.secure_url
+                ? { cvFile: uploadResult.secure_url }
+                : {}),
             cvFileName: file.originalname,
             cvFileSize: file.size,
             ...(expectedSalary !== undefined ? { expectedSalary } : {}),
         });
     }
-    static async getApplicationsByUserId(userId) {
-        return application_repository_1.ApplicationRepo.getApplicationsByUserId(userId);
+    static async getApplicationsByUserId(userId, page = 1, limit = 10) {
+        return application_repository_1.ApplicationRepo.getApplicationsByUserId(userId, page, limit);
     }
 }
 exports.ApplicationService = ApplicationService;

@@ -14,6 +14,7 @@ class CompanyRepo {
             where: { id },
             data: {
                 ...(data.name !== undefined && { name: data.name }),
+                ...(data.email !== undefined && { email: data.email }),
                 ...(data.description !== undefined && { description: data.description }),
                 ...(data.locationCity !== undefined && { locationCity: data.locationCity }),
                 ...(data.locationProvince !== undefined && { locationProvince: data.locationProvince }),

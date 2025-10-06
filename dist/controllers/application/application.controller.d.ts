@@ -3,6 +3,9 @@ export declare class ApplicationController {
     static applyJob(req: Request, res: Response, next: NextFunction): Promise<void>;
     static getApplicationsByUserId(req: Request<{
         userId: string;
+    }, any, any, {
+        page?: string;
+        limit?: string;
     }>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
 }
 //# sourceMappingURL=application.controller.d.ts.map

@@ -3,14 +3,28 @@ import { DateHelper } from "../../utils/dateHelper";
 
 export class PaymentManagementService {
   public static async createPaymentRecord(subscriptionId: number, planPrice: number) {
-    const expiredAt = DateHelper.getPaymentExpiration();
-    
-    return await PaymentRepo.createPayment({
-      subscriptionId,
-      paymentMethod: "TRANSFER",
-      amount: Number(planPrice),
-      expiredAt,
-    });
+    try {
+      const expiredAt = DateHelper.getPaymentExpiration();
+      console.log("Creating payment record with data:", {
+        subscriptionId,
+        paymentMethod: "TRANSFER",
+        amount: Number(planPrice),
+        expiresAt: expiredAt,
+      });
+      
+      const result = await PaymentRepo.createPayment({
+        subscriptionId,
+        paymentMethod: "TRANSFER",
+        amount: Number(planPrice),
+        expiresAt: expiredAt,
+      });
+      
+      console.log("Payment creation result:", result);
+      return result;
+    } catch (error) {
+      console.error("Error in createPaymentRecord:", error);
+      throw error;
+    }
   }
 
   public static async getPendingPayments() {

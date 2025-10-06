@@ -1,164 +1,58 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CertificateBadgeController = void 0;
-const certificateVerification_service_1 = require("../../services/skillAssessment/certificateVerification.service");
+const CertificateController_1 = require("./CertificateController");
+const BadgeController_1 = require("./BadgeController");
 const badgeCore_service_1 = require("../../services/skillAssessment/badgeCore.service");
-const badgeVerification_service_1 = require("../../services/skillAssessment/badgeVerification.service");
-const badgeProgress_service_1 = require("../../services/skillAssessment/badgeProgress.service");
+const CertificateHelper_1 = require("./helpers/CertificateHelper");
 const customError_1 = require("../../utils/customError");
 class CertificateBadgeController {
     // ===== CERTIFICATE MANAGEMENT =====
     // Verify certificate by code
     static async verifyCertificate(req, res, next) {
-        try {
-            const { code } = req.params;
-            if (!code) {
-                throw new customError_1.CustomError("Certificate code is required", 400);
-            }
-            const result = await certificateVerification_service_1.CertificateVerificationService.verifyCertificate(code);
-            res.status(200).json({
-                success: true,
-                message: "Certificate verification completed",
-                data: result,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
+        return await CertificateController_1.CertificateController.verifyCertificate(req, res, next);
     }
     // Download certificate PDF
     static async downloadCertificate(req, res, next) {
-        try {
-            const { code } = req.params;
-            const userId = res.locals.decrypt?.userId; // Optional for public access
-            if (!code) {
-                throw new customError_1.CustomError("Certificate code is required", 400);
-            }
-            const result = await certificateVerification_service_1.CertificateVerificationService.downloadCertificate(code, userId);
-            // Mock PDF buffer
-            const mockBuffer = Buffer.from('Mock PDF content');
-            // Set headers for PDF download
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', `attachment; filename="certificate-${code}.pdf"`);
-            res.setHeader('Content-Length', mockBuffer.length);
-            res.send(mockBuffer);
-        }
-        catch (error) {
-            next(error);
-        }
+        return await CertificateController_1.CertificateController.downloadCertificate(req, res, next);
     }
-    // Get user's certificates
+    // Get user certificates
     static async getUserCertificates(req, res, next) {
-        try {
-            const { userId } = res.locals.decrypt;
-            const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 10;
-            const result = await certificateVerification_service_1.CertificateVerificationService.getUserCertificates(userId, page, limit);
-            res.status(200).json({
-                success: true,
-                message: "User certificates retrieved successfully",
-                data: result,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
+        return await CertificateController_1.CertificateController.getUserCertificates(req, res, next);
     }
-    // Share certificate to social media
-    static async shareCertificate(req, res, next) {
+    // ===== BADGE MANAGEMENT =====
+    // Get user badges
+    static async getUserBadges(req, res, next) {
+        return await BadgeController_1.BadgeController.getUserBadges(req, res, next);
+    }
+    // Get badge by ID
+    static async getBadgeById(req, res, next) {
+        return await BadgeController_1.BadgeController.getBadgeById(req, res, next);
+    }
+    // Verify badge
+    static async verifyBadge(req, res, next) {
+        return await BadgeController_1.BadgeController.verifyBadge(req, res, next);
+    }
+    // Get badge progress
+    static async getBadgeProgress(req, res, next) {
+        return await BadgeController_1.BadgeController.getBadgeProgress(req, res, next);
+    }
+    // Share badge to social media
+    static async shareBadge(req, res, next) {
         try {
             const { userId } = res.locals.decrypt;
-            const { code } = req.params;
+            const badgeId = parseInt(req.params.badgeId || '0');
             const { platform } = req.body;
-            if (!code) {
-                throw new customError_1.CustomError("Certificate code is required", 400);
+            CertificateHelper_1.CertificateHelper.validateUserId(userId);
+            if (isNaN(badgeId) || badgeId <= 0) {
+                throw new customError_1.CustomError("Valid badge ID is required", 400);
             }
             if (!platform) {
                 throw new customError_1.CustomError("Social media platform is required", 400);
             }
-            const result = await certificateVerification_service_1.CertificateVerificationService.shareCertificate(code, platform, userId);
-            res.status(200).json({
-                success: true,
-                message: "Certificate share link generated",
-                data: result,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
-    }
-    // Get certificate analytics (Developer only)
-    static async getCertificateAnalytics(req, res, next) {
-        try {
-            const { role } = res.locals.decrypt;
-            const result = await certificateVerification_service_1.CertificateVerificationService.getCertificateAnalytics(role);
-            res.status(200).json({
-                success: true,
-                message: "Certificate analytics retrieved successfully",
-                data: result,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
-    }
-    // ===== BADGE MANAGEMENT =====
-    // Get user's badges
-    static async getUserBadges(req, res, next) {
-        try {
-            const { userId } = res.locals.decrypt;
-            const result = await badgeCore_service_1.BadgeCoreService.getUserBadges(userId);
-            res.status(200).json({
-                success: true,
-                message: "User badges retrieved successfully",
-                data: result,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
-    }
-    // Get badge details
-    static async getBadgeDetails(req, res, next) {
-        try {
-            const badgeId = parseInt(req.params.badgeId || '0');
-            const result = await badgeCore_service_1.BadgeCoreService.getBadgeDetails(badgeId);
-            res.status(200).json({
-                success: true,
-                message: "Badge details retrieved successfully",
-                data: result,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
-    }
-    // Verify badge
-    static async verifyBadge(req, res, next) {
-        try {
-            const badgeId = parseInt(req.params.badgeId || '0');
-            const { userId } = res.locals.decrypt;
-            const result = await badgeVerification_service_1.BadgeVerificationService.verifyBadge(badgeId, userId);
-            res.status(200).json({
-                success: true,
-                message: "Badge verification completed",
-                data: result,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
-    }
-    // Get badge analytics (Developer only)
-    static async getBadgeAnalytics(req, res, next) {
-        try {
-            const { role } = res.locals.decrypt;
-            const result = await badgeProgress_service_1.BadgeProgressService.getBadgeAnalytics(role);
-            res.status(200).json({
-                success: true,
-                message: "Badge analytics retrieved successfully",
-                data: result,
-            });
+            // Mock implementation for badge sharing
+            const shareUrl = `${process.env.FRONTEND_URL}/badges/${badgeId}?shared=true`;
+            res.status(200).json(CertificateHelper_1.CertificateHelper.buildSuccessResponse("Badge share URL generated successfully", { shareUrl }));
         }
         catch (error) {
             next(error);
@@ -167,49 +61,53 @@ class CertificateBadgeController {
     // Get badge leaderboard
     static async getBadgeLeaderboard(req, res, next) {
         try {
-            const badgeTemplateId = parseInt(req.params.badgeTemplateId || '0');
+            const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
-            const result = await badgeProgress_service_1.BadgeProgressService.getBadgeLeaderboard(badgeTemplateId, limit);
-            res.status(200).json({
-                success: true,
-                message: "Badge leaderboard retrieved successfully",
-                data: result,
-            });
+            const category = req.query.category;
+            // Mock implementation for badge leaderboard
+            const leaderboard = { users: [], pagination: { page, limit, total: 0 } };
+            res.status(200).json(CertificateHelper_1.CertificateHelper.buildSuccessResponse("Badge leaderboard retrieved successfully", leaderboard));
         }
         catch (error) {
             next(error);
         }
     }
-    // Get user's badge progress
-    static async getUserBadgeProgress(req, res, next) {
+    // Get badge statistics
+    static async getBadgeStats(req, res, next) {
         try {
             const { userId } = res.locals.decrypt;
-            const result = await badgeProgress_service_1.BadgeProgressService.getUserBadgeProgress(userId);
-            res.status(200).json({
-                success: true,
-                message: "User badge progress retrieved successfully",
-                data: result,
-            });
+            CertificateHelper_1.CertificateHelper.validateUserId(userId);
+            const stats = await badgeCore_service_1.BadgeCoreService.getUserBadgeStats(userId);
+            res.status(200).json(CertificateHelper_1.CertificateHelper.buildSuccessResponse("Badge statistics retrieved successfully", stats));
         }
         catch (error) {
             next(error);
         }
     }
-    // Share badge to social media
-    static async shareBadge(req, res, next) {
+    // Get all available badges
+    static async getAllBadges(req, res, next) {
         try {
-            const { userId } = res.locals.decrypt;
-            const badgeId = parseInt(req.params.badgeId || '0');
-            const { platform } = req.body;
-            if (!platform) {
-                throw new customError_1.CustomError("Social media platform is required", 400);
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const category = req.query.category;
+            // Mock implementation for all badges
+            const badges = { badges: [], pagination: { page, limit, total: 0 } };
+            res.status(200).json(CertificateHelper_1.CertificateHelper.buildSuccessResponse("All badges retrieved successfully", badges));
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    // Award badge to user (Internal use)
+    static async awardBadge(req, res, next) {
+        try {
+            const { userId, badgeTemplateId, assessmentResultId } = req.body;
+            CertificateHelper_1.CertificateHelper.validateUserId(userId);
+            if (!badgeTemplateId || badgeTemplateId <= 0) {
+                throw new customError_1.CustomError("Valid badge template ID is required", 400);
             }
-            const result = await badgeVerification_service_1.BadgeVerificationService.shareBadge(badgeId, platform, userId);
-            res.status(200).json({
-                success: true,
-                message: "Badge share link generated",
-                data: result,
-            });
+            const badge = await badgeCore_service_1.BadgeCoreService.awardBadge(userId);
+            res.status(201).json(CertificateHelper_1.CertificateHelper.buildSuccessResponse("Badge awarded successfully", badge));
         }
         catch (error) {
             next(error);

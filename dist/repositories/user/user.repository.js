@@ -38,6 +38,14 @@ class UserRepo {
             data: { passwordHash },
         });
     }
+    static async findWithCompany(userId) {
+        return prisma_1.prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                ownedCompany: true,
+            },
+        });
+    }
 }
 exports.UserRepo = UserRepo;
 //# sourceMappingURL=user.repository.js.map

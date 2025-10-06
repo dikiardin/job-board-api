@@ -69,13 +69,20 @@ export class SubscriptionController {
 
       ControllerHelper.validateRequired({ planId }, "Plan ID is required");
       
+      // Ensure planId is integer
+      const parsedPlanId = typeof planId === 'string' ? parseInt(planId) : planId;
+      if (isNaN(parsedPlanId)) {
+        throw new Error("Invalid plan ID format");
+      }
+      
       const result = await SubscriptionService.subscribeUser(
         userId,
-        parseInt(planId)
+        parsedPlanId
       );
 
       res.status(201).json(result);
     } catch (error) {
+      console.error("Subscription error:", error);
       next(error);
     }
   }

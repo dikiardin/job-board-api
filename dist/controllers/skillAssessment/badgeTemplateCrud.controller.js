@@ -9,11 +9,6 @@ class BadgeTemplateCrudController {
     // Create badge template (Developer only)
     static async createBadgeTemplate(req, res, next) {
         try {
-            // Debug logging
-            console.log('=== CREATE BADGE TEMPLATE DEBUG ===');
-            console.log('Request body:', req.body);
-            console.log('Request file:', req.file);
-            console.log('Headers:', req.headers);
             const { userId, role } = res.locals.decrypt;
             // Handle potential key spacing issues in form-data
             const bodyKeys = Object.keys(req.body);
@@ -50,7 +45,6 @@ class BadgeTemplateCrudController {
             }
             // Upload icon to Cloudinary
             const uploadResult = await (0, cloudinary_1.cloudinaryUpload)(iconFile);
-            console.log('Cloudinary upload result:', uploadResult);
             // Create badge template
             const badgeTemplate = await badgeTemplate_repository_1.BadgeTemplateRepository.createBadgeTemplate({
                 name,
@@ -59,7 +53,6 @@ class BadgeTemplateCrudController {
                 icon: uploadResult.secure_url,
                 createdBy: userId,
             });
-            console.log('Created badge template:', badgeTemplate);
             res.status(201).json({
                 success: true,
                 message: "Badge template created successfully",
@@ -75,7 +68,6 @@ class BadgeTemplateCrudController {
             });
         }
         catch (error) {
-            console.error('Badge template creation error:', error);
             next(error);
         }
     }
