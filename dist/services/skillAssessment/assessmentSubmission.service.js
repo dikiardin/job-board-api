@@ -47,6 +47,44 @@ class AssessmentSubmissionService {
             pagination: { page, limit, total: 0, totalPages: 0 },
         };
     }
+    // Check if assessment exists
+    static async checkAssessmentExists(assessmentId) {
+        try {
+            const assessment = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentById(assessmentId);
+            return !!assessment;
+        }
+        catch (error) {
+            console.error("Error checking assessment exists:", error);
+            return false;
+        }
+    }
+    // Get assessment for taking (without answers)
+    static async getAssessmentForTaking(assessmentId) {
+        try {
+            const assessment = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentById(assessmentId);
+            if (!assessment) {
+                throw new customError_1.CustomError("Assessment not found", 404);
+            }
+            // Return assessment without answers for security
+            return {
+                id: assessment.id,
+                title: assessment.title,
+                description: assessment.description,
+                questions: assessment.questions?.map((q) => ({
+                    id: q.id,
+                    question: q.question,
+                    options: q.options,
+                    // Don't include the correct answer
+                })) || [],
+                badgeTemplate: assessment.badgeTemplate,
+                creator: assessment.creator,
+            };
+        }
+        catch (error) {
+            console.error("Error getting assessment for taking:", error);
+            throw error;
+        }
+    }
     static async getAssessmentResult(userId, assessmentId) {
         const result = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getUserResult(userId, assessmentId);
         if (!result) {

@@ -13,7 +13,8 @@ const verifySubscription = async (req, res, next) => {
         if (!userId) {
             return res.status(401).json({ success: false, message: "Authentication required" });
         }
-        const subscription = await prisma_1.prisma.subscription.findFirst({
+        // Check for ACTIVE subscription first
+        let subscription = await prisma_1.prisma.subscription.findFirst({
             where: {
                 userId,
                 status: prisma_2.SubscriptionStatus.ACTIVE,
@@ -21,6 +22,18 @@ const verifySubscription = async (req, res, next) => {
             },
             include: { plan: true, usage: true },
         });
+        // If no active subscription, check for recent PENDING subscription (within 24 hours)
+        if (!subscription) {
+            const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            subscription = await prisma_1.prisma.subscription.findFirst({
+                where: {
+                    userId,
+                    status: prisma_2.SubscriptionStatus.PENDING,
+                    createdAt: { gte: twentyFourHoursAgo },
+                },
+                include: { plan: true, usage: true },
+            });
+        }
         if (!subscription) {
             return res.status(403).json({
                 success: false,

@@ -110,7 +110,7 @@ export declare class PaymentRepo {
         paymentMethod: "TRANSFER" | "GATEWAY";
         amount: number;
         paymentProof?: string;
-        expiredAt?: Date;
+        expiresAt?: Date;
     }): Promise<{
         subscription: {
             plan: {

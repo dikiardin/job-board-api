@@ -51,7 +51,17 @@ class SkillAssessmentResultsRepository {
                 take: limit,
                 include: {
                     assessment: {
-                        select: { id: true, title: true, description: true },
+                        select: {
+                            id: true,
+                            title: true,
+                            description: true,
+                            creator: {
+                                select: { id: true, name: true }
+                            },
+                            badgeTemplate: {
+                                select: { id: true, name: true, icon: true, category: true }
+                            }
+                        },
                     },
                 },
                 orderBy: { createdAt: "desc" },
