@@ -36,13 +36,27 @@ class SubscriptionManagementService {
         }
     }
     static async createSubscription(userId, planId) {
-        const placeholderDate = dateHelper_1.DateHelper.getPlaceholderDate();
-        return await subscription_repository_1.SubscriptionRepo.createSubscription({
-            userId,
-            planId: planId,
-            startDate: placeholderDate,
-            expiresAt: placeholderDate,
-        });
+        try {
+            const placeholderDate = dateHelper_1.DateHelper.getPlaceholderDate();
+            console.log("Creating subscription with data:", {
+                userId,
+                planId,
+                startDate: placeholderDate,
+                expiresAt: placeholderDate,
+            });
+            const result = await subscription_repository_1.SubscriptionRepo.createSubscription({
+                userId,
+                planId: planId,
+                startDate: placeholderDate,
+                expiresAt: placeholderDate,
+            });
+            console.log("Subscription creation result:", result);
+            return result;
+        }
+        catch (error) {
+            console.error("Error in createSubscription:", error);
+            throw error;
+        }
     }
     static async updateSubscription(id, data) {
         const existingSubscription = await subscription_repository_1.SubscriptionRepo.getSubscriptionById(id);

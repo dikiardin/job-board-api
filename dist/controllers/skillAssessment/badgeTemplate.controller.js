@@ -3,9 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BadgeTemplateController = void 0;
 const BadgeTemplateQueryController_1 = require("./BadgeTemplateQueryController");
 const BadgeTemplateMutationController_1 = require("./BadgeTemplateMutationController");
-const badgeTemplate_repository_1 = require("../../repositories/skillAssessment/badgeTemplate.repository");
-const BadgeTemplateHelper_1 = require("./helpers/BadgeTemplateHelper");
-const customError_1 = require("../../utils/customError");
 class BadgeTemplateController {
     // Create badge template (Developer only)
     static async createBadgeTemplate(req, res, next) {
@@ -33,37 +30,11 @@ class BadgeTemplateController {
     }
     // Get badge template statistics (Developer only)
     static async getBadgeTemplateStats(req, res, next) {
-        try {
-            const { userId, role } = res.locals.decrypt;
-            BadgeTemplateHelper_1.BadgeTemplateHelper.validateDeveloperRole(role);
-            const stats = await badgeTemplate_repository_1.BadgeTemplateRepository.getBadgeTemplateStats();
-            res.status(200).json({
-                success: true,
-                message: "Badge template statistics retrieved successfully",
-                data: stats,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
+        return await BadgeTemplateQueryController_1.BadgeTemplateQueryController.getBadgeTemplateStats(req, res, next);
     }
     // Search badge templates
     static async searchBadgeTemplates(req, res, next) {
-        try {
-            const { query, category } = req.query;
-            if (!query || typeof query !== 'string') {
-                throw new customError_1.CustomError("Search query is required", 400);
-            }
-            const templates = await badgeTemplate_repository_1.BadgeTemplateRepository.searchBadgeTemplates(query);
-            res.status(200).json({
-                success: true,
-                message: "Badge templates search completed",
-                data: templates,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
+        return await BadgeTemplateQueryController_1.BadgeTemplateQueryController.searchBadgeTemplates(req, res, next);
     }
     // Get popular badge templates (alias for getAllBadgeTemplates)
     static async getPopularBadgeTemplates(req, res, next) {

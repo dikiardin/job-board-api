@@ -34,6 +34,28 @@ export declare class AssessmentSubmissionService {
             totalPages: number;
         };
     }>;
+    static checkAssessmentExists(assessmentId: number): Promise<boolean>;
+    static getAssessmentForTaking(assessmentId: number): Promise<{
+        id: number;
+        title: string;
+        description: string | null;
+        questions: {
+            id: any;
+            question: any;
+            options: any;
+        }[];
+        badgeTemplate: {
+            name: string;
+            id: number;
+            description: string | null;
+            category: string | null;
+            icon: string | null;
+        } | null;
+        creator: {
+            name: string | null;
+            id: number;
+        };
+    }>;
     static getAssessmentResult(userId: number, assessmentId: number): Promise<{
         assessment: {
             id: number;

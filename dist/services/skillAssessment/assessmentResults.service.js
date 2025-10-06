@@ -2,22 +2,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssessmentResultsService = void 0;
 const skillAssessmentModular_repository_1 = require("../../repositories/skillAssessment/skillAssessmentModular.repository");
+const skillAssessmentResults_repository_1 = require("../../repositories/skillAssessment/skillAssessmentResults.repository");
 const customError_1 = require("../../utils/customError");
 class AssessmentResultsService {
     // Get user's assessment results
     static async getUserResults(userId, page = 1, limit = 10) {
-        // Calculate offset
-        const offset = (page - 1) * limit;
-        // Mock implementation - would typically call repository
-        return {
-            results: [],
-            pagination: {
-                page,
-                limit,
-                total: 0,
-                totalPages: 0,
-            },
-        };
+        try {
+            // Repository already handles pagination
+            const result = await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getUserResults(userId, page, limit);
+            return result;
+        }
+        catch (error) {
+            console.error("Error getting user results:", error);
+            throw new customError_1.CustomError("Failed to retrieve assessment results", 500);
+        }
     }
     // Get specific assessment result
     static async getAssessmentResult(userId, assessmentId) {

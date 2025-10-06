@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 export declare class BadgeTemplateController {
     static createBadgeTemplate(req: Request, res: Response, next: NextFunction): Promise<void>;
     static getAllBadgeTemplates(req: Request, res: Response, next: NextFunction): Promise<void>;
-    static getBadgeTemplateById(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
+    static getBadgeTemplateById(req: Request, res: Response, next: NextFunction): Promise<void>;
     static getBadgeTemplatesByDeveloper(req: Request, res: Response, next: NextFunction): Promise<void>;
     static updateBadgeTemplate(req: Request, res: Response, next: NextFunction): Promise<void>;
     static deleteBadgeTemplate(req: Request, res: Response, next: NextFunction): Promise<void>;

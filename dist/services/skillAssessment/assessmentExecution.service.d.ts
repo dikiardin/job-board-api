@@ -55,16 +55,18 @@ export declare class AssessmentExecutionService {
     }>;
     static getTimeRemaining(startTime: Date): number;
     static validateAssessmentExists(assessmentId: number): Promise<{
-        questions: {
-            id: number;
-            question: string;
-            answer: string;
-            options: string[];
-        }[];
         _count: {
             questions: number;
             results: number;
         };
+        questions: {
+            id: number;
+            options: import("../../generated/prisma/runtime/library").JsonValue;
+            question: string;
+            answer: string;
+            orderIndex: number;
+            assessmentId: number;
+        }[];
         badgeTemplate: {
             name: string;
             id: number;
@@ -76,6 +78,7 @@ export declare class AssessmentExecutionService {
             name: string | null;
             id: number;
         };
+    } & {
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;

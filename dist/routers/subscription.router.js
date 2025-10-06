@@ -7,6 +7,7 @@ const payment_controller_1 = require("../controllers/subscription/payment.contro
 const verifyToken_1 = require("../middlewares/verifyToken");
 const verifyRole_1 = require("../middlewares/verifyRole");
 const uploadImage_1 = require("../middlewares/uploadImage");
+const subscription_validator_1 = require("../middlewares/validator/subscription.validator");
 const prisma_1 = require("../generated/prisma");
 class SubscriptionRouter {
     constructor() {
@@ -36,7 +37,7 @@ class SubscriptionRouter {
         // Get user's active subscription (Developer + User)
         this.route.get("/my-active-subscription", verifyToken_1.verifyToken, this.subscriptionController.getUserActiveSubscription);
         // User subscribe (Developer + User)
-        this.route.post("/subscribe", verifyToken_1.verifyToken, this.subscriptionController.subscribe);
+        this.route.post("/subscribe", verifyToken_1.verifyToken, subscription_validator_1.SubscriptionValidator.validateSubscribeRequest, this.subscriptionController.subscribe);
         // Update subscription (Developer only)
         this.route.patch("/subscriptions/:id", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), this.subscriptionController.updateSubscription);
         // Get all pending payments (Developer only)

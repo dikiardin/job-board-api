@@ -155,21 +155,19 @@ class AssessmentExecutionService {
     }
     // Validate assessment exists and is active
     static async validateAssessmentExists(assessmentId) {
-        const assessments = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAllAssessments(1, 1000);
-        const assessment = assessments.assessments?.find((a) => a.id === assessmentId);
+        const assessment = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentById(assessmentId);
         if (!assessment) {
             throw new customError_1.CustomError("Assessment not found", 404);
         }
-        // Return assessment with mock questions for validation
-        return {
-            ...assessment,
-            questions: Array.from({ length: 25 }, (_, index) => ({
-                id: index + 1,
-                question: `Sample question ${index + 1}`,
-                answer: "Option A", // Mock answer for validation
-                options: ["Option A", "Option B", "Option C", "Option D"]
-            }))
-        };
+        console.log("=== ASSESSMENT DATA FOR SCORING ===");
+        console.log("Assessment ID:", assessment.id);
+        console.log("Questions count:", assessment.questions?.length || 0);
+        console.log("Questions data:", assessment.questions?.map(q => ({
+            id: q.id,
+            question: q.question?.substring(0, 50) + "...",
+            answer: q.answer
+        })));
+        return assessment;
     }
     // Get passing score threshold
     static getPassingScore() {

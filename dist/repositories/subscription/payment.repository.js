@@ -38,16 +38,25 @@ class PaymentRepo {
     }
     // Create payment
     static async createPayment(data) {
-        return prisma_1.prisma.payment.create({
-            data,
-            include: {
-                subscription: {
-                    include: {
-                        plan: true,
+        try {
+            console.log("PaymentRepo.createPayment called with data:", data);
+            const result = await prisma_1.prisma.payment.create({
+                data,
+                include: {
+                    subscription: {
+                        include: {
+                            plan: true,
+                        },
                     },
                 },
-            },
-        });
+            });
+            console.log("PaymentRepo.createPayment result:", result);
+            return result;
+        }
+        catch (error) {
+            console.error("Error in PaymentRepo.createPayment:", error);
+            throw error;
+        }
     }
     // Upload payment proof
     static async uploadPaymentProof(paymentId, paymentProof) {

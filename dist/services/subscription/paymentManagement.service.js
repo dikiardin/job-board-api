@@ -5,13 +5,27 @@ const payment_repository_1 = require("../../repositories/subscription/payment.re
 const dateHelper_1 = require("../../utils/dateHelper");
 class PaymentManagementService {
     static async createPaymentRecord(subscriptionId, planPrice) {
-        const expiredAt = dateHelper_1.DateHelper.getPaymentExpiration();
-        return await payment_repository_1.PaymentRepo.createPayment({
-            subscriptionId,
-            paymentMethod: "TRANSFER",
-            amount: Number(planPrice),
-            expiredAt,
-        });
+        try {
+            const expiredAt = dateHelper_1.DateHelper.getPaymentExpiration();
+            console.log("Creating payment record with data:", {
+                subscriptionId,
+                paymentMethod: "TRANSFER",
+                amount: Number(planPrice),
+                expiresAt: expiredAt,
+            });
+            const result = await payment_repository_1.PaymentRepo.createPayment({
+                subscriptionId,
+                paymentMethod: "TRANSFER",
+                amount: Number(planPrice),
+                expiresAt: expiredAt,
+            });
+            console.log("Payment creation result:", result);
+            return result;
+        }
+        catch (error) {
+            console.error("Error in createPaymentRecord:", error);
+            throw error;
+        }
     }
     static async getPendingPayments() {
         return await payment_repository_1.PaymentRepo.getPendingPayments();

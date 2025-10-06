@@ -1,7 +1,37 @@
 export declare class AssessmentResultsService {
     private static readonly PASSING_SCORE;
     static getUserResults(userId: number, page?: number, limit?: number): Promise<{
-        results: never[];
+        results: ({
+            assessment: {
+                id: number;
+                description: string | null;
+                title: string;
+                badgeTemplate: {
+                    name: string;
+                    id: number;
+                    category: string | null;
+                    icon: string | null;
+                } | null;
+                creator: {
+                    name: string | null;
+                    id: number;
+                };
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
+            score: number;
+            assessmentId: number;
+            isPassed: boolean;
+            startedAt: Date | null;
+            finishedAt: Date | null;
+            durationSeconds: number | null;
+            certificateUrl: string | null;
+            certificateCode: string | null;
+        })[];
         pagination: {
             page: number;
             limit: number;

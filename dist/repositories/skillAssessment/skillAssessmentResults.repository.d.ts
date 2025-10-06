@@ -63,6 +63,16 @@ export declare class SkillAssessmentResultsRepository {
                 id: number;
                 description: string | null;
                 title: string;
+                badgeTemplate: {
+                    name: string;
+                    id: number;
+                    category: string | null;
+                    icon: string | null;
+                } | null;
+                creator: {
+                    name: string | null;
+                    id: number;
+                };
             };
         } & {
             createdAt: Date;
