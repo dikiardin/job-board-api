@@ -16,8 +16,8 @@ export function startInterviewJobs() {
         const candidateName = (it as any).application.user.name as string;
         const jobTitle = (it as any).application.job.title as string;
         const companyName = (it as any).application.job.company.name as string;
-        const adminEmail = ((it as any).application.job.company.admin?.email as string) || undefined;
-        const adminName = ((it as any).application.job.company.admin?.name as string) || null;
+        const adminEmail = ((it as any).application.job.company.owner?.email as string) || undefined;
+        const adminName = ((it as any).application.job.company.owner?.name as string) || null;
 
         await InterviewEmailService.sendCandidateEmail({
           type: "reminder",

@@ -116,8 +116,8 @@ class InterviewCommandService {
         const candidateName = interview.application.user.name;
         const jobTitle = interview.application.job.title;
         const companyName = interview.application.job.company.name;
-        const adminEmail = interview.application.job.company.admin?.email || undefined;
-        const adminName = interview.application.job.company.admin?.name || null;
+        const adminEmail = interview.application.job.company.owner?.email || undefined;
+        const adminName = interview.application.job.company.owner?.name || null;
         await interviewEmail_service_1.InterviewEmailService.sendCandidateEmail({
             type: "created",
             to: candidateEmail,
@@ -169,8 +169,8 @@ class InterviewCommandService {
         const candidateName = updated.application.user.name;
         const jobTitle = updated.application.job.title;
         const companyName = updated.application.job.company.name;
-        const adminEmail = updated.application.job.company.admin?.email || undefined;
-        const adminName = updated.application.job.company.admin?.name || null;
+        const adminEmail = updated.application.job.company.owner?.email || undefined;
+        const adminName = updated.application.job.company.owner?.name || null;
         await interviewEmail_service_1.InterviewEmailService.sendCandidateEmail({
             type,
             to: candidateEmail,
@@ -206,8 +206,8 @@ class InterviewCommandService {
         const candidateName = interview.application.user.name;
         const jobTitle = interview.application.job.title;
         const companyName = interview.application.job.company.name;
-        const adminEmail = interview.application.job.company.admin?.email;
-        const adminName = interview.application.job.company.admin?.name || null;
+        const adminEmail = interview.application.job.company.owner?.email;
+        const adminName = interview.application.job.company.owner?.name || null;
         await interviewEmail_service_1.InterviewEmailService.sendCandidateEmail({
             type: "cancelled",
             to: candidateEmail,

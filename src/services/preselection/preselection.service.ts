@@ -33,7 +33,7 @@ export class PreselectionService {
   private static async validateJobOwnership(jobId: string | number, requesterId: number): Promise<void> {
     const job = await PreselectionRepository.getJob(jobId);
     if (!job) throw { status: 404, message: "Job not found" };
-    if (!(job as any).company || (job as any).company?.adminId !== requesterId) {
+    if (!(job as any).company || (job as any).company?.ownerAdminId !== requesterId) {
       throw { status: 403, message: "You don't own this job" };
     }
   }
@@ -148,7 +148,7 @@ export class PreselectionService {
 
     const job = await PreselectionRepository.getJob(jobId);
     if (!job) throw { status: 404, message: "Job not found" };
-    if (!(job as any).company || (job as any).company?.adminId !== requesterId) {
+    if (!(job as any).company || (job as any).company?.ownerAdminId !== requesterId) {
       throw { status: 403, message: "You don't own this job" };
     }
 

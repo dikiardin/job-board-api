@@ -119,8 +119,8 @@ export class InterviewCommandService {
     const candidateName = interview.application.user.name as string;
     const jobTitle = interview.application.job.title as string;
     const companyName = interview.application.job.company.name as string;
-    const adminEmail = interview.application.job.company.admin?.email as string || undefined;
-    const adminName = interview.application.job.company.admin?.name as string || null;
+    const adminEmail = interview.application.job.company.owner?.email as string || undefined;
+    const adminName = interview.application.job.company.owner?.name as string || null;
 
     await InterviewEmailService.sendCandidateEmail({
       type: "created",
@@ -175,8 +175,8 @@ export class InterviewCommandService {
     const candidateName = updated.application.user.name as string;
     const jobTitle = updated.application.job.title as string;
     const companyName = updated.application.job.company.name as string;
-    const adminEmail = (updated.application.job.company.admin?.email as string) || undefined;
-    const adminName = (updated.application.job.company.admin?.name as string) || null;
+    const adminEmail = (updated.application.job.company.owner?.email as string) || undefined;
+    const adminName = (updated.application.job.company.owner?.name as string) || null;
     await InterviewEmailService.sendCandidateEmail({
       type,
       to: candidateEmail,
@@ -211,8 +211,8 @@ export class InterviewCommandService {
     const candidateName = (interview as any).application.user.name as string;
     const jobTitle = (interview as any).application.job.title as string;
     const companyName = (interview as any).application.job.company.name as string;
-    const adminEmail = (interview as any).application.job.company.admin?.email as string | undefined;
-    const adminName = ((interview as any).application.job.company.admin?.name as string) || null;
+    const adminEmail = (interview as any).application.job.company.owner?.email as string | undefined;
+    const adminName = ((interview as any).application.job.company.owner?.name as string) || null;
     await InterviewEmailService.sendCandidateEmail({
       type: "cancelled",
       to: candidateEmail,

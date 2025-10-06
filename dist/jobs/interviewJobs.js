@@ -20,8 +20,8 @@ function startInterviewJobs() {
                 const candidateName = it.application.user.name;
                 const jobTitle = it.application.job.title;
                 const companyName = it.application.job.company.name;
-                const adminEmail = it.application.job.company.admin?.email || undefined;
-                const adminName = it.application.job.company.admin?.name || null;
+                const adminEmail = it.application.job.company.owner?.email || undefined;
+                const adminName = it.application.job.company.owner?.name || null;
                 await interviewEmail_service_1.InterviewEmailService.sendCandidateEmail({
                     type: "reminder",
                     to: candidateEmail,
