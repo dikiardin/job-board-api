@@ -25,7 +25,7 @@ class PreselectionService {
         const job = await preselection_repository_1.PreselectionRepository.getJob(jobId);
         if (!job)
             throw { status: 404, message: "Job not found" };
-        if (!job.company || job.company?.adminId !== requesterId) {
+        if (!job.company || job.company?.ownerAdminId !== requesterId) {
             throw { status: 403, message: "You don't own this job" };
         }
     }
@@ -128,7 +128,7 @@ class PreselectionService {
         const job = await preselection_repository_1.PreselectionRepository.getJob(jobId);
         if (!job)
             throw { status: 404, message: "Job not found" };
-        if (!job.company || job.company?.adminId !== requesterId) {
+        if (!job.company || job.company?.ownerAdminId !== requesterId) {
             throw { status: 403, message: "You don't own this job" };
         }
         const data = await preselection_repository_1.PreselectionRepository.getTestResultsByJob(jobId);
