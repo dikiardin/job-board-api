@@ -34,6 +34,13 @@ class SkillAssessmentRouter {
       CertificateManagementController.verifyCertificate
     );
 
+    // Certificate view (public - inline PDF view)
+    this.route.get(
+      "/certificates/:certificateCode/view",
+      SkillAssessmentValidator.validateCertificateCode,
+      CertificateManagementController.viewCertificate
+    );
+
     // Certificate download (authenticated)
     this.route.get(
       "/certificates/:resultId/download",
