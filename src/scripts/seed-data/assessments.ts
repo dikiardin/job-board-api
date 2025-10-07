@@ -20,10 +20,12 @@ export interface SeedAssessmentsResult {
   badgeTemplates: {
     frontend: BadgeTemplate;
     data: BadgeTemplate;
+    test: BadgeTemplate;
   };
   assessments: {
     frontend: SkillAssessment;
     data: SkillAssessment;
+    test: SkillAssessment;
   };
   badgePriorityReviewer: Badge;
   skillResults: {
@@ -91,6 +93,52 @@ export async function seedAssessments({
           C: "Neutral",
           D: "Disagree",
         }),
+      },
+    },
+  });
+
+  // NEW: Testing Assessment with only 2 questions
+  const badgeTemplateTest = await prisma.badgeTemplate.create({
+    data: {
+      name: "Quick Test Expert",
+      icon: "https://placehold.co/64x64?text=QT",
+      description: "Awarded for passing the quick test assessment with >= 75% score.",
+      category: "Testing",
+      createdBy: developer.id,
+    },
+  });
+
+  const assessmentTest = await prisma.skillAssessment.create({
+    data: {
+      title: "Quick Test Assessment",
+      slug: "quick-test-assessment",
+      description: "2-question assessment for testing purposes. Perfect for quick validation of the assessment system.",
+      category: "Testing",
+      createdBy: developer.id,
+      badgeTemplateId: badgeTemplateTest.id,
+      questions: {
+        create: [
+          {
+            question: "What is the primary purpose of unit testing in software development?",
+            options: [
+              "To test the entire application end-to-end",
+              "To test individual components or functions in isolation",
+              "To test database connections only",
+              "To test user interface elements"
+            ],
+            answer: "To test individual components or functions in isolation",
+          },
+          {
+            question: "Which HTTP status code indicates a successful response?",
+            options: [
+              "404 - Not Found",
+              "500 - Internal Server Error", 
+              "200 - OK",
+              "401 - Unauthorized"
+            ],
+            answer: "200 - OK",
+          },
+        ],
       },
     },
   });
@@ -178,8 +226,16 @@ export async function seedAssessments({
     },
   });
   return {
-    badgeTemplates: { frontend: badgeTemplateFrontend, data: badgeTemplateData },
-    assessments: { frontend: assessmentFrontend, data: assessmentData },
+    badgeTemplates: { 
+      frontend: badgeTemplateFrontend, 
+      data: badgeTemplateData, 
+      test: badgeTemplateTest 
+    },
+    assessments: { 
+      frontend: assessmentFrontend, 
+      data: assessmentData, 
+      test: assessmentTest 
+    },
     badgePriorityReviewer,
     skillResults: { alice: aliceSkillResult, gina: ginaSkillResult, bob: bobSkillResult },
   };

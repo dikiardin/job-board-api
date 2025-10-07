@@ -17,19 +17,33 @@ export class AssessmentSubmissionService {
       assessment.questions, data.answers
     );
 
-    const result = await AssessmentSubmissionService.saveAssessmentResult({
-      userId: data.userId, assessmentId: data.assessmentId, score,
-    });
-
     const isPassed = ScoringCalculationService.isPassed(score);
+    
+    // Generate certificate immediately if user passed
     const certificateData = isPassed ? await AssessmentSubmissionService.generateCertificate(
       data.userId, assessment, score, totalQuestions
     ) : null;
 
+    // Save result with certificate data
+    const resultData: any = {
+      userId: data.userId, 
+      assessmentId: data.assessmentId, 
+      score,
+    };
+    
+    if (certificateData) {
+      resultData.certificateUrl = certificateData.certificateUrl;
+      resultData.certificateCode = certificateData.certificateCode;
+    }
+    
+    const result = await AssessmentSubmissionService.saveAssessmentResult(resultData);
+
     return {
       result: { 
         id: result.id, score, correctAnswers, totalQuestions, 
-        passed: isPassed, timeSpent: data.timeSpent, completedAt: result.createdAt 
+        passed: isPassed, timeSpent: data.timeSpent, completedAt: result.createdAt,
+        certificateUrl: certificateData?.certificateUrl,
+        certificateCode: certificateData?.certificateCode,
       },
       certificate: certificateData,
     };
@@ -54,6 +68,8 @@ export class AssessmentSubmissionService {
     userId: number;
     assessmentId: number;
     score: number;
+    certificateUrl?: string;
+    certificateCode?: string;
   }) {
     return await SkillAssessmentModularRepository.saveAssessmentResult(data);
   }

@@ -201,6 +201,40 @@ export async function seedEmploymentAndReviews({
     },
   });
 
+  // NEW: Additional employment records for more review diversity
+  const employmentBobTech = await prisma.employment.create({
+    data: {
+      userId: seekers.bob.id,
+      companyId: techCorp.id,
+      positionTitle: "Senior Data Analyst",
+      department: "Data",
+      startDate: new Date("2024-07-01"),
+      isCurrent: true,
+      isVerified: true,
+      verifiedAt: now,
+      verifiedById: admins.tech.id,
+      companyNameSnapshot: techCorp.name,
+      userNameSnapshot: seekers.bob.name ?? "Bob Pratama",
+    },
+  });
+
+  const employmentEkoCreative = await prisma.employment.create({
+    data: {
+      userId: seekers.eko.id,
+      companyId: creativeStudio.id,
+      positionTitle: "Project Manager",
+      department: "Operations",
+      startDate: new Date("2023-08-01"),
+      endDate: new Date("2024-05-31"),
+      isCurrent: false,
+      isVerified: true,
+      verifiedAt: now,
+      verifiedById: admins.creative.id,
+      companyNameSnapshot: creativeStudio.name,
+      userNameSnapshot: seekers.eko.name ?? "Eko Prasetyo",
+    },
+  });
+
   await prisma.companyReview.createMany({
     data: [
       {
@@ -363,6 +397,39 @@ export async function seedEmploymentAndReviews({
         salaryEstimateMax: 28_000_000,
         body: "Data-driven culture with lots of analytical challenges. Work can be intense but rewarding.",
         reviewerSnapshot: "Anonymous",
+      },
+      // NEW: Additional reviews from new employment records
+      {
+        companyId: techCorp.id,
+        employmentId: employmentBobTech.id, // Using Bob's new TechCorp employment
+        reviewerUserId: seekers.bob.id,
+        positionTitle: "Senior Data Analyst",
+        isVerifiedEmployee: true,
+        isAnonymous: false, // Not anonymous to show variety
+        ratingCulture: new Prisma.Decimal("4.60"),
+        ratingFacilities: new Prisma.Decimal("4.50"),
+        ratingWorkLife: new Prisma.Decimal("4.20"),
+        ratingCareer: new Prisma.Decimal("4.70"),
+        salaryEstimateMin: 30_000_000,
+        salaryEstimateMax: 38_000_000,
+        body: "Excellent data infrastructure and analytics tools. Great team collaboration and learning opportunities in AI/ML.",
+        reviewerSnapshot: seekers.bob.name ?? "Bob Pratama",
+      },
+      {
+        companyId: creativeStudio.id,
+        employmentId: employmentEkoCreative.id, // Using Eko's Creative Studio employment
+        reviewerUserId: seekers.eko.id,
+        positionTitle: "Project Manager",
+        isVerifiedEmployee: true,
+        isAnonymous: false, // Not anonymous to show variety
+        ratingCulture: new Prisma.Decimal("4.40"),
+        ratingFacilities: new Prisma.Decimal("4.10"),
+        ratingWorkLife: new Prisma.Decimal("4.30"),
+        ratingCareer: new Prisma.Decimal("4.00"),
+        salaryEstimateMin: 18_000_000,
+        salaryEstimateMax: 23_000_000,
+        body: "Great place for creative project management. Flexible work arrangements and supportive creative teams.",
+        reviewerSnapshot: seekers.eko.name ?? "Eko Prasetyo",
       },
     ],
   });

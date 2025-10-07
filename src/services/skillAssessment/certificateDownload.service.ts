@@ -4,7 +4,8 @@ import { CustomError } from "../../utils/customError";
 export class CertificateDownloadService {
   public static async streamCertificateToResponse(
     certificateData: any,
-    res: Response
+    res: Response,
+    forceDownload: boolean = true
   ) {
     const response = await CertificateDownloadService.fetchCertificatePDF(
       certificateData.certificateUrl
@@ -14,7 +15,7 @@ export class CertificateDownloadService {
     const pdfBuffer = Buffer.from(buffer);
     
     CertificateDownloadService.validatePDFBuffer(pdfBuffer);
-    CertificateDownloadService.setPDFHeaders(res, certificateData.certificateCode);
+    CertificateDownloadService.setPDFHeaders(res, certificateData.certificateCode, forceDownload);
     
     res.send(pdfBuffer);
   }
@@ -42,9 +43,17 @@ export class CertificateDownloadService {
     }
   }
 
-  private static setPDFHeaders(res: Response, certificateCode: string) {
+  private static setPDFHeaders(res: Response, certificateCode: string, forceDownload: boolean = true) {
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="certificate-${certificateCode}.pdf"`);
+    
+    if (forceDownload) {
+      // Force download
+      res.setHeader('Content-Disposition', `attachment; filename="certificate-${certificateCode}.pdf"`);
+    } else {
+      // Inline view in browser
+      res.setHeader('Content-Disposition', `inline; filename="certificate-${certificateCode}.pdf"`);
+    }
+    
     res.setHeader('Cache-Control', 'no-cache');
   }
 }

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { BadgeCoreService } from "../../services/skillAssessment/badgeCore.service";
 import { ControllerHelper } from "../../utils/controllerHelper";
 import { CertificateDownloadService } from "../../services/skillAssessment/certificateDownload.service";
+import { AssessmentResultsRepository } from "../../repositories/skillAssessment/assessmentResults.repository";
 
 export class CertificateManagementController {
   public static async downloadCertificate(
@@ -18,7 +19,44 @@ export class CertificateManagementController {
       
       await CertificateDownloadService.streamCertificateToResponse(
         certificateData, 
-        res
+        res,
+        true // forceDownload = true
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async viewCertificate(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { certificateCode } = req.params;
+
+      if (!certificateCode) {
+        return res.status(400).json({ 
+          success: false,
+          message: "Certificate code is required" 
+        });
+      }
+
+      // Get certificate from database
+      const certificate = await AssessmentResultsRepository.verifyCertificate(certificateCode);
+
+      if (!certificate) {
+        return res.status(404).json({
+          success: false,
+          message: "Certificate not found or invalid",
+        });
+      }
+
+      // Stream PDF for inline viewing
+      await CertificateDownloadService.streamCertificateToResponse(
+        { certificateUrl: certificate.certificateUrl, certificateCode }, 
+        res,
+        false // forceDownload = false (inline view)
       );
     } catch (error) {
       next(error);
@@ -34,16 +72,44 @@ export class CertificateManagementController {
       const { certificateCode } = req.params;
 
       if (!certificateCode) {
-        return res.status(400).json({ message: "Certificate code is required" });
+        return res.status(400).json({ 
+          success: false,
+          message: "Certificate code is required" 
+        });
       }
 
-      // Mock verification - would integrate with certificate service
-      const result = { isValid: true, certificateCode, verifiedAt: new Date() };
+      // Verify certificate using repository
+      const certificate = await AssessmentResultsRepository.verifyCertificate(certificateCode);
+
+      if (!certificate) {
+        return res.status(404).json({
+          success: false,
+          message: "Certificate not found or invalid",
+        });
+      }
 
       res.status(200).json({
         success: true,
         message: "Certificate verified successfully",
-        data: result,
+        certificate: {
+          id: certificate.id,
+          certificateCode: certificate.certificateCode,
+          score: certificate.score,
+          isPassed: certificate.isPassed,
+          certificateUrl: certificate.certificateUrl,
+          createdAt: certificate.createdAt,
+          user: {
+            id: certificate.user.id,
+            name: certificate.user.name,
+            email: certificate.user.email,
+          },
+          assessment: {
+            id: certificate.assessment.id,
+            title: certificate.assessment.title,
+            description: certificate.assessment.description,
+            category: certificate.assessment.category,
+          },
+        },
       });
     } catch (error) {
       next(error);

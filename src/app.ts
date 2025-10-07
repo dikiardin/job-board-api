@@ -193,6 +193,90 @@ class App {
       }
     });
 
+    this.app.post("/test-create-certificate", async (req: Request, res: Response) => {
+      try {
+        // Create a test certificate with proper certificate code and PDF URL
+        const certificateCode = `CERT-TEST-${Date.now()}`;
+        const pdfUrl = `${process.env.BE_URL || 'http://localhost:4400'}/test-generate-pdf/${certificateCode}`;
+        
+        // Ensure test user exists
+        const testUser = await prisma.user.upsert({
+          where: { email: 'bob@example.com' },
+          update: {},
+          create: {
+            name: 'Bob Pratama',
+            email: 'bob@example.com',
+            role: 'USER'
+          }
+        });
+
+        // Ensure test assessment exists
+        const testAssessment = await prisma.skillAssessment.upsert({
+          where: { id: 1 },
+          update: {},
+          create: {
+            title: 'Quick Test Assessment',
+            description: '2-question assessment for testing purposes. Perfect for quick validation of the assessment system.',
+            category: 'Testing',
+            createdBy: testUser.id
+          }
+        });
+        
+        const certificate = await prisma.skillResult.create({
+          data: {
+            userId: testUser.id,
+            assessmentId: testAssessment.id,
+            score: 85,
+            isPassed: true,
+            certificateCode: certificateCode,
+            certificateUrl: pdfUrl, // Point to our PDF generation endpoint
+            startedAt: new Date(),
+            finishedAt: new Date(),
+          },
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+            assessment: { select: { id: true, title: true, description: true, category: true } },
+          }
+        });
+        res.status(200).json({ 
+          success: true, 
+          certificate,
+          qrCodeUrl: `${process.env.FE_URL || 'http://localhost:3000'}/verify-certificate/${certificateCode}`,
+          pdfViewUrl: `${process.env.BE_URL || 'http://localhost:4400'}/skill-assessment/certificates/${certificateCode}/view`,
+          message: `Test certificate created. View PDF at: ${process.env.BE_URL || 'http://localhost:4400'}/skill-assessment/certificates/${certificateCode}/view`
+        });
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message, stack: error.stack });
+      }
+    });
+
+    this.app.get("/test-generate-pdf/:certificateCode", async (req: Request, res: Response) => {
+      try {
+        const { certificateCode } = req.params;
+        const { PDFLayoutService } = await import("./services/skillAssessment/pdfLayout.service");
+        
+        // Generate test PDF with QR code
+        const pdfBuffer = await PDFLayoutService.generateCertificatePDF({
+          userName: "John Doe",
+          userEmail: "john.doe@example.com",
+          assessmentTitle: "JavaScript Fundamentals",
+          assessmentDescription: "Basic JavaScript programming concepts",
+          score: 85,
+          totalQuestions: 25,
+          completedAt: new Date(),
+          userId: 1,
+          certificateCode: certificateCode || "CERT-TEST-DEFAULT",
+          badgeIcon: "🏆"
+        });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="certificate-${certificateCode}.pdf"`);
+        res.send(pdfBuffer);
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message, stack: error.stack });
+      }
+    });
+
     const authRouter: AuthRouter = new AuthRouter();
     const subscriptionRouter: SubscriptionRouter = new SubscriptionRouter();
     const preselectionRouter: PreselectionRouter = new PreselectionRouter();

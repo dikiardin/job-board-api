@@ -93,10 +93,14 @@ export class AssessmentResultsRepository {
   // Verify certificate by code
   public static async verifyCertificate(certificateCode: string) {
     return await prisma.skillResult.findFirst({
-      where: { certificateCode },
+      where: { 
+        certificateCode,
+        isPassed: true,  // Only return passed certificates
+        certificateUrl: { not: null }  // Only return certificates with URL
+      },
       include: {
         user: { select: { id: true, name: true, email: true } },
-        assessment: { select: { id: true, title: true, description: true } },
+        assessment: { select: { id: true, title: true, description: true, category: true } },
       },
     });
   }
