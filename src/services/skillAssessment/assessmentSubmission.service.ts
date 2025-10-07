@@ -3,16 +3,23 @@ import { CustomError } from "../../utils/customError";
 import { CertificateService } from "./certificate.service";
 import { AssessmentExecutionService } from "./assessmentExecution.service";
 import { ScoringCalculationService } from "./scoringCalculation.service";
+import { AssessmentValidationService } from "./assessmentValidation.service";
 
 export class AssessmentSubmissionService {
   public static async submitAssessment(data: {
     assessmentId: number;
     userId: number;
     answers: Array<{ questionId: number; answer: string }>;
-    timeSpent: number;
+    startedAt: string;
   }) {
     await AssessmentSubmissionService.validateSubmission(data);
     const assessment = await AssessmentExecutionService.validateAssessmentExists(data.assessmentId);
+    
+    // Calculate time spent from startedAt
+    const startTime = new Date(data.startedAt);
+    const finishTime = new Date();
+    const timeSpentMinutes = Math.round((finishTime.getTime() - startTime.getTime()) / (1000 * 60));
+    
     const { score, correctAnswers, totalQuestions } = ScoringCalculationService.calculateScore(
       assessment.questions, data.answers
     );
@@ -41,7 +48,7 @@ export class AssessmentSubmissionService {
     return {
       result: { 
         id: result.id, score, correctAnswers, totalQuestions, 
-        passed: isPassed, timeSpent: data.timeSpent, completedAt: result.createdAt,
+        passed: isPassed, timeSpent: timeSpentMinutes, completedAt: result.createdAt,
         certificateUrl: certificateData?.certificateUrl,
         certificateCode: certificateData?.certificateCode,
       },
@@ -54,6 +61,11 @@ export class AssessmentSubmissionService {
     if (existingResult) {
       throw new CustomError("You have already completed this assessment", 400);
     }
+
+    // Validate time limit using AssessmentValidationService
+    const startTime = new Date(data.startedAt);
+    const finishTime = new Date();
+    AssessmentValidationService.validateTimeLimit(startTime, finishTime);
   }
 
   private static async generateCertificate(userId: number, assessment: any, score: number, totalQuestions: number) {
@@ -62,6 +74,10 @@ export class AssessmentSubmissionService {
       userName: user.name || 'User', userEmail: user.email, assessmentTitle: assessment.title,
       assessmentDescription: assessment.description || '', score, totalQuestions, completedAt: new Date(), userId,
     });
+  }
+
+  public static async getUserAssessmentAttempts(userId: number, assessmentId: number) {
+    return await SkillAssessmentModularRepository.getUserAssessmentAttempts(userId, assessmentId);
   }
 
   private static async saveAssessmentResult(data: {
@@ -130,15 +146,28 @@ export class AssessmentSubmissionService {
     return result;
   }
 
-  public static async getAllAssessmentResults(assessmentId: number) {
+  public static async getAllAssessmentResults(assessmentId: number, createdBy: number) {
     // Get real results from database
-    const results = await SkillAssessmentModularRepository.getAssessmentResults(assessmentId);
+    const results = await SkillAssessmentModularRepository.getAssessmentResults(assessmentId, createdBy);
+    
+    // Handle null results
+    if (!results || !Array.isArray(results)) {
+      return {
+        results: [],
+        summary: {
+          totalAttempts: 0,
+          passedCount: 0,
+          averageScore: 0,
+          passRate: 0,
+        }
+      };
+    }
     
     // Calculate summary statistics
     const totalAttempts = results.length;
-    const passedCount = results.filter(r => r.isPassed).length;
+    const passedCount = results.filter((r: any) => r.isPassed).length;
     const averageScore = totalAttempts > 0 
-      ? Math.round(results.reduce((sum, r) => sum + r.score, 0) / totalAttempts)
+      ? Math.round(results.reduce((sum: number, r: any) => sum + (r.score || 0), 0) / totalAttempts)
       : 0;
     const passRate = totalAttempts > 0 ? Math.round((passedCount / totalAttempts) * 100) : 0;
     

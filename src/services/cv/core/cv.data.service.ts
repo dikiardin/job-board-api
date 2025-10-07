@@ -22,22 +22,30 @@ export class CVDataService {
       throw new Error("User not found");
     }
 
+    // Use additionalInfo as primary source, fallback to user data
     return {
       personalInfo: {
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        address: user.address,
+        name: additionalInfo?.fullName || user.name || user.email,
+        email: additionalInfo?.email || user.email,
+        phone: additionalInfo?.phone || user.phone,
+        address: additionalInfo?.address || user.address,
         profilePicture: user.profilePicture,
+        linkedin: additionalInfo?.linkedin,
+        portfolio: additionalInfo?.portfolio,
       },
-      education: user.education,
-      employments: user.employments.map((emp: any) => ({
-        company: emp.company.name,
+      education: additionalInfo?.educationDetails || user.education || [],
+      employments: additionalInfo?.workExperience || user.employments?.map((emp: any) => ({
+        company: emp.company?.name || emp.company,
         startDate: emp.startDate,
         endDate: emp.endDate,
         position: emp.position,
-      })),
-      skills: [],
+      })) || [],
+      skills: additionalInfo?.skills || [],
+      projects: additionalInfo?.projects || [],
+      certifications: additionalInfo?.certifications || [],
+      languages: additionalInfo?.languages || [],
+      skillCategories: additionalInfo?.skillCategories || {},
+      objective: additionalInfo?.objective,
       badges: [],
       additionalInfo,
     };

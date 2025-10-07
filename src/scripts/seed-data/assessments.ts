@@ -21,11 +21,15 @@ export interface SeedAssessmentsResult {
     frontend: BadgeTemplate;
     data: BadgeTemplate;
     test: BadgeTemplate;
+    javascript: BadgeTemplate;
+    react: BadgeTemplate;
   };
   assessments: {
     frontend: SkillAssessment;
     data: SkillAssessment;
     test: SkillAssessment;
+    javascript: SkillAssessment;
+    react: SkillAssessment;
   };
   badgePriorityReviewer: Badge;
   skillResults: {
@@ -142,6 +146,99 @@ export async function seedAssessments({
       },
     },
   });
+
+  // NEW: JavaScript Fundamentals Assessment with 2 questions
+  const badgeTemplateJavaScript = await prisma.badgeTemplate.create({
+    data: {
+      name: "JavaScript Expert",
+      icon: "https://placehold.co/64x64?text=JS",
+      description: "Awarded for mastering JavaScript fundamentals with >= 75% score.",
+      category: "Programming",
+      createdBy: developer.id,
+    },
+  });
+
+  const assessmentJavaScript = await prisma.skillAssessment.create({
+    data: {
+      title: "JavaScript Fundamentals",
+      slug: "javascript-fundamentals",
+      description: "2-question assessment covering core JavaScript concepts and ES6+ features.",
+      category: "Programming",
+      createdBy: developer.id,
+      badgeTemplateId: badgeTemplateJavaScript.id,
+      questions: {
+        create: [
+          {
+            question: "What is the difference between 'let' and 'var' in JavaScript?",
+            options: [
+              "There is no difference, they are interchangeable",
+              "'let' has block scope while 'var' has function scope",
+              "'var' has block scope while 'let' has function scope",
+              "'let' is used for constants while 'var' is for variables"
+            ],
+            answer: "'let' has block scope while 'var' has function scope",
+          },
+          {
+            question: "Which method is used to add an element to the end of an array in JavaScript?",
+            options: [
+              "array.append()",
+              "array.add()",
+              "array.push()",
+              "array.insert()"
+            ],
+            answer: "array.push()",
+          },
+        ],
+      },
+    },
+  });
+
+  // NEW: React Basics Assessment with 2 questions
+  const badgeTemplateReact = await prisma.badgeTemplate.create({
+    data: {
+      name: "React Developer",
+      icon: "https://placehold.co/64x64?text=RX",
+      description: "Awarded for demonstrating React knowledge with >= 75% score.",
+      category: "Frontend",
+      createdBy: developer.id,
+    },
+  });
+
+  const assessmentReact = await prisma.skillAssessment.create({
+    data: {
+      title: "React Basics",
+      slug: "react-basics",
+      description: "2-question assessment covering React components, hooks, and state management.",
+      category: "Frontend",
+      createdBy: developer.id,
+      badgeTemplateId: badgeTemplateReact.id,
+      questions: {
+        create: [
+          {
+            question: "What is the purpose of the useState hook in React?",
+            options: [
+              "To handle component lifecycle methods",
+              "To manage component state in functional components",
+              "To connect to external APIs",
+              "To optimize component performance"
+            ],
+            answer: "To manage component state in functional components",
+          },
+          {
+            question: "What is JSX in React?",
+            options: [
+              "A new programming language",
+              "A database query language",
+              "A syntax extension that allows writing HTML-like code in JavaScript",
+              "A CSS framework for styling React components"
+            ],
+            answer: "A syntax extension that allows writing HTML-like code in JavaScript",
+          },
+        ],
+      },
+    },
+  });
+
   const aliceAssessmentStart = addDays(-1);
   const aliceSkillResult = await prisma.skillResult.create({
     data: {
@@ -229,12 +326,16 @@ export async function seedAssessments({
     badgeTemplates: { 
       frontend: badgeTemplateFrontend, 
       data: badgeTemplateData, 
-      test: badgeTemplateTest 
+      test: badgeTemplateTest,
+      javascript: badgeTemplateJavaScript,
+      react: badgeTemplateReact
     },
     assessments: { 
       frontend: assessmentFrontend, 
       data: assessmentData, 
-      test: assessmentTest 
+      test: assessmentTest,
+      javascript: assessmentJavaScript,
+      react: assessmentReact
     },
     badgePriorityReviewer,
     skillResults: { alice: aliceSkillResult, gina: ginaSkillResult, bob: bobSkillResult },

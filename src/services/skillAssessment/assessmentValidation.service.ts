@@ -21,11 +21,12 @@ export class AssessmentValidationService {
   }
 
   private static validateSingleQuestion(question: any, index: number) {
-    if (!question.question || question.options.length !== 4 || !question.answer) {
+    if (!question.question || question.options.length !== 4) {
       throw new CustomError(`Question ${index} is invalid`, 400);
     }
     
-    if (!question.options.includes(question.answer)) {
+    // Allow empty answers (for auto-submit scenarios)
+    if (question.answer && !question.options.includes(question.answer)) {
       throw new CustomError(`Question ${index} answer must be one of the options`, 400);
     }
   }
@@ -34,9 +35,10 @@ export class AssessmentValidationService {
     const timeDiff = finishedAt.getTime() - startedAt.getTime();
     const minutesDiff = timeDiff / (1000 * 60);
     
-    if (minutesDiff > 32) {
+    // For testing: allow up to 2.5 minutes (2 minutes + 30 seconds buffer)
+    if (minutesDiff > 2.5) {
       throw new CustomError(
-        `Assessment submission time exceeded maximum allowed duration of 30 minutes. Time taken: ${Math.round(minutesDiff * 100) / 100} minutes`, 
+        `Assessment submission time exceeded maximum allowed duration of 2 minutes. Time taken: ${Math.round(minutesDiff * 100) / 100} minutes`, 
         400
       );
     }

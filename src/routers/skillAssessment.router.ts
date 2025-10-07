@@ -50,9 +50,12 @@ class SkillAssessmentRouter {
       CertificateManagementController.downloadCertificate
     );
 
-    // Assessment discovery (public)
+    // Assessment discovery (subscription required)
     this.route.get(
       "/assessments",
+      verifyToken,
+      verifyRole([UserRole.USER]),
+      verifySubscription,
       SkillAssessmentValidator.validatePagination,
       AssessmentManagementController.getAssessments
     );
@@ -137,10 +140,20 @@ class SkillAssessmentRouter {
       AssessmentTakingController.submitAssessment
     );
 
+    // Get user's attempts for a specific assessment
+    this.route.get(
+      "/assessments/:assessmentId/my-attempts",
+      verifyToken,
+      verifyRole([UserRole.USER]),
+      SkillAssessmentValidator.validateAssessmentId,
+      AssessmentTakingController.getUserAssessmentAttempts
+    );
+
     this.route.get(
       "/user/results",
       verifyToken,
       verifyRole([UserRole.USER]),
+      verifySubscription,
       AssessmentTakingController.getUserResults
     );
 
@@ -149,6 +162,7 @@ class SkillAssessmentRouter {
       "/user/result",
       verifyToken,
       verifyRole([UserRole.USER]),
+      verifySubscription,
       AssessmentTakingController.getUserResults
     );
 
@@ -156,6 +170,7 @@ class SkillAssessmentRouter {
       "/user/badges",
       verifyToken,
       verifyRole([UserRole.USER]),
+      verifySubscription,
       CertificateManagementController.getUserBadges
     );
 

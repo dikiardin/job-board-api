@@ -48,9 +48,13 @@ export class SkillAssessmentResultsRepository {
   }
 
   // Get user's all assessment results
-  public static async getUserResults(userId: number, page: number = 1, limit: number = 10) {
+  public static async getUserResults(
+    userId: number,
+    page: number = 1,
+    limit: number = 10
+  ) {
     const skip = (page - 1) * limit;
-    
+
     const [results, total] = await Promise.all([
       prisma.skillResult.findMany({
         where: { userId },
@@ -58,16 +62,16 @@ export class SkillAssessmentResultsRepository {
         take: limit,
         include: {
           assessment: {
-            select: { 
-              id: true, 
-              title: true, 
+            select: {
+              id: true,
+              title: true,
               description: true,
               creator: {
-                select: { id: true, name: true }
+                select: { id: true, name: true },
               },
               badgeTemplate: {
-                select: { id: true, name: true, icon: true, category: true }
-              }
+                select: { id: true, name: true, icon: true, category: true },
+              },
             },
           },
         },
@@ -88,11 +92,14 @@ export class SkillAssessmentResultsRepository {
   }
 
   // Get assessment results for developer
-  public static async getAssessmentResults(assessmentId: number, createdBy: number) {
+  public static async getAssessmentResults(
+    assessmentId: number,
+    createdBy: number
+  ) {
     const assessment = await prisma.skillAssessment.findFirst({
       where: { id: assessmentId, createdBy },
     });
-    
+
     if (!assessment) return null;
 
     return await prisma.skillResult.findMany({
@@ -122,12 +129,16 @@ export class SkillAssessmentResultsRepository {
   }
 
   // Get user's certificates
-  public static async getUserCertificates(userId: number, page: number = 1, limit: number = 10) {
+  public static async getUserCertificates(
+    userId: number,
+    page: number = 1,
+    limit: number = 10
+  ) {
     const skip = (page - 1) * limit;
-    
+
     const [certificates, total] = await Promise.all([
       prisma.skillResult.findMany({
-        where: { 
+        where: {
           userId,
           certificateCode: { not: null },
         },
@@ -141,7 +152,7 @@ export class SkillAssessmentResultsRepository {
         orderBy: { createdAt: "desc" },
       }),
       prisma.skillResult.count({
-        where: { 
+        where: {
           userId,
           certificateCode: { not: null },
         },
@@ -160,7 +171,10 @@ export class SkillAssessmentResultsRepository {
   }
 
   // Get assessment leaderboard
-  public static async getAssessmentLeaderboard(assessmentId: number, limit: number = 10) {
+  public static async getAssessmentLeaderboard(
+    assessmentId: number,
+    limit: number = 10
+  ) {
     return await prisma.skillResult.findMany({
       where: { assessmentId },
       take: limit,
@@ -169,10 +183,7 @@ export class SkillAssessmentResultsRepository {
           select: { id: true, name: true },
         },
       },
-      orderBy: [
-        { score: "desc" },
-        { createdAt: "asc" },
-      ],
+      orderBy: [{ score: "desc" }, { createdAt: "asc" }],
     });
   }
 
@@ -193,13 +204,15 @@ export class SkillAssessmentResultsRepository {
     }
 
     const totalAttempts = results.length;
-    const passedAttempts = results.filter(r => r.score >= 75).length;
+    const passedAttempts = results.filter((r) => r.score >= 75).length;
     const totalScore = results.reduce((sum, r) => sum + r.score, 0);
-    
+
     // Calculate time spent from startedAt and finishedAt
     const totalTime = results.reduce((sum, r) => {
       if (r.startedAt && r.finishedAt) {
-        const timeSpent = Math.round((r.finishedAt.getTime() - r.startedAt.getTime()) / 1000 / 60); // in minutes
+        const timeSpent = Math.round(
+          (r.finishedAt.getTime() - r.startedAt.getTime()) / 1000 / 60
+        ); // in minutes
         return sum + timeSpent;
       }
       return sum + 30; // default 30 minutes if no time data
@@ -239,6 +252,30 @@ export class SkillAssessmentResultsRepository {
         assessment: {
           select: { id: true, title: true, description: true },
         },
+      },
+    });
+  }
+
+  // Get user assessment attempts for a specific assessment
+  public static async getUserAssessmentAttempts(
+    userId: number,
+    assessmentId: number
+  ) {
+    return await prisma.skillResult.findMany({
+      where: {
+        userId,
+        assessmentId,
+      },
+      select: {
+        id: true,
+        assessmentId: true,
+        userId: true,
+        createdAt: true,
+        score: true,
+        isPassed: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
   }

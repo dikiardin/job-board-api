@@ -45,7 +45,10 @@ export class AssessmentTakingController {
       const { answers, startedAt } = req.body;
 
       const result = await AssessmentSubmissionService.submitAssessment({
-        userId, assessmentId, answers, timeSpent: 30,
+        userId, 
+        assessmentId, 
+        answers, 
+        startedAt,
       });
 
       res.status(200).json({
@@ -92,13 +95,42 @@ export class AssessmentTakingController {
       // For developers, get all results for the assessment
       // For users, get only their specific result
       const results = role === 'DEVELOPER' 
-        ? await AssessmentSubmissionService.getAllAssessmentResults(assessmentId)
+        ? await AssessmentSubmissionService.getAllAssessmentResults(assessmentId, userId)
         : await AssessmentSubmissionService.getAssessmentResult(userId, assessmentId);
 
       res.status(200).json({
         success: true,
         message: "Assessment results retrieved successfully",
         data: results,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async getUserAssessmentAttempts(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const userId = ControllerHelper.getUserId(res);
+      const assessmentId = ControllerHelper.parseId(req.params.assessmentId);
+
+      const attempts = await AssessmentSubmissionService.getUserAssessmentAttempts(userId, assessmentId);
+
+      // Debug logging
+      console.log('🔍 Backend Assessment Attempts Debug:', {
+        userId,
+        assessmentId,
+        attemptsCount: attempts.length,
+        attempts
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "User assessment attempts retrieved successfully",
+        data: attempts,
       });
     } catch (error) {
       next(error);
