@@ -30,6 +30,8 @@ export class ProfileRepository {
         id: true,
         slug: true,
         name: true,
+        email: true,
+        phone: true,
         description: true,
         website: true,
         locationCity: true,

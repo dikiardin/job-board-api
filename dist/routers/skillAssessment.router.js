@@ -21,6 +21,8 @@ class SkillAssessmentRouter {
     initializeRoutes() {
         // Public routes
         this.route.get("/verify/:certificateCode", skillAssessment_validator_1.SkillAssessmentValidator.validateCertificateCode, certificateManagement_controller_1.CertificateManagementController.verifyCertificate);
+        // Certificate view (public - inline PDF view)
+        this.route.get("/certificates/:certificateCode/view", skillAssessment_validator_1.SkillAssessmentValidator.validateCertificateCode, certificateManagement_controller_1.CertificateManagementController.viewCertificate);
         // Certificate download (authenticated)
         this.route.get("/certificates/:resultId/download", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), skillAssessment_validator_1.SkillAssessmentValidator.validateResultId, certificateManagement_controller_1.CertificateManagementController.downloadCertificate);
         // Assessment discovery (public)

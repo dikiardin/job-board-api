@@ -30,7 +30,7 @@ class BasicAuthService {
         if (role === "USER") {
             await createEmployment_service_1.CreateEmploymentService.createForNewUser(user.id);
         }
-        const token = (0, createToken_1.createToken)({ userId: user.id, email: user.email }, "3d");
+        const token = (0, createToken_1.createToken)({ userId: user.id, email: user.email }, "1h");
         try {
             await nodemailer_1.transport.sendMail({
                 from: process.env.MAIL_SENDER,

@@ -336,6 +336,7 @@ export declare class SkillAssessmentModularRepository {
             id: number;
             description: string | null;
             title: string;
+            category: string;
         };
     } & {
         createdAt: Date;

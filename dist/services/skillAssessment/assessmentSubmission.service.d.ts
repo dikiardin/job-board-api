@@ -16,6 +16,8 @@ export declare class AssessmentSubmissionService {
             passed: boolean;
             timeSpent: number;
             completedAt: Date;
+            certificateUrl: string | undefined;
+            certificateCode: string | undefined;
         };
         certificate: {
             certificateUrl: string;

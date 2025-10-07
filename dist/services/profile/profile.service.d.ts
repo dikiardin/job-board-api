@@ -16,7 +16,9 @@ export declare class ProfileService {
         id: number;
     }>;
     static getCompanyProfile(ownerAdminId: number): Promise<{
+        email: string;
         name: string;
+        phone: string | null;
         address: string | null;
         createdAt: Date;
         updatedAt: Date;

@@ -1,5 +1,9 @@
 export declare class EditProfileService {
-    static editProfile(userId: number, role: "USER" | "ADMIN", data: any, file?: Express.Multer.File): Promise<{
+    static editProfile(userId: number, role: "USER" | "ADMIN", data: any, files?: {
+        logoFile?: Express.Multer.File | undefined;
+        bannerFile?: Express.Multer.File | undefined;
+        profilePictureFile?: Express.Multer.File | undefined;
+    }): Promise<{
         role: import("../../generated/prisma").$Enums.UserRole;
         email: string;
         passwordHash: string | null;
