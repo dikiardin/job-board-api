@@ -23,29 +23,36 @@ export class AssessmentResultsService {
     if (!result) {
       throw new CustomError("Assessment result not found", 404);
     }
-
     return result;
   }
 
-  // Get assessment leaderboard
-  public static async getAssessmentLeaderboard(assessmentId: number, limit: number = 10) {
-    return await SkillAssessmentModularRepository.getAssessmentResults(assessmentId);
+  // Get assessment statistics
+  public static async getAssessmentStatistics(assessmentId: number, createdBy: number) {
+    // Get assessment results
+    return await SkillAssessmentModularRepository.getAssessmentResults(assessmentId, createdBy);
   }
 
-  // Get assessment statistics for users
-  public static async getAssessmentStats(assessmentId: number) {
-    const stats = await SkillAssessmentModularRepository.getAssessmentResults(assessmentId);
+  public static async getAssessmentSummary(assessmentId: number, createdBy: number) {
+    const stats = await SkillAssessmentModularRepository.getAssessmentResults(assessmentId, createdBy);
+    
+    // Handle null/empty stats
+    if (!stats || !Array.isArray(stats) || stats.length === 0) {
+      return {
+        totalAttempts: 0,
+        averageScore: 0,
+        passRate: 0,
+      };
+    }
     
     return {
       totalAttempts: stats.length,
-      averageScore: stats.reduce((sum: number, result: any) => sum + result.score, 0) / stats.length,
-      passRate: (stats.filter((result: any) => result.score >= this.PASSING_SCORE).length / stats.length) * 100,
+      averageScore: stats.reduce((sum: number, result: any) => sum + (result.score || 0), 0) / stats.length,
+      passRate: (stats.filter((result: any) => (result.score || 0) >= this.PASSING_SCORE).length / stats.length) * 100,
     };
   }
 
-  // Retake assessment (if allowed)
-  public static async retakeAssessment(userId: number, assessmentId: number) {
-    // Check if retakes are allowed (business logic)
+  // Reset assessment for retake
+  public static async resetAssessment(userId: number, assessmentId: number) {
     const existingResult = await SkillAssessmentModularRepository.getUserResult(userId, assessmentId);
     if (existingResult && existingResult.score >= this.PASSING_SCORE) {
       throw new CustomError("Cannot retake a passed assessment", 400);
@@ -95,6 +102,10 @@ export class AssessmentResultsService {
   // Get assessment completion certificate info
   public static async getCertificateInfo(userId: number, assessmentId: number) {
     const result = await this.getAssessmentResult(userId, assessmentId);
+    
+    if (!result) {
+      throw new CustomError("Assessment result not found", 404);
+    }
     
     if (result.score < this.PASSING_SCORE) {
       throw new CustomError("Certificate only available for passed assessments", 400);

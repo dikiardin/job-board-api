@@ -52,7 +52,6 @@ export async function seedBadgesAndCvs({
     data: [
       {
         userId: seekers.alice.id,
-        title: "Alice Hartono - Frontend CV",
         fileUrl: "https://res.cloudinary.com/demo/cv/alice.pdf",
         templateUsed: "ats",
         additionalInfo: {
@@ -63,7 +62,6 @@ export async function seedBadgesAndCvs({
       },
       {
         userId: seekers.gina.id,
-        title: "Gina Gold - Product Portfolio",
         fileUrl: "https://res.cloudinary.com/demo/cv/gina.pdf",
         templateUsed: "modern",
         additionalInfo: {
@@ -73,7 +71,6 @@ export async function seedBadgesAndCvs({
       },
       {
         userId: seekers.charlie.id,
-        title: "Charlie Wijaya - Product Ops",
         fileUrl: "https://res.cloudinary.com/demo/cv/charlie.pdf",
         templateUsed: "classic",
         additionalInfo: {

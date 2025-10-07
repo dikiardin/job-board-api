@@ -1,5 +1,5 @@
 import { prisma } from "../../../config/prisma";
-import { PDFService } from "../pdf/pdf.service";
+import { pdfService } from "../pdf/pdf.service";
 import { CVRepo } from "../../../repositories/cv/cv.repository";
 import { CVData, CVAdditionalInfo } from "./cv.types";
 import { CVDataService } from "./cv.data.service";
@@ -14,15 +14,22 @@ export class CVGenerationService {
     const user = await CVDataService.getUserData(userId);
     const cvData = CVDataService.transformUserDataToCVData(user, additionalInfo);
 
-    // Generate PDF (mock implementation)
-    const pdfBuffer = Buffer.from("Mock PDF content");
+    // Generate PDF using PDF service
+    const fileUrl = await pdfService.generatePDF(cvData, templateType);
 
-    // Save CV record (mock implementation)
-    const savedCV = { id: Date.now() };
+    // Save CV record
+    const cvCreateData = {
+      userId,
+      templateUsed: templateType,
+      additionalInfo: additionalInfo || {},
+      fileUrl,
+    };
+    
+    const savedCV = await CVRepo.create(cvCreateData);
 
     return {
       cvId: savedCV.id,
-      pdfBuffer,
+      fileUrl: savedCV.fileUrl,
       cvData,
       templateType,
     };
@@ -35,20 +42,28 @@ export class CVGenerationService {
     templateType: string = "ats",
     additionalInfo?: CVAdditionalInfo
   ) {
-    // Mock CV existence check
-    if (!cvId || !userId) {
+    // Check if CV exists and belongs to user
+    const existingCV = await CVRepo.findByIdAndUserId(cvId, userId);
+    if (!existingCV) {
       throw new Error("CV not found or access denied");
     }
 
     const user = await CVDataService.getUserData(userId);
     const cvData = CVDataService.transformUserDataToCVData(user, additionalInfo);
 
-    // Generate updated PDF (mock implementation)
-    const pdfBuffer = Buffer.from("Mock updated PDF content");
+    // Generate updated PDF
+    const fileUrl = await pdfService.generatePDF(cvData, templateType);
+
+    // Update CV record
+    const updatedCV = await CVRepo.updateById(cvId, {
+      templateUsed: templateType,
+      additionalInfo: additionalInfo || {},
+      fileUrl,
+    });
 
     return {
-      cvId,
-      pdfBuffer,
+      cvId: updatedCV.id,
+      fileUrl: updatedCV.fileUrl,
       cvData,
       templateType,
     };

@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma";
+import { SubscriptionStatus } from "../../generated/prisma";
 
 export class SubscriptionQueryRepo {
   public static async getAllSubscriptions() {
@@ -48,7 +49,7 @@ export class SubscriptionQueryRepo {
     return prisma.subscription.findFirst({
       where: {
         userId,
-        status: "ACTIVE",
+        status: SubscriptionStatus.ACTIVE,
         expiresAt: { gte: new Date() },
       },
       include: {

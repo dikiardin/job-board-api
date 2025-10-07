@@ -366,9 +366,9 @@ model SkillResult {
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   certificate Certificate?
 
-  @@unique([userId, assessmentId])
   @@index([assessmentId])
   @@index([userId, createdAt])
+  @@index([userId, assessmentId])
 }
 
 model BadgeTemplate {
@@ -445,7 +445,6 @@ model Certificate {
 model GeneratedCV {
   id             Int      @id @default(autoincrement())
   userId         Int
-  title          String?
   fileUrl        String
   templateUsed   String
   additionalInfo Json?

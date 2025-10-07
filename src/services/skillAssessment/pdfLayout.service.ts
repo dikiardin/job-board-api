@@ -141,7 +141,7 @@ export class PDFLayoutService {
     doc.text(`Certificate Code: ${data.certificateCode}`, centerX - 200, 450, { width: 400, align: "center" });
 
     // QR Code for certificate verification (very compact layout)
-    // Generate QR code for certificate verification
+    // Generate QR code for certificate verification with certificate code
     const verificationUrl = `${process.env.FE_URL || 'http://localhost:3000'}/verify-certificate/${data.certificateCode}`;
     
     try {

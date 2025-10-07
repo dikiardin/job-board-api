@@ -6,6 +6,8 @@ export interface CVData {
     phone?: string | null;
     address?: string | null;
     profilePicture?: string | null;
+    linkedin?: string | undefined;
+    portfolio?: string | undefined;
   };
   education?: string | null;
   employments: Array<{
@@ -15,6 +17,24 @@ export interface CVData {
     position: string;
   }>;
   skills: string[];
+  projects?: Array<{
+    name: string;
+    description: string;
+    technologies: string[];
+    url?: string;
+  }>;
+  certifications?: Array<{
+    name: string;
+    issuer: string;
+    date: string;
+    link?: string;
+  }>;
+  languages?: Array<{
+    name: string;
+    level: string;
+  }>;
+  skillCategories?: Record<string, string[]>;
+  objective?: string | undefined;
   badges: Array<{
     name: string;
     icon?: string | null;
@@ -24,6 +44,12 @@ export interface CVData {
 }
 
 export interface CVAdditionalInfo {
+  // Personal info from frontend form
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  
   objective?: string;
   skills?: string[];
   skillCategories?: Record<string, string[]>; // Optional custom skill categorization

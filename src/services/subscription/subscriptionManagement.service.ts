@@ -21,7 +21,23 @@ export class SubscriptionManagementService {
   }
 
   public static async getUserActiveSubscription(userId: number) {
-    return await SubscriptionRepo.getUserActiveSubscription(userId);
+    const subscription = await SubscriptionRepo.getUserActiveSubscription(userId);
+    
+    if (!subscription) {
+      return {
+        isActive: false,
+        subscription: null,
+        message: "No active subscription found"
+      };
+    }
+
+    return {
+      isActive: true,
+      subscription: subscription,
+      plan: subscription.plan,
+      expiresAt: subscription.expiresAt,
+      status: subscription.status
+    };
   }
 
   public static async validatePlanExists(planId: number) {
