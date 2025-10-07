@@ -21,7 +21,7 @@ const buildVerificationEmail = (name, token) => {
                   </a>
                 </p>
                 <p style="color: #888; font-size: 14px; text-align: center; margin: 0;">
-                  This verification link will expire in <strong>3 days</strong>.
+                  This verification link will expire in <strong>i hour</strong>.
                 </p>
               </div>
             </div>  

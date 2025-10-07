@@ -12,9 +12,10 @@ class EditProfileController {
             const userId = decrypt.userId;
             const role = decrypt.role;
             const files = req.files;
-            const uploadedFile = (files.profilePicture && files.profilePicture[0]) ||
-                (files.logo && files.logo[0]);
-            const updatedProfile = await editProfile_service_1.EditProfileService.editProfile(userId, role, req.body, uploadedFile);
+            const logoFile = files?.logoUrl?.[0];
+            const bannerFile = files?.bannerUrl?.[0];
+            const profilePictureFile = files?.profilePicture?.[0];
+            const updatedProfile = await editProfile_service_1.EditProfileService.editProfile(userId, role, req.body, { logoFile, bannerFile, profilePictureFile });
             res.status(200).json({
                 message: "Profile completed successfully",
                 data: updatedProfile,
@@ -29,7 +30,7 @@ class EditProfileController {
             const { userId } = res.locals.decrypt;
             const files = req.files;
             const uploadedFile = (files?.profilePicture && files.profilePicture[0]) ||
-                (files?.logo && files.logo[0]);
+                (files?.logoUrl && files.logoUrl[0]);
             const updatedProfile = await editProfile_service_1.EditProfileService.completeProfile(userId, req.body, uploadedFile);
             res.status(200).json({
                 message: "Profile completed successfully",

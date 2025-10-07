@@ -23,6 +23,7 @@ class ProfileRouter {
       uploadFields([
         { name: "profilePicture", maxCount: 1 },
         { name: "logoUrl", maxCount: 1 },
+        { name: "bannerUrl", maxCount: 1 },
       ]),
       this.editProfileController.editProfile
     );

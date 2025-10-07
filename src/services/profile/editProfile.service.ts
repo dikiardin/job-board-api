@@ -7,14 +7,26 @@ export class EditProfileService {
     userId: number,
     role: "USER" | "ADMIN",
     data: any,
-    file?: Express.Multer.File
+    files?: { logoFile?: Express.Multer.File | undefined; bannerFile?: Express.Multer.File | undefined; profilePictureFile?: Express.Multer.File | undefined }
   ) {
     const user = await EditProfileRepository.findUserById(userId);
     if (!user) throw new CustomError("User not found", 404);
 
+    let logoUrl: string | undefined;
+    let bannerUrl: string | undefined;
     let profilePictureUrl: string | undefined;
-    if (file) {
-      const upload = await cloudinaryUpload(file);
+
+    // Upload files to Cloudinary
+    if (files?.logoFile) {
+      const upload = await cloudinaryUpload(files.logoFile);
+      logoUrl = upload.secure_url;
+    }
+    if (files?.bannerFile) {
+      const upload = await cloudinaryUpload(files.bannerFile);
+      bannerUrl = upload.secure_url;
+    }
+    if (files?.profilePictureFile) {
+      const upload = await cloudinaryUpload(files.profilePictureFile);
       profilePictureUrl = upload.secure_url;
     }
 
@@ -32,15 +44,31 @@ export class EditProfileService {
     }
 
     if (role === "ADMIN") {
-      const { phone, address, locationCity, city, description, website } = data;
+      const { name, email, phone, address, locationCity, locationProvince, city, description, website, socials } = data;
+      
+      // Parse socials if it's a string
+      let parsedSocials = socials;
+      if (typeof socials === 'string') {
+        try {
+          parsedSocials = JSON.parse(socials);
+        } catch (e) {
+          parsedSocials = {};
+        }
+      }
+
       const [companyResult, userResult] = await Promise.all([
         EditProfileRepository.updateCompanyProfile(userId, {
+          ...(name && { name }),
+          ...(email && { email }),
           phone,
           address,
           locationCity,
+          ...(locationProvince && { locationProvince }),
           description,
           website,
-          ...(profilePictureUrl && { logoUrl: profilePictureUrl }),
+          ...(parsedSocials && { socials: parsedSocials }),
+          ...(logoUrl && { logoUrl }),
+          ...(bannerUrl && { bannerUrl }),
         }),
         EditProfileRepository.updateUserProfile(userId, {
           phone,

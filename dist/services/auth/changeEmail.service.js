@@ -24,7 +24,7 @@ class ChangeEmailService {
                 email: newEmail,
             });
         }
-        const token = (0, createToken_1.createToken)({ userId, email: newEmail }, "3d");
+        const token = (0, createToken_1.createToken)({ userId, email: newEmail }, "1h");
         try {
             await nodemailer_1.transport.sendMail({
                 from: process.env.MAIL_SENDER,

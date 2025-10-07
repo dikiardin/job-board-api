@@ -5,13 +5,24 @@ const cloudinary_1 = require("../../config/cloudinary");
 const editProfile_repository_1 = require("../../repositories/profile/editProfile.repository");
 const customError_1 = require("../../utils/customError");
 class EditProfileService {
-    static async editProfile(userId, role, data, file) {
+    static async editProfile(userId, role, data, files) {
         const user = await editProfile_repository_1.EditProfileRepository.findUserById(userId);
         if (!user)
             throw new customError_1.CustomError("User not found", 404);
+        let logoUrl;
+        let bannerUrl;
         let profilePictureUrl;
-        if (file) {
-            const upload = await (0, cloudinary_1.cloudinaryUpload)(file);
+        // Upload files to Cloudinary
+        if (files?.logoFile) {
+            const upload = await (0, cloudinary_1.cloudinaryUpload)(files.logoFile);
+            logoUrl = upload.secure_url;
+        }
+        if (files?.bannerFile) {
+            const upload = await (0, cloudinary_1.cloudinaryUpload)(files.bannerFile);
+            bannerUrl = upload.secure_url;
+        }
+        if (files?.profilePictureFile) {
+            const upload = await (0, cloudinary_1.cloudinaryUpload)(files.profilePictureFile);
             profilePictureUrl = upload.secure_url;
         }
         if (role === "USER") {
@@ -27,20 +38,35 @@ class EditProfileService {
             });
         }
         if (role === "ADMIN") {
-            const { phone, location, city, description, website } = data;
+            const { name, email, phone, address, locationCity, locationProvince, city, description, website, socials } = data;
+            // Parse socials if it's a string
+            let parsedSocials = socials;
+            if (typeof socials === 'string') {
+                try {
+                    parsedSocials = JSON.parse(socials);
+                }
+                catch (e) {
+                    parsedSocials = {};
+                }
+            }
             const [companyResult, userResult] = await Promise.all([
                 editProfile_repository_1.EditProfileRepository.updateCompanyProfile(userId, {
+                    ...(name && { name }),
+                    ...(email && { email }),
                     phone,
-                    location,
-                    city,
+                    address,
+                    locationCity,
+                    ...(locationProvince && { locationProvince }),
                     description,
                     website,
-                    ...(profilePictureUrl && { logo: profilePictureUrl }),
+                    ...(parsedSocials && { socials: parsedSocials }),
+                    ...(logoUrl && { logoUrl }),
+                    ...(bannerUrl && { bannerUrl }),
                 }),
                 editProfile_repository_1.EditProfileRepository.updateUserProfile(userId, {
                     phone,
-                    address: location,
-                    city,
+                    address,
+                    city: locationCity,
                     ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
                 }),
             ]);

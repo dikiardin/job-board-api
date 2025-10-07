@@ -79,12 +79,29 @@ export class PreselectionService {
       isActive: test.isActive,
       passingScore: test.passingScore,
       createdAt: test.createdAt,
-      questions: test.questions.map((q) => ({
-        id: q.id,
-        question: q.question,
-        options: q.options as unknown as string[],
-        ...(hideAnswers ? {} : { answer: q.answer }),
-      })),
+      questions: test.questions.map((q) => {
+        // Ensure options is always an array
+        let options: string[] = [];
+        if (Array.isArray(q.options)) {
+          options = q.options as string[];
+        } else if (typeof q.options === 'string') {
+          try {
+            options = JSON.parse(q.options);
+          } catch {
+            options = [];
+          }
+        } else if (q.options && typeof q.options === 'object') {
+          // Handle Prisma Json type
+          options = q.options as any;
+        }
+        
+        return {
+          id: q.id,
+          question: q.question,
+          options,
+          ...(hideAnswers ? {} : { answer: q.answer }),
+        };
+      }),
     };
   }
 
@@ -119,7 +136,22 @@ export class PreselectionService {
     for (const a of answers) {
       const q = qMap.get(a.questionId);
       if (!q) throw { status: 400, message: `Invalid questionId ${a.questionId}` };
-      const options = q.options as unknown as string[];
+      
+      // Ensure options is always an array
+      let options: string[] = [];
+      if (Array.isArray(q.options)) {
+        options = q.options as string[];
+      } else if (typeof q.options === 'string') {
+        try {
+          options = JSON.parse(q.options);
+        } catch {
+          options = [];
+        }
+      } else if (q.options && typeof q.options === 'object') {
+        // Handle Prisma Json type
+        options = q.options as any;
+      }
+      
       if (!options.includes(a.selected)) throw { status: 400, message: `Selected answer is not a valid option for question ${a.questionId}` };
       const isCorrect = a.selected === q.answer;
       if (isCorrect) score += 1;

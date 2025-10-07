@@ -15,11 +15,12 @@ class ProfileRouter {
     initializeRoutes() {
         this.route.put("/edit", verifyToken_1.verifyToken, (0, uploadImage_1.uploadFields)([
             { name: "profilePicture", maxCount: 1 },
-            { name: "logo", maxCount: 1 },
+            { name: "logoUrl", maxCount: 1 },
+            { name: "bannerUrl", maxCount: 1 },
         ]), this.editProfileController.editProfile);
         this.route.put("/complete", verifyToken_1.verifyToken, (0, uploadImage_1.uploadFields)([
             { name: "profilePicture", maxCount: 1 },
-            { name: "logo", maxCount: 1 },
+            { name: "logoUrl", maxCount: 1 },
         ]), this.editProfileController.completeProfile);
         this.route.get("/user", verifyToken_1.verifyToken, this.profileController.getUserProfile);
         this.route.get("/admin", verifyToken_1.verifyToken, this.profileController.getCompanyProfile);

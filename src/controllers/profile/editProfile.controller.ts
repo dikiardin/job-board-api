@@ -17,15 +17,15 @@ export class EditProfileController {
       const role = decrypt.role;
       const files = req.files as Record<string, Express.Multer.File[]>;
 
-      const uploadedFile =
-        (files.profilePicture && files.profilePicture[0]) ||
-        (files.logoUrl && files.logoUrl[0]);
+      const logoFile = files?.logoUrl?.[0];
+      const bannerFile = files?.bannerUrl?.[0];
+      const profilePictureFile = files?.profilePicture?.[0];
 
       const updatedProfile = await EditProfileService.editProfile(
         userId,
         role,
         req.body,
-        uploadedFile
+        { logoFile, bannerFile, profilePictureFile }
       );
 
       res.status(200).json({

@@ -11,15 +11,26 @@ class AssessmentSubmissionService {
         await AssessmentSubmissionService.validateSubmission(data);
         const assessment = await assessmentExecution_service_1.AssessmentExecutionService.validateAssessmentExists(data.assessmentId);
         const { score, correctAnswers, totalQuestions } = scoringCalculation_service_1.ScoringCalculationService.calculateScore(assessment.questions, data.answers);
-        const result = await AssessmentSubmissionService.saveAssessmentResult({
-            userId: data.userId, assessmentId: data.assessmentId, score,
-        });
         const isPassed = scoringCalculation_service_1.ScoringCalculationService.isPassed(score);
+        // Generate certificate immediately if user passed
         const certificateData = isPassed ? await AssessmentSubmissionService.generateCertificate(data.userId, assessment, score, totalQuestions) : null;
+        // Save result with certificate data
+        const resultData = {
+            userId: data.userId,
+            assessmentId: data.assessmentId,
+            score,
+        };
+        if (certificateData) {
+            resultData.certificateUrl = certificateData.certificateUrl;
+            resultData.certificateCode = certificateData.certificateCode;
+        }
+        const result = await AssessmentSubmissionService.saveAssessmentResult(resultData);
         return {
             result: {
                 id: result.id, score, correctAnswers, totalQuestions,
-                passed: isPassed, timeSpent: data.timeSpent, completedAt: result.createdAt
+                passed: isPassed, timeSpent: data.timeSpent, completedAt: result.createdAt,
+                certificateUrl: certificateData?.certificateUrl,
+                certificateCode: certificateData?.certificateCode,
             },
             certificate: certificateData,
         };
