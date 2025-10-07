@@ -32,20 +32,20 @@ export class EditProfileService {
     }
 
     if (role === "ADMIN") {
-      const { phone, location, city, description, website } = data;
+      const { phone, address, locationCity, city, description, website } = data;
       const [companyResult, userResult] = await Promise.all([
         EditProfileRepository.updateCompanyProfile(userId, {
           phone,
-          location,
-          city,
+          address,
+          locationCity,
           description,
           website,
-          ...(profilePictureUrl && { logo: profilePictureUrl }),
+          ...(profilePictureUrl && { logoUrl: profilePictureUrl }),
         }),
         EditProfileRepository.updateUserProfile(userId, {
           phone,
-          address: location,
-          city,
+          address,
+          city: locationCity,
           ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
         }),
       ]);

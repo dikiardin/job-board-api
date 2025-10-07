@@ -19,7 +19,7 @@ export class EditProfileController {
 
       const uploadedFile =
         (files.profilePicture && files.profilePicture[0]) ||
-        (files.logo && files.logo[0]);
+        (files.logoUrl && files.logoUrl[0]);
 
       const updatedProfile = await EditProfileService.editProfile(
         userId,
@@ -48,7 +48,7 @@ export class EditProfileController {
       const files = req.files as Record<string, Express.Multer.File[]>;
       const uploadedFile =
         (files?.profilePicture && files.profilePicture[0]) ||
-        (files?.logo && files.logo[0]);
+        (files?.logoUrl && files.logoUrl[0]);
 
       const updatedProfile = await EditProfileService.completeProfile(
         userId,
