@@ -24,7 +24,7 @@ export class ChangeEmailService {
       });
     }
 
-    const token = createToken({ userId, email: newEmail }, "3d");
+    const token = createToken({ userId, email: newEmail }, "1h");
 
     try {
       await transport.sendMail({

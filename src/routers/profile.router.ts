@@ -22,7 +22,7 @@ class ProfileRouter {
       verifyToken,
       uploadFields([
         { name: "profilePicture", maxCount: 1 },
-        { name: "logo", maxCount: 1 },
+        { name: "logoUrl", maxCount: 1 },
       ]),
       this.editProfileController.editProfile
     );
@@ -31,7 +31,7 @@ class ProfileRouter {
       verifyToken, 
       uploadFields([
         { name: "profilePicture", maxCount: 1 },
-        { name: "logo", maxCount: 1 },
+        { name: "logoUrl", maxCount: 1 },
       ]),
       this.editProfileController.completeProfile
     );
