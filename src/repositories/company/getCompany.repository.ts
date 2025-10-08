@@ -7,50 +7,71 @@ interface GetAllCompaniesParams {
   city?: string;
 }
 
+type SortField = "name" | "jobsCount";
+type SortOrder = "asc" | "desc";
+
 export class GetCompanyRepository {
   public static async getAllCompanies({
     page,
     limit,
     keyword,
     city,
-  }: GetAllCompaniesParams) {
+    sort = "name",
+    order = "asc",
+  }: GetAllCompaniesParams & { sort?: SortField; order?: SortOrder }) {
     const skip = (page - 1) * limit;
 
     const where: any = {};
-    if (keyword) {
-      where.name = { contains: keyword, mode: "insensitive" };
-    }
-    if (city) {
-      where.locationCity = { contains: city, mode: "insensitive" };
-    }
+    if (keyword) where.name = { contains: keyword, mode: "insensitive" };
+    if (city) where.locationCity = { contains: city, mode: "insensitive" };
 
-    const [companies, total] = await prisma.$transaction([
-      prisma.company.findMany({
-        where,
-        skip,
-        take: limit,
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          description: true,
-          website: true,
-          locationCity: true,
-          locationProvince: true,
-          logoUrl: true,
-          bannerUrl: true,
-          createdAt: true,
-          updatedAt: true,
-          _count: {
-            select: {
-              jobs: { where: { isPublished: true } },
-            },
+    const companiesRaw = await prisma.company.findMany({
+      where,
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        description: true,
+        website: true,
+        locationCity: true,
+        locationProvince: true,
+        logoUrl: true,
+        bannerUrl: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            jobs: { where: { isPublished: true } },
           },
         },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.company.count({ where }),
-    ]);
+        jobs: {
+          where: { isPublished: true },
+          select: { id: true },
+        },
+      },
+    });
+
+    // Count published jobs for sorting
+    const companies = companiesRaw.map((c) => ({
+      ...c,
+      jobsCount: c.jobs.length,
+    }));
+
+    companies.sort((a, b) => {
+      if (sort === "jobsCount") {
+        return order === "asc"
+          ? a.jobsCount - b.jobsCount
+          : b.jobsCount - a.jobsCount;
+      } else {
+        return order === "asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      }
+    });
+
+    const total = await prisma.company.count({ where });
 
     return { data: companies, total };
   }

@@ -1,13 +1,17 @@
 import { prisma } from "../../config/prisma";
 
+export interface JobFilters {
+  keyword?: string | undefined;
+  city?: string | undefined;
+  limit?: number;
+  offset?: number; 
+  sortBy?: "createdAt";
+  sortOrder?: "asc" | "desc";
+}
+
 export class GetJobRepository {
-  public static async getAllJobs(filters?: {
-    keyword?: string;
-    city?: string;
-    limit?: number;
-    offset?: number;
-  }) {
-    const { keyword, city, limit, offset } = filters || {};
+  public static async getAllJobs(filters?: JobFilters) {
+    const { keyword, city, limit, offset, sortBy, sortOrder } = filters || {};
 
     const conditions: any[] = [];
     if (keyword) {
@@ -23,8 +27,10 @@ export class GetJobRepository {
         ],
       });
     }
-    if (city)
+
+    if (city) {
       conditions.push({ city: { contains: city, mode: "insensitive" } });
+    }
 
     return prisma.job.findMany({
       where: {
@@ -41,9 +47,11 @@ export class GetJobRepository {
         salaryMax: true,
         tags: true,
         company: { select: { name: true, logoUrl: true } },
-        createdAt:true,
+        createdAt: true,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: {
+        [sortBy || "createdAt"]: sortOrder || "desc",
+      },
       ...(limit !== undefined ? { take: limit } : {}),
       ...(offset !== undefined ? { skip: offset } : {}),
     });

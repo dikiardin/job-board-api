@@ -8,7 +8,14 @@ export class GetJobController {
     next: NextFunction
   ) {
     try {
-      const { keyword, city, limit = "9", page = "1" } = req.query;
+      const {
+        keyword,
+        city,
+        limit = "9",
+        page = "1",
+        sortBy = "createdAt",
+        sortOrder = "desc",
+      } = req.query;
 
       const numericLimit = parseInt(limit as string, 10);
       const numericPage = parseInt(page as string, 10);
@@ -19,6 +26,8 @@ export class GetJobController {
         city: city as string,
         limit: numericLimit,
         offset,
+        sortBy: sortBy as "createdAt", 
+        sortOrder: (sortOrder as "asc" | "desc") || "desc",
       });
 
       res.status(200).json({

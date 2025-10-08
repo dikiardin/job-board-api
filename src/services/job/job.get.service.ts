@@ -7,6 +7,8 @@ export class GetJobService {
     city?: string;
     limit?: number;
     offset?: number;
+    sortBy?: "createdAt"; 
+    sortOrder?: "asc" | "desc";
   }) {
     const [jobs, total] = await Promise.all([
       GetJobRepository.getAllJobs(filters),
