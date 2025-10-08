@@ -1,13 +1,15 @@
 import { UserRepo } from "../../repositories/user/user.repository";
 import { hashPassword } from "../../utils/hashPassword";
 import { comparePassword } from "../../utils/comparePassword";
-import { createToken } from "../../utils/createToken";
+import { createToken, verifyToken } from "../../utils/createToken";
 import { CustomError } from "../../utils/customError";
 import { decodeToken } from "../../utils/decodeToken";
 import { transport } from "../../config/nodemailer";
 import { buildVerificationEmail } from "../../utils/emailTemplateVerify";
 import { CreateEmploymentService } from "../employment/createEmployment.service";
 import { CreateCompanyService } from "../company/createCompany.service";
+import { EmailService } from "./resendEmail.service";
+import { Buffer } from "buffer";
 
 export class BasicAuthService {
   public static async register(
@@ -56,40 +58,76 @@ export class BasicAuthService {
   }
 
   public static async verifyEmail(token: string) {
-    const decoded: any = decodeToken(token);
+    try {
+      const decoded = verifyToken(token);
 
-    if (!decoded?.userId) {
-      throw new CustomError("Invalid verification link", 400);
-    }
+      if (!decoded?.userId) {
+        throw new CustomError("Invalid verification link", 400);
+      }
 
-    const user = await UserRepo.findById(decoded.userId);
-    if (!user) {
-      throw new CustomError("User not found", 404);
-    }
+      const user = await UserRepo.findById(decoded.userId);
+      if (!user) {
+        throw new CustomError("User not found", 404);
+      }
 
-    if (user.emailVerifiedAt) {
+      if (user.emailVerifiedAt) {
+        const jwt = createToken(
+          { userId: user.id, email: user.email, role: user.role },
+          "7d"
+        );
+        return { message: "User already verified", token: jwt, user };
+      }
+
+      const updatedUser = await UserRepo.verifyUser(decoded.userId);
+
       const jwt = createToken(
-        { userId: user.id, email: user.email, role: user.role },
+        {
+          userId: updatedUser.id,
+          email: updatedUser.email,
+          role: updatedUser.role,
+        },
         "7d"
       );
-      return { message: "User already verified", token: jwt, user };
+
+      return {
+        message: "Email verified successfully",
+        token: jwt,
+        user: updatedUser,
+      };
+    } catch (err: any) {
+      // detect expired link
+      if (err.name === "TokenExpiredError") {
+        return {
+          message: "Expired verification link",
+          status: "expired",
+        };
+      }
+
+      throw err;
+    }
+  }
+
+  public static async resendVerificationEmail(email: string) {
+    const user = await UserRepo.findByEmail(email);
+    if (!user) throw new CustomError("User not found", 404);
+
+    if (user.emailVerifiedAt) {
+      throw new CustomError("User already verified", 400);
     }
 
-    const updatedUser = await UserRepo.verifyUser(decoded.userId);
+    const newToken = createToken(
+      { userId: user.id, email: user.email, role: user.role },
+      "1h"
+    );
 
-    const jwt = createToken(
-      {
-        userId: updatedUser.id,
-        email: updatedUser.email,
-        role: updatedUser.role,
-      },
-      "7d"
+    await EmailService.sendVerificationEmail(
+      user.name ?? "there",
+      user.email,
+      newToken
     );
 
     return {
-      message: "Email verified successfully",
-      token: jwt,
-      user: updatedUser,
+      message: "New verification email sent successfully",
     };
   }
 
