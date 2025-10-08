@@ -35,7 +35,7 @@ export async function seedSubscriptions({
         priceIdr: 25_000,
         perks: [
           "ATS CV Generator",
-          "2 Skill Assessments per month",
+          "2 skill assessments per month",
           "Basic email reminders",
         ],
         monthlyAssessmentQuota: 2,

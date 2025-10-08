@@ -5,7 +5,10 @@ import { QuestionManagementController } from "../controllers/skillAssessment/que
 import { CertificateManagementController } from "../controllers/skillAssessment/certificateManagement.controller";
 import { BadgeTemplateController } from "../controllers/skillAssessment/badgeTemplate.controller";
 import { verifyToken } from "../middlewares/verifyToken";
-import { verifySubscription, checkAssessmentLimits } from "../middlewares/verifySubscription";
+import {
+  verifySubscription,
+  checkAssessmentLimits,
+} from "../middlewares/verifySubscription";
 import { UserRole } from "../generated/prisma";
 import { uploadSingle } from "../middlewares/uploadImage";
 import { SkillAssessmentValidator } from "../middlewares/validator/skillAssessment.validator";
