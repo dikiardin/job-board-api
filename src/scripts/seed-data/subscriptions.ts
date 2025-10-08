@@ -19,6 +19,8 @@ export interface SeedSubscriptionsResult {
   standardPlan: SubscriptionPlan;
   professionalPlan: SubscriptionPlan;
   ginaProfessional: Subscription;
+  testProfessionalSubscription: Subscription;
+  testStandardSubscription: Subscription;
 }
 export async function seedSubscriptions({
   prisma,
@@ -39,29 +41,30 @@ export async function seedSubscriptions({
           "Basic email reminders",
         ],
         monthlyAssessmentQuota: 2,
-        priorityCvReview: false,
-        cvGeneratorEnabled: true,
       },
     }),
     prisma.subscriptionPlan.create({
       data: {
         code: SubscriptionPlanCode.PROFESSIONAL,
-        name: "Professional",
-        description: "Professional plan with unlimited assessments and priority review.",
+        name: "Professional Plan",
+        description: "Advanced features for serious job seekers",
         priceIdr: 100_000,
         perks: [
           "ATS CV Generator",
-          "Unlimited Skill Assessments",
-          "Priority CV Review",
-          "Exclusive templates",
+          "Unlimited skill assessments",
+          "Priority review when applying for jobs",
+          "Advanced CV templates", 
+          "Priority customer support",
+          "Detailed analytics and insights",
+          "Premium badge showcase",
+          "Enhanced profile visibility"
         ],
         monthlyAssessmentQuota: null,
-        priorityCvReview: true,
-        cvGeneratorEnabled: true,
       },
     }),
   ]);
-  const { developer, seekers } = users;
+
+  const { seekers, developer } = users;
   const thirtyDaysLater = addDays(30);
   const fifteenDaysLater = addDays(15);
   const sixtyDaysAgo = addDays(-60);
@@ -197,7 +200,81 @@ export async function seedSubscriptions({
       },
     },
   });
-  return { standardPlan, professionalPlan, ginaProfessional };
+
+  // Testing Users Subscriptions
+  const testProfessionalSubscription = await prisma.subscription.create({
+    data: {
+      userId: seekers.testProfessional.id,
+      planId: professionalPlan.id,
+      status: SubscriptionStatus.ACTIVE,
+      startDate: now,
+      paidAt: now,
+      expiresAt: thirtyDaysLater,
+      approvedByDeveloperId: developer.id,
+      payments: {
+        create: {
+          amount: new Prisma.Decimal(100_000),
+          paymentMethod: PaymentMethod.TRANSFER,
+          status: PaymentStatus.APPROVED,
+          paymentProof: "https://res.cloudinary.com/demo/payments/test-professional.jpg",
+          paidAt: now,
+          approvedAt: now,
+          approvedById: developer.id,
+          referenceCode: "PRO-INV-TEST-001",
+        },
+      },
+      usage: {
+        create: {
+          assessmentsUsed: 0,
+          cvGenerated: 0,
+          priorityReviews: 0,
+          periodStart: now,
+          periodEnd: thirtyDaysLater,
+        },
+      },
+    },
+  });
+
+  const testStandardSubscription = await prisma.subscription.create({
+    data: {
+      userId: seekers.testStandard.id,
+      planId: standardPlan.id,
+      status: SubscriptionStatus.ACTIVE,
+      startDate: now,
+      paidAt: now,
+      expiresAt: thirtyDaysLater,
+      approvedByDeveloperId: developer.id,
+      payments: {
+        create: {
+          amount: new Prisma.Decimal(25_000),
+          paymentMethod: PaymentMethod.TRANSFER,
+          status: PaymentStatus.APPROVED,
+          paymentProof: "https://res.cloudinary.com/demo/payments/test-standard.jpg",
+          paidAt: now,
+          approvedAt: now,
+          approvedById: developer.id,
+          referenceCode: "STD-INV-TEST-001",
+        },
+      },
+      usage: {
+        create: {
+          assessmentsUsed: 0,
+          cvGenerated: 0,
+          priorityReviews: 0,
+          periodStart: now,
+          periodEnd: thirtyDaysLater,
+        },
+      },
+    },
+  });
+
+  return { 
+    standardPlan, 
+    professionalPlan, 
+    ginaProfessional,
+    testProfessionalSubscription,
+    testStandardSubscription
+  };
 }
 
 

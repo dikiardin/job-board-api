@@ -8,6 +8,7 @@ export class ApplicationRepo {
     cvFileName?: string | null;
     cvFileSize?: number | null;
     expectedSalary?: number;
+    isPriority?: boolean;
   }) {
     return prisma.application.create({
       data: {
@@ -18,6 +19,7 @@ export class ApplicationRepo {
         cvFileSize: data.cvFileSize ?? null,
         expectedSalary:
           typeof data.expectedSalary === "number" ? data.expectedSalary : null,
+        isPriority: data.isPriority ?? false,
       },
     });
   }
@@ -66,7 +68,22 @@ export class ApplicationRepo {
     const [applications, total] = await Promise.all([
       prisma.application.findMany({
         where: { userId },
-        include: {
+        select: {
+          id: true,
+          userId: true,
+          jobId: true,
+          cvUrl: true,
+          cvFileName: true,
+          cvFileSize: true,
+          expectedSalary: true,
+          expectedSalaryCurrency: true,
+          status: true,
+          reviewNote: true,
+          reviewUpdatedAt: true,
+          referralSource: true,
+          createdAt: true,
+          updatedAt: true,
+          isPriority: true, // ← Include priority field
           job: {
             select: {
               id: true,
@@ -94,6 +111,72 @@ export class ApplicationRepo {
         take: limit,
       }),
       prisma.application.count({ where: { userId } }),
+    ]);
+
+    return { applications, total };
+  }
+
+  public static async getApplicationsForEmployer(
+    companyId: number,
+    page = 1,
+    limit = 10,
+    status?: string
+  ) {
+    const skip = (page - 1) * limit;
+
+    const whereClause: any = {
+      job: { companyId },
+    };
+
+    if (status) {
+      whereClause.status = status;
+    }
+
+    const [applications, total] = await Promise.all([
+      prisma.application.findMany({
+        where: whereClause,
+        select: {
+          id: true,
+          userId: true,
+          jobId: true,
+          cvUrl: true,
+          cvFileName: true,
+          cvFileSize: true,
+          expectedSalary: true,
+          expectedSalaryCurrency: true,
+          status: true,
+          reviewNote: true,
+          reviewUpdatedAt: true,
+          referralSource: true,
+          createdAt: true,
+          updatedAt: true,
+          isPriority: true, // ← IMPORTANT: Include priority field
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              profilePicture: true,
+            },
+          },
+          job: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+            },
+          },
+          timeline: { orderBy: { createdAt: "asc" } },
+        },
+        orderBy: [
+          { isPriority: "desc" }, // Priority applications first
+          { createdAt: "desc" },  // Then by newest
+        ],
+        skip,
+        take: limit,
+      }),
+      prisma.application.count({ where: whereClause }),
     ]);
 
     return { applications, total };

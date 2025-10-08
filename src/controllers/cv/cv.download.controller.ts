@@ -25,51 +25,29 @@ export class CVDownloadController {
         return res.status(404).json({ message: "CV not found" });
       }
 
-      // Debug: Try different URL variations
-      console.log("Original fileUrl:", cv.fileUrl);
+      // Try different URL variations
 
       // Try original URL first
       let response = await fetch(cv.fileUrl);
-      console.log(
-        "First attempt response:",
-        response.status,
-        response.statusText
-      );
 
       if (!response.ok) {
         // Try without .pdf extension
         const urlWithoutPdf = cv.fileUrl.replace(".pdf", "");
-        console.log("Trying URL without .pdf:", urlWithoutPdf);
         response = await fetch(urlWithoutPdf);
-        console.log(
-          "Second attempt response:",
-          response.status,
-          response.statusText
-        );
       }
 
       if (!response.ok) {
-        console.error(
-          "All fetch attempts failed:",
-          response.status,
-          response.statusText
-        );
-
         // As fallback, redirect to original Cloudinary URL
-        console.log("Redirecting to Cloudinary URL directly");
         return res.redirect(cv.fileUrl);
       }
 
       const buffer = await response.arrayBuffer();
-      console.log("PDF buffer size:", buffer.byteLength);
 
       // Validate PDF buffer
       const pdfBuffer = Buffer.from(buffer);
       const pdfHeader = pdfBuffer.toString("ascii", 0, 4);
-      console.log("PDF header:", pdfHeader);
 
       if (!pdfHeader.startsWith("%PDF")) {
-        console.error("Invalid PDF file - missing PDF header");
         return res.status(500).json({ message: "Invalid PDF file" });
       }
 
@@ -119,7 +97,6 @@ export class CVDownloadController {
       }
 
       // Fetch PDF from Cloudinary
-      console.log("Public download - Fetching PDF from:", cv.fileUrl);
       const response = await fetch(cv.fileUrl);
 
       if (!response.ok) {

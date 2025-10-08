@@ -59,7 +59,19 @@ export class ReviewManagementService {
     await CompanyValidationService.validateUserEmployment(userId, companyId);
     const existingReview = await CompanyValidationService.validateExistingReview(userId, companyId);
 
-    // Validate rating values
+    this.validateUpdateData(data);
+    const updateData = this.buildUpdateData(data);
+
+    const updatedReview = await CompanyReviewRepository.updateReview(
+      existingReview.id,
+      updateData
+    );
+
+    return updatedReview;
+  }
+
+  // Helper: Validate update data
+  private static validateUpdateData(data: CreateReviewData) {
     const ratings = [
       data.ratingCulture,
       data.ratingWorkLife,
@@ -67,8 +79,10 @@ export class ReviewManagementService {
       data.ratingCareer,
     ];
     ReviewValidationService.validateRatingValues(ratings);
+  }
 
-    // Calculate company rating
+  // Helper: Build update data object
+  private static buildUpdateData(data: CreateReviewData) {
     const companyRating = ReviewValidationService.calculateCompanyRating(
       data.ratingCulture,
       data.ratingWorkLife,
@@ -97,12 +111,7 @@ export class ReviewManagementService {
       updateData.body = data.body;
     }
 
-    const updatedReview = await CompanyReviewRepository.updateReview(
-      existingReview.id,
-      updateData
-    );
-
-    return updatedReview;
+    return updateData;
   }
 
   // Delete user's review

@@ -71,7 +71,7 @@ export async function seedApplications({
 }: SeedApplicationsOptions): Promise<SeedApplicationsResult> {
   const { seekers, admins, developer } = users;
   const { jobs, tests } = companies;
-  const { alice, bob, gina, charlie, diana, eko } = seekers;
+  const { alice, bob, gina, charlie, diana, eko, testProfessional, testStandard } = seekers;
   const hourMs = 60 * 60 * 1000;
 
   const applicationSeeds: ApplicationSeed[] = [
@@ -189,6 +189,75 @@ export async function seedApplications({
       });
     }
   }
+
+  // Add preselection results for testing users (without applications)
+  // Professional Tester - Frontend pretest
+  const testProfessionalFrontendResult = await prisma.preselectionResult.create({
+    data: {
+      userId: testProfessional.id,
+      testId: tests.frontend.id,
+      score: 20,
+      passed: true,
+    },
+  });
+
+  await recordApplicantAnswers({
+    prisma,
+    resultId: testProfessionalFrontendResult.id,
+    testId: tests.frontend.id,
+    correctCount: 20,
+  });
+
+  // Professional Tester - Data Scientist pretest
+  const testProfessionalDataResult = await prisma.preselectionResult.create({
+    data: {
+      userId: testProfessional.id,
+      testId: tests.dataScientist.id,
+      score: 18,
+      passed: true,
+    },
+  });
+
+  await recordApplicantAnswers({
+    prisma,
+    resultId: testProfessionalDataResult.id,
+    testId: tests.dataScientist.id,
+    correctCount: 18,
+  });
+
+  // Standard Tester - Frontend pretest
+  const testStandardFrontendResult = await prisma.preselectionResult.create({
+    data: {
+      userId: testStandard.id,
+      testId: tests.frontend.id,
+      score: 19,
+      passed: true,
+    },
+  });
+
+  await recordApplicantAnswers({
+    prisma,
+    resultId: testStandardFrontendResult.id,
+    testId: tests.frontend.id,
+    correctCount: 19,
+  });
+
+  // Standard Tester - Data Scientist pretest
+  const testStandardDataResult = await prisma.preselectionResult.create({
+    data: {
+      userId: testStandard.id,
+      testId: tests.dataScientist.id,
+      score: 17,
+      passed: true,
+    },
+  });
+
+  await recordApplicantAnswers({
+    prisma,
+    resultId: testStandardDataResult.id,
+    testId: tests.dataScientist.id,
+    correctCount: 17,
+  });
 
   return { applications: applications as Record<ApplicationKey, Application> };
 }

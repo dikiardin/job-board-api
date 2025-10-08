@@ -87,7 +87,7 @@ export const checkAssessmentLimits = async (
     const planKey = subscription.planCode.toUpperCase();
     const monthlyLimit = ASSESSMENT_LIMITS[planKey] ?? 2;
 
-    // Premium users have unlimited assessments
+    // Professional users have unlimited assessments
     if (monthlyLimit === -1) {
       return next();
     }

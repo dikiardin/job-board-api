@@ -77,16 +77,13 @@ class JobRouter {
       "/companies/:companyId/jobs/:jobId/applications/:applicationId/status",
       verifyToken,
       verifyRole([UserRole.ADMIN]),
-      require("../middlewares/validator/job.validator").validateUpdateApplicantStatus,
+      require("../middlewares/validator/job.validator")
+        .validateUpdateApplicantStatus,
       JobController.updateApplicantStatus
     );
 
-    this.route.get(
-      "/all",
-      GetJobController.getAllJobs
-    );
+    this.route.get("/all", GetJobController.getAllJobs);
     this.route.get("/:slug", GetJobController.getJobBySlug);
-
   }
 
   public getRouter(): Router {

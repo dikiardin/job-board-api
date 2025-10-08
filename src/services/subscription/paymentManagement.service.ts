@@ -5,12 +5,6 @@ export class PaymentManagementService {
   public static async createPaymentRecord(subscriptionId: number, planPrice: number) {
     try {
       const expiredAt = DateHelper.getPaymentExpiration();
-      console.log("Creating payment record with data:", {
-        subscriptionId,
-        paymentMethod: "TRANSFER",
-        amount: Number(planPrice),
-        expiresAt: expiredAt,
-      });
       
       const result = await PaymentRepo.createPayment({
         subscriptionId,
@@ -19,7 +13,6 @@ export class PaymentManagementService {
         expiresAt: expiredAt,
       });
       
-      console.log("Payment creation result:", result);
       return result;
     } catch (error) {
       console.error("Error in createPaymentRecord:", error);

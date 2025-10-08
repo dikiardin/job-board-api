@@ -12,15 +12,11 @@ export class CompanyController {
       // Get adminId from decoded token
       const adminId = parseInt(res.locals.decrypt?.userId);
       
-      console.log("Admin ID from token:", adminId);
-      
       if (!adminId) {
         return res.status(401).json({ message: "Admin ID not found in token" });
       }
       
       let company = await CreateCompanyRepo.findByAdminId(adminId);
-      
-      console.log("Found company:", company);
       
       if (!company) {
         // Auto-provision a default company for this admin to avoid broken admin flows

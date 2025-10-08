@@ -327,8 +327,38 @@ export class JobRepository {
           ...appWhere,
           ...(Object.keys(userWhere).length ? { user: { is: userWhere } } : {}),
         },
-        include: { user: true },
-        orderBy,
+        select: {
+          id: true,
+          userId: true,
+          jobId: true,
+          cvUrl: true,
+          cvFileName: true,
+          cvFileSize: true,
+          expectedSalary: true,
+          expectedSalaryCurrency: true,
+          status: true,
+          reviewNote: true,
+          reviewUpdatedAt: true,
+          referralSource: true,
+          createdAt: true,
+          updatedAt: true,
+          isPriority: true, // ← IMPORTANT: Include priority field
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              profilePicture: true,
+              education: true,
+              dob: true,
+            },
+          },
+        },
+        orderBy: [
+          { isPriority: "desc" }, // ← IMPORTANT: Priority sorting first
+          orderBy, // Then original sorting
+        ],
         skip: offset,
         take: limit,
       }),

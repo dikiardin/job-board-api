@@ -176,6 +176,7 @@ model Application {
   reviewNote             String?
   reviewUpdatedAt        DateTime?
   referralSource         String?
+  isPriority             Boolean           @default(false)
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @default(now()) @updatedAt
 
@@ -188,6 +189,7 @@ model Application {
   @@unique([userId, jobId])
   @@index([jobId])
   @@index([status, updatedAt])
+  @@index([isPriority, createdAt])
 }
 
 model ApplicationTimeline {

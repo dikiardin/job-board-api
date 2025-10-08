@@ -36,6 +36,8 @@ export interface SeedAssessmentsResult {
     alice: SkillResult;
     gina: SkillResult;
     bob: SkillResult;
+    testProfessional: SkillResult;
+    testStandard: SkillResult;
   };
 }
 
@@ -313,6 +315,43 @@ export async function seedAssessments({
       durationSeconds: 1_400,
     },
   });
+  // Testing Users Skill Results
+  const testProfessionalSkillResult = await prisma.skillResult.create({
+    data: {
+      userId: seekers.testProfessional.id,
+      assessmentId: assessmentJavaScript.id,
+      score: 2,
+      isPassed: true,
+      answers: {
+        strengths: ["JavaScript fundamentals", "ES6+ features"],
+        improvements: ["Advanced patterns"],
+      } as Prisma.JsonObject,
+      startedAt: addDays(-1),
+      finishedAt: new Date(addDays(-1).getTime() + 10 * 60 * 1000),
+      durationSeconds: 600,
+      certificateUrl: "https://res.cloudinary.com/demo/certificates/test-professional-js.pdf",
+      certificateCode: "CERT-JS-TESTPRO-001",
+    },
+  });
+
+  const testStandardSkillResult = await prisma.skillResult.create({
+    data: {
+      userId: seekers.testStandard.id,
+      assessmentId: assessmentReact.id,
+      score: 2,
+      isPassed: true,
+      answers: {
+        strengths: ["React hooks", "Component structure"],
+        improvements: ["State management"],
+      } as Prisma.JsonObject,
+      startedAt: addDays(-2),
+      finishedAt: new Date(addDays(-2).getTime() + 12 * 60 * 1000),
+      durationSeconds: 720,
+      certificateUrl: "https://res.cloudinary.com/demo/certificates/test-standard-react.pdf",
+      certificateCode: "CERT-REACT-TESTSTD-001",
+    },
+  });
+
   const badgePriorityReviewer = await prisma.badge.create({
     data: {
       name: "Priority Reviewer",
@@ -338,7 +377,13 @@ export async function seedAssessments({
       react: assessmentReact
     },
     badgePriorityReviewer,
-    skillResults: { alice: aliceSkillResult, gina: ginaSkillResult, bob: bobSkillResult },
+    skillResults: { 
+      alice: aliceSkillResult, 
+      gina: ginaSkillResult, 
+      bob: bobSkillResult,
+      testProfessional: testProfessionalSkillResult,
+      testStandard: testStandardSkillResult
+    },
   };
 }
 

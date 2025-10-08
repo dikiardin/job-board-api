@@ -199,15 +199,6 @@ export class AssessmentExecutionService {
       throw new CustomError("Assessment not found", 404);
     }
 
-    console.log("=== ASSESSMENT DATA FOR SCORING ===");
-    console.log("Assessment ID:", assessment.id);
-    console.log("Questions count:", assessment.questions?.length || 0);
-    console.log("Questions data:", assessment.questions?.map(q => ({
-      id: q.id,
-      question: q.question?.substring(0, 50) + "...",
-      answer: q.answer
-    })));
-
     return assessment;
   }
 
