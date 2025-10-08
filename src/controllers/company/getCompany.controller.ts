@@ -8,13 +8,22 @@ export class GetCompanyController {
     next: NextFunction
   ) {
     try {
-      const { page = 1, limit = 9, keyword, city } = req.query;
+      const {
+        page = 1,
+        limit = 9,
+        keyword,
+        city,
+        sort = "name",
+        order = "asc",
+      } = req.query;
 
       const companies = await GetCompanyService.getAllCompanies({
         page: Number(page),
         limit: Number(limit),
         keyword: keyword as string,
         city: city as string,
+        sort: sort as "name" | "jobsCount",
+        order: order as "asc" | "desc",
       });
 
       res.status(200).json({
