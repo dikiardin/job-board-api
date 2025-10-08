@@ -52,6 +52,20 @@ export class BasicAuthController {
     }
   }
 
+  static async resendVerification(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { email } = req.body;
+      const result = await BasicAuthService.resendVerificationEmail(email);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   public static async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;

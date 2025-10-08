@@ -41,6 +41,7 @@ export class GetJobRepository {
         salaryMax: true,
         tags: true,
         company: { select: { name: true, logoUrl: true } },
+        createdAt:true,
       },
       orderBy: { createdAt: "desc" },
       ...(limit !== undefined ? { take: limit } : {}),
