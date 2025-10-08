@@ -60,24 +60,31 @@ export class AssessmentCreationService {
       }>;
     }
   ) {
-
-    // If questions are being updated, validate them
     if (data.questions) {
-      if (data.questions.length < 1) {
-        throw new CustomError("Assessment must have at least 1 question", 400);
-      }
-
-      data.questions.forEach((q, index) => {
-        if (!q.question || q.options.length !== 4 || !q.answer) {
-          throw new CustomError(`Question ${index + 1} is invalid`, 400);
-        }
-        if (!q.options.includes(q.answer)) {
-          throw new CustomError(`Question ${index + 1} answer must be one of the options`, 400);
-        }
-      });
+      this.validateUpdateQuestions(data.questions);
     }
 
     return await AssessmentCrudRepository.updateAssessment(assessmentId, userId, data);
+  }
+
+  // Helper: Validate questions for update
+  private static validateUpdateQuestions(questions: Array<{
+    question: string;
+    options: string[];
+    answer: string;
+  }>) {
+    if (questions.length < 1) {
+      throw new CustomError("Assessment must have at least 1 question", 400);
+    }
+
+    questions.forEach((q, index) => {
+      if (!q.question || q.options.length !== 4 || !q.answer) {
+        throw new CustomError(`Question ${index + 1} is invalid`, 400);
+      }
+      if (!q.options.includes(q.answer)) {
+        throw new CustomError(`Question ${index + 1} answer must be one of the options`, 400);
+      }
+    });
   }
 
   // Delete assessment (Developer only)

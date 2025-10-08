@@ -31,7 +31,6 @@ export class AssessmentTakingController {
         data: assessment,
       });
     } catch (error) {
-      console.error("Error in getAssessmentForUser:", error);
       next(error);
     }
   }
