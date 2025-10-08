@@ -14,14 +14,16 @@ export class AssessmentTakingController {
       const assessmentId = ControllerHelper.parseId(req.params.assessmentId);
 
       // Check if assessment exists first
-      const assessmentExists = await AssessmentSubmissionService.checkAssessmentExists(assessmentId);
-      
+      const assessmentExists =
+        await AssessmentSubmissionService.checkAssessmentExists(assessmentId);
+
       if (!assessmentExists) {
         throw new Error(`Assessment with ID ${assessmentId} not found`);
       }
-      
+
       // Get assessment for user (without answers)
-      const assessment = await AssessmentSubmissionService.getAssessmentForTaking(assessmentId);
+      const assessment =
+        await AssessmentSubmissionService.getAssessmentForTaking(assessmentId);
 
       res.status(200).json({
         success: true,
@@ -45,9 +47,9 @@ export class AssessmentTakingController {
       const { answers, startedAt } = req.body;
 
       const result = await AssessmentSubmissionService.submitAssessment({
-        userId, 
-        assessmentId, 
-        answers, 
+        userId,
+        assessmentId,
+        answers,
         startedAt,
       });
 
@@ -71,7 +73,11 @@ export class AssessmentTakingController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const results = await AssessmentResultsService.getUserResults(userId, page, limit);
+      const results = await AssessmentResultsService.getUserResults(
+        userId,
+        page,
+        limit
+      );
 
       res.status(200).json({
         success: true,
@@ -94,9 +100,16 @@ export class AssessmentTakingController {
 
       // For developers, get all results for the assessment
       // For users, get only their specific result
-      const results = role === 'DEVELOPER' 
-        ? await AssessmentSubmissionService.getAllAssessmentResults(assessmentId, userId)
-        : await AssessmentSubmissionService.getAssessmentResult(userId, assessmentId);
+      const results =
+        role === "DEVELOPER"
+          ? await AssessmentSubmissionService.getAllAssessmentResults(
+              assessmentId,
+              userId
+            )
+          : await AssessmentSubmissionService.getAssessmentResult(
+              userId,
+              assessmentId
+            );
 
       res.status(200).json({
         success: true,
@@ -117,15 +130,12 @@ export class AssessmentTakingController {
       const userId = ControllerHelper.getUserId(res);
       const assessmentId = ControllerHelper.parseId(req.params.assessmentId);
 
-      const attempts = await AssessmentSubmissionService.getUserAssessmentAttempts(userId, assessmentId);
+      const attempts =
+        await AssessmentSubmissionService.getUserAssessmentAttempts(
+          userId,
+          assessmentId
+        );
 
-      // Debug logging
-      console.log('🔍 Backend Assessment Attempts Debug:', {
-        userId,
-        assessmentId,
-        attemptsCount: attempts.length,
-        attempts
-      });
 
       res.status(200).json({
         success: true,
