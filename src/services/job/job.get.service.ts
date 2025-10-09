@@ -9,6 +9,7 @@ export class GetJobService {
     offset?: number;
     sortBy?: "createdAt"; 
     sortOrder?: "asc" | "desc";
+    postedWithin?: "1" | "3" | "7" | "30";
   }) {
     const [jobs, total] = await Promise.all([
       GetJobRepository.getAllJobs(filters),
@@ -29,6 +30,7 @@ export class GetJobService {
           : "Not specified",
       companyName: (job as any).company?.name,
       companyLogo: (job as any).company?.logoUrl,
+      createdAt: job.createdAt,
     }));
 
     return { jobs: formattedJobs, total };

@@ -15,6 +15,7 @@ export class GetJobController {
         page = "1",
         sortBy = "createdAt",
         sortOrder = "desc",
+        postedWithin, 
       } = req.query;
 
       const numericLimit = parseInt(limit as string, 10);
@@ -28,6 +29,7 @@ export class GetJobController {
         offset,
         sortBy: sortBy as "createdAt", 
         sortOrder: (sortOrder as "asc" | "desc") || "desc",
+        postedWithin: postedWithin as "1" | "3" | "7" | "30",
       });
 
       res.status(200).json({

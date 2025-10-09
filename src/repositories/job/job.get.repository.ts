@@ -4,14 +4,15 @@ export interface JobFilters {
   keyword?: string | undefined;
   city?: string | undefined;
   limit?: number;
-  offset?: number; 
+  offset?: number;
   sortBy?: "createdAt";
   sortOrder?: "asc" | "desc";
+  postedWithin?: "1" | "3" | "7" | "30";
 }
 
 export class GetJobRepository {
   public static async getAllJobs(filters?: JobFilters) {
-    const { keyword, city, limit, offset, sortBy, sortOrder } = filters || {};
+    const { keyword, city, limit, offset, sortBy, sortOrder, postedWithin } = filters || {};
 
     const conditions: any[] = [];
     if (keyword) {
@@ -30,6 +31,13 @@ export class GetJobRepository {
 
     if (city) {
       conditions.push({ city: { contains: city, mode: "insensitive" } });
+    }
+
+    if (postedWithin) {
+      const days = parseInt(postedWithin, 10);
+      const dateLimit = new Date();
+      dateLimit.setDate(dateLimit.getDate() - days);
+      conditions.push({ createdAt: { gte: dateLimit } });
     }
 
     return prisma.job.findMany({
@@ -92,6 +100,11 @@ export class GetJobRepository {
             id: true,
             slug: true,
             name: true,
+            email: true,
+            phone: true,
+            address: true,
+            website: true,
+            description: true,
             logoUrl: true,
             locationCity: true,
           },
