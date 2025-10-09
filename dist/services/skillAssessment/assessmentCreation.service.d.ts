@@ -5,6 +5,7 @@ export declare class AssessmentCreationService {
         description?: string;
         category: string;
         badgeTemplateId?: number;
+        passScore?: number;
         createdBy: number;
         userRole: UserRole;
         questions: Array<{
@@ -128,6 +129,7 @@ export declare class AssessmentCreationService {
         description?: string;
         category?: string;
         badgeTemplateId?: number;
+        passScore?: number;
         questions?: Array<{
             question: string;
             options: string[];
@@ -167,6 +169,7 @@ export declare class AssessmentCreationService {
         passScore: number;
         badgeTemplateId: number | null;
     })>;
+    private static validateUpdateQuestions;
     static deleteAssessment(assessmentId: number, userId: number): Promise<{
         isActive: boolean;
         createdAt: Date;
@@ -232,5 +235,6 @@ export declare class AssessmentCreationService {
         questions: any;
         exportedAt: string;
     }>;
+    private static validatePassScore;
 }
 //# sourceMappingURL=assessmentCreation.service.d.ts.map

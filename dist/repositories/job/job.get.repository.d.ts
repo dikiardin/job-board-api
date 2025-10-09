@@ -1,11 +1,15 @@
+export interface JobFilters {
+    keyword?: string | undefined;
+    city?: string | undefined;
+    limit?: number;
+    offset?: number;
+    sortBy?: "createdAt";
+    sortOrder?: "asc" | "desc";
+}
 export declare class GetJobRepository {
-    static getAllJobs(filters?: {
-        keyword?: string;
-        city?: string;
-        limit?: number;
-        offset?: number;
-    }): Promise<{
+    static getAllJobs(filters?: JobFilters): Promise<{
         city: string;
+        createdAt: Date;
         id: number;
         company: {
             name: string;

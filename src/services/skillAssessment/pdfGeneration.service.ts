@@ -12,6 +12,7 @@ export class PDFGenerationService {
     userId: number;
     certificateCode: string;
     badgeIcon?: string;
+    badgeName?: string;
   }): Promise<Buffer> {
     // Delegate to PDF layout service
     return await PDFLayoutService.generateCertificatePDF(data);

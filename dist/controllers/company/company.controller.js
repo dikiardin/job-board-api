@@ -8,12 +8,10 @@ class CompanyController {
         try {
             // Get adminId from decoded token
             const adminId = parseInt(res.locals.decrypt?.userId);
-            console.log("Admin ID from token:", adminId);
             if (!adminId) {
                 return res.status(401).json({ message: "Admin ID not found in token" });
             }
             let company = await createCompany_repository_1.CreateCompanyRepo.findByAdminId(adminId);
-            console.log("Found company:", company);
             if (!company) {
                 // Auto-provision a default company for this admin to avoid broken admin flows
                 const admin = await user_repository_1.UserRepo.findById(adminId);

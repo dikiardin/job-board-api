@@ -2,11 +2,11 @@
 // Modular repository that delegates to specialized repositories
 // This keeps the main repository under 200 lines while maintaining all functionality
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AssessmentResultsRepository = exports.AssessmentCrudRepository = exports.SkillAssessmentModularRepository = void 0;
+exports.SkillAssessmentResultsRepository = exports.AssessmentCrudRepository = exports.SkillAssessmentModularRepository = void 0;
 const assessmentCrud_repository_1 = require("./assessmentCrud.repository");
 Object.defineProperty(exports, "AssessmentCrudRepository", { enumerable: true, get: function () { return assessmentCrud_repository_1.AssessmentCrudRepository; } });
-const assessmentResults_repository_1 = require("./assessmentResults.repository");
-Object.defineProperty(exports, "AssessmentResultsRepository", { enumerable: true, get: function () { return assessmentResults_repository_1.AssessmentResultsRepository; } });
+const skillAssessmentResults_repository_1 = require("./skillAssessmentResults.repository");
+Object.defineProperty(exports, "SkillAssessmentResultsRepository", { enumerable: true, get: function () { return skillAssessmentResults_repository_1.SkillAssessmentResultsRepository; } });
 class SkillAssessmentModularRepository {
     // ===== ASSESSMENT CRUD OPERATIONS =====
     // Delegate to AssessmentCrudRepository
@@ -44,52 +44,43 @@ class SkillAssessmentModularRepository {
         return await assessmentCrud_repository_1.AssessmentCrudRepository.saveQuestion(data);
     }
     // ===== ASSESSMENT RESULTS OPERATIONS =====
-    // Delegate to AssessmentResultsRepository
+    // Delegate to SkillAssessmentResultsRepository
     static async saveAssessmentResult(data) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.saveAssessmentResult(data);
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.saveAssessmentResult(data);
     }
     static async getUserResult(userId, assessmentId) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.getUserResult(userId, assessmentId);
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getUserResult(userId, assessmentId);
     }
-    static async getAssessmentResults(assessmentId) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.getAssessmentResults(assessmentId);
+    static async getAssessmentResults(assessmentId, createdBy) {
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getAssessmentResults(assessmentId, createdBy);
     }
     static async getUserResults(userId, page, limit) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.getUserResults(userId, page, limit);
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getUserResults(userId, page, limit);
     }
     static async verifyCertificate(certificateCode) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.verifyCertificate(certificateCode);
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.verifyCertificate(certificateCode);
     }
     static async getUserCertificates(userId, page, limit) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.getUserCertificates(userId, page, limit);
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getUserCertificates(userId, page, limit);
     }
     static async getCertificateByCode(certificateCode) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.getCertificateByCode(certificateCode);
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getCertificateByCode(certificateCode);
     }
     static async getAssessmentLeaderboard(assessmentId, limit) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.getAssessmentLeaderboard(assessmentId, limit);
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getAssessmentLeaderboard(assessmentId, limit);
     }
     static async getAssessmentStatistics(assessmentId) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.getAssessmentStatistics(assessmentId);
-    }
-    static async deleteAssessmentResult(resultId) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.deleteAssessmentResult(resultId);
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getAssessmentStats(assessmentId);
     }
     static async updateCertificateInfo(resultId, certificateUrl, certificateCode) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.updateCertificateInfo(resultId, certificateUrl, certificateCode);
-    }
-    static async getUserAssessmentHistory(userId) {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.getUserAssessmentHistory(userId);
-    }
-    static async getGlobalAssessmentStats() {
-        return await assessmentResults_repository_1.AssessmentResultsRepository.getGlobalAssessmentStats();
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.updateCertificateInfo(resultId, certificateUrl, certificateCode);
     }
     // ===== CONVENIENCE METHODS =====
     // Combined methods that use both repositories
-    static async getAssessmentWithResults(assessmentId) {
+    static async getAssessmentWithResults(assessmentId, createdBy) {
         const [assessment, results, stats] = await Promise.all([
             this.getAssessmentById(assessmentId),
-            this.getAssessmentResults(assessmentId),
+            this.getAssessmentResults(assessmentId, createdBy),
             this.getAssessmentStatistics(assessmentId),
         ]);
         return {
@@ -99,23 +90,25 @@ class SkillAssessmentModularRepository {
         };
     }
     static async getUserAssessmentSummary(userId) {
-        const [results, certificates, history] = await Promise.all([
+        const [results, certificates] = await Promise.all([
             this.getUserResults(userId),
             this.getUserCertificates(userId),
-            this.getUserAssessmentHistory(userId),
         ]);
         return {
             results: results.results,
             certificates: certificates.certificates,
-            statistics: history.statistics,
         };
+    }
+    // Get user assessment attempts for a specific assessment
+    static async getUserAssessmentAttempts(userId, assessmentId) {
+        return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getUserAssessmentAttempts(userId, assessmentId);
     }
     // Export specialized repositories for direct access if needed
     static get CrudRepository() {
         return assessmentCrud_repository_1.AssessmentCrudRepository;
     }
     static get ResultsRepository() {
-        return assessmentResults_repository_1.AssessmentResultsRepository;
+        return skillAssessmentResults_repository_1.SkillAssessmentResultsRepository;
     }
 }
 exports.SkillAssessmentModularRepository = SkillAssessmentModularRepository;

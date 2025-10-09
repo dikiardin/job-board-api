@@ -40,7 +40,7 @@ export const checkSubscription = async (
         status: SubscriptionStatus.ACTIVE,
         expiresAt: { gt: new Date() },
       },
-      include: { plan: true, usage: true },
+      include: { plan: true },
     });
 
     if (!activeSubscription) {

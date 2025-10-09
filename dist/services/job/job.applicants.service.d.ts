@@ -39,20 +39,19 @@ export declare class JobApplicantsService {
         offset: number;
         items: {
             applicationId: any;
+            userId: any;
+            userName: any;
+            userEmail: any;
+            profilePicture: any;
             appliedAt: any;
             expectedSalary: any;
             status: any;
             cvFile: any;
             testScore: number | null;
             preselectionPassed: boolean | null;
-            user: {
-                id: any;
-                name: any;
-                email: any;
-                profilePicture: any;
-                education: any;
-                dob: any;
-            };
+            isPriority: any;
+            education: any;
+            age: number | null;
         }[];
     }>;
 }

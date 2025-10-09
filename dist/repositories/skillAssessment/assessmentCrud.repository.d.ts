@@ -4,6 +4,7 @@ export declare class AssessmentCrudRepository {
         description?: string;
         category: string;
         badgeTemplateId?: number;
+        passScore?: number;
         createdBy: number;
         questions: Array<{
             question: string;

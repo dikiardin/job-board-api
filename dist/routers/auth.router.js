@@ -23,6 +23,7 @@ class AuthRouter {
         this.route.post("/signup/admin", auth_1.companyRegisterValidation, validate_1.validateRequest, this.basicAuthController.register);
         this.route.post("/signin", validate_1.validateRequest, this.basicAuthController.login);
         this.route.get("/verify/:token", this.basicAuthController.verifyEmail);
+        this.route.post("/resend-verification", this.basicAuthController.resendVerification);
         this.route.get("/keep", verifyToken_1.verifyToken, this.keepLoginController.keepLogin);
         this.route.post("/social", this.socialAuthController.socialLogin);
         this.route.patch("/change-email", verifyToken_1.verifyToken, changeEmail_controller_1.ChangeEmailController.changeEmail);

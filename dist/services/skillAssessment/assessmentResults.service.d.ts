@@ -40,6 +40,11 @@ export declare class AssessmentResultsService {
         };
     }>;
     static getAssessmentResult(userId: number, assessmentId: number): Promise<{
+        user: {
+            email: string;
+            name: string | null;
+            id: number;
+        };
         assessment: {
             id: number;
             description: string | null;
@@ -60,7 +65,7 @@ export declare class AssessmentResultsService {
         certificateUrl: string | null;
         certificateCode: string | null;
     }>;
-    static getAssessmentLeaderboard(assessmentId: number, limit?: number): Promise<({
+    static getAssessmentStatistics(assessmentId: number, createdBy: number): Promise<({
         user: {
             email: string;
             name: string | null;
@@ -80,13 +85,13 @@ export declare class AssessmentResultsService {
         durationSeconds: number | null;
         certificateUrl: string | null;
         certificateCode: string | null;
-    })[]>;
-    static getAssessmentStats(assessmentId: number): Promise<{
+    })[] | null>;
+    static getAssessmentSummary(assessmentId: number, createdBy: number): Promise<{
         totalAttempts: number;
         averageScore: number;
         passRate: number;
     }>;
-    static retakeAssessment(userId: number, assessmentId: number): Promise<{
+    static resetAssessment(userId: number, assessmentId: number): Promise<{
         message: string;
     }>;
     static canRetakeAssessment(userId: number, assessmentId: number): Promise<boolean>;

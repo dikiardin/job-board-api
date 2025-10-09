@@ -6,11 +6,11 @@ const hashPassword_1 = require("../../utils/hashPassword");
 const comparePassword_1 = require("../../utils/comparePassword");
 const createToken_1 = require("../../utils/createToken");
 const customError_1 = require("../../utils/customError");
-const decodeToken_1 = require("../../utils/decodeToken");
 const nodemailer_1 = require("../../config/nodemailer");
 const emailTemplateVerify_1 = require("../../utils/emailTemplateVerify");
 const createEmployment_service_1 = require("../employment/createEmployment.service");
 const createCompany_service_1 = require("../company/createCompany.service");
+const resendEmail_service_1 = require("./resendEmail.service");
 class BasicAuthService {
     static async register(role, name, email, password) {
         const existing = await user_repository_1.UserRepo.findByEmail(email);
@@ -46,28 +46,53 @@ class BasicAuthService {
         return { message: "Registered successfully, please verify your email." };
     }
     static async verifyEmail(token) {
-        const decoded = (0, decodeToken_1.decodeToken)(token);
-        if (!decoded?.userId) {
-            throw new customError_1.CustomError("Invalid verification link", 400);
+        try {
+            const decoded = (0, createToken_1.verifyToken)(token);
+            if (!decoded?.userId) {
+                throw new customError_1.CustomError("Invalid verification link", 400);
+            }
+            const user = await user_repository_1.UserRepo.findById(decoded.userId);
+            if (!user) {
+                throw new customError_1.CustomError("User not found", 404);
+            }
+            if (user.emailVerifiedAt) {
+                const jwt = (0, createToken_1.createToken)({ userId: user.id, email: user.email, role: user.role }, "7d");
+                return { message: "User already verified", token: jwt, user };
+            }
+            const updatedUser = await user_repository_1.UserRepo.verifyUser(decoded.userId);
+            const jwt = (0, createToken_1.createToken)({
+                userId: updatedUser.id,
+                email: updatedUser.email,
+                role: updatedUser.role,
+            }, "7d");
+            return {
+                message: "Email verified successfully",
+                token: jwt,
+                user: updatedUser,
+            };
         }
-        const user = await user_repository_1.UserRepo.findById(decoded.userId);
-        if (!user) {
+        catch (err) {
+            // detect expired link
+            if (err.name === "TokenExpiredError") {
+                return {
+                    message: "Expired verification link",
+                    status: "expired",
+                };
+            }
+            throw err;
+        }
+    }
+    static async resendVerificationEmail(email) {
+        const user = await user_repository_1.UserRepo.findByEmail(email);
+        if (!user)
             throw new customError_1.CustomError("User not found", 404);
-        }
         if (user.emailVerifiedAt) {
-            const jwt = (0, createToken_1.createToken)({ userId: user.id, email: user.email, role: user.role }, "7d");
-            return { message: "User already verified", token: jwt, user };
+            throw new customError_1.CustomError("User already verified", 400);
         }
-        const updatedUser = await user_repository_1.UserRepo.verifyUser(decoded.userId);
-        const jwt = (0, createToken_1.createToken)({
-            userId: updatedUser.id,
-            email: updatedUser.email,
-            role: updatedUser.role,
-        }, "7d");
+        const newToken = (0, createToken_1.createToken)({ userId: user.id, email: user.email, role: user.role }, "1h");
+        await resendEmail_service_1.EmailService.sendVerificationEmail(user.name ?? "there", user.email, newToken);
         return {
-            message: "Email verified successfully",
-            token: jwt,
-            user: updatedUser,
+            message: "New verification email sent successfully",
         };
     }
     static async login(email, password) {

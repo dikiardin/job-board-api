@@ -11,6 +11,7 @@ class AssessmentCrudRepository {
                 description: data.description || null,
                 category: data.category,
                 badgeTemplateId: data.badgeTemplateId || null,
+                passScore: data.passScore || 75,
                 createdBy: data.createdBy,
                 ...(data.questions.length > 0 && {
                     questions: {
@@ -77,6 +78,7 @@ class AssessmentCrudRepository {
                         description: data.description,
                         category: data.category,
                         badgeTemplateId: data.badgeTemplateId,
+                        passScore: data.passScore,
                         questions: {
                             create: data.questions.map((q) => ({
                                 question: q.question,
@@ -103,6 +105,8 @@ class AssessmentCrudRepository {
                 updateData.category = data.category;
             if (data.badgeTemplateId !== undefined)
                 updateData.badgeTemplateId = data.badgeTemplateId;
+            if (data.passScore !== undefined)
+                updateData.passScore = data.passScore;
             return await prisma_1.prisma.skillAssessment.updateMany({
                 where: { id: assessmentId, createdBy },
                 data: updateData,

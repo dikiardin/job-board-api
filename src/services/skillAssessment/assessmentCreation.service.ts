@@ -9,6 +9,7 @@ export class AssessmentCreationService {
     description?: string;
     category: string;
     badgeTemplateId?: number;
+    passScore?: number;
     createdBy: number;
     userRole: UserRole;
     questions: Array<{
@@ -19,6 +20,7 @@ export class AssessmentCreationService {
   }) {
     AssessmentValidationService.validateDeveloperRole(data.userRole);
     AssessmentValidationService.validateQuestions(data.questions);
+    this.validatePassScore(data.passScore);
     
     const { userRole, ...assessmentData } = data;
     return await AssessmentCrudRepository.createAssessment(assessmentData);
@@ -53,6 +55,7 @@ export class AssessmentCreationService {
       description?: string;
       category?: string;
       badgeTemplateId?: number;
+      passScore?: number;
       questions?: Array<{
         question: string;
         options: string[];
@@ -62,6 +65,10 @@ export class AssessmentCreationService {
   ) {
     if (data.questions) {
       this.validateUpdateQuestions(data.questions);
+    }
+    
+    if (data.passScore !== undefined) {
+      this.validatePassScore(data.passScore);
     }
 
     return await AssessmentCrudRepository.updateAssessment(assessmentId, userId, data);
@@ -182,5 +189,20 @@ export class AssessmentCreationService {
       questions: (assessment as any).questions || [],
       exportedAt: new Date().toISOString()
     };
+  }
+
+  // Helper: Validate pass score
+  private static validatePassScore(passScore?: number) {
+    if (passScore !== undefined && passScore !== null) {
+      if (typeof passScore !== 'number') {
+        throw new CustomError("Pass score must be a number", 400);
+      }
+      if (passScore < 1 || passScore > 100) {
+        throw new CustomError("Pass score must be between 1% and 100%", 400);
+      }
+      if (!Number.isInteger(passScore)) {
+        throw new CustomError("Pass score must be a whole number", 400);
+      }
+    }
   }
 }

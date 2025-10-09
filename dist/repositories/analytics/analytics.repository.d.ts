@@ -87,6 +87,7 @@ export declare class AnalyticsRepository {
         reviewNote: string | null;
         reviewUpdatedAt: Date | null;
         referralSource: string | null;
+        isPriority: boolean;
     })[]>;
     static applicationStatusCounts(params: {
         companyId: string | number;

@@ -492,7 +492,6 @@ model Subscription {
   plan                SubscriptionPlan   @relation(fields: [planId], references: [id])
   user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   payments            Payment[]
-  usage               SubscriptionUsage?
   approvedByDeveloper User?              @relation("SubscriptionApprover", fields: [approvedByDeveloperId], references: [id])
 
   @@index([userId])
@@ -524,19 +523,6 @@ model Payment {
   @@index([status])
 }
 
-model SubscriptionUsage {
-  id              Int      @id @default(autoincrement())
-  subscriptionId  Int      @unique
-  assessmentsUsed Int      @default(0)
-  cvGenerated     Int      @default(0)
-  priorityReviews Int      @default(0)
-  periodStart     DateTime
-  periodEnd       DateTime
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now()) @updatedAt
-
-  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-}
 
 model Employment {
   id                  Int       @id @default(autoincrement())

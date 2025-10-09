@@ -56,11 +56,11 @@ class SkillAssessmentResultsRepository {
                             title: true,
                             description: true,
                             creator: {
-                                select: { id: true, name: true }
+                                select: { id: true, name: true },
                             },
                             badgeTemplate: {
-                                select: { id: true, name: true, icon: true, category: true }
-                            }
+                                select: { id: true, name: true, icon: true, category: true },
+                            },
                         },
                     },
                 },
@@ -154,10 +154,7 @@ class SkillAssessmentResultsRepository {
                     select: { id: true, name: true },
                 },
             },
-            orderBy: [
-                { score: "desc" },
-                { createdAt: "asc" },
-            ],
+            orderBy: [{ score: "desc" }, { createdAt: "asc" }],
         });
     }
     // Get assessment statistics
@@ -175,7 +172,7 @@ class SkillAssessmentResultsRepository {
             };
         }
         const totalAttempts = results.length;
-        const passedAttempts = results.filter(r => r.score >= 75).length;
+        const passedAttempts = results.filter((r) => r.score >= 75).length;
         const totalScore = results.reduce((sum, r) => sum + r.score, 0);
         // Calculate time spent from startedAt and finishedAt
         const totalTime = results.reduce((sum, r) => {
@@ -213,6 +210,26 @@ class SkillAssessmentResultsRepository {
                 assessment: {
                     select: { id: true, title: true, description: true },
                 },
+            },
+        });
+    }
+    // Get user assessment attempts for a specific assessment
+    static async getUserAssessmentAttempts(userId, assessmentId) {
+        return await prisma_1.prisma.skillResult.findMany({
+            where: {
+                userId,
+                assessmentId,
+            },
+            select: {
+                id: true,
+                assessmentId: true,
+                userId: true,
+                createdAt: true,
+                score: true,
+                isPassed: true,
+            },
+            orderBy: {
+                createdAt: "desc",
             },
         });
     }

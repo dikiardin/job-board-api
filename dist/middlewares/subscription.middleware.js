@@ -27,7 +27,7 @@ const checkSubscription = async (req, res, next) => {
                 status: prisma_2.SubscriptionStatus.ACTIVE,
                 expiresAt: { gt: new Date() },
             },
-            include: { plan: true, usage: true },
+            include: { plan: true },
         });
         if (!activeSubscription) {
             return res.status(403).json({

@@ -6,6 +6,7 @@ export declare class ApplicationRepo {
         cvFileName?: string | null;
         cvFileSize?: number | null;
         expectedSalary?: number;
+        isPriority?: boolean;
     }): Promise<{
         createdAt: Date;
         updatedAt: Date;
@@ -21,6 +22,7 @@ export declare class ApplicationRepo {
         reviewNote: string | null;
         reviewUpdatedAt: Date | null;
         referralSource: string | null;
+        isPriority: boolean;
     }>;
     static findExisting(userId: number, jobId: number | string): Promise<{
         createdAt: Date;
@@ -37,6 +39,7 @@ export declare class ApplicationRepo {
         reviewNote: string | null;
         reviewUpdatedAt: Date | null;
         referralSource: string | null;
+        isPriority: boolean;
     } | null>;
     static getApplicationWithOwnership(applicationId: number): Promise<({
         user: {
@@ -122,6 +125,7 @@ export declare class ApplicationRepo {
         reviewNote: string | null;
         reviewUpdatedAt: Date | null;
         referralSource: string | null;
+        isPriority: boolean;
     }) | null>;
     static updateApplicationStatus(applicationId: number, status: any, reviewNote?: string | null): Promise<{
         createdAt: Date;
@@ -138,9 +142,15 @@ export declare class ApplicationRepo {
         reviewNote: string | null;
         reviewUpdatedAt: Date | null;
         referralSource: string | null;
+        isPriority: boolean;
     }>;
     static getApplicationsByUserId(userId: number, page?: number, limit?: number): Promise<{
-        applications: ({
+        applications: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            status: import("../../generated/prisma").$Enums.ApplicationStatus;
             job: {
                 city: string;
                 id: number;
@@ -156,6 +166,16 @@ export declare class ApplicationRepo {
                 salaryMin: number | null;
                 salaryMax: number | null;
             };
+            jobId: number;
+            cvUrl: string;
+            cvFileName: string | null;
+            cvFileSize: number | null;
+            expectedSalary: number | null;
+            expectedSalaryCurrency: string | null;
+            reviewNote: string | null;
+            reviewUpdatedAt: Date | null;
+            referralSource: string | null;
+            isPriority: boolean;
             interviews: {
                 createdAt: Date;
                 updatedAt: Date;
@@ -178,12 +198,28 @@ export declare class ApplicationRepo {
                 note: string | null;
                 createdById: number | null;
             }[];
-        } & {
+        }[];
+        total: number;
+    }>;
+    static getApplicationsForEmployer(companyId: number, page?: number, limit?: number, status?: string): Promise<{
+        applications: {
             createdAt: Date;
             updatedAt: Date;
             id: number;
+            user: {
+                email: string;
+                name: string | null;
+                phone: string | null;
+                profilePicture: string | null;
+                id: number;
+            };
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
+            job: {
+                id: number;
+                slug: string;
+                title: string;
+            };
             jobId: number;
             cvUrl: string;
             cvFileName: string | null;
@@ -193,7 +229,16 @@ export declare class ApplicationRepo {
             reviewNote: string | null;
             reviewUpdatedAt: Date | null;
             referralSource: string | null;
-        })[];
+            isPriority: boolean;
+            timeline: {
+                createdAt: Date;
+                id: number;
+                status: import("../../generated/prisma").$Enums.ApplicationStatus;
+                applicationId: number;
+                note: string | null;
+                createdById: number | null;
+            }[];
+        }[];
         total: number;
     }>;
 }

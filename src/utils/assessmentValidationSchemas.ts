@@ -14,6 +14,11 @@ export class AssessmentValidationSchemas {
     badgeTemplateId: Joi.number().integer().positive().optional().messages({
       "number.positive": "Badge template ID must be a positive number",
     }),
+    passScore: Joi.number().integer().min(1).max(100).optional().default(75).messages({
+      "number.min": "Pass score must be at least 1%",
+      "number.max": "Pass score cannot exceed 100%",
+      "number.integer": "Pass score must be a whole number",
+    }),
     questions: Joi.array()
       .items(
         Joi.object({
@@ -34,10 +39,10 @@ export class AssessmentValidationSchemas {
           }),
         })
       )
-      .min(0)
+      .min(1)
       .required()
       .messages({
-        "array.min": "Questions array is required",
+        "array.min": "At least one question is required",
         "any.required": "Questions are required",
       }),
   });
@@ -73,6 +78,11 @@ export class AssessmentValidationSchemas {
     description: Joi.string().optional(),
     category: Joi.string().min(1).optional(),
     badgeTemplateId: Joi.number().integer().positive().optional(),
+    passScore: Joi.number().integer().min(1).max(100).optional().messages({
+      "number.min": "Pass score must be at least 1%",
+      "number.max": "Pass score cannot exceed 100%",
+      "number.integer": "Pass score must be a whole number",
+    }),
     questions: Joi.array()
       .items(
         Joi.object({

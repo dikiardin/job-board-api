@@ -6,6 +6,8 @@ const cloudinary_1 = require("../../config/cloudinary");
 const customError_1 = require("../../utils/customError");
 const preselection_repository_1 = require("../../repositories/preselection/preselection.repository");
 const job_repository_1 = require("../../repositories/job/job.repository");
+const prisma_1 = require("../../generated/prisma");
+const prisma = new prisma_1.PrismaClient();
 class ApplicationService {
     static async submitApplicationBySlug(userId, jobSlug, file, expectedSalary) {
         if (!file)
@@ -31,6 +33,17 @@ class ApplicationService {
             }
         }
         const uploadResult = await (0, cloudinary_1.cloudinaryUpload)(file);
+        // Check if user has Professional subscription for priority review
+        const userSubscription = await prisma.subscription.findFirst({
+            where: {
+                userId,
+                status: "ACTIVE",
+            },
+            include: {
+                plan: true,
+            },
+        });
+        const isPriority = userSubscription?.plan?.code === "PROFESSIONAL";
         return application_repository_1.ApplicationRepo.createApplication({
             userId,
             jobId,
@@ -41,6 +54,7 @@ class ApplicationService {
             cvFileName: file.originalname,
             cvFileSize: file.size,
             ...(expectedSalary !== undefined ? { expectedSalary } : {}),
+            isPriority,
         });
     }
     static async getApplicationsByUserId(userId, page = 1, limit = 10) {

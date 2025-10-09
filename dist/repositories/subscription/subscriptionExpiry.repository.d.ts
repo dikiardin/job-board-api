@@ -24,8 +24,8 @@ export declare class SubscriptionExpiryRepo {
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -59,8 +59,8 @@ export declare class SubscriptionExpiryRepo {
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -94,8 +94,8 @@ export declare class SubscriptionExpiryRepo {
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;

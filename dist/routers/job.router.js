@@ -24,7 +24,8 @@ class JobRouter {
         // Applicants list with server-side pagination/filter/sort
         this.route.get("/companies/:companyId/jobs/:jobId/applicants", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), require("../middlewares/validator/job.validator").validateApplicantsList, job_controller_1.JobController.applicantsList);
         // Update applicant status (IN_REVIEW / INTERVIEW / ACCEPTED / REJECTED)
-        this.route.put("/companies/:companyId/jobs/:jobId/applications/:applicationId/status", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), require("../middlewares/validator/job.validator").validateUpdateApplicantStatus, job_controller_1.JobController.updateApplicantStatus);
+        this.route.put("/companies/:companyId/jobs/:jobId/applications/:applicationId/status", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), require("../middlewares/validator/job.validator")
+            .validateUpdateApplicantStatus, job_controller_1.JobController.updateApplicantStatus);
         this.route.get("/all", job_get_controller_1.GetJobController.getAllJobs);
         this.route.get("/:slug", job_get_controller_1.GetJobController.getJobBySlug);
     }

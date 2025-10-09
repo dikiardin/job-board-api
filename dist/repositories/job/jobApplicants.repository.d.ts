@@ -55,6 +55,7 @@ export declare class JobApplicantsRepository {
             reviewNote: string | null;
             reviewUpdatedAt: Date | null;
             referralSource: string | null;
+            isPriority: boolean;
         })[];
         total: number;
         limit: number;

@@ -4,6 +4,8 @@ export declare class GetJobService {
         city?: string;
         limit?: number;
         offset?: number;
+        sortBy?: "createdAt";
+        sortOrder?: "asc" | "desc";
     }): Promise<{
         jobs: {
             id: number;

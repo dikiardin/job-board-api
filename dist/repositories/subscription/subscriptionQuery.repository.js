@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionQueryRepo = void 0;
 const prisma_1 = require("../../config/prisma");
+const prisma_2 = require("../../generated/prisma");
 class SubscriptionQueryRepo {
     static async getAllSubscriptions() {
         return prisma_1.prisma.subscription.findMany({
@@ -47,7 +48,7 @@ class SubscriptionQueryRepo {
         return prisma_1.prisma.subscription.findFirst({
             where: {
                 userId,
-                status: "ACTIVE",
+                status: prisma_2.SubscriptionStatus.ACTIVE,
                 expiresAt: { gte: new Date() },
             },
             include: {

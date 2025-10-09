@@ -35,25 +35,14 @@ export declare class SubscriptionManagementService {
             referenceCode: string | null;
             notes: string | null;
         }[];
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -98,25 +87,14 @@ export declare class SubscriptionManagementService {
             referenceCode: string | null;
             notes: string | null;
         }[];
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -156,25 +134,14 @@ export declare class SubscriptionManagementService {
             referenceCode: string | null;
             notes: string | null;
         }[];
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -183,7 +150,45 @@ export declare class SubscriptionManagementService {
         approvedByDeveloperId: number | null;
         lastReminderSentAt: Date | null;
     })[]>;
-    static getUserActiveSubscription(userId: number): Promise<({
+    static getUserActiveSubscription(userId: number): Promise<{
+        isActive: boolean;
+        subscription: null;
+        message: string;
+        plan?: never;
+        expiresAt?: never;
+        status?: never;
+    } | {
+        isActive: boolean;
+        subscription: {
+            plan: {
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                id: number;
+                description: string | null;
+                code: import("../../generated/prisma").$Enums.SubscriptionPlanCode;
+                priceIdr: number;
+                perks: string[];
+                monthlyAssessmentQuota: number | null;
+                priorityCvReview: boolean;
+                cvGeneratorEnabled: boolean;
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            startDate: Date | null;
+            userId: number;
+            status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+            planId: number;
+            paidAt: Date | null;
+            expiresAt: Date | null;
+            cancelledAt: Date | null;
+            paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
+            proofUrl: string | null;
+            approvedByDeveloperId: number | null;
+            lastReminderSentAt: Date | null;
+        };
         plan: {
             name: string;
             createdAt: Date;
@@ -197,33 +202,10 @@ export declare class SubscriptionManagementService {
             priorityCvReview: boolean;
             cvGeneratorEnabled: boolean;
         };
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
-    } & {
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
-        startDate: Date | null;
-        userId: number;
-        planId: number;
-        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
-        paidAt: Date | null;
         expiresAt: Date | null;
-        cancelledAt: Date | null;
-        paymentMethod: import("../../generated/prisma").$Enums.PaymentMethod;
-        proofUrl: string | null;
-        approvedByDeveloperId: number | null;
-        lastReminderSentAt: Date | null;
-    }) | null>;
+        status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        message?: never;
+    }>;
     static validatePlanExists(planId: number): Promise<{
         name: string;
         createdAt: Date;
@@ -258,8 +240,8 @@ export declare class SubscriptionManagementService {
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -288,25 +270,14 @@ export declare class SubscriptionManagementService {
             priorityCvReview: boolean;
             cvGeneratorEnabled: boolean;
         };
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;

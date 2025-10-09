@@ -6,6 +6,7 @@ export class SkillAssessmentResultsRepository {
     userId: number;
     assessmentId: number;
     score: number;
+    isPassed: boolean;
     certificateUrl?: string;
     certificateCode?: string;
   }) {
@@ -14,7 +15,7 @@ export class SkillAssessmentResultsRepository {
         userId: data.userId,
         assessmentId: data.assessmentId,
         score: data.score,
-        isPassed: data.score >= 75,
+        isPassed: data.isPassed,
         certificateUrl: data.certificateUrl || null,
         certificateCode: data.certificateCode || null,
         startedAt: new Date(),
@@ -40,7 +41,7 @@ export class SkillAssessmentResultsRepository {
           select: { id: true, name: true, email: true },
         },
         assessment: {
-          select: { id: true, title: true, description: true },
+          select: { id: true, title: true, description: true, passScore: true },
         },
       },
       orderBy: { createdAt: "desc" },
@@ -66,6 +67,7 @@ export class SkillAssessmentResultsRepository {
               id: true,
               title: true,
               description: true,
+              passScore: true,
               creator: {
                 select: { id: true, name: true },
               },

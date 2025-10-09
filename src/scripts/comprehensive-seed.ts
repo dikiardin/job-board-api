@@ -32,7 +32,6 @@ async function comprehensiveSeed() {
     prisma.badgeTemplate.deleteMany(),
     prisma.badge.deleteMany(),
     prisma.generatedCV.deleteMany(),
-    prisma.subscriptionUsage.deleteMany(),
     prisma.payment.deleteMany(),
     prisma.subscription.deleteMany(),
     prisma.subscriptionPlan.deleteMany(),

@@ -128,6 +128,7 @@ export declare class JobRepository {
             reviewNote: string | null;
             reviewUpdatedAt: Date | null;
             referralSource: string | null;
+            isPriority: boolean;
         })[];
         _count: {
             applications: number;
@@ -319,37 +320,19 @@ export declare class JobRepository {
         limit?: number;
         offset?: number;
     }): Promise<{
-        items: ({
-            user: {
-                role: import("../../generated/prisma").$Enums.UserRole;
-                email: string;
-                passwordHash: string | null;
-                name: string | null;
-                phone: string | null;
-                gender: string | null;
-                dob: Date | null;
-                education: string | null;
-                address: string | null;
-                city: string | null;
-                profilePicture: string | null;
-                emailVerifiedAt: Date | null;
-                verificationToken: string | null;
-                verificationTokenExpiresAt: Date | null;
-                passwordResetToken: string | null;
-                passwordResetExpiresAt: Date | null;
-                emailChangeToken: string | null;
-                emailChangeNewEmail: string | null;
-                emailChangeExpiresAt: Date | null;
-                lastLoginAt: Date | null;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
-                id: number;
-            };
-        } & {
+        items: {
             createdAt: Date;
             updatedAt: Date;
             id: number;
+            user: {
+                email: string;
+                name: string | null;
+                phone: string | null;
+                dob: Date | null;
+                education: string | null;
+                profilePicture: string | null;
+                id: number;
+            };
             userId: number;
             status: import("../../generated/prisma").$Enums.ApplicationStatus;
             jobId: number;
@@ -361,7 +344,8 @@ export declare class JobRepository {
             reviewNote: string | null;
             reviewUpdatedAt: Date | null;
             referralSource: string | null;
-        })[];
+            isPriority: boolean;
+        }[];
         total: number;
         limit: number;
         offset: number;

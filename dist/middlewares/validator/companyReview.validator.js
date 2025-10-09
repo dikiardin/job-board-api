@@ -19,66 +19,54 @@ const createReviewSchema = joi_1.default.object({
         'any.required': 'Position title is required'
     }),
     salaryEstimateMin: joi_1.default.number()
-        .positive()
-        .max(1000000000) // Maximum 1 billion IDR
         .optional()
         .allow(null)
         .messages({
-        'number.base': 'Minimum salary estimate must be a number',
-        'number.positive': 'Minimum salary estimate must be positive',
-        'number.max': 'Minimum salary estimate must not exceed 1,000,000,000 IDR'
+        'number.base': 'Minimum salary estimate must be a number'
     }),
     salaryEstimateMax: joi_1.default.number()
-        .positive()
-        .max(1000000000) // Maximum 1 billion IDR
         .optional()
         .allow(null)
         .messages({
-        'number.base': 'Maximum salary estimate must be a number',
-        'number.positive': 'Maximum salary estimate must be positive',
-        'number.max': 'Maximum salary estimate must not exceed 1,000,000,000 IDR'
+        'number.base': 'Maximum salary estimate must be a number'
     }),
     ratingCulture: joi_1.default.number()
-        .min(0.1)
+        .min(1)
         .max(5)
-        .precision(1)
         .required()
         .messages({
         'number.base': 'Culture rating must be a number',
-        'number.min': 'Culture rating must be at least 0.1',
+        'number.min': 'Culture rating must be at least 1',
         'number.max': 'Culture rating must not exceed 5',
         'any.required': 'Culture rating is required'
     }),
     ratingWorkLife: joi_1.default.number()
-        .min(0.1)
+        .min(1)
         .max(5)
-        .precision(1)
         .required()
         .messages({
         'number.base': 'Work-life balance rating must be a number',
-        'number.min': 'Work-life balance rating must be at least 0.1',
+        'number.min': 'Work-life balance rating must be at least 1',
         'number.max': 'Work-life balance rating must not exceed 5',
         'any.required': 'Work-life balance rating is required'
     }),
     ratingFacilities: joi_1.default.number()
-        .min(0.1)
+        .min(1)
         .max(5)
-        .precision(1)
         .required()
         .messages({
         'number.base': 'Facility rating must be a number',
-        'number.min': 'Facility rating must be at least 0.1',
+        'number.min': 'Facility rating must be at least 1',
         'number.max': 'Facility rating must not exceed 5',
         'any.required': 'Facility rating is required'
     }),
     ratingCareer: joi_1.default.number()
-        .min(0.1)
+        .min(1)
         .max(5)
-        .precision(1)
         .required()
         .messages({
         'number.base': 'Career opportunity rating must be a number',
-        'number.min': 'Career opportunity rating must be at least 0.1',
+        'number.min': 'Career opportunity rating must be at least 1',
         'number.max': 'Career opportunity rating must not exceed 5',
         'any.required': 'Career opportunity rating is required'
     }),

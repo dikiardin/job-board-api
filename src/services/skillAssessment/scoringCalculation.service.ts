@@ -1,5 +1,5 @@
 export class ScoringCalculationService {
-  private static readonly PASSING_SCORE = 75;
+  private static readonly DEFAULT_PASSING_SCORE = 75;
 
   public static calculateScore(
     questions: Array<{ id: number; answer: string }>,
@@ -35,12 +35,13 @@ export class ScoringCalculationService {
     return correctAnswers;
   }
 
-  public static isPassed(score: number): boolean {
-    return score >= this.PASSING_SCORE;
+  public static isPassed(score: number, passScore?: number): boolean {
+    const requiredScore = passScore ?? this.DEFAULT_PASSING_SCORE;
+    return score >= requiredScore;
   }
 
-  public static getPassingScore(): number {
-    return this.PASSING_SCORE;
+  public static getPassingScore(passScore?: number): number {
+    return passScore ?? this.DEFAULT_PASSING_SCORE;
   }
 
   public static calculateTimeEfficiency(timeSpent: number, timeLimit: number) {
