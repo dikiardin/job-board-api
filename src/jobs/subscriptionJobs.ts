@@ -4,11 +4,11 @@ import { EmailService } from "../services/subscription/email.service";
 import { SubscriptionStatus } from "../generated/prisma";
 
 export function startSubscriptionJobs() {
-  // Reminder H-24 (daily at 09:00)
-  cron.schedule("0 9 * * *", async () => {
-    console.log("[CRON] Checking subscriptions expiring in 24 hours...");
+  // FOR TESTING: Reminder 1 minute before expiry (every 30 seconds)
+  cron.schedule("*/30 * * * * *", async () => {
+    console.log("[CRON] Checking subscriptions expiring in 1 minute...");
     try {
-      const expiring = await SubscriptionRepo.getSubscriptionsExpiringWithinHours(24);
+      const expiring = await SubscriptionRepo.getSubscriptionsExpiringInMinutes(1);
 
       for (const subscription of expiring) {
         if (subscription.expiresAt) {
@@ -21,14 +21,14 @@ export function startSubscriptionJobs() {
       }
       }
 
-      console.log(`[CRON] Sent ${expiring.length} expiration reminder emails (H-24)`);
+      console.log(`[CRON] Sent ${expiring.length} expiration reminder emails (1 minute before)`);
     } catch (error) {
       console.error("[CRON] Failed to send expiration reminders:", error);
     }
   });
 
-  // Deactivate expired subscriptions (daily at 10:00)
-  cron.schedule("0 10 * * *", async () => {
+  // FOR TESTING: Deactivate expired subscriptions (every minute)
+  cron.schedule("0 * * * * *", async () => {
     console.log("[CRON] Checking for expired subscriptions...");
     try {
       const expired = await SubscriptionRepo.getExpiredSubscriptions();

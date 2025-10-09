@@ -16,14 +16,14 @@ export const buildSubscriptionExpirationEmail = (
           <td>
             <h2 style="color: #333;">Hi ${name},</h2>
                    <p style="color: #555; font-size: 16px; line-height: 1.5;">
-                     Your <strong>${planName}</strong> subscription will expire on <strong>${formattedDate}</strong> (2 minutes from now).
+                     Your <strong>${planName}</strong> subscription will expire on <strong>${formattedDate}</strong>.
                    </p>
             <p style="color: #555; font-size: 16px; line-height: 1.5;">
               To continue accessing premium features, please renew your subscription now.
             </p>
             <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.FE_URL}/subscription/renew" target="_blank" 
-                style="background-color: #007bff; color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-size: 16px; font-weight: bold;">
+              <a href="${process.env.FE_URL || 'http://localhost:3000'}/subscription/renew" target="_blank" 
+                style="background-color: #24CFA7; color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-size: 16px; font-weight: bold;">
                 Renew Subscription
               </a>
             </div>

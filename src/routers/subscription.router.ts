@@ -145,6 +145,20 @@ class SubscriptionRouter {
       verifyToken,
       this.paymentController.getPaymentsBySubscriptionId
     );
+
+    // Get renewal info (Developer + User)
+    this.route.get(
+      "/renewal-info",
+      verifyToken,
+      this.subscriptionController.getRenewalInfo
+    );
+
+    // Renew subscription (Developer + User)
+    this.route.post(
+      "/renew",
+      verifyToken,
+      this.subscriptionController.renewSubscription
+    );
   }
 
   public getRouter(): Router {
