@@ -7,6 +7,8 @@ export const buildSubscriptionExpirationEmail = (
     year: "numeric",
     month: "long",
     day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
   });
 
   return `
@@ -16,7 +18,7 @@ export const buildSubscriptionExpirationEmail = (
           <td>
             <h2 style="color: #333;">Hi ${name},</h2>
                    <p style="color: #555; font-size: 16px; line-height: 1.5;">
-                     Your <strong>${planName}</strong> subscription will expire on <strong>${formattedDate}</strong>.
+                     Your <strong>${planName}</strong> subscription will expire on <strong>${formattedDate}</strong> (in about 50 minutes).
                    </p>
             <p style="color: #555; font-size: 16px; line-height: 1.5;">
               To continue accessing premium features, please renew your subscription now.
