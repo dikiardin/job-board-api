@@ -92,6 +92,7 @@ export declare class InterviewQueryService {
             reviewNote: string | null;
             reviewUpdatedAt: Date | null;
             referralSource: string | null;
+            isPriority: boolean;
         };
     } & {
         createdAt: Date;

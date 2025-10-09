@@ -26,7 +26,7 @@ export const verifySubscription = async (
         status: SubscriptionStatus.ACTIVE,
         expiresAt: { gt: new Date() },
       },
-      include: { plan: true, usage: true },
+      include: { plan: true },
     });
 
     // If no active subscription, check for recent PENDING subscription (within 24 hours)
@@ -38,7 +38,7 @@ export const verifySubscription = async (
           status: SubscriptionStatus.PENDING,
           createdAt: { gte: twentyFourHoursAgo },
         },
-        include: { plan: true, usage: true },
+        include: { plan: true },
       });
     }
 

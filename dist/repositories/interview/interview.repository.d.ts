@@ -123,6 +123,7 @@ export declare class InterviewRepository {
             reviewNote: string | null;
             reviewUpdatedAt: Date | null;
             referralSource: string | null;
+            isPriority: boolean;
         };
     } & {
         createdAt: Date;
@@ -255,6 +256,7 @@ export declare class InterviewRepository {
             reviewNote: string | null;
             reviewUpdatedAt: Date | null;
             referralSource: string | null;
+            isPriority: boolean;
         };
     } & {
         createdAt: Date;
@@ -396,6 +398,7 @@ export declare class InterviewRepository {
             reviewNote: string | null;
             reviewUpdatedAt: Date | null;
             referralSource: string | null;
+            isPriority: boolean;
         };
     } & {
         createdAt: Date;
@@ -533,6 +536,7 @@ export declare class InterviewRepository {
                 reviewNote: string | null;
                 reviewUpdatedAt: Date | null;
                 referralSource: string | null;
+                isPriority: boolean;
             };
         } & {
             createdAt: Date;
@@ -678,6 +682,7 @@ export declare class InterviewRepository {
             reviewNote: string | null;
             reviewUpdatedAt: Date | null;
             referralSource: string | null;
+            isPriority: boolean;
         };
     } & {
         createdAt: Date;

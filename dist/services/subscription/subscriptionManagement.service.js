@@ -20,7 +20,21 @@ class SubscriptionManagementService {
         return await subscription_repository_1.SubscriptionRepo.getUserSubscriptions(userId);
     }
     static async getUserActiveSubscription(userId) {
-        return await subscription_repository_1.SubscriptionRepo.getUserActiveSubscription(userId);
+        const subscription = await subscription_repository_1.SubscriptionRepo.getUserActiveSubscription(userId);
+        if (!subscription) {
+            return {
+                isActive: false,
+                subscription: null,
+                message: "No active subscription found"
+            };
+        }
+        return {
+            isActive: true,
+            subscription: subscription,
+            plan: subscription.plan,
+            expiresAt: subscription.expiresAt,
+            status: subscription.status
+        };
     }
     static async validatePlanExists(planId) {
         const plan = await plan_repository_1.PlanRepo.getPlanById(planId);
@@ -38,19 +52,12 @@ class SubscriptionManagementService {
     static async createSubscription(userId, planId) {
         try {
             const placeholderDate = dateHelper_1.DateHelper.getPlaceholderDate();
-            console.log("Creating subscription with data:", {
-                userId,
-                planId,
-                startDate: placeholderDate,
-                expiresAt: placeholderDate,
-            });
             const result = await subscription_repository_1.SubscriptionRepo.createSubscription({
                 userId,
                 planId: planId,
                 startDate: placeholderDate,
                 expiresAt: placeholderDate,
             });
-            console.log("Subscription creation result:", result);
             return result;
         }
         catch (error) {

@@ -95,15 +95,6 @@ export async function seedSubscriptions({
           referenceCode: "PRO-INV-ALICE-001",
         },
       },
-      usage: {
-        create: {
-          assessmentsUsed: 3,
-          cvGenerated: 2,
-          priorityReviews: 1,
-          periodStart: now,
-          periodEnd: thirtyDaysLater,
-        },
-      },
     },
   });
   await prisma.subscription.create({
@@ -166,15 +157,6 @@ export async function seedSubscriptions({
           referenceCode: "PRO-INV-GINA-002",
         },
       },
-      usage: {
-        create: {
-          assessmentsUsed: 1,
-          cvGenerated: 1,
-          priorityReviews: 1,
-          periodStart: now,
-          periodEnd: fifteenDaysLater,
-        },
-      },
     },
   });
   await prisma.subscription.create({
@@ -223,15 +205,6 @@ export async function seedSubscriptions({
           referenceCode: "PRO-INV-TEST-001",
         },
       },
-      usage: {
-        create: {
-          assessmentsUsed: 0,
-          cvGenerated: 0,
-          priorityReviews: 0,
-          periodStart: now,
-          periodEnd: thirtyDaysLater,
-        },
-      },
     },
   });
 
@@ -254,15 +227,6 @@ export async function seedSubscriptions({
           approvedAt: now,
           approvedById: developer.id,
           referenceCode: "STD-INV-TEST-001",
-        },
-      },
-      usage: {
-        create: {
-          assessmentsUsed: 0,
-          cvGenerated: 0,
-          priorityReviews: 0,
-          periodStart: now,
-          periodEnd: thirtyDaysLater,
         },
       },
     },

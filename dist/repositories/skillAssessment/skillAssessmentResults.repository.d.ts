@@ -239,5 +239,13 @@ export declare class SkillAssessmentResultsRepository {
         certificateUrl: string | null;
         certificateCode: string | null;
     }) | null>;
+    static getUserAssessmentAttempts(userId: number, assessmentId: number): Promise<{
+        createdAt: Date;
+        id: number;
+        userId: number;
+        score: number;
+        assessmentId: number;
+        isPassed: boolean;
+    }[]>;
 }
 //# sourceMappingURL=skillAssessmentResults.repository.d.ts.map

@@ -65,4 +65,13 @@ export class PDFLayoutHelper {
        .font('Helvetica-Bold')
        .text(assessmentTitle, centerX - 250, 340, { width: 500, align: "center" });
   }
+
+  public static addBadgeInfo(doc: any, centerX: number, badgeName: string) {
+    const goldColor = "#FFD700";
+    
+    doc.fontSize(16)
+       .fillColor(goldColor)
+       .font('Helvetica-Bold')
+       .text(`${badgeName} Badge`, centerX - 200, 370, { width: 400, align: "center" });
+  }
 }

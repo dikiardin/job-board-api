@@ -16,6 +16,7 @@ export class PDFLayoutService {
     userId: number;
     certificateCode: string;
     badgeIcon?: string;
+    badgeName?: string;
   }): Promise<Buffer> {
     const doc = new PDFKit.default({
       size: "A4",
@@ -32,8 +33,8 @@ export class PDFLayoutService {
     this.addHeader(doc, centerX);
     this.addUserInfo(doc, centerX, data);
     this.addScoreInfo(doc, centerX, data);
-    this.addDateAndSignature(doc, centerX, data.completedAt);
-    await this.addQRCode(doc, centerX, data.certificateCode);
+    this.addDateAndSignature(doc, centerX, data.completedAt, data);
+    await this.addQRCode(doc, centerX, data.certificateCode, data);
 
     return this.generateBuffer(doc);
   }
@@ -82,19 +83,27 @@ export class PDFLayoutService {
     PDFLayoutHelper.addCertificationText(doc, centerX);
     PDFLayoutHelper.addUserName(doc, centerX, data.userName);
     PDFLayoutHelper.addAssessmentTitle(doc, centerX, data.assessmentTitle);
+    
+    // Add badge info if badge name exists
+    if (data.badgeName) {
+      PDFLayoutHelper.addBadgeInfo(doc, centerX, data.badgeName);
+    }
   }
 
   private static addScoreInfo(doc: any, centerX: number, data: any) {
     const primaryColor = "#467EC7";
     const scorePercentage = Math.round(data.score);
     
+    // Adjust position based on whether badge info is present
+    const scoreY = data.badgeName ? 395 : 390;
+    
     doc.fontSize(18)
        .fillColor(primaryColor)
        .font('Helvetica-Bold')
-       .text(`Score: ${data.score}/${data.totalQuestions} (${scorePercentage}%)`, centerX - 200, 390, { width: 400, align: "center" });
+       .text(`Score: ${scorePercentage}/100 (${scorePercentage}%)`, centerX - 200, scoreY, { width: 400, align: "center" });
   }
 
-  private static addDateAndSignature(doc: any, centerX: number, completedAt: Date) {
+  private static addDateAndSignature(doc: any, centerX: number, completedAt: Date, data: any) {
     const lightGray = "#718096";
     
     const formattedDate = completedAt.toLocaleDateString('en-US', { 
@@ -103,20 +112,26 @@ export class PDFLayoutService {
       day: 'numeric' 
     });
 
+    // Adjust position based on whether badge info is present
+    const dateY = data.badgeName ? 425 : 420;
+
     doc.fontSize(14)
        .fillColor(lightGray)
        .font('Helvetica')
-       .text(`Completed on: ${formattedDate}`, centerX - 200, 430, { width: 400, align: "center" });
+       .text(`Completed on: ${formattedDate}`, centerX - 200, dateY, { width: 400, align: "center" });
   }
 
-  private static async addQRCode(doc: any, centerX: number, certificateCode: string) {
+  private static async addQRCode(doc: any, centerX: number, certificateCode: string, data: any) {
     const primaryColor = "#467EC7";
     const lightGray = "#718096";
+    
+    // Adjust position based on whether badge info is present
+    const codeY = data.badgeName ? 450 : 445;
     
     doc.fontSize(14)
        .fillColor(lightGray)
        .font('Helvetica')
-       .text(`Certificate Code: ${certificateCode}`, centerX - 200, 450, { width: 400, align: "center" });
+       .text(`Certificate Code: ${certificateCode}`, centerX - 200, codeY, { width: 400, align: "center" });
 
     const verificationUrl = `${process.env.FE_URL || 'http://localhost:3000'}/verify-certificate/${certificateCode}`;
 
@@ -132,7 +147,7 @@ export class PDFLayoutService {
       });
       
       const qrX = centerX - 25;
-      const qrY = 465;
+      const qrY = data.badgeName ? 470 : 465;
       doc.image(qrCodeBuffer, qrX, qrY, { width: 50, height: 50 });
       
       doc.fontSize(6)
@@ -145,15 +160,15 @@ export class PDFLayoutService {
          .font('Helvetica')
          .text(verificationUrl, centerX - 60, qrY + 62, { width: 120, align: "center" });
 
-      // Footer with branding (positioned right after QR code)
+      // Footer with branding positioned at bottom left
       doc.fontSize(9)
          .fillColor(primaryColor)
          .font('Helvetica-Bold')
-         .text("WORKOO JOB BOARD", 50, qrY + 75);
+         .text("WORKOO JOB BOARD", 50, doc.page.height - 60);
 
     } catch (error) {
       const qrX = centerX - 25;
-      const qrY = 465;
+      const qrY = data.badgeName ? 470 : 465;
       doc.rect(qrX, qrY, 50, 50)
          .lineWidth(1)
          .stroke(lightGray);
@@ -165,10 +180,11 @@ export class PDFLayoutService {
       doc.fontSize(5)
          .text(verificationUrl, centerX - 60, qrY + 62, { width: 120, align: "center" });
 
+      // Footer with branding positioned at bottom left
       doc.fontSize(9)
          .fillColor(primaryColor)
          .font('Helvetica-Bold')
-         .text("WORKOO JOB BOARD", 50, qrY + 75);
+         .text("WORKOO JOB BOARD", 50, doc.page.height - 60);
     }
   }
 

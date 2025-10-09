@@ -36,25 +36,14 @@ export declare class SubscriptionRepo {
             referenceCode: string | null;
             notes: string | null;
         }[];
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -99,25 +88,14 @@ export declare class SubscriptionRepo {
             referenceCode: string | null;
             notes: string | null;
         }[];
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -157,25 +135,14 @@ export declare class SubscriptionRepo {
             referenceCode: string | null;
             notes: string | null;
         }[];
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -198,25 +165,14 @@ export declare class SubscriptionRepo {
             priorityCvReview: boolean;
             cvGeneratorEnabled: boolean;
         };
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -251,8 +207,8 @@ export declare class SubscriptionRepo {
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -281,25 +237,14 @@ export declare class SubscriptionRepo {
             priorityCvReview: boolean;
             cvGeneratorEnabled: boolean;
         };
-        usage: {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            subscriptionId: number;
-            assessmentsUsed: number;
-            cvGenerated: number;
-            priorityReviews: number;
-            periodStart: Date;
-            periodEnd: Date;
-        } | null;
     } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -333,8 +278,8 @@ export declare class SubscriptionRepo {
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -368,8 +313,8 @@ export declare class SubscriptionRepo {
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;
@@ -403,8 +348,8 @@ export declare class SubscriptionRepo {
         id: number;
         startDate: Date | null;
         userId: number;
-        planId: number;
         status: import("../../generated/prisma").$Enums.SubscriptionStatus;
+        planId: number;
         paidAt: Date | null;
         expiresAt: Date | null;
         cancelledAt: Date | null;

@@ -3,13 +3,13 @@ export { CVData, CVAdditionalInfo, CVTemplate } from "./cv.types";
 declare class CVService {
     generateCV(userId: number, templateType?: string, additionalInfo?: CVAdditionalInfo): Promise<{
         cvId: number;
-        pdfBuffer: Buffer<ArrayBuffer>;
+        fileUrl: string;
         cvData: import("./cv.types").CVData;
         templateType: string;
     }>;
     updateCV(cvId: number, userId: number, templateType?: string, additionalInfo?: CVAdditionalInfo): Promise<{
         cvId: number;
-        pdfBuffer: Buffer<ArrayBuffer>;
+        fileUrl: string;
         cvData: import("./cv.types").CVData;
         templateType: string;
     }>;
@@ -18,11 +18,10 @@ declare class CVService {
         updatedAt: Date;
         id: number;
         userId: number;
-        title: string | null;
+        isPriority: boolean;
         fileUrl: string;
         templateUsed: string;
         additionalInfo: import("../../../generated/prisma/runtime/library").JsonValue | null;
-        isPriority: boolean;
     }>[]>;
     getCVById(cvId: number, userId: number): Promise<any>;
     deleteCV(cvId: number, userId: number): Promise<{

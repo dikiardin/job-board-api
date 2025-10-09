@@ -4,9 +4,15 @@ interface GetAllCompaniesParams {
     keyword?: string;
     city?: string;
 }
+type SortField = "name" | "jobsCount";
+type SortOrder = "asc" | "desc";
 export declare class GetCompanyService {
-    static getAllCompanies(params: GetAllCompaniesParams): Promise<{
+    static getAllCompanies(params: GetAllCompaniesParams & {
+        sort?: SortField;
+        order?: SortOrder;
+    }): Promise<{
         data: {
+            jobsCount: number;
             name: string;
             createdAt: Date;
             updatedAt: Date;
@@ -21,6 +27,9 @@ export declare class GetCompanyService {
             website: string | null;
             locationCity: string | null;
             locationProvince: string | null;
+            jobs: {
+                id: number;
+            }[];
         }[];
         total: number;
     }>;

@@ -25,7 +25,6 @@ export async function clearDatabase(prisma: PrismaClient) {
 
   await prisma.generatedCV.deleteMany();
 
-  await prisma.subscriptionUsage.deleteMany();
   await prisma.payment.deleteMany();
   await prisma.subscription.deleteMany();
   await prisma.subscriptionPlan.deleteMany();

@@ -1,1 +1,1 @@
-{"version":3,"file":"createToken.d.ts","sourceRoot":"","sources":["../../src/utils/createToken.ts"],"names":[],"mappings":"AAQA,eAAO,MAAM,WAAW,GAAI,SAAS,GAAG,EAAE,WAAW,GAAG,WAEvD,CAAC"}
+{"version":3,"file":"createToken.d.ts","sourceRoot":"","sources":["../../src/utils/createToken.ts"],"names":[],"mappings":"AAAA,OAAO,EAAgB,UAAU,EAAE,MAAM,cAAc,CAAC;AASxD,eAAO,MAAM,WAAW,GAAI,SAAS,GAAG,EAAE,WAAW,GAAG,WAEvD,CAAC;AAEF,eAAO,MAAM,WAAW,GAAI,OAAO,MAAM,KAAG,UAS3C,CAAC"}

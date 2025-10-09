@@ -1,5 +1,5 @@
 import { AssessmentCrudRepository } from "./assessmentCrud.repository";
-import { AssessmentResultsRepository } from "./assessmentResults.repository";
+import { SkillAssessmentResultsRepository } from "./skillAssessmentResults.repository";
 export declare class SkillAssessmentModularRepository {
     static createAssessment(data: any): Promise<{
         questions: {
@@ -262,6 +262,11 @@ export declare class SkillAssessmentModularRepository {
         certificateCode: string | null;
     }>;
     static getUserResult(userId: number, assessmentId: number): Promise<({
+        user: {
+            email: string;
+            name: string | null;
+            id: number;
+        };
         assessment: {
             id: number;
             description: string | null;
@@ -282,7 +287,7 @@ export declare class SkillAssessmentModularRepository {
         certificateUrl: string | null;
         certificateCode: string | null;
     }) | null>;
-    static getAssessmentResults(assessmentId: number): Promise<({
+    static getAssessmentResults(assessmentId: number, createdBy: number): Promise<({
         user: {
             email: string;
             name: string | null;
@@ -302,9 +307,25 @@ export declare class SkillAssessmentModularRepository {
         durationSeconds: number | null;
         certificateUrl: string | null;
         certificateCode: string | null;
-    })[]>;
+    })[] | null>;
     static getUserResults(userId: number, page?: number, limit?: number): Promise<{
-        results: {
+        results: ({
+            assessment: {
+                id: number;
+                description: string | null;
+                title: string;
+                badgeTemplate: {
+                    name: string;
+                    id: number;
+                    category: string | null;
+                    icon: string | null;
+                } | null;
+                creator: {
+                    name: string | null;
+                    id: number;
+                };
+            };
+        } & {
             createdAt: Date;
             updatedAt: Date;
             id: number;
@@ -318,13 +339,13 @@ export declare class SkillAssessmentModularRepository {
             durationSeconds: number | null;
             certificateUrl: string | null;
             certificateCode: string | null;
-        }[];
+        })[];
         pagination: {
             page: number;
             limit: number;
             total: number;
             totalPages: number;
-        } | null;
+        };
     }>;
     static verifyCertificate(certificateCode: string): Promise<({
         user: {
@@ -336,7 +357,6 @@ export declare class SkillAssessmentModularRepository {
             id: number;
             description: string | null;
             title: string;
-            category: string;
         };
     } & {
         createdAt: Date;
@@ -354,7 +374,13 @@ export declare class SkillAssessmentModularRepository {
         certificateCode: string | null;
     }) | null>;
     static getUserCertificates(userId: number, page?: number, limit?: number): Promise<{
-        certificates: {
+        certificates: ({
+            assessment: {
+                id: number;
+                description: string | null;
+                title: string;
+            };
+        } & {
             createdAt: Date;
             updatedAt: Date;
             id: number;
@@ -368,13 +394,13 @@ export declare class SkillAssessmentModularRepository {
             durationSeconds: number | null;
             certificateUrl: string | null;
             certificateCode: string | null;
-        }[];
+        })[];
         pagination: {
             page: number;
             limit: number;
             total: number;
             totalPages: number;
-        } | null;
+        };
     }>;
     static getCertificateByCode(certificateCode: string): Promise<({
         user: {
@@ -402,7 +428,12 @@ export declare class SkillAssessmentModularRepository {
         certificateUrl: string | null;
         certificateCode: string | null;
     }) | null>;
-    static getAssessmentLeaderboard(assessmentId: number, limit?: number): Promise<{
+    static getAssessmentLeaderboard(assessmentId: number, limit?: number): Promise<({
+        user: {
+            name: string | null;
+            id: number;
+        };
+    } & {
         createdAt: Date;
         updatedAt: Date;
         id: number;
@@ -416,36 +447,12 @@ export declare class SkillAssessmentModularRepository {
         durationSeconds: number | null;
         certificateUrl: string | null;
         certificateCode: string | null;
-    }[]>;
+    })[]>;
     static getAssessmentStatistics(assessmentId: number): Promise<{
         totalAttempts: number;
         averageScore: number;
-        averageTime: number;
         passRate: number;
-        highestScore: number;
-        lowestScore: number;
-    } | {
-        totalAttempts: number;
-        averageScore: number;
-        passRate: number;
-        highestScore: number;
-        lowestScore: number;
-        averageTime?: never;
-    }>;
-    static deleteAssessmentResult(resultId: number): Promise<{
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
-        userId: number;
-        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
-        score: number;
-        assessmentId: number;
-        isPassed: boolean;
-        startedAt: Date | null;
-        finishedAt: Date | null;
-        durationSeconds: number | null;
-        certificateUrl: string | null;
-        certificateCode: string | null;
+        averageTimeSpent: number;
     }>;
     static updateCertificateInfo(resultId: number, certificateUrl: string, certificateCode: string): Promise<{
         createdAt: Date;
@@ -462,40 +469,7 @@ export declare class SkillAssessmentModularRepository {
         certificateUrl: string | null;
         certificateCode: string | null;
     }>;
-    static getUserAssessmentHistory(userId: number): Promise<{
-        results: ({
-            assessment: {
-                id: number;
-                title: string;
-            };
-        } & {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            userId: number;
-            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
-            score: number;
-            assessmentId: number;
-            isPassed: boolean;
-            startedAt: Date | null;
-            finishedAt: Date | null;
-            durationSeconds: number | null;
-            certificateUrl: string | null;
-            certificateCode: string | null;
-        })[];
-        statistics: {
-            totalAssessments: number;
-            passedAssessments: number;
-            averageScore: number;
-            passRate: number;
-        };
-    }>;
-    static getGlobalAssessmentStats(): Promise<{
-        totalResults: number;
-        totalUsers: number;
-        totalAssessments: number;
-    }>;
-    static getAssessmentWithResults(assessmentId: number): Promise<{
+    static getAssessmentWithResults(assessmentId: number, createdBy: number): Promise<{
         assessment: ({
             _count: {
                 questions: number;
@@ -554,25 +528,32 @@ export declare class SkillAssessmentModularRepository {
             durationSeconds: number | null;
             certificateUrl: string | null;
             certificateCode: string | null;
-        })[];
+        })[] | null;
         statistics: {
             totalAttempts: number;
             averageScore: number;
-            averageTime: number;
             passRate: number;
-            highestScore: number;
-            lowestScore: number;
-        } | {
-            totalAttempts: number;
-            averageScore: number;
-            passRate: number;
-            highestScore: number;
-            lowestScore: number;
-            averageTime?: never;
+            averageTimeSpent: number;
         };
     }>;
     static getUserAssessmentSummary(userId: number): Promise<{
-        results: {
+        results: ({
+            assessment: {
+                id: number;
+                description: string | null;
+                title: string;
+                badgeTemplate: {
+                    name: string;
+                    id: number;
+                    category: string | null;
+                    icon: string | null;
+                } | null;
+                creator: {
+                    name: string | null;
+                    id: number;
+                };
+            };
+        } & {
             createdAt: Date;
             updatedAt: Date;
             id: number;
@@ -586,8 +567,14 @@ export declare class SkillAssessmentModularRepository {
             durationSeconds: number | null;
             certificateUrl: string | null;
             certificateCode: string | null;
-        }[];
-        certificates: {
+        })[];
+        certificates: ({
+            assessment: {
+                id: number;
+                description: string | null;
+                title: string;
+            };
+        } & {
             createdAt: Date;
             updatedAt: Date;
             id: number;
@@ -601,17 +588,19 @@ export declare class SkillAssessmentModularRepository {
             durationSeconds: number | null;
             certificateUrl: string | null;
             certificateCode: string | null;
-        }[];
-        statistics: {
-            totalAssessments: number;
-            passedAssessments: number;
-            averageScore: number;
-            passRate: number;
-        };
+        })[];
     }>;
+    static getUserAssessmentAttempts(userId: number, assessmentId: number): Promise<{
+        createdAt: Date;
+        id: number;
+        userId: number;
+        score: number;
+        assessmentId: number;
+        isPassed: boolean;
+    }[]>;
     static get CrudRepository(): typeof AssessmentCrudRepository;
-    static get ResultsRepository(): typeof AssessmentResultsRepository;
+    static get ResultsRepository(): typeof SkillAssessmentResultsRepository;
 }
 export default SkillAssessmentModularRepository;
-export { AssessmentCrudRepository, AssessmentResultsRepository };
+export { AssessmentCrudRepository, SkillAssessmentResultsRepository };
 //# sourceMappingURL=skillAssessmentModular.repository.d.ts.map

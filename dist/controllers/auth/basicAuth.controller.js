@@ -33,6 +33,16 @@ class BasicAuthController {
             next(error);
         }
     }
+    static async resendVerification(req, res, next) {
+        try {
+            const { email } = req.body;
+            const result = await basicAuth_service_1.BasicAuthService.resendVerificationEmail(email);
+            res.json(result);
+        }
+        catch (err) {
+            next(err);
+        }
+    }
     static async login(req, res, next) {
         try {
             const { email, password } = req.body;

@@ -10,7 +10,6 @@ class SubscriptionRepo {
                 user: { select: { id: true, name: true, email: true } },
                 plan: true,
                 payments: { orderBy: { createdAt: "desc" } },
-                usage: true,
             },
             orderBy: { createdAt: "desc" },
         });
@@ -22,7 +21,6 @@ class SubscriptionRepo {
                 user: { select: { id: true, name: true, email: true } },
                 plan: true,
                 payments: { orderBy: { createdAt: "desc" } },
-                usage: true,
             },
         });
     }
@@ -32,7 +30,6 @@ class SubscriptionRepo {
             include: {
                 plan: true,
                 payments: { orderBy: { createdAt: "desc" } },
-                usage: true,
             },
             orderBy: { createdAt: "desc" },
         });
@@ -44,7 +41,7 @@ class SubscriptionRepo {
                 status: prisma_2.SubscriptionStatus.ACTIVE,
                 expiresAt: { gt: new Date() },
             },
-            include: { plan: true, usage: true },
+            include: { plan: true },
         });
     }
     static async createSubscription(data) {
@@ -66,7 +63,7 @@ class SubscriptionRepo {
         return prisma_1.prisma.subscription.update({
             where: { id },
             data,
-            include: { plan: true, usage: true },
+            include: { plan: true },
         });
     }
     static async getSubscriptionsExpiringInMinutes(minutes) {

@@ -31,6 +31,15 @@ export declare class BasicAuthService {
             updatedAt: Date;
             id: number;
         };
+        status?: never;
+    } | {
+        message: string;
+        status: string;
+        token?: never;
+        user?: never;
+    }>;
+    static resendVerificationEmail(email: string): Promise<{
+        message: string;
     }>;
     static login(email: string, password: string): Promise<{
         token: string;

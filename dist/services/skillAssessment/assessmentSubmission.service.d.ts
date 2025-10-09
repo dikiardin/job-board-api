@@ -6,7 +6,7 @@ export declare class AssessmentSubmissionService {
             questionId: number;
             answer: string;
         }>;
-        timeSpent: number;
+        startedAt: string;
     }): Promise<{
         result: {
             id: number;
@@ -26,6 +26,14 @@ export declare class AssessmentSubmissionService {
     }>;
     private static validateSubmission;
     private static generateCertificate;
+    static getUserAssessmentAttempts(userId: number, assessmentId: number): Promise<{
+        createdAt: Date;
+        id: number;
+        userId: number;
+        score: number;
+        assessmentId: number;
+        isPassed: boolean;
+    }[]>;
     private static saveAssessmentResult;
     static getUserResults(userId: number, page?: number, limit?: number): Promise<{
         results: never[];
@@ -59,6 +67,11 @@ export declare class AssessmentSubmissionService {
         };
     }>;
     static getAssessmentResult(userId: number, assessmentId: number): Promise<{
+        user: {
+            email: string;
+            name: string | null;
+            id: number;
+        };
         assessment: {
             id: number;
             description: string | null;
@@ -79,7 +92,17 @@ export declare class AssessmentSubmissionService {
         certificateUrl: string | null;
         certificateCode: string | null;
     }>;
-    static getAllAssessmentResults(assessmentId: number): Promise<{
+    static getAllAssessmentResults(assessmentId: number, createdBy: number): Promise<{
+        results: never[];
+        summary: {
+            totalAttempts: number;
+            passedCount: number;
+            averageScore: number;
+            passRate: number;
+            completionRate?: never;
+        };
+        assessment?: never;
+    } | {
         results: ({
             user: {
                 email: string;
@@ -106,6 +129,7 @@ export declare class AssessmentSubmissionService {
             averageScore: number;
             passRate: number;
             completionRate: number;
+            passedCount?: never;
         };
         assessment: {
             id: number;
@@ -113,6 +137,6 @@ export declare class AssessmentSubmissionService {
             totalQuestions: number;
         };
     }>;
-    static isAssessmentPassed(score: number): boolean;
+    static isAssessmentPassed(score: number, passScore?: number): boolean;
 }
 //# sourceMappingURL=assessmentSubmission.service.d.ts.map

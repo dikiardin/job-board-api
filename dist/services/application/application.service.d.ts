@@ -14,9 +14,15 @@ export declare class ApplicationService {
         reviewNote: string | null;
         reviewUpdatedAt: Date | null;
         referralSource: string | null;
+        isPriority: boolean;
     }>;
     static getApplicationsByUserId(userId: number, page?: number, limit?: number): Promise<{
-        applications: ({
+        applications: {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            status: import("../../generated/prisma").$Enums.ApplicationStatus;
             job: {
                 city: string;
                 id: number;
@@ -32,6 +38,16 @@ export declare class ApplicationService {
                 salaryMin: number | null;
                 salaryMax: number | null;
             };
+            jobId: number;
+            cvUrl: string;
+            cvFileName: string | null;
+            cvFileSize: number | null;
+            expectedSalary: number | null;
+            expectedSalaryCurrency: string | null;
+            reviewNote: string | null;
+            reviewUpdatedAt: Date | null;
+            referralSource: string | null;
+            isPriority: boolean;
             interviews: {
                 createdAt: Date;
                 updatedAt: Date;
@@ -54,22 +70,7 @@ export declare class ApplicationService {
                 note: string | null;
                 createdById: number | null;
             }[];
-        } & {
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
-            userId: number;
-            status: import("../../generated/prisma").$Enums.ApplicationStatus;
-            jobId: number;
-            cvUrl: string;
-            cvFileName: string | null;
-            cvFileSize: number | null;
-            expectedSalary: number | null;
-            expectedSalaryCurrency: string | null;
-            reviewNote: string | null;
-            reviewUpdatedAt: Date | null;
-            referralSource: string | null;
-        })[];
+        }[];
         total: number;
     }>;
 }

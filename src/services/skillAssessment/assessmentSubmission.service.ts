@@ -24,7 +24,7 @@ export class AssessmentSubmissionService {
       assessment.questions, data.answers
     );
 
-    const isPassed = ScoringCalculationService.isPassed(score);
+    const isPassed = ScoringCalculationService.isPassed(score, assessment.passScore);
     
     // Generate certificate immediately if user passed
     const certificateData = isPassed ? await AssessmentSubmissionService.generateCertificate(
@@ -36,6 +36,7 @@ export class AssessmentSubmissionService {
       userId: data.userId, 
       assessmentId: data.assessmentId, 
       score,
+      isPassed,
     };
     
     if (certificateData) {
@@ -71,8 +72,15 @@ export class AssessmentSubmissionService {
   private static async generateCertificate(userId: number, assessment: any, score: number, totalQuestions: number) {
     const user = await AssessmentExecutionService.getUserInfo(userId);
     return await CertificateService.generateCertificate({
-      userName: user.name || 'User', userEmail: user.email, assessmentTitle: assessment.title,
-      assessmentDescription: assessment.description || '', score, totalQuestions, completedAt: new Date(), userId,
+      userName: user.name || 'User', 
+      userEmail: user.email, 
+      assessmentTitle: assessment.title,
+      assessmentDescription: assessment.description || '', 
+      score, 
+      totalQuestions, 
+      completedAt: new Date(), 
+      userId,
+      badgeName: assessment.badgeTemplate?.name,
     });
   }
 
@@ -143,6 +151,17 @@ export class AssessmentSubmissionService {
     if (!result) {
       throw new CustomError("Assessment result not found", 404);
     }
+    
+    // Get assessment to check current pass score
+    const assessment = await SkillAssessmentModularRepository.getAssessmentById(assessmentId);
+    if (assessment) {
+      // Recalculate isPassed based on current pass score
+      const isPassed = this.isAssessmentPassed(result.score, assessment.passScore);
+      
+      // Update result with recalculated pass status
+      result.isPassed = isPassed;
+    }
+    
     return result;
   }
 
@@ -163,9 +182,13 @@ export class AssessmentSubmissionService {
       };
     }
     
-    // Calculate summary statistics
+    // Get assessment to check pass score
+    const assessment = await SkillAssessmentModularRepository.getAssessmentById(assessmentId);
+    const passScore = assessment?.passScore || 75;
+    
+    // Calculate summary statistics with dynamic pass score
     const totalAttempts = results.length;
-    const passedCount = results.filter((r: any) => r.isPassed).length;
+    const passedCount = results.filter((r: any) => this.isAssessmentPassed(r.score, passScore)).length;
     const averageScore = totalAttempts > 0 
       ? Math.round(results.reduce((sum: number, r: any) => sum + (r.score || 0), 0) / totalAttempts)
       : 0;
@@ -187,7 +210,7 @@ export class AssessmentSubmissionService {
     };
   }
 
-  public static isAssessmentPassed(score: number): boolean {
-    return score >= 75;
+  public static isAssessmentPassed(score: number, passScore?: number): boolean {
+    return ScoringCalculationService.isPassed(score, passScore);
   }
 }

@@ -4,7 +4,7 @@ exports.GetJobRepository = void 0;
 const prisma_1 = require("../../config/prisma");
 class GetJobRepository {
     static async getAllJobs(filters) {
-        const { keyword, city, limit, offset } = filters || {};
+        const { keyword, city, limit, offset, sortBy, sortOrder } = filters || {};
         const conditions = [];
         if (keyword) {
             conditions.push({
@@ -19,8 +19,9 @@ class GetJobRepository {
                 ],
             });
         }
-        if (city)
+        if (city) {
             conditions.push({ city: { contains: city, mode: "insensitive" } });
+        }
         return prisma_1.prisma.job.findMany({
             where: {
                 isPublished: true,
@@ -36,8 +37,11 @@ class GetJobRepository {
                 salaryMax: true,
                 tags: true,
                 company: { select: { name: true, logoUrl: true } },
+                createdAt: true,
             },
-            orderBy: { createdAt: "desc" },
+            orderBy: {
+                [sortBy || "createdAt"]: sortOrder || "desc",
+            },
             ...(limit !== undefined ? { take: limit } : {}),
             ...(offset !== undefined ? { skip: offset } : {}),
         });

@@ -8,7 +8,6 @@ export class SubscriptionRepo {
         user: { select: { id: true, name: true, email: true } },
         plan: true,
         payments: { orderBy: { createdAt: "desc" } },
-        usage: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -21,7 +20,6 @@ export class SubscriptionRepo {
         user: { select: { id: true, name: true, email: true } },
         plan: true,
         payments: { orderBy: { createdAt: "desc" } },
-        usage: true,
       },
     });
   }
@@ -32,7 +30,6 @@ export class SubscriptionRepo {
       include: {
         plan: true,
         payments: { orderBy: { createdAt: "desc" } },
-        usage: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -45,7 +42,7 @@ export class SubscriptionRepo {
         status: SubscriptionStatus.ACTIVE,
         expiresAt: { gt: new Date() },
       },
-      include: { plan: true, usage: true },
+      include: { plan: true },
     });
   }
 
@@ -85,7 +82,7 @@ export class SubscriptionRepo {
     return prisma.subscription.update({
       where: { id },
       data,
-      include: { plan: true, usage: true },
+      include: { plan: true },
     });
   }
 

@@ -14,6 +14,7 @@ export class CertificateService {
     completedAt: Date;
     userId: number;
     badgeIcon?: string;
+    badgeName?: string;
   }): Promise<{ certificateUrl: string; certificateCode: string }> {
     const certificateCode = `CERT-${uuidv4().toUpperCase().substring(0, 8)}`;
 

@@ -25,22 +25,29 @@ class AssessmentResultsService {
         }
         return result;
     }
-    // Get assessment leaderboard
-    static async getAssessmentLeaderboard(assessmentId, limit = 10) {
-        return await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentResults(assessmentId);
+    // Get assessment statistics
+    static async getAssessmentStatistics(assessmentId, createdBy) {
+        // Get assessment results
+        return await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentResults(assessmentId, createdBy);
     }
-    // Get assessment statistics for users
-    static async getAssessmentStats(assessmentId) {
-        const stats = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentResults(assessmentId);
+    static async getAssessmentSummary(assessmentId, createdBy) {
+        const stats = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getAssessmentResults(assessmentId, createdBy);
+        // Handle null/empty stats
+        if (!stats || !Array.isArray(stats) || stats.length === 0) {
+            return {
+                totalAttempts: 0,
+                averageScore: 0,
+                passRate: 0,
+            };
+        }
         return {
             totalAttempts: stats.length,
-            averageScore: stats.reduce((sum, result) => sum + result.score, 0) / stats.length,
-            passRate: (stats.filter((result) => result.score >= this.PASSING_SCORE).length / stats.length) * 100,
+            averageScore: stats.reduce((sum, result) => sum + (result.score || 0), 0) / stats.length,
+            passRate: (stats.filter((result) => (result.score || 0) >= this.PASSING_SCORE).length / stats.length) * 100,
         };
     }
-    // Retake assessment (if allowed)
-    static async retakeAssessment(userId, assessmentId) {
-        // Check if retakes are allowed (business logic)
+    // Reset assessment for retake
+    static async resetAssessment(userId, assessmentId) {
         const existingResult = await skillAssessmentModular_repository_1.SkillAssessmentModularRepository.getUserResult(userId, assessmentId);
         if (existingResult && existingResult.score >= this.PASSING_SCORE) {
             throw new customError_1.CustomError("Cannot retake a passed assessment", 400);
@@ -83,6 +90,9 @@ class AssessmentResultsService {
     // Get assessment completion certificate info
     static async getCertificateInfo(userId, assessmentId) {
         const result = await this.getAssessmentResult(userId, assessmentId);
+        if (!result) {
+            throw new customError_1.CustomError("Assessment result not found", 404);
+        }
         if (result.score < this.PASSING_SCORE) {
             throw new customError_1.CustomError("Certificate only available for passed assessments", 400);
         }

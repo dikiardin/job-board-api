@@ -9,6 +9,7 @@ class AssessmentCreationService {
     static async createAssessment(data) {
         assessmentValidation_service_1.AssessmentValidationService.validateDeveloperRole(data.userRole);
         assessmentValidation_service_1.AssessmentValidationService.validateQuestions(data.questions);
+        this.validatePassScore(data.passScore);
         const { userRole, ...assessmentData } = data;
         return await assessmentCrud_repository_1.AssessmentCrudRepository.createAssessment(assessmentData);
     }
@@ -30,21 +31,27 @@ class AssessmentCreationService {
     }
     // Update assessment (Developer only)
     static async updateAssessment(assessmentId, userId, data) {
-        // If questions are being updated, validate them
         if (data.questions) {
-            if (data.questions.length < 1) {
-                throw new customError_1.CustomError("Assessment must have at least 1 question", 400);
-            }
-            data.questions.forEach((q, index) => {
-                if (!q.question || q.options.length !== 4 || !q.answer) {
-                    throw new customError_1.CustomError(`Question ${index + 1} is invalid`, 400);
-                }
-                if (!q.options.includes(q.answer)) {
-                    throw new customError_1.CustomError(`Question ${index + 1} answer must be one of the options`, 400);
-                }
-            });
+            this.validateUpdateQuestions(data.questions);
+        }
+        if (data.passScore !== undefined) {
+            this.validatePassScore(data.passScore);
         }
         return await assessmentCrud_repository_1.AssessmentCrudRepository.updateAssessment(assessmentId, userId, data);
+    }
+    // Helper: Validate questions for update
+    static validateUpdateQuestions(questions) {
+        if (questions.length < 1) {
+            throw new customError_1.CustomError("Assessment must have at least 1 question", 400);
+        }
+        questions.forEach((q, index) => {
+            if (!q.question || q.options.length !== 4 || !q.answer) {
+                throw new customError_1.CustomError(`Question ${index + 1} is invalid`, 400);
+            }
+            if (!q.options.includes(q.answer)) {
+                throw new customError_1.CustomError(`Question ${index + 1} answer must be one of the options`, 400);
+            }
+        });
     }
     // Delete assessment (Developer only)
     static async deleteAssessment(assessmentId, userId) {
@@ -113,6 +120,20 @@ class AssessmentCreationService {
             questions: assessment.questions || [],
             exportedAt: new Date().toISOString()
         };
+    }
+    // Helper: Validate pass score
+    static validatePassScore(passScore) {
+        if (passScore !== undefined && passScore !== null) {
+            if (typeof passScore !== 'number') {
+                throw new customError_1.CustomError("Pass score must be a number", 400);
+            }
+            if (passScore < 1 || passScore > 100) {
+                throw new customError_1.CustomError("Pass score must be between 1% and 100%", 400);
+            }
+            if (!Number.isInteger(passScore)) {
+                throw new customError_1.CustomError("Pass score must be a whole number", 400);
+            }
+        }
     }
 }
 exports.AssessmentCreationService = AssessmentCreationService;

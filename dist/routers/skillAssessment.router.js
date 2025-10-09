@@ -25,8 +25,8 @@ class SkillAssessmentRouter {
         this.route.get("/certificates/:certificateCode/view", skillAssessment_validator_1.SkillAssessmentValidator.validateCertificateCode, certificateManagement_controller_1.CertificateManagementController.viewCertificate);
         // Certificate download (authenticated)
         this.route.get("/certificates/:resultId/download", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), skillAssessment_validator_1.SkillAssessmentValidator.validateResultId, certificateManagement_controller_1.CertificateManagementController.downloadCertificate);
-        // Assessment discovery (public)
-        this.route.get("/assessments", skillAssessment_validator_1.SkillAssessmentValidator.validatePagination, assessmentManagement_controller_1.AssessmentManagementController.getAssessments);
+        // Assessment discovery (subscription required)
+        this.route.get("/assessments", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, skillAssessment_validator_1.SkillAssessmentValidator.validatePagination, assessmentManagement_controller_1.AssessmentManagementController.getAssessments);
         // Developer routes (create and manage assessments)
         this.route.post("/assessments", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), skillAssessment_validator_1.SkillAssessmentValidator.validateCreateAssessment, assessmentManagement_controller_1.AssessmentManagementController.createAssessment);
         // Get single assessment by ID (for editing) - MUST BE BEFORE general list
@@ -40,10 +40,12 @@ class SkillAssessmentRouter {
         // User routes (take assessments - subscription required)
         this.route.get("/assessments/:assessmentId/take", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, skillAssessment_validator_1.SkillAssessmentValidator.validateAssessmentId, assessmentTaking_controller_1.AssessmentTakingController.getAssessmentForUser);
         this.route.post("/assessments/:assessmentId/submit", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, verifySubscription_1.checkAssessmentLimits, skillAssessment_validator_1.SkillAssessmentValidator.validateAssessmentId, skillAssessment_validator_1.SkillAssessmentValidator.validateSubmitAssessment, assessmentTaking_controller_1.AssessmentTakingController.submitAssessment);
-        this.route.get("/user/results", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), assessmentTaking_controller_1.AssessmentTakingController.getUserResults);
+        // Get user's attempts for a specific assessment
+        this.route.get("/assessments/:assessmentId/my-attempts", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), skillAssessment_validator_1.SkillAssessmentValidator.validateAssessmentId, assessmentTaking_controller_1.AssessmentTakingController.getUserAssessmentAttempts);
+        this.route.get("/user/results", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, assessmentTaking_controller_1.AssessmentTakingController.getUserResults);
         // Alias for user results (singular)
-        this.route.get("/user/result", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), assessmentTaking_controller_1.AssessmentTakingController.getUserResults);
-        this.route.get("/user/badges", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), certificateManagement_controller_1.CertificateManagementController.getUserBadges);
+        this.route.get("/user/result", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, assessmentTaking_controller_1.AssessmentTakingController.getUserResults);
+        this.route.get("/user/badges", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.USER]), verifySubscription_1.verifySubscription, certificateManagement_controller_1.CertificateManagementController.getUserBadges);
         // Badge Template Management Routes (Developer only)
         this.route.post("/badge-templates", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.DEVELOPER]), (0, uploadImage_1.uploadSingle)("icon"), // File upload for badge icon
         badgeTemplate_controller_1.BadgeTemplateController.createBadgeTemplate);
