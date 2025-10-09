@@ -11,8 +11,8 @@ export class DateHelper {
 
   public static getSubscriptionEndDate(startDate: Date): Date {
     const endDate = new Date(startDate);
-    // FOR TESTING: 3 minutes instead of 30 days
-    endDate.setMinutes(endDate.getMinutes() + 3);
+    // Set to 1 hour duration
+    endDate.setHours(endDate.getHours() + 1);
     return endDate;
   }
 
@@ -38,17 +38,17 @@ export class DateHelper {
     return new Date();
   }
 
-  // FOR TESTING: Get subscription end date for testing (3 minutes)
-  public static getTestSubscriptionEndDate(startDate: Date = new Date()): Date {
-    const endDate = new Date(startDate);
-    endDate.setMinutes(endDate.getMinutes() + 3);
-    return endDate;
-  }
-
-  // FOR TESTING: Get reminder time (1 minute before expiry)
+  // Get reminder time (50 minutes before expiry)
   public static getReminderTime(expiryDate: Date): Date {
     const reminderTime = new Date(expiryDate);
-    reminderTime.setMinutes(reminderTime.getMinutes() - 1);
+    reminderTime.setMinutes(reminderTime.getMinutes() - 50);
     return reminderTime;
+  }
+
+  // Check if current time is within reminder window (50 minutes before expiry)
+  public static isReminderTime(expiryDate: Date): boolean {
+    const now = new Date();
+    const reminderTime = this.getReminderTime(expiryDate);
+    return now >= reminderTime && now < expiryDate;
   }
 }
