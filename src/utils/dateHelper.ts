@@ -11,7 +11,8 @@ export class DateHelper {
 
   public static getSubscriptionEndDate(startDate: Date): Date {
     const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 30); // 30 days
+    // FOR TESTING: 3 minutes instead of 30 days
+    endDate.setMinutes(endDate.getMinutes() + 3);
     return endDate;
   }
 
@@ -35,5 +36,19 @@ export class DateHelper {
 
   public static getCurrentTime(): Date {
     return new Date();
+  }
+
+  // FOR TESTING: Get subscription end date for testing (3 minutes)
+  public static getTestSubscriptionEndDate(startDate: Date = new Date()): Date {
+    const endDate = new Date(startDate);
+    endDate.setMinutes(endDate.getMinutes() + 3);
+    return endDate;
+  }
+
+  // FOR TESTING: Get reminder time (1 minute before expiry)
+  public static getReminderTime(expiryDate: Date): Date {
+    const reminderTime = new Date(expiryDate);
+    reminderTime.setMinutes(reminderTime.getMinutes() - 1);
+    return reminderTime;
   }
 }

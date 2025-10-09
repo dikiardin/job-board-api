@@ -23,10 +23,10 @@ export class EmailService {
 
     try {
       await transport.sendMail(mailOptions);
-      console.log(`Expiration reminder sent to ${userEmail}`);
     } catch (error) {
       console.error(`Failed to send email to ${userEmail}:`, error);
       throw error;
     }
   }
+
 }

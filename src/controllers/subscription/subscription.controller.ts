@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { SubscriptionService } from "../../services/subscription/subscription.service";
+import { SubscriptionRenewalService } from "../../services/subscription/subscriptionRenewal.service";
 import { ControllerHelper } from "../../utils/controllerHelper";
 
 export class SubscriptionController {
@@ -100,6 +101,36 @@ export class SubscriptionController {
 
       const subscription = await SubscriptionService.updateSubscription(id, updateData);
       res.status(200).json(subscription);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async renewSubscription(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const userId = ControllerHelper.getUserId(res);
+      const planId = req.body.planId ? ControllerHelper.parseId(req.body.planId) : undefined;
+
+      const result = await SubscriptionRenewalService.renewSubscription(userId, planId);
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async getRenewalInfo(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const userId = ControllerHelper.getUserId(res);
+      const renewalInfo = await SubscriptionRenewalService.getRenewalInfo(userId);
+      res.status(200).json(renewalInfo);
     } catch (error) {
       next(error);
     }
