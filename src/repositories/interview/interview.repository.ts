@@ -4,7 +4,7 @@ import { InterviewStatus, Prisma } from "../../generated/prisma";
 export class InterviewRepository {
   static async createMany(interviews: Array<{
     applicationId: number;
-    scheduleDate: Date;
+    startsAt: Date;
     locationOrLink?: string | null;
     notes?: string | null;
   }>) {
@@ -14,7 +14,7 @@ export class InterviewRepository {
         const rec = await tx.interview.create({
           data: {
             applicationId: item.applicationId,
-            startsAt: item.scheduleDate,
+            startsAt: item.startsAt,
             locationOrLink: item.locationOrLink ?? null,
             notes: item.notes ?? null,
           },
@@ -57,7 +57,7 @@ export class InterviewRepository {
     });
   }
 
-  static async updateOne(id: number, data: Partial<{ scheduleDate: Date; locationOrLink: string | null; notes: string | null; status: InterviewStatus }>) {
+  static async updateOne(id: number, data: Partial<{ startsAt: Date; locationOrLink: string | null; notes: string | null; status: InterviewStatus; reminderSentAt: Date | null }>) {
     return prisma.interview.update({
       where: { id },
       data,

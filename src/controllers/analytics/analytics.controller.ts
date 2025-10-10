@@ -66,4 +66,68 @@ export class AnalyticsController {
       next(error);
     }
   }
+
+  static async engagement(req: Request, res: Response, next: NextFunction) {
+    try {
+      const companyId = req.params.companyId as string;
+      const requester = res.locals.decrypt as { userId: number; role: UserRole };
+      const data = await AnalyticsService.engagement({
+        companyId,
+        requesterId: requester.userId,
+        requesterRole: requester.role,
+        query: req.query as any,
+      });
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async conversionFunnel(req: Request, res: Response, next: NextFunction) {
+    try {
+      const companyId = req.params.companyId as string;
+      const requester = res.locals.decrypt as { userId: number; role: UserRole };
+      const data = await AnalyticsService.conversionFunnel({
+        companyId,
+        requesterId: requester.userId,
+        requesterRole: requester.role,
+        query: req.query as any,
+      });
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async retention(req: Request, res: Response, next: NextFunction) {
+    try {
+      const companyId = req.params.companyId as string;
+      const requester = res.locals.decrypt as { userId: number; role: UserRole };
+      const data = await AnalyticsService.retention({
+        companyId,
+        requesterId: requester.userId,
+        requesterRole: requester.role,
+        query: req.query as any,
+      });
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async performance(req: Request, res: Response, next: NextFunction) {
+    try {
+      const companyId = req.params.companyId as string;
+      const requester = res.locals.decrypt as { userId: number; role: UserRole };
+      const data = await AnalyticsService.performance({
+        companyId,
+        requesterId: requester.userId,
+        requesterRole: requester.role,
+        query: req.query as any,
+      });
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

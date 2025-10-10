@@ -80,7 +80,7 @@ export class InterviewCommandService {
 
   private static async prepareInterviewSchedules(items: any[], applications: any[]) {
     const appByUser = new Map(applications.map((a) => [a.userId, a]));
-    const toCreate: Array<{ applicationId: number; scheduleDate: Date; locationOrLink?: string | null; notes?: string | null }> = [];
+    const toCreate: Array<{ applicationId: number; startsAt: Date; locationOrLink?: string | null; notes?: string | null }> = [];
     
     for (const it of items) {
       const app = appByUser.get(it.applicantId);
@@ -91,7 +91,7 @@ export class InterviewCommandService {
       const conflict = await InterviewRepository.findConflicts(app.id, new Date(scheduleDate.getTime()), new Date(scheduleDate.getTime()));
       if (conflict) throw { status: 400, message: `Schedule conflict for applicant ${it.applicantId}` };
       
-      toCreate.push({ applicationId: app.id, scheduleDate, locationOrLink: it.locationOrLink ?? null, notes: it.notes ?? null });
+      toCreate.push({ applicationId: app.id, startsAt: scheduleDate, locationOrLink: it.locationOrLink ?? null, notes: it.notes ?? null });
     }
     
     return toCreate;
@@ -102,10 +102,12 @@ export class InterviewCommandService {
   }
 
   private static async updateApplicationStatuses(created: any[]) {
-    await prisma.application.updateMany({ 
-      where: { id: { in: created.map((c: any) => c.applicationId) } }, 
-      data: { status: "INTERVIEW" } as any 
-    });
+    // Don't automatically change status to INTERVIEW - keep the current status
+    // The status should remain ACCEPTED as set by the admin
+    // await prisma.application.updateMany({ 
+    //   where: { id: { in: created.map((c: any) => c.applicationId) } }, 
+    //   data: { status: "INTERVIEW" } as any 
+    // });
   }
 
   private static async sendInterviewNotifications(created: any[]) {
@@ -158,85 +160,116 @@ export class InterviewCommandService {
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can update schedule" };
     const interview = await assertCompanyOwnershipByInterview(id, requesterId);
     validatePayload(body, true);
-    const updateData: any = { ...body };
+    const updateData: any = {};
+    
+    // Handle non-date fields
+    if (typeof body.notes !== "undefined") updateData.notes = body.notes;
+    if (typeof body.locationOrLink !== "undefined") updateData.locationOrLink = body.locationOrLink;
+    if (typeof body.status !== "undefined") updateData.status = body.status;
+    
+    // Handle date field separately
     if (typeof body.scheduleDate !== "undefined") {
       const d = new Date(body.scheduleDate as any);
       if (isNaN(d.getTime())) throw { status: 400, message: "scheduleDate must be a valid date" };
       if (d.getTime() <= Date.now()) throw { status: 400, message: "scheduleDate cannot be in the past" };
+      
       const conflict = await InterviewRepository.findConflicts(interview.applicationId, new Date(d.getTime()), new Date(d.getTime()));
       if (conflict && conflict.id !== id) throw { status: 400, message: "Schedule conflict for this application" };
-      updateData.scheduleDate = d;
+      
+      updateData.startsAt = d;
       updateData.reminderSentAt = null;
       updateData.status = InterviewStatus.SCHEDULED;
     }
+    
     const updated = (await InterviewRepository.updateOne(id, updateData)) as any;
-    const type = updateData.status === InterviewStatus.CANCELLED ? "cancelled" : "updated";
-    const candidateEmail = updated.application.user.email as string;
-    const candidateName = updated.application.user.name as string;
-    const jobTitle = updated.application.job.title as string;
-    const companyName = updated.application.job.company.name as string;
-    const adminEmail = (updated.application.job.company.owner?.email as string) || undefined;
-    const adminName = (updated.application.job.company.owner?.name as string) || null;
-    await InterviewEmailService.sendCandidateEmail({
-      type,
-      to: candidateEmail,
-      candidateName,
-      adminName,
-      jobTitle,
-      companyName,
-      scheduleDate: new Date(updated.scheduleDate),
-      locationOrLink: (updated.locationOrLink as string | null) ?? null,
-      notes: (updated.notes as string | null) ?? null,
-    });
-    if (adminEmail) {
-      await InterviewEmailService.sendAdminEmail({
+    
+    // Send email notifications
+    try {
+      const type = updateData.status === InterviewStatus.CANCELLED ? "cancelled" : "updated";
+      
+      const candidateEmail = updated.application.user.email as string;
+      const candidateName = updated.application.user.name as string;
+      const jobTitle = updated.application.job.title as string;
+      const companyName = updated.application.job.company.name as string;
+      const adminEmail = (updated.application.job.company.owner?.email as string) || undefined;
+      const adminName = (updated.application.job.company.owner?.name as string) || null;
+      
+      await InterviewEmailService.sendCandidateEmail({
         type,
-        to: adminEmail,
-        adminName: adminName || "Admin",
+        to: candidateEmail,
         candidateName,
+        adminName,
         jobTitle,
         companyName,
-        scheduleDate: new Date(updated.scheduleDate),
+        scheduleDate: new Date(updated.startsAt),
         locationOrLink: (updated.locationOrLink as string | null) ?? null,
         notes: (updated.notes as string | null) ?? null,
       });
+      
+      if (adminEmail) {
+        await InterviewEmailService.sendAdminEmail({
+          type,
+          to: adminEmail,
+          adminName: adminName || "Admin",
+          candidateName,
+          jobTitle,
+          companyName,
+          scheduleDate: new Date(updated.startsAt),
+          locationOrLink: (updated.locationOrLink as string | null) ?? null,
+          notes: (updated.notes as string | null) ?? null,
+        });
+      }
+    } catch (emailError) {
+      console.error("Failed to send update emails:", emailError);
+      // Continue with update even if email fails
     }
+    
     return updated;
   }
   static async remove(params: { id: number; requesterId: number; requesterRole: UserRole }) {
     const { id, requesterId, requesterRole } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can delete schedule" };
     const interview = await assertCompanyOwnershipByInterview(id, requesterId);
-    const candidateEmail = (interview as any).application.user.email as string;
-    const candidateName = (interview as any).application.user.name as string;
-    const jobTitle = (interview as any).application.job.title as string;
-    const companyName = (interview as any).application.job.company.name as string;
-    const adminEmail = (interview as any).application.job.company.owner?.email as string | undefined;
-    const adminName = ((interview as any).application.job.company.owner?.name as string) || null;
-    await InterviewEmailService.sendCandidateEmail({
-      type: "cancelled",
-      to: candidateEmail,
-      candidateName,
-      adminName,
-      jobTitle,
-      companyName,
-      scheduleDate: new Date((interview as any).scheduleDate),
-      locationOrLink: ((interview as any).locationOrLink as string | null) ?? null,
-      notes: ((interview as any).notes as string | null) ?? null,
-    });
-    if (adminEmail) {
-      await InterviewEmailService.sendAdminEmail({
+    
+    // Try to send cancellation emails, but don't fail the delete operation if email fails
+    try {
+      const candidateEmail = (interview as any).application.user.email as string;
+      const candidateName = (interview as any).application.user.name as string;
+      const jobTitle = (interview as any).application.job.title as string;
+      const companyName = (interview as any).application.job.company.name as string;
+      const adminEmail = (interview as any).application.job.company.owner?.email as string | undefined;
+      const adminName = ((interview as any).application.job.company.owner?.name as string) || null;
+      
+      await InterviewEmailService.sendCandidateEmail({
         type: "cancelled",
-        to: adminEmail,
-        adminName: adminName || "Admin",
+        to: candidateEmail,
         candidateName,
+        adminName,
         jobTitle,
         companyName,
         scheduleDate: new Date((interview as any).scheduleDate),
         locationOrLink: ((interview as any).locationOrLink as string | null) ?? null,
         notes: ((interview as any).notes as string | null) ?? null,
       });
+      
+      if (adminEmail) {
+        await InterviewEmailService.sendAdminEmail({
+          type: "cancelled",
+          to: adminEmail,
+          adminName: adminName || "Admin",
+          candidateName,
+          jobTitle,
+          companyName,
+          scheduleDate: new Date((interview as any).scheduleDate),
+          locationOrLink: ((interview as any).locationOrLink as string | null) ?? null,
+          notes: ((interview as any).notes as string | null) ?? null,
+        });
+      }
+    } catch (emailError) {
+      console.error("Failed to send cancellation emails:", emailError);
+      // Continue with deletion even if email fails
     }
+    
     await InterviewRepository.deleteOne(id);
     return { success: true };
   }

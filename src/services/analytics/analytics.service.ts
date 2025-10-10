@@ -149,4 +149,54 @@ export class AnalyticsService {
       topCities, // [{ city, count }]
     };
   }
+
+  static async engagement(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
+    const { companyId, requesterId, requesterRole, query } = params;
+    await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
+    const { from, to } = parseRange(query);
+
+    // Daily/Monthly Active Users
+    const dau = await AnalyticsRepository.dailyActiveUsers({ companyId, ...(from && { from }), ...(to && { to }) });
+    const mau = await AnalyticsRepository.monthlyActiveUsers({ companyId, ...(from && { from }), ...(to && { to }) });
+
+    // Session metrics
+    const sessionMetrics = await AnalyticsRepository.sessionMetrics({ companyId, ...(from && { from }), ...(to && { to }) });
+
+    // Page views
+    const pageViews = await AnalyticsRepository.pageViews({ companyId, ...(from && { from }), ...(to && { to }) });
+
+    return {
+      dau,
+      mau,
+      sessionMetrics,
+      pageViews,
+    };
+  }
+
+  static async conversionFunnel(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
+    const { companyId, requesterId, requesterRole, query } = params;
+    await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
+    const { from, to } = parseRange(query);
+
+    const funnelData = await AnalyticsRepository.conversionFunnelData({ companyId, ...(from && { from }), ...(to && { to }) });
+    return funnelData;
+  }
+
+  static async retention(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
+    const { companyId, requesterId, requesterRole, query } = params;
+    await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
+    const { from, to } = parseRange(query);
+
+    const retentionData = await AnalyticsRepository.retentionData({ companyId, ...(from && { from }), ...(to && { to }) });
+    return retentionData;
+  }
+
+  static async performance(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
+    const { companyId, requesterId, requesterRole, query } = params;
+    await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
+    const { from, to } = parseRange(query);
+
+    const performanceData = await AnalyticsRepository.performanceData({ companyId, ...(from && { from }), ...(to && { to }) });
+    return performanceData;
+  }
 }

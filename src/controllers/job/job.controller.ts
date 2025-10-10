@@ -211,10 +211,26 @@ export class JobController {
       const query: any = {};
       if (typeof name === "string") query.name = name;
       if (typeof education === "string") query.education = education;
-      if (typeof ageMin === "string" && ageMin.trim() !== "")
-        query.ageMin = Number(ageMin);
-      if (typeof ageMax === "string" && ageMax.trim() !== "")
-        query.ageMax = Number(ageMax);
+      if (typeof ageMin === "string" && ageMin.trim() !== "") {
+        const age = Number(ageMin);
+        if (age < 0) {
+          return res.status(400).json({ 
+            success: false, 
+            message: "Age minimum cannot be negative" 
+          });
+        }
+        query.ageMin = age;
+      }
+      if (typeof ageMax === "string" && ageMax.trim() !== "") {
+        const age = Number(ageMax);
+        if (age < 0) {
+          return res.status(400).json({ 
+            success: false, 
+            message: "Age maximum cannot be negative" 
+          });
+        }
+        query.ageMax = age;
+      }
       if (
         typeof expectedSalaryMin === "string" &&
         expectedSalaryMin.trim() !== ""
@@ -233,10 +249,28 @@ export class JobController {
         query.sortBy = sortBy;
       if (sortOrder === "asc" || sortOrder === "desc")
         query.sortOrder = sortOrder;
-      if (typeof limit === "string" && limit.trim() !== "")
-        query.limit = Number(limit);
-      if (typeof offset === "string" && offset.trim() !== "")
-        query.offset = Number(offset);
+      if (typeof limit === "string" && limit.trim() !== "") {
+        const limitNum = Number(limit);
+        if (limitNum < 0) {
+          return res.status(400).json({ 
+            success: false, 
+            message: "Limit cannot be negative" 
+          });
+        }
+        // Cap limit to prevent performance issues
+        const MAX_LIMIT = 100;
+        query.limit = Math.min(limitNum, MAX_LIMIT);
+      }
+      if (typeof offset === "string" && offset.trim() !== "") {
+        const offsetNum = Number(offset);
+        if (offsetNum < 0) {
+          return res.status(400).json({ 
+            success: false, 
+            message: "Offset cannot be negative" 
+          });
+        }
+        query.offset = offsetNum;
+      }
 
       const data = await JobApplicantsService.listApplicants({
         companyId,

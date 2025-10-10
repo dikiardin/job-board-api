@@ -18,7 +18,7 @@ export function validateCreateManyInterviews(req: Request, res: Response, next: 
 }
 
 const updateSchema = Joi.object({
-  scheduleDate: Joi.date().iso().greater('now').optional(),
+  scheduleDate: Joi.date().iso().optional(),
   locationOrLink: Joi.string().allow(null, '').optional(),
   notes: Joi.string().allow(null, '').max(500).optional(),
   status: Joi.string().valid('SCHEDULED','COMPLETED','CANCELLED','NO_SHOW').optional(),
