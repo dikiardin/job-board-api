@@ -20,6 +20,7 @@ import { prisma } from "./config/prisma";
 import JobShareRouter from "./routers/share.router";
 import SavedJobRouter from "./routers/save.router";
 import cvRoutes from "./routers/cv.router";
+import ContactRouter from "./routers/contact.router";
 
 const PORT: string = process.env.PORT || "5000";
 
@@ -290,6 +291,7 @@ class App {
     const skillAssessmentRouter: SkillAssessmentRouter = new SkillAssessmentRouter();
     const shareRouter: JobShareRouter = new JobShareRouter();
     const saveRouter: SavedJobRouter = new SavedJobRouter();
+    const contactRouter: ContactRouter = new ContactRouter();
 
     this.app.use("/auth", authRouter.getRouter());
     this.app.use("/subscription", subscriptionRouter.getRouter());
@@ -303,10 +305,9 @@ class App {
     this.app.use("/company", companyRouter.getRouter());
     this.app.use("/reviews", companyReviewRouter.getRouter());
     this.app.use("/skill-assessment", skillAssessmentRouter.getRouter());
-    
     this.app.use("/share", shareRouter.getRouter());
     this.app.use("/save", saveRouter.getRouter());
-  
+    this.app.use("/contact", contactRouter.getRouter());
   }
 
   private errorHandling(): void {

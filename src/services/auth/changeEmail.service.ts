@@ -31,7 +31,7 @@ export class ChangeEmailService {
         from: process.env.MAIL_SENDER,
         to: newEmail,
         subject: "Workoo | Verify your new email",
-        html: buildVerificationEmailChange(newEmail, token),
+        html: buildVerificationEmailChange(user.name ?? newEmail, token),
       });
     } catch (err) {
       console.error("Nodemailer Error:", err);
