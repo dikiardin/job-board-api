@@ -41,6 +41,34 @@ class AnalyticsRouter {
       verifyRole([UserRole.ADMIN]),
       AnalyticsController.overview
     );
+
+    this.route.get(
+      "/companies/:companyId/analytics/engagement",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      AnalyticsController.engagement
+    );
+
+    this.route.get(
+      "/companies/:companyId/analytics/conversion-funnel",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      AnalyticsController.conversionFunnel
+    );
+
+    this.route.get(
+      "/companies/:companyId/analytics/retention",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      AnalyticsController.retention
+    );
+
+    this.route.get(
+      "/companies/:companyId/analytics/performance",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      AnalyticsController.performance
+    );
   }
 
   public getRouter(): Router {

@@ -92,6 +92,12 @@ export class JobApplicantsService {
       throw { status: 401, message: "Only company admin can list applicants" };
     await assertCompanyOwnership(companyId, requesterId);
 
+    // Verify job exists and belongs to the company
+    const job = await JobRepository.getJobById(companyId, jobId);
+    if (!job) {
+      throw { status: 404, message: "Job not found" };
+    }
+
     const result = await JobRepository.listApplicantsForJob({
       companyId,
       jobId,

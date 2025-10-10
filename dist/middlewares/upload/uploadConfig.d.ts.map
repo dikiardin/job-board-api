@@ -1,1 +1,0 @@
-{"version":3,"file":"uploadConfig.d.ts","sourceRoot":"","sources":["../../../src/middlewares/upload/uploadConfig.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,cAAc,EAAE,YAAY,EAAE,MAAM,mBAAmB,CAAC;AAC/E,OAAO,EAAE,wBAAwB,EAAE,MAAM,0BAA0B,CAAC;AAGpE,OAAO,EACL,YAAY,EACZ,cAAc,EACd,YAAY,EACZ,wBAAwB,EACzB,CAAC;AAGF,eAAO,MAAM,YAAY;;;;;CAKxB,CAAC"}
