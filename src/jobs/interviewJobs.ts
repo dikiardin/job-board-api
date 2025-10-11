@@ -48,11 +48,8 @@ export function startInterviewJobs() {
         await InterviewRepository.markReminderSent((it as any).id as number);
       }
 
-      if (due.length > 0) console.log(`[CRON] Interview reminders sent: ${due.length}`);
     } catch (error) {
       console.error("[CRON] Interview reminder job failed:", error);
     }
   });
-
-  console.log("[CRON] Interview jobs started");
 }

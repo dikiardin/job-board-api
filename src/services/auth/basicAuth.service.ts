@@ -10,6 +10,7 @@ import { CreateEmploymentService } from "../employment/createEmployment.service"
 import { CreateCompanyService } from "../company/createCompany.service";
 import { EmailService } from "./resendEmail.service";
 import { Buffer } from "buffer";
+import { resolveIsProfileComplete } from "../../utils/profileCompletion";
 
 export class BasicAuthService {
   public static async register(
@@ -71,14 +72,25 @@ export class BasicAuthService {
       }
 
       if (user.emailVerifiedAt) {
+        const extendedUser =
+          (await UserRepo.findWithCompany(user.id)) ?? { ...user, ownedCompany: null };
         const jwt = createToken(
           { userId: user.id, email: user.email, role: user.role },
           "7d"
         );
-        return { message: "User already verified", token: jwt, user };
+        return {
+          message: "User already verified",
+          token: jwt,
+          user: { ...user, isProfileComplete: resolveIsProfileComplete(extendedUser) },
+        };
       }
 
       const updatedUser = await UserRepo.verifyUser(decoded.userId);
+      const extendedUser =
+        (await UserRepo.findWithCompany(updatedUser.id)) ?? {
+          ...updatedUser,
+          ownedCompany: null,
+        };
 
       const jwt = createToken(
         {
@@ -92,7 +104,10 @@ export class BasicAuthService {
       return {
         message: "Email verified successfully",
         token: jwt,
-        user: updatedUser,
+        user: {
+          ...updatedUser,
+          isProfileComplete: resolveIsProfileComplete(extendedUser),
+        },
       };
     } catch (err: any) {
       // detect expired link
@@ -149,7 +164,13 @@ export class BasicAuthService {
       throw new CustomError("Please verify your email before logging in", 400);
     }
 
+    const extendedUser =
+      (await UserRepo.findWithCompany(user.id)) ?? { ...user, ownedCompany: null };
+
     const token = createToken({ userId: user.id, role: user.role }, "7d");
-    return { token, user };
+    return {
+      token,
+      user: { ...user, isProfileComplete: resolveIsProfileComplete(extendedUser) },
+    };
   }
 }
