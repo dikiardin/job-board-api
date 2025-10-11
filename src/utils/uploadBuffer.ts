@@ -1,4 +1,9 @@
-import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
+import {
+  cloudinaryUpload,
+  deleteCloudinaryAsset,
+  uploadBufferDirect,
+  uploadStreamDirect,
+} from "../config/cloudinary";
 
 interface UploadOptions {
   folder: string;
@@ -10,28 +15,20 @@ export async function uploadBufferToCloudinary(
   buffer: Buffer,
   options: UploadOptions
 ): Promise<{ secureUrl: string; publicId: string }> {
-  const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-    const uploadOptions: any = {
-      folder: options.folder,
-      resource_type: options.resourceType ?? "raw",
-    };
-    
-    if (options.fileName) {
-      uploadOptions.public_id = options.fileName;
-    }
+  const uploadOptions: Parameters<typeof uploadBufferDirect>[1] = {
+    filename: options.fileName ?? `${Date.now()}`,
+    resourceType: options.resourceType ?? "raw",
+    folder: options.folder,
+    useFilename: true,
+    uniqueFilename: false,
+    accessMode: "public",
+  };
 
-    const uploadStream = cloudinary.uploader.upload_stream(
-      uploadOptions,
-      (error, uploadResult) => {
-        if (error || !uploadResult) {
-          return reject(error);
-        }
-        resolve(uploadResult);
-      }
-    );
+  if (options.fileName) {
+    uploadOptions.publicId = options.fileName;
+  }
 
-    uploadStream.end(buffer);
-  });
+  const result = await uploadBufferDirect(buffer, uploadOptions);
 
   return {
     secureUrl: result.secure_url,
@@ -43,29 +40,19 @@ export async function uploadToCloudinary(
   stream: NodeJS.ReadableStream,
   fileName: string
 ): Promise<{ secure_url: string; public_id: string }> {
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        resource_type: "raw",
-        public_id: fileName.replace(/\.[^/.]+$/, ""), // Remove extension from public_id
-        use_filename: true,
-        unique_filename: false, // Don't add random suffix
-        access_mode: "public", // Ensure public access
-      },
-      (error, result) => {
-        if (error || !result) {
-          return reject(error || new Error('Upload failed'));
-        }
-        
-        resolve({
-          secure_url: result.secure_url,
-          public_id: result.public_id
-        });
-      }
-    );
-
-    stream.pipe(uploadStream);
+  const response = await uploadStreamDirect(stream, {
+    filename: fileName,
+    resourceType: "raw",
+    publicId: fileName.replace(/\.[^/.]+$/, ""),
+    useFilename: true,
+    uniqueFilename: false,
+    accessMode: "public",
   });
+
+  return {
+    secure_url: response.secure_url,
+    public_id: response.public_id,
+  };
 }
 
 export async function deleteFromCloudinary(fileUrl: string) {
@@ -75,7 +62,7 @@ export async function deleteFromCloudinary(fileUrl: string) {
 
   const publicId = match[1];
 
-  return cloudinary.uploader.destroy(publicId, {
-    resource_type: "raw",
-  });
+  return deleteCloudinaryAsset(publicId, "raw");
 }
+
+export { cloudinaryUpload };

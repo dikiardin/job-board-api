@@ -6,7 +6,6 @@ import { SubscriptionStatus } from "../generated/prisma";
 export function startSubscriptionJobs() {
   // Reminder 50 minutes before expiry (every 10 minutes)
   cron.schedule("*/10 * * * *", async () => {
-    console.log("[CRON] Checking subscriptions expiring in 50 minutes...");
     try {
       const expiring = await SubscriptionRepo.getSubscriptionsExpiringInMinutes(50);
 
@@ -21,7 +20,6 @@ export function startSubscriptionJobs() {
       }
       }
 
-      console.log(`[CRON] Sent ${expiring.length} expiration reminder emails (50 minutes before)`);
     } catch (error) {
       console.error("[CRON] Failed to send expiration reminders:", error);
     }
@@ -29,7 +27,6 @@ export function startSubscriptionJobs() {
 
   // Deactivate expired subscriptions (every 15 minutes)
   cron.schedule("*/15 * * * *", async () => {
-    console.log("[CRON] Checking for expired subscriptions...");
     try {
       const expired = await SubscriptionRepo.getExpiredSubscriptions();
 
@@ -39,12 +36,9 @@ export function startSubscriptionJobs() {
         });
       }
 
-      console.log(`[CRON] Deactivated ${expired.length} expired subscriptions`);
     } catch (error) {
       console.error("[CRON] Failed to deactivate expired subscriptions:", error);
     }
   });
-
-  console.log("[CRON] All subscription jobs started");
 }
 

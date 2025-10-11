@@ -4,6 +4,7 @@ import { verifyGoogleToken } from "./google";
 import { CreateCompanyService } from "../company/createCompany.service";
 import { CreateEmploymentService } from "../employment/createEmployment.service";
 import { UserRepo } from "../../repositories/user/user.repository";
+import { resolveIsProfileComplete } from "../../utils/profileCompletion";
 
 type SocialProfile = {
   providerId: string;
@@ -80,7 +81,14 @@ export class SocialAuthService {
       }
     }
 
+    const extendedUser =
+      (await UserRepo.findWithCompany(user.id)) ?? { ...user, ownedCompany: null };
+
     const jwtToken = createToken({ userId: user.id, role: user.role }, "7d");
-    return { ...user, token: jwtToken };
+    return {
+      ...user,
+      token: jwtToken,
+      isProfileComplete: resolveIsProfileComplete(extendedUser),
+    };
   }
 }
