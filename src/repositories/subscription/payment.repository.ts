@@ -1,56 +1,21 @@
-import { prisma } from "../../config/prisma";
+import { PaymentQueryRepo } from "./paymentQuery.repository";
+import { PaymentMutationRepo } from "./paymentMutation.repository";
+import { PaymentActionRepo } from "./paymentAction.repository";
 
 export class PaymentRepo {
   // Get all pending payments
   public static async getPendingPayments() {
-    return prisma.payment.findMany({
-      where: { status: "PENDING" },
-      include: {
-        subscription: {
-          include: {
-            user: {
-              select: { id: true, name: true, email: true },
-            },
-            plan: true,
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    return PaymentQueryRepo.getPendingPayments();
   }
 
   // Get payment by ID
   public static async getPaymentById(id: number) {
-    return prisma.payment.findUnique({
-      where: { id },
-      include: {
-        subscription: {
-          include: {
-            user: {
-              select: { id: true, name: true, email: true },
-            },
-            plan: true,
-          },
-        },
-      },
-    });
+    return PaymentQueryRepo.getPaymentById(id);
   }
 
   // Get payment by slug
   public static async getPaymentBySlug(slug: string) {
-    return prisma.payment.findUnique({
-      where: { slug },
-      include: {
-        subscription: {
-          include: {
-            user: {
-              select: { id: true, name: true, email: true },
-            },
-            plan: true,
-          },
-        },
-      },
-    });
+    return PaymentQueryRepo.getPaymentBySlug(slug);
   }
 
   // Create payment
@@ -61,26 +26,7 @@ export class PaymentRepo {
     paymentProof?: string;
     expiresAt?: Date;
   }) {
-    try {
-      console.log("PaymentRepo.createPayment called with data:", data);
-      
-      const result = await prisma.payment.create({
-        data,
-        include: {
-          subscription: {
-            include: {
-              plan: true,
-            },
-          },
-        },
-      });
-      
-      console.log("PaymentRepo.createPayment result:", result);
-      return result;
-    } catch (error) {
-      console.error("Error in PaymentRepo.createPayment:", error);
-      throw error;
-    }
+    return PaymentMutationRepo.createPayment(data);
   }
 
   // Upload payment proof
@@ -88,10 +34,7 @@ export class PaymentRepo {
     paymentId: number,
     paymentProof: string
   ) {
-    return prisma.payment.update({
-      where: { id: paymentId },
-      data: { paymentProof },
-    });
+    return PaymentMutationRepo.uploadPaymentProof(paymentId, paymentProof);
   }
 
   // Upload payment proof by slug
@@ -99,10 +42,7 @@ export class PaymentRepo {
     slug: string,
     paymentProof: string
   ) {
-    return prisma.payment.update({
-      where: { slug },
-      data: { paymentProof },
-    });
+    return PaymentMutationRepo.uploadPaymentProofBySlug(slug, paymentProof);
   }
 
   // Update payment status
@@ -111,23 +51,11 @@ export class PaymentRepo {
     status: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED",
     approvedAt?: Date
   ) {
-    return prisma.payment.update({
-      where: { id: paymentId },
-      data: {
-        status,
-        ...(approvedAt && { approvedAt }),
-      },
-      include: {
-        subscription: {
-          include: {
-            user: {
-              select: { id: true, name: true, email: true },
-            },
-            plan: true,
-          },
-        },
-      },
-    });
+    return PaymentMutationRepo.updatePaymentStatus(
+      paymentId,
+      status,
+      approvedAt
+    );
   }
 
   // Update payment status by slug
@@ -136,50 +64,35 @@ export class PaymentRepo {
     status: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED",
     approvedAt?: Date
   ) {
-    return prisma.payment.update({
-      where: { slug },
-      data: {
-        status,
-        ...(approvedAt && { approvedAt }),
-      },
-      include: {
-        subscription: {
-          include: {
-            user: {
-              select: { id: true, name: true, email: true },
-            },
-            plan: true,
-          },
-        },
-      },
-    });
+    return PaymentMutationRepo.updatePaymentStatusBySlug(
+      slug,
+      status,
+      approvedAt
+    );
   }
 
   // Get payments by subscription ID
   public static async getPaymentsBySubscriptionId(subscriptionId: number) {
-    return prisma.payment.findMany({
-      where: { subscriptionId },
-      orderBy: { createdAt: "desc" },
-    });
+    return PaymentQueryRepo.getPaymentsBySubscriptionId(subscriptionId);
   }
 
   // Approve payment
   public static async approvePayment(id: number) {
-    return this.updatePaymentStatus(id, "APPROVED", new Date());
+    return PaymentActionRepo.approvePayment(id);
   }
 
   // Reject payment
   public static async rejectPayment(id: number) {
-    return this.updatePaymentStatus(id, "REJECTED");
+    return PaymentActionRepo.rejectPayment(id);
   }
 
   // Approve payment by slug
   public static async approvePaymentBySlug(slug: string) {
-    return this.updatePaymentStatusBySlug(slug, "APPROVED", new Date());
+    return PaymentActionRepo.approvePaymentBySlug(slug);
   }
 
   // Reject payment by slug
   public static async rejectPaymentBySlug(slug: string) {
-    return this.updatePaymentStatusBySlug(slug, "REJECTED");
+    return PaymentActionRepo.rejectPaymentBySlug(slug);
   }
 }

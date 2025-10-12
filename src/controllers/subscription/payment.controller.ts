@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { PaymentService } from "../../services/subscription/payment.service";
-import { cloudinaryUpload } from "../../config/cloudinary";
-import { ControllerHelper } from "../../utils/controllerHelper";
+import { PaymentQueryController } from "./paymentQuery.controller";
+import { PaymentUploadController } from "./paymentUpload.controller";
+import { PaymentActionController } from "./paymentAction.controller";
 
 export class PaymentController {
   public static async getPendingPayments(
@@ -9,12 +9,7 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const payments = await PaymentService.getPendingPayments();
-      res.status(200).json(payments);
-    } catch (error) {
-      next(error);
-    }
+    return PaymentQueryController.getPendingPayments(req, res, next);
   }
 
   public static async getPaymentById(
@@ -22,13 +17,7 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const id = ControllerHelper.parseId(req.params.id);
-      const payment = await PaymentService.getPaymentById(id);
-      res.status(200).json(payment);
-    } catch (error) {
-      next(error);
-    }
+    return PaymentQueryController.getPaymentById(req, res, next);
   }
 
   public static async getPaymentBySlug(
@@ -36,14 +25,7 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const { slug } = req.params;
-      ControllerHelper.validateRequired({ slug }, "Payment slug is required");
-      const payment = await PaymentService.getPaymentBySlugOrId(slug!);
-      res.status(200).json(payment);
-    } catch (error) {
-      next(error);
-    }
+    return PaymentQueryController.getPaymentBySlug(req, res, next);
   }
 
   public static async uploadPaymentProof(
@@ -51,27 +33,7 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const paymentId = ControllerHelper.parseId(req.params.paymentId);
-      
-      ControllerHelper.validateRequired({ file: req.file }, "Payment proof image is required");
-      
-      const cloudinaryResult = await cloudinaryUpload(req.file!);
-      const payment = await PaymentService.uploadPaymentProof(paymentId, cloudinaryResult.secure_url);
-
-      res.status(200).json({
-        ...payment,
-        cloudinary: {
-          public_id: cloudinaryResult.public_id,
-          secure_url: cloudinaryResult.secure_url,
-          width: cloudinaryResult.width,
-          height: cloudinaryResult.height,
-          format: cloudinaryResult.format,
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    return PaymentUploadController.uploadPaymentProof(req, res, next);
   }
 
   public static async uploadPaymentProofBySlug(
@@ -79,27 +41,7 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const { slug } = req.params;
-      ControllerHelper.validateRequired({ slug }, "Payment slug is required");
-      ControllerHelper.validateRequired({ file: req.file }, "Payment proof image is required");
-      
-      const cloudinaryResult = await cloudinaryUpload(req.file!);
-      const payment = await PaymentService.uploadPaymentProofBySlug(slug!, cloudinaryResult.secure_url);
-
-      res.status(200).json({
-        ...payment,
-        cloudinary: {
-          public_id: cloudinaryResult.public_id,
-          secure_url: cloudinaryResult.secure_url,
-          width: cloudinaryResult.width,
-          height: cloudinaryResult.height,
-          format: cloudinaryResult.format,
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    return PaymentUploadController.uploadPaymentProofBySlug(req, res, next);
   }
 
   public static async approvePayment(
@@ -107,13 +49,7 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const id = ControllerHelper.parseId(req.params.id);
-      const payment = await PaymentService.approvePayment(id);
-      res.status(200).json(payment);
-    } catch (error) {
-      next(error);
-    }
+    return PaymentActionController.approvePayment(req, res, next);
   }
 
   public static async approvePaymentBySlug(
@@ -121,14 +57,7 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const { slug } = req.params;
-      ControllerHelper.validateRequired({ slug }, "Payment slug is required");
-      const payment = await PaymentService.approvePaymentBySlug(slug!);
-      res.status(200).json(payment);
-    } catch (error) {
-      next(error);
-    }
+    return PaymentActionController.approvePaymentBySlug(req, res, next);
   }
 
   public static async rejectPayment(
@@ -136,13 +65,7 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const id = ControllerHelper.parseId(req.params.id);
-      const payment = await PaymentService.rejectPayment(id);
-      res.status(200).json(payment);
-    } catch (error) {
-      next(error);
-    }
+    return PaymentActionController.rejectPayment(req, res, next);
   }
 
   public static async rejectPaymentBySlug(
@@ -150,14 +73,7 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const { slug } = req.params;
-      ControllerHelper.validateRequired({ slug }, "Payment slug is required");
-      const payment = await PaymentService.rejectPaymentBySlug(slug!);
-      res.status(200).json(payment);
-    } catch (error) {
-      next(error);
-    }
+    return PaymentActionController.rejectPaymentBySlug(req, res, next);
   }
 
   public static async getPaymentsBySubscriptionId(
@@ -165,12 +81,6 @@ export class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    try {
-      const subscriptionId = ControllerHelper.parseId(req.params.subscriptionId);
-      const payments = await PaymentService.getPaymentsBySubscriptionId(subscriptionId);
-      res.status(200).json(payments);
-    } catch (error) {
-      next(error);
-    }
+    return PaymentQueryController.getPaymentsBySubscriptionId(req, res, next);
   }
 }

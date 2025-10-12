@@ -3,13 +3,19 @@ import { SkillAssessmentResultsRepository } from "../../repositories/skillAssess
 import { CustomError } from "../../utils/customError";
 
 export class AssessmentResultsService {
-  private static readonly PASSING_SCORE = 75;
-
   // Get user's assessment results
-  public static async getUserResults(userId: number, page: number = 1, limit: number = 10) {
+  public static async getUserResults(
+    userId: number,
+    page: number = 1,
+    limit: number = 10
+  ) {
     try {
       // Repository already handles pagination
-      const result = await SkillAssessmentResultsRepository.getUserResults(userId, page, limit);
+      const result = await SkillAssessmentResultsRepository.getUserResults(
+        userId,
+        page,
+        limit
+      );
       return result;
     } catch (error) {
       console.error("Error getting user results:", error);
@@ -18,8 +24,14 @@ export class AssessmentResultsService {
   }
 
   // Get specific assessment result
-  public static async getAssessmentResult(userId: number, assessmentId: number) {
-    const result = await SkillAssessmentModularRepository.getUserResult(userId, assessmentId);
+  public static async getAssessmentResult(
+    userId: number,
+    assessmentId: number
+  ) {
+    const result = await SkillAssessmentModularRepository.getUserResult(
+      userId,
+      assessmentId
+    );
     if (!result) {
       throw new CustomError("Assessment result not found", 404);
     }
@@ -27,14 +39,26 @@ export class AssessmentResultsService {
   }
 
   // Get assessment statistics
-  public static async getAssessmentStatistics(assessmentId: number, createdBy: number) {
+  public static async getAssessmentStatistics(
+    assessmentId: number,
+    createdBy: number
+  ) {
     // Get assessment results
-    return await SkillAssessmentModularRepository.getAssessmentResults(assessmentId, createdBy);
+    return await SkillAssessmentModularRepository.getAssessmentResults(
+      assessmentId,
+      createdBy
+    );
   }
 
-  public static async getAssessmentSummary(assessmentId: number, createdBy: number) {
-    const stats = await SkillAssessmentModularRepository.getAssessmentResults(assessmentId, createdBy);
-    
+  public static async getAssessmentSummary(
+    assessmentId: number,
+    createdBy: number
+  ) {
+    const stats = await SkillAssessmentModularRepository.getAssessmentResults(
+      assessmentId,
+      createdBy
+    );
+
     // Handle null/empty stats
     if (!stats || !Array.isArray(stats) || stats.length === 0) {
       return {
@@ -43,18 +67,27 @@ export class AssessmentResultsService {
         passRate: 0,
       };
     }
-    
+
     return {
       totalAttempts: stats.length,
-      averageScore: stats.reduce((sum: number, result: any) => sum + (result.score || 0), 0) / stats.length,
-      passRate: (stats.filter((result: any) => (result.score || 0) >= this.PASSING_SCORE).length / stats.length) * 100,
+      averageScore:
+        stats.reduce(
+          (sum: number, result: any) => sum + (result.score || 0),
+          0
+        ) / stats.length,
+      passRate:
+        (stats.filter((result: any) => result.isPassed).length / stats.length) *
+        100,
     };
   }
 
   // Reset assessment for retake
   public static async resetAssessment(userId: number, assessmentId: number) {
-    const existingResult = await SkillAssessmentModularRepository.getUserResult(userId, assessmentId);
-    if (existingResult && existingResult.score >= this.PASSING_SCORE) {
+    const existingResult = await SkillAssessmentModularRepository.getUserResult(
+      userId,
+      assessmentId
+    );
+    if (existingResult && existingResult.isPassed) {
       throw new CustomError("Cannot retake a passed assessment", 400);
     }
 
@@ -67,11 +100,17 @@ export class AssessmentResultsService {
   }
 
   // Check if user can retake assessment
-  public static async canRetakeAssessment(userId: number, assessmentId: number): Promise<boolean> {
-    const existingResult = await SkillAssessmentModularRepository.getUserResult(userId, assessmentId);
-    
+  public static async canRetakeAssessment(
+    userId: number,
+    assessmentId: number
+  ): Promise<boolean> {
+    const existingResult = await SkillAssessmentModularRepository.getUserResult(
+      userId,
+      assessmentId
+    );
+
     // Can retake if no previous attempt or if failed
-    return !existingResult || existingResult.score < this.PASSING_SCORE;
+    return !existingResult || !existingResult.isPassed;
   }
 
   // Get user's assessment history
@@ -102,13 +141,16 @@ export class AssessmentResultsService {
   // Get assessment completion certificate info
   public static async getCertificateInfo(userId: number, assessmentId: number) {
     const result = await this.getAssessmentResult(userId, assessmentId);
-    
+
     if (!result) {
       throw new CustomError("Assessment result not found", 404);
     }
-    
-    if (result.score < this.PASSING_SCORE) {
-      throw new CustomError("Certificate only available for passed assessments", 400);
+
+    if (!result.isPassed) {
+      throw new CustomError(
+        "Certificate only available for passed assessments",
+        400
+      );
     }
 
     return {
@@ -120,9 +162,14 @@ export class AssessmentResultsService {
   }
 
   // Get assessment feedback
-  public static getAssessmentFeedback(score: number, correctAnswers: number, totalQuestions: number) {
+  public static getAssessmentFeedback(
+    score: number,
+    correctAnswers: number,
+    totalQuestions: number,
+    assessmentPassScore?: number
+  ) {
     const percentage = (correctAnswers / totalQuestions) * 100;
-    
+
     let feedback = {
       overall: "",
       strengths: [] as string[],
@@ -131,23 +178,55 @@ export class AssessmentResultsService {
     };
 
     if (score >= 95) {
-      feedback.overall = "Exceptional performance! You have mastered this skill area.";
-      feedback.strengths = ["Outstanding knowledge", "Excellent problem-solving", "Strong fundamentals"];
-      feedback.nextSteps = ["Consider advanced topics", "Mentor others", "Take leadership roles"];
+      feedback.overall =
+        "Exceptional performance! You have mastered this skill area.";
+      feedback.strengths = [
+        "Outstanding knowledge",
+        "Excellent problem-solving",
+        "Strong fundamentals",
+      ];
+      feedback.nextSteps = [
+        "Consider advanced topics",
+        "Mentor others",
+        "Take leadership roles",
+      ];
     } else if (score >= 85) {
       feedback.overall = "Great job! You have strong knowledge in this area.";
-      feedback.strengths = ["Good understanding", "Solid foundation", "Above average performance"];
+      feedback.strengths = [
+        "Good understanding",
+        "Solid foundation",
+        "Above average performance",
+      ];
       feedback.improvements = ["Review missed concepts", "Practice edge cases"];
-      feedback.nextSteps = ["Explore advanced topics", "Apply knowledge in projects"];
-    } else if (score >= 75) {
-      feedback.overall = "Well done! You've successfully passed this assessment.";
-      feedback.strengths = ["Basic understanding achieved", "Met minimum requirements"];
-      feedback.improvements = ["Strengthen weak areas", "Practice more problems"];
+      feedback.nextSteps = [
+        "Explore advanced topics",
+        "Apply knowledge in projects",
+      ];
+    } else if (score >= (assessmentPassScore || 75)) {
+      feedback.overall =
+        "Well done! You've successfully passed this assessment.";
+      feedback.strengths = [
+        "Basic understanding achieved",
+        "Met minimum requirements",
+      ];
+      feedback.improvements = [
+        "Strengthen weak areas",
+        "Practice more problems",
+      ];
       feedback.nextSteps = ["Continue practicing", "Review study materials"];
     } else {
-      feedback.overall = "Keep practicing! You can retake this assessment when ready.";
-      feedback.improvements = ["Review fundamental concepts", "Practice basic problems", "Study recommended materials"];
-      feedback.nextSteps = ["Take preparatory courses", "Practice with easier problems", "Retake when confident"];
+      feedback.overall =
+        "Keep practicing! You can retake this assessment when ready.";
+      feedback.improvements = [
+        "Review fundamental concepts",
+        "Practice basic problems",
+        "Study recommended materials",
+      ];
+      feedback.nextSteps = [
+        "Take preparatory courses",
+        "Practice with easier problems",
+        "Retake when confident",
+      ];
     }
 
     return feedback;
@@ -155,10 +234,15 @@ export class AssessmentResultsService {
 
   // Calculate detailed score breakdown
   public static calculateScoreBreakdown(
-    answers: Array<{ questionId: number; answer: string; isCorrect: boolean; topic?: string }>
+    answers: Array<{
+      questionId: number;
+      answer: string;
+      isCorrect: boolean;
+      topic?: string;
+    }>
   ) {
     const totalQuestions = answers.length;
-    const correctAnswers = answers.filter(a => a.isCorrect).length;
+    const correctAnswers = answers.filter((a) => a.isCorrect).length;
     const score = Math.round((correctAnswers / totalQuestions) * 100);
 
     // Group by topic if available
@@ -189,12 +273,16 @@ export class AssessmentResultsService {
   }
 
   // Get passing score threshold
-  public static getPassingScore(): number {
-    return this.PASSING_SCORE;
+  public static getPassingScore(assessmentPassScore?: number): number {
+    return assessmentPassScore || 75;
   }
 
   // Check if score is passing
-  public static isPassingScore(score: number): boolean {
-    return score >= this.PASSING_SCORE;
+  public static isPassingScore(
+    score: number,
+    assessmentPassScore?: number
+  ): boolean {
+    const passScore = assessmentPassScore || 75;
+    return score >= passScore;
   }
 }

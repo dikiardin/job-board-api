@@ -83,7 +83,6 @@ export class SubscriptionController {
 
       res.status(201).json(result);
     } catch (error) {
-      console.error("Subscription error:", error);
       next(error);
     }
   }
