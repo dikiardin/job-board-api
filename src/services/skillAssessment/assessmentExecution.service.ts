@@ -4,7 +4,7 @@ import { prisma } from "../../config/prisma";
 
 export class AssessmentExecutionService {
   private static readonly PASSING_SCORE = 75;
-  private static readonly TIME_LIMIT_MINUTES = 30;
+  private static readonly TIME_LIMIT_MINUTES = 3; // Changed from 30 to 3 minutes to match frontend
 
   // Get assessment for taking (hide answers, subscription required)
   public static async getAssessmentForTaking(assessmentId: number, userId: number) {
@@ -124,7 +124,7 @@ export class AssessmentExecutionService {
   }) {
     // Validate time limit
     if (data.timeSpent > this.TIME_LIMIT_MINUTES) {
-      throw new CustomError("Assessment time limit exceeded", 400);
+      throw new CustomError(`Assessment submission time exceeded maximum allowed duration of ${this.TIME_LIMIT_MINUTES} minutes. Time taken: ${data.timeSpent} minutes`, 400);
     }
 
     // Validate all questions are answered
