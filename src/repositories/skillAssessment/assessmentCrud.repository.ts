@@ -1,4 +1,7 @@
-import { prisma } from "../../config/prisma";
+import { AssessmentCrudQueryRepository } from "./assessmentCrudQuery.repository";
+import { AssessmentCrudMutationRepository } from "./assessmentCrudMutation.repository";
+import { AssessmentCrudValidationRepository } from "./assessmentCrudValidation.repository";
+import { AssessmentCrudStatsRepository } from "./assessmentCrudStats.repository";
 
 export class AssessmentCrudRepository {
   // Create new assessment
@@ -15,208 +18,94 @@ export class AssessmentCrudRepository {
       answer: string;
     }>;
   }) {
-    return await prisma.skillAssessment.create({
-      data: {
-        title: data.title,
-        description: data.description || null,
-        category: data.category,
-        badgeTemplateId: data.badgeTemplateId || null,
-        passScore: data.passScore || 75,
-        createdBy: data.createdBy,
-        ...(data.questions.length > 0 && {
-          questions: {
-            create: data.questions.map((q) => ({
-              question: q.question,
-              options: q.options,
-              answer: q.answer,
-            })),
-          },
-        }),
-      },
-      include: {
-        questions: true,
-        creator: { select: { id: true, name: true, email: true } },
-        badgeTemplate: { select: { id: true, name: true, icon: true, description: true, category: true } },
-      },
-    });
+    return AssessmentCrudMutationRepository.createAssessment(data);
   }
 
   // Get all assessments with pagination
   public static async getAllAssessments(page: number = 1, limit: number = 10) {
-    const skip = (page - 1) * limit;
-    const [assessments, total] = await Promise.all([
-      prisma.skillAssessment.findMany({
-        skip,
-        take: limit,
-        include: {
-          creator: { select: { id: true, name: true } },
-          badgeTemplate: { select: { id: true, name: true, icon: true, description: true, category: true } },
-          _count: { select: { results: true, questions: true } },
-        },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.skillAssessment.count(),
-    ]);
-
-    return {
-      assessments,
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
-    };
+    return AssessmentCrudQueryRepository.getAllAssessments(page, limit);
   }
 
   // Get assessment by ID
   public static async getAssessmentById(assessmentId: number) {
-    return await prisma.skillAssessment.findUnique({
-      where: { id: assessmentId },
-      include: {
-        questions: true,
-        creator: { select: { id: true, name: true } },
-        badgeTemplate: { select: { id: true, name: true, icon: true, description: true, category: true } },
-        _count: { select: { results: true, questions: true } },
-      },
-    });
+    return AssessmentCrudQueryRepository.getAssessmentById(assessmentId);
   }
 
   // Update assessment
-  public static async updateAssessment(assessmentId: number, createdBy: number, data: any) {
-    const existingAssessment = await prisma.skillAssessment.findFirst({
-      where: { id: assessmentId, createdBy },
-    });
-
-    if (data.questions && data.questions.length > 0) {
-      return await prisma.$transaction(async (tx) => {
-        await tx.skillQuestion.deleteMany({ where: { assessmentId } });
-        return await tx.skillAssessment.update({
-          where: { id: assessmentId },
-          data: {
-            title: data.title,
-            description: data.description,
-            category: data.category,
-            badgeTemplateId: data.badgeTemplateId,
-            passScore: data.passScore,
-            questions: {
-              create: data.questions!.map((q: any) => ({
-                question: q.question,
-                options: q.options,
-                answer: q.answer,
-              })),
-            },
-          },
-          include: {
-            questions: true,
-            creator: { select: { id: true, name: true } },
-            badgeTemplate: { select: { id: true, name: true, icon: true, description: true, category: true } },
-          },
-        });
-      });
-    } else {
-      const updateData: any = {};
-      if (data.title !== undefined) updateData.title = data.title;
-      if (data.description !== undefined) updateData.description = data.description;
-      if (data.category !== undefined) updateData.category = data.category;
-      if (data.badgeTemplateId !== undefined) updateData.badgeTemplateId = data.badgeTemplateId;
-      if (data.passScore !== undefined) updateData.passScore = data.passScore;
-
-      return await prisma.skillAssessment.updateMany({
-        where: { id: assessmentId, createdBy },
-        data: updateData,
-      });
-    }
+  public static async updateAssessment(
+    assessmentId: number,
+    createdBy: number,
+    data: any
+  ) {
+    return AssessmentCrudMutationRepository.updateAssessment(
+      assessmentId,
+      createdBy,
+      data
+    );
   }
 
   // Delete assessment
-  public static async deleteAssessment(assessmentId: number, createdBy: number) {
-    const existingAssessment = await prisma.skillAssessment.findFirst({
-      where: { id: assessmentId, createdBy },
-    });
-
-    if (!existingAssessment) return null;
-
-    return await prisma.skillAssessment.delete({
-      where: { id: assessmentId },
-    });
+  public static async deleteAssessment(
+    assessmentId: number,
+    createdBy: number
+  ) {
+    return AssessmentCrudMutationRepository.deleteAssessment(
+      assessmentId,
+      createdBy
+    );
   }
 
   // Get developer's assessments
-  public static async getDeveloperAssessments(createdBy: number, page?: number, limit?: number) {
-    const query: any = { where: { createdBy }, orderBy: { createdAt: "desc" } };
-    
-    if (page && limit) {
-      query.skip = (page - 1) * limit;
-      query.take = limit;
-    }
-
-    query.include = {
-      _count: { select: { results: true, questions: true } },
-      badgeTemplate: { select: { id: true, name: true, icon: true, category: true } },
-    };
-
-    return await prisma.skillAssessment.findMany(query);
+  public static async getDeveloperAssessments(
+    createdBy: number,
+    page?: number,
+    limit?: number
+  ) {
+    return AssessmentCrudQueryRepository.getDeveloperAssessments(
+      createdBy,
+      page,
+      limit
+    );
   }
 
   // Search assessments
-  public static async searchAssessments(searchTerm: string, page?: number, limit?: number) {
-    const query: any = {
-      where: {
-        OR: [
-          { title: { contains: searchTerm, mode: 'insensitive' } },
-          { description: { contains: searchTerm, mode: 'insensitive' } },
-        ],
-      },
-      orderBy: { createdAt: "desc" },
-    };
-
-    if (page && limit) {
-      query.skip = (page - 1) * limit;
-      query.take = limit;
-    }
-
-    query.include = {
-      creator: { select: { id: true, name: true } },
-      _count: { select: { results: true } },
-    };
-
-    return await prisma.skillAssessment.findMany(query);
+  public static async searchAssessments(
+    searchTerm: string,
+    page?: number,
+    limit?: number
+  ) {
+    return AssessmentCrudQueryRepository.searchAssessments(
+      searchTerm,
+      page,
+      limit
+    );
   }
 
   // Check if assessment title is available
-  public static async isAssessmentTitleAvailable(title: string, excludeId?: number) {
-    const where: any = { title };
-    if (excludeId) where.id = { not: excludeId };
-
-    const existing = await prisma.skillAssessment.findFirst({ where });
-    return !existing;
+  public static async isAssessmentTitleAvailable(
+    title: string,
+    excludeId?: number
+  ) {
+    return AssessmentCrudValidationRepository.isAssessmentTitleAvailable(
+      title,
+      excludeId
+    );
   }
 
   // Get assessment statistics
   public static async getAssessmentStats() {
-    const [totalAssessments, totalQuestions, totalResults] = await Promise.all([
-      prisma.skillAssessment.count(),
-      prisma.skillQuestion.count(),
-      prisma.skillResult.count(),
-    ]);
-
-    return { totalAssessments, totalQuestions, totalResults };
+    return AssessmentCrudStatsRepository.getAssessmentStats();
   }
 
   // Get assessment by ID for developer (includes questions)
-  public static async getAssessmentByIdForDeveloper(assessmentId: number, createdBy: number) {
-    return await prisma.skillAssessment.findFirst({
-      where: {
-        id: assessmentId,
-        createdBy: createdBy,
-      },
-      include: {
-        questions: true,
-        badgeTemplate: {
-          select: {
-            id: true,
-            name: true,
-            icon: true,
-          },
-        },
-      },
-    });
+  public static async getAssessmentByIdForDeveloper(
+    assessmentId: number,
+    createdBy: number
+  ) {
+    return AssessmentCrudQueryRepository.getAssessmentByIdForDeveloper(
+      assessmentId,
+      createdBy
+    );
   }
 
   // Save individual question
@@ -226,13 +115,6 @@ export class AssessmentCrudRepository {
     options: string[];
     answer: string;
   }) {
-    return await prisma.skillQuestion.create({
-      data: {
-        assessmentId: data.assessmentId,
-        question: data.question,
-        options: data.options,
-        answer: data.answer,
-      },
-    });
+    return AssessmentCrudMutationRepository.saveQuestion(data);
   }
 }

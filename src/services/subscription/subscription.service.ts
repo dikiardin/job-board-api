@@ -19,16 +19,26 @@ export class SubscriptionService {
   }
 
   public static async subscribeUser(userId: number, planId: number) {
+    // Validate plan and check active subscription
     const plan = await SubscriptionManagementService.validatePlanExists(planId);
     await SubscriptionManagementService.checkActiveSubscription(userId);
     
-    const subscription = await SubscriptionManagementService.createSubscription(userId, planId);
-    const payment = await PaymentManagementService.createPaymentRecord(
-      subscription.id, 
-      Number(plan.priceIdr)
-    );
+    // Create subscription and payment records
+    const subscription = await this.createSubscriptionRecord(userId, planId);
+    const payment = await this.createPaymentForSubscription(subscription.id, plan.priceIdr);
 
     return { subscription, payment };
+  }
+
+  private static async createSubscriptionRecord(userId: number, planId: number) {
+    return await SubscriptionManagementService.createSubscription(userId, planId);
+  }
+
+  private static async createPaymentForSubscription(subscriptionId: number, amount: number) {
+    return await PaymentManagementService.createPaymentRecord(
+      subscriptionId, 
+      Number(amount)
+    );
   }
 
   public static async updateSubscription(
