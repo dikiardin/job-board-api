@@ -10,9 +10,9 @@ datasource db {
 }
 
 model User {
-  id                         Int       @id @default(autoincrement())
-  role                       UserRole  @default(USER)
-  email                      String    @unique
+  id                         Int                   @id @default(autoincrement())
+  role                       UserRole              @default(USER)
+  email                      String                @unique
   passwordHash               String?
   name                       String?
   phone                      String?
@@ -31,35 +31,34 @@ model User {
   emailChangeNewEmail        String?
   emailChangeExpiresAt       DateTime?
   lastLoginAt                DateTime?
-  isActive                   Boolean   @default(true)
-  createdAt                  DateTime  @default(now())
-  updatedAt                  DateTime  @default(now()) @updatedAt
-
-  profile                 UserProfile?
-  applications            Application[]
-  createdBadgeTemplates   BadgeTemplate[]
-  createdBadges           Badge[]
-  ownedCompany            Company?              @relation("CompanyOwner")
-  employments             Employment[]
-  employmentVerifications Employment[]          @relation("EmploymentVerifier")
-  generatedCvs            GeneratedCV[]
-  jobShares               JobShare[]
-  preselectionResults     PreselectionResult[]
-  savedJobs               SavedJob[]
-  createdAssessments      SkillAssessment[]     @relation("SkillAssessmentCreator")
-  skillResults            SkillResult[]
-  subscriptions           Subscription[]
-  subscriptionApprovals   Subscription[]        @relation("SubscriptionApprover")
-  approvedPayments        Payment[]             @relation("PaymentDeveloperApprover")
-  userBadges              UserBadge[]
-  providers               UserProvider[]
-  certificatesIssued      Certificate[]         @relation("CertificateIssuer")
-  interviewsCreated       Interview[]           @relation("InterviewCreator")
-  interviewsUpdated       Interview[]           @relation("InterviewUpdater")
-  analyticsEvents         AnalyticsEvent[]
-  ApplicationTimeline     ApplicationTimeline[]
-  Certificate             Certificate[]
-  CompanyReview           CompanyReview[]
+  isActive                   Boolean               @default(true)
+  createdAt                  DateTime              @default(now())
+  updatedAt                  DateTime              @default(now()) @updatedAt
+  analyticsEvents            AnalyticsEvent[]
+  applications               Application[]
+  ApplicationTimeline        ApplicationTimeline[]
+  createdBadges              Badge[]
+  createdBadgeTemplates      BadgeTemplate[]
+  certificatesIssued         Certificate[]         @relation("CertificateIssuer")
+  Certificate                Certificate[]
+  ownedCompany               Company?              @relation("CompanyOwner")
+  CompanyReview              CompanyReview[]
+  employments                Employment[]
+  employmentVerifications    Employment[]          @relation("EmploymentVerifier")
+  generatedCvs               GeneratedCV[]
+  interviewsCreated          Interview[]           @relation("InterviewCreator")
+  interviewsUpdated          Interview[]           @relation("InterviewUpdater")
+  jobShares                  JobShare[]
+  approvedPayments           Payment[]             @relation("PaymentDeveloperApprover")
+  preselectionResults        PreselectionResult[]
+  savedJobs                  SavedJob[]
+  createdAssessments         SkillAssessment[]     @relation("SkillAssessmentCreator")
+  skillResults               SkillResult[]
+  subscriptionApprovals      Subscription[]        @relation("SubscriptionApprover")
+  subscriptions              Subscription[]
+  userBadges                 UserBadge[]
+  profile                    UserProfile?
+  providers                  UserProvider[]
 }
 
 model UserProfile {
@@ -81,8 +80,7 @@ model UserProfile {
   avatarUrl    String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @default(now()) @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserProvider {
@@ -94,65 +92,62 @@ model UserProvider {
   refreshToken String?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @default(now()) @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerId])
   @@index([userId])
 }
 
 model Company {
-  id               Int      @id @default(autoincrement())
-  slug             String   @unique @default(cuid())
+  id               Int             @id @default(autoincrement())
+  slug             String          @unique @default(cuid())
   name             String
-  email            String   @unique
+  email            String          @unique
   phone            String?
-  description      String?  @db.Text
+  description      String?
   logoUrl          String?
   bannerUrl        String?
   website          String?
   locationCity     String?
   locationProvince String?
-  locationCountry  String?  @default("ID")
+  locationCountry  String?         @default("ID")
   address          String?
   socials          Json?
-  ownerAdminId     Int?     @unique
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @default(now()) @updatedAt
-
-  owner       User?           @relation("CompanyOwner", fields: [ownerAdminId], references: [id])
-  employments Employment[]
-  jobs        Job[]
-  reviews     CompanyReview[]
+  ownerAdminId     Int?            @unique
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @default(now()) @updatedAt
+  owner            User?           @relation("CompanyOwner", fields: [ownerAdminId], references: [id])
+  reviews          CompanyReview[]
+  employments      Employment[]
+  jobs             Job[]
 
   @@index([name])
   @@index([locationCity])
 }
 
 model Job {
-  id              Int       @id @default(autoincrement())
-  slug            String    @unique @default(cuid())
-  companyId       Int
-  title           String
-  description     String    @db.Text
-  category        String
-  employmentType  String?
-  experienceLevel String?
-  city            String
-  province        String?
-  salaryMin       Int?
-  salaryMax       Int?
-  salaryCurrency  String?   @default("IDR")
-  tags            String[]
-  bannerUrl       String?
-  applyDeadline   DateTime?
-  isPublished     Boolean   @default(false)
-  publishedAt     DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @default(now()) @updatedAt
-
-  company          Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  id               Int               @id @default(autoincrement())
+  slug             String            @unique @default(cuid())
+  companyId        Int
+  title            String
+  description      String
+  category         String
+  employmentType   String?
+  experienceLevel  String?
+  city             String
+  province         String?
+  salaryMin        Int?
+  salaryMax        Int?
+  salaryCurrency   String?           @default("IDR")
+  tags             String[]
+  bannerUrl        String?
+  applyDeadline    DateTime?
+  isPublished      Boolean           @default(false)
+  publishedAt      DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @default(now()) @updatedAt
   applications     Application[]
+  company          Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
   jobShares        JobShare[]
   preselectionTest PreselectionTest?
   savedBy          SavedJob[]
@@ -164,27 +159,26 @@ model Job {
 }
 
 model Application {
-  id                     Int               @id @default(autoincrement())
+  id                     Int                     @id @default(autoincrement())
   userId                 Int
   jobId                  Int
   cvUrl                  String
   cvFileName             String?
   cvFileSize             Int?
   expectedSalary         Int?
-  expectedSalaryCurrency String?           @default("IDR")
-  status                 ApplicationStatus @default(SUBMITTED)
+  expectedSalaryCurrency String?                 @default("IDR")
+  status                 ApplicationStatus       @default(SUBMITTED)
   reviewNote             String?
   reviewUpdatedAt        DateTime?
   referralSource         String?
-  isPriority             Boolean           @default(false)
-  createdAt              DateTime          @default(now())
-  updatedAt              DateTime          @default(now()) @updatedAt
-
-  job         Job                     @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user        User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  interviews  Interview[]
-  timeline    ApplicationTimeline[]
-  attachments ApplicationAttachment[]
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @default(now()) @updatedAt
+  isPriority             Boolean                 @default(false)
+  job                    Job                     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user                   User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments            ApplicationAttachment[]
+  timeline               ApplicationTimeline[]
+  interviews             Interview[]
 
   @@unique([userId, jobId])
   @@index([jobId])
@@ -199,22 +193,20 @@ model ApplicationTimeline {
   note          String?
   createdAt     DateTime          @default(now())
   createdById   Int?
-
-  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  createdBy   User?       @relation(fields: [createdById], references: [id])
+  application   Application       @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdBy     User?             @relation(fields: [createdById], references: [id])
 
   @@index([applicationId])
 }
 
 model ApplicationAttachment {
-  id            Int      @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   applicationId Int
   url           String
   fileName      String?
   fileSize      Int?
-  createdAt     DateTime @default(now())
-
-  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
 }
@@ -224,9 +216,8 @@ model SavedJob {
   userId    Int
   jobId     Int
   createdAt DateTime @default(now())
-
-  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, jobId])
   @@index([userId])
@@ -246,127 +237,119 @@ model Interview {
   updatedById    Int?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @default(now()) @updatedAt
-
-  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  createdBy   User?       @relation("InterviewCreator", fields: [createdById], references: [id])
-  updatedBy   User?       @relation("InterviewUpdater", fields: [updatedById], references: [id])
+  application    Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdBy      User?           @relation("InterviewCreator", fields: [createdById], references: [id])
+  updatedBy      User?           @relation("InterviewUpdater", fields: [updatedById], references: [id])
 
   @@index([applicationId])
   @@index([startsAt])
 }
 
 model PreselectionTest {
-  id               Int      @id @default(autoincrement())
-  jobId            Int      @unique
-  isActive         Boolean  @default(true)
+  id               Int                    @id @default(autoincrement())
+  jobId            Int                    @unique
+  isActive         Boolean                @default(true)
   passingScore     Int?
-  questionCount    Int      @default(25)
-  timeLimitMinutes Int      @default(30)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @default(now()) @updatedAt
-
-  job       Job                    @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  questions PreselectionQuestion[]
-  results   PreselectionResult[]
+  questionCount    Int                    @default(25)
+  timeLimitMinutes Int                    @default(30)
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @default(now()) @updatedAt
+  questions        PreselectionQuestion[]
+  results          PreselectionResult[]
+  job              Job                    @relation(fields: [jobId], references: [id], onDelete: Cascade)
 }
 
 model PreselectionQuestion {
-  id         Int    @id @default(autoincrement())
+  id         Int               @id @default(autoincrement())
   testId     Int
   question   String
   options    Json
   answer     String
-  orderIndex Int    @default(0)
-
-  test    PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
-  answers ApplicantAnswer[]
+  orderIndex Int               @default(0)
+  answers    ApplicantAnswer[]
+  test       PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@index([testId])
 }
 
 model PreselectionResult {
-  id        Int      @id @default(autoincrement())
+  id        Int               @id @default(autoincrement())
   userId    Int
   testId    Int
   score     Int
-  passed    Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  test    PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
-  user    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  answers ApplicantAnswer[]
+  passed    Boolean           @default(false)
+  createdAt DateTime          @default(now())
+  answers   ApplicantAnswer[]
+  test      PreselectionTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, testId])
   @@index([testId])
 }
 
 model ApplicantAnswer {
-  id         Int     @id @default(autoincrement())
+  id         Int                  @id @default(autoincrement())
   resultId   Int
   questionId Int
   selected   String
   isCorrect  Boolean
-
-  question PreselectionQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  result   PreselectionResult   @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  question   PreselectionQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  result     PreselectionResult   @relation(fields: [resultId], references: [id], onDelete: Cascade)
 
   @@unique([resultId, questionId])
   @@index([questionId])
 }
 
 model SkillAssessment {
-  id               Int      @id @default(autoincrement())
-  slug             String   @unique @default(cuid())
+  id               Int             @id @default(autoincrement())
+  slug             String          @unique @default(cuid())
   title            String
-  description      String?  @db.Text
+  description      String?
   category         String
   createdBy        Int
   badgeTemplateId  Int?
-  timeLimitMinutes Int      @default(30)
-  passScore        Int      @default(75)
-  isActive         Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @default(now()) @updatedAt
-
-  creator       User            @relation("SkillAssessmentCreator", fields: [createdBy], references: [id])
-  badgeTemplate BadgeTemplate?  @relation(fields: [badgeTemplateId], references: [id])
-  questions     SkillQuestion[]
-  results       SkillResult[]
-  UserBadge     UserBadge[]
-  Certificate   Certificate[]
+  timeLimitMinutes Int             @default(30)
+  passScore        Int             @default(75)
+  isActive         Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @default(now()) @updatedAt
+  Certificate      Certificate[]
+  badgeTemplate    BadgeTemplate?  @relation(fields: [badgeTemplateId], references: [id])
+  creator          User            @relation("SkillAssessmentCreator", fields: [createdBy], references: [id])
+  questions        SkillQuestion[]
+  results          SkillResult[]
+  UserBadge        UserBadge[]
 }
 
 model SkillQuestion {
-  id           Int    @id @default(autoincrement())
+  id           Int             @id @default(autoincrement())
   assessmentId Int
   question     String
   options      Json
   answer       String
-  orderIndex   Int    @default(0)
-
-  assessment SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  orderIndex   Int             @default(0)
+  assessment   SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
 
   @@index([assessmentId])
 }
 
 model SkillResult {
-  id              Int       @id @default(autoincrement())
+  id              Int             @id @default(autoincrement())
   userId          Int
   assessmentId    Int
   score           Int
-  isPassed        Boolean   @default(false)
+  isPassed        Boolean         @default(false)
   answers         Json?
   startedAt       DateTime?
   finishedAt      DateTime?
   durationSeconds Int?
   certificateUrl  String?
   certificateCode String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @default(now()) @updatedAt
-
-  assessment  SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  certificate Certificate?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now()) @updatedAt
+  certificate     Certificate?
+  assessment      SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([assessmentId])
   @@index([userId, createdAt])
@@ -374,74 +357,70 @@ model SkillResult {
 }
 
 model BadgeTemplate {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
+  id          Int               @id @default(autoincrement())
+  name        String            @unique
   icon        String?
   description String?
   category    String?
   createdBy   Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @default(now()) @updatedAt
   creator     User              @relation(fields: [createdBy], references: [id])
   assessments SkillAssessment[]
   userBadges  UserBadge[]
 }
 
 model Badge {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
   icon        String?
   criteria    String?
   description String?
   category    String?
   createdBy   Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-
-  creator    User        @relation(fields: [createdBy], references: [id])
-  userBadges UserBadge[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
+  creator     User        @relation(fields: [createdBy], references: [id])
+  userBadges  UserBadge[]
 }
 
 model UserBadge {
-  id              Int      @id @default(autoincrement())
+  id              Int              @id @default(autoincrement())
   userId          Int
   badgeTemplateId Int?
   badgeId         Int?
   assessmentId    Int?
-  earnedAt        DateTime @default(now())
+  earnedAt        DateTime         @default(now())
   evidenceUrl     String?
-  badgeType       String   @default("skill")
-
-  badgeTemplate BadgeTemplate?   @relation(fields: [badgeTemplateId], references: [id])
-  badge         Badge?           @relation(fields: [badgeId], references: [id])
-  assessment    SkillAssessment? @relation(fields: [assessmentId], references: [id])
-  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeType       String           @default("skill")
+  assessment      SkillAssessment? @relation(fields: [assessmentId], references: [id])
+  badge           Badge?           @relation(fields: [badgeId], references: [id])
+  badgeTemplate   BadgeTemplate?   @relation(fields: [badgeTemplateId], references: [id])
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([assessmentId])
   @@index([badgeId])
 }
 
 model Certificate {
-  id              Int       @id @default(autoincrement())
-  code            String    @unique
+  id              Int             @id @default(autoincrement())
+  code            String          @unique
   userId          Int
   assessmentId    Int
-  skillResultId   Int       @unique
+  skillResultId   Int             @unique
   pdfUrl          String?
   qrUrl           String?
   verificationUrl String?
-  issuedAt        DateTime  @default(now())
+  issuedAt        DateTime        @default(now())
   expiresAt       DateTime?
   verifiedAt      DateTime?
   issuerId        Int?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @default(now()) @updatedAt
-
-  assessment  SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
-  skillResult SkillResult     @relation(fields: [skillResultId], references: [id], onDelete: Cascade)
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  issuer      User?           @relation("CertificateIssuer", fields: [issuerId], references: [id])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now()) @updatedAt
+  assessment      SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  issuer          User?           @relation("CertificateIssuer", fields: [issuerId], references: [id])
+  skillResult     SkillResult     @relation(fields: [skillResultId], references: [id], onDelete: Cascade)
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model GeneratedCV {
@@ -453,8 +432,7 @@ model GeneratedCV {
   isPriority     Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now()) @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model SubscriptionPlan {
@@ -469,8 +447,7 @@ model SubscriptionPlan {
   cvGeneratorEnabled     Boolean              @default(true)
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @default(now()) @updatedAt
-
-  subscriptions Subscription[]
+  subscriptions          Subscription[]
 }
 
 model Subscription {
@@ -488,11 +465,10 @@ model Subscription {
   lastReminderSentAt    DateTime?
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @default(now()) @updatedAt
-
-  plan                SubscriptionPlan   @relation(fields: [planId], references: [id])
-  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  payments            Payment[]
-  approvedByDeveloper User?              @relation("SubscriptionApprover", fields: [approvedByDeveloperId], references: [id])
+  payments              Payment[]
+  approvedByDeveloper   User?              @relation("SubscriptionApprover", fields: [approvedByDeveloperId], references: [id])
+  plan                  SubscriptionPlan   @relation(fields: [planId], references: [id])
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([planId])
@@ -515,65 +491,62 @@ model Payment {
   notes                String?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @default(now()) @updatedAt
-
-  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  approvedBy   User?        @relation("PaymentDeveloperApprover", fields: [approvedById], references: [id])
+  slug                 String        @unique @default(cuid())
+  approvedBy           User?         @relation("PaymentDeveloperApprover", fields: [approvedById], references: [id])
+  subscription         Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 
   @@index([subscriptionId])
   @@index([status])
 }
 
-
 model Employment {
-  id                  Int       @id @default(autoincrement())
+  id                  Int            @id @default(autoincrement())
   userId              Int
   companyId           Int?
   positionTitle       String?
   department          String?
   startDate           DateTime?
   endDate             DateTime?
-  isCurrent           Boolean   @default(false)
-  isVerified          Boolean   @default(false)
+  isCurrent           Boolean        @default(false)
+  isVerified          Boolean        @default(false)
   verifiedAt          DateTime?
   verifiedById        Int?
   companyNameSnapshot String?
   userNameSnapshot    String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @default(now()) @updatedAt
-
-  company    Company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  verifiedBy User?          @relation("EmploymentVerifier", fields: [verifiedById], references: [id])
-  review     CompanyReview?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @default(now()) @updatedAt
+  review              CompanyReview?
+  company             Company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verifiedBy          User?          @relation("EmploymentVerifier", fields: [verifiedById], references: [id])
 
   @@unique([userId, companyId])
   @@index([userId])
 }
 
 model CompanyReview {
-  id                 Int      @id @default(autoincrement())
+  id                 Int         @id @default(autoincrement())
   companyId          Int
-  employmentId       Int?     @unique
+  employmentId       Int?        @unique
   reviewerUserId     Int
   positionTitle      String
-  isVerifiedEmployee Boolean  @default(false)
-  isAnonymous        Boolean  @default(true)
-  ratingCulture      Decimal? @db.Decimal(3, 2)
-  ratingWorkLife     Decimal? @db.Decimal(3, 2)
-  ratingFacilities   Decimal? @db.Decimal(3, 2)
-  ratingCareer       Decimal? @db.Decimal(3, 2)
-  companyRating      Decimal? @db.Decimal(3, 2)
+  isVerifiedEmployee Boolean     @default(false)
+  isAnonymous        Boolean     @default(true)
+  ratingCulture      Decimal?    @db.Decimal(3, 2)
+  ratingWorkLife     Decimal?    @db.Decimal(3, 2)
+  ratingFacilities   Decimal?    @db.Decimal(3, 2)
+  ratingCareer       Decimal?    @db.Decimal(3, 2)
   salaryEstimateMin  Int?
   salaryEstimateMax  Int?
-  currency           String?  @default("IDR")
+  currency           String?     @default("IDR")
   body               String?
   reviewerSnapshot   String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now()) @updatedAt
-
-  company    Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  employment Employment? @relation(fields: [employmentId], references: [id])
-  reviewer   User        @relation(fields: [reviewerUserId], references: [id])
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @default(now()) @updatedAt
+  companyRating      Decimal?    @db.Decimal(3, 2)
+  company            Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  employment         Employment? @relation(fields: [employmentId], references: [id])
+  reviewer           User        @relation(fields: [reviewerUserId], references: [id])
 
   @@index([companyId])
   @@index([reviewerUserId])
@@ -587,9 +560,8 @@ model JobShare {
   sharedUrl     String?
   customMessage String?
   createdAt     DateTime      @default(now())
-
-  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job           Job           @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([jobId])
@@ -605,8 +577,7 @@ model AnalyticsEvent {
   gender    String?
   ageRange  String?
   createdAt DateTime @default(now())
-
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?    @relation(fields: [userId], references: [id])
 
   @@index([type])
   @@index([createdAt])

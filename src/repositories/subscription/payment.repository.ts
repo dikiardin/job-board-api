@@ -36,6 +36,23 @@ export class PaymentRepo {
     });
   }
 
+  // Get payment by slug
+  public static async getPaymentBySlug(slug: string) {
+    return prisma.payment.findUnique({
+      where: { slug },
+      include: {
+        subscription: {
+          include: {
+            user: {
+              select: { id: true, name: true, email: true },
+            },
+            plan: true,
+          },
+        },
+      },
+    });
+  }
+
   // Create payment
   public static async createPayment(data: {
     subscriptionId: number;
@@ -77,6 +94,17 @@ export class PaymentRepo {
     });
   }
 
+  // Upload payment proof by slug
+  public static async uploadPaymentProofBySlug(
+    slug: string,
+    paymentProof: string
+  ) {
+    return prisma.payment.update({
+      where: { slug },
+      data: { paymentProof },
+    });
+  }
+
   // Update payment status
   public static async updatePaymentStatus(
     paymentId: number,
@@ -85,6 +113,31 @@ export class PaymentRepo {
   ) {
     return prisma.payment.update({
       where: { id: paymentId },
+      data: {
+        status,
+        ...(approvedAt && { approvedAt }),
+      },
+      include: {
+        subscription: {
+          include: {
+            user: {
+              select: { id: true, name: true, email: true },
+            },
+            plan: true,
+          },
+        },
+      },
+    });
+  }
+
+  // Update payment status by slug
+  public static async updatePaymentStatusBySlug(
+    slug: string,
+    status: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED",
+    approvedAt?: Date
+  ) {
+    return prisma.payment.update({
+      where: { slug },
       data: {
         status,
         ...(approvedAt && { approvedAt }),
@@ -118,5 +171,15 @@ export class PaymentRepo {
   // Reject payment
   public static async rejectPayment(id: number) {
     return this.updatePaymentStatus(id, "REJECTED");
+  }
+
+  // Approve payment by slug
+  public static async approvePaymentBySlug(slug: string) {
+    return this.updatePaymentStatusBySlug(slug, "APPROVED", new Date());
+  }
+
+  // Reject payment by slug
+  public static async rejectPaymentBySlug(slug: string) {
+    return this.updatePaymentStatusBySlug(slug, "REJECTED");
   }
 }

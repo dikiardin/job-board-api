@@ -31,6 +31,21 @@ export class PaymentController {
     }
   }
 
+  public static async getPaymentBySlug(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { slug } = req.params;
+      ControllerHelper.validateRequired({ slug }, "Payment slug is required");
+      const payment = await PaymentService.getPaymentBySlugOrId(slug!);
+      res.status(200).json(payment);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public static async uploadPaymentProof(
     req: Request,
     res: Response,
@@ -43,6 +58,34 @@ export class PaymentController {
       
       const cloudinaryResult = await cloudinaryUpload(req.file!);
       const payment = await PaymentService.uploadPaymentProof(paymentId, cloudinaryResult.secure_url);
+
+      res.status(200).json({
+        ...payment,
+        cloudinary: {
+          public_id: cloudinaryResult.public_id,
+          secure_url: cloudinaryResult.secure_url,
+          width: cloudinaryResult.width,
+          height: cloudinaryResult.height,
+          format: cloudinaryResult.format,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async uploadPaymentProofBySlug(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { slug } = req.params;
+      ControllerHelper.validateRequired({ slug }, "Payment slug is required");
+      ControllerHelper.validateRequired({ file: req.file }, "Payment proof image is required");
+      
+      const cloudinaryResult = await cloudinaryUpload(req.file!);
+      const payment = await PaymentService.uploadPaymentProofBySlug(slug!, cloudinaryResult.secure_url);
 
       res.status(200).json({
         ...payment,
@@ -73,6 +116,21 @@ export class PaymentController {
     }
   }
 
+  public static async approvePaymentBySlug(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { slug } = req.params;
+      ControllerHelper.validateRequired({ slug }, "Payment slug is required");
+      const payment = await PaymentService.approvePaymentBySlug(slug!);
+      res.status(200).json(payment);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public static async rejectPayment(
     req: Request,
     res: Response,
@@ -81,6 +139,21 @@ export class PaymentController {
     try {
       const id = ControllerHelper.parseId(req.params.id);
       const payment = await PaymentService.rejectPayment(id);
+      res.status(200).json(payment);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async rejectPaymentBySlug(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { slug } = req.params;
+      ControllerHelper.validateRequired({ slug }, "Payment slug is required");
+      const payment = await PaymentService.rejectPaymentBySlug(slug!);
       res.status(200).json(payment);
     } catch (error) {
       next(error);

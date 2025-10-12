@@ -115,12 +115,28 @@ class SubscriptionRouter {
       this.paymentController.getPaymentById
     );
 
+    // Get payment by slug (Developer only) - More secure
+    this.route.get(
+      "/payments/slug/:slug",
+      verifyToken,
+      verifyRole([UserRole.DEVELOPER]),
+      this.paymentController.getPaymentBySlug
+    );
+
     // Upload payment proof (Developer + User)
     this.route.post(
       "/payments/:paymentId/upload-proof",
       verifyToken,
       uploadPaymentProofSingle("paymentProof"),
       this.paymentController.uploadPaymentProof
+    );
+
+    // Upload payment proof by slug (Developer + User) - More secure
+    this.route.post(
+      "/payments/slug/:slug/upload-proof",
+      verifyToken,
+      uploadPaymentProofSingle("paymentProof"),
+      this.paymentController.uploadPaymentProofBySlug
     );
 
     // Approve payment (Developer only)
@@ -131,12 +147,28 @@ class SubscriptionRouter {
       this.paymentController.approvePayment
     );
 
+    // Approve payment by slug (Developer only) - More secure
+    this.route.patch(
+      "/payments/slug/:slug/approve",
+      verifyToken,
+      verifyRole([UserRole.DEVELOPER]),
+      this.paymentController.approvePaymentBySlug
+    );
+
     // Reject payment (Developer only)
     this.route.patch(
       "/payments/:id/reject",
       verifyToken,
       verifyRole([UserRole.DEVELOPER]),
       this.paymentController.rejectPayment
+    );
+
+    // Reject payment by slug (Developer only) - More secure
+    this.route.patch(
+      "/payments/slug/:slug/reject",
+      verifyToken,
+      verifyRole([UserRole.DEVELOPER]),
+      this.paymentController.rejectPaymentBySlug
     );
 
     // Get payments by subscription ID (Developer + User)

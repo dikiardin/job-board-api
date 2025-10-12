@@ -35,10 +35,10 @@ export class AssessmentValidationService {
     const timeDiff = finishedAt.getTime() - startedAt.getTime();
     const minutesDiff = timeDiff / (1000 * 60);
     
-    // For testing: allow up to 2.5 minutes (2 minutes + 30 seconds buffer)
-    if (minutesDiff > 2.5) {
+    // Allow up to 3.5 minutes (3 minutes + 30 seconds buffer for network delays and auto-submit)
+    if (minutesDiff > 3.5) {
       throw new CustomError(
-        `Assessment submission time exceeded maximum allowed duration of 2 minutes. Time taken: ${Math.round(minutesDiff * 100) / 100} minutes`, 
+        `Assessment submission time exceeded maximum allowed duration of 3 minutes. Time taken: ${Math.round(minutesDiff * 100) / 100} minutes`, 
         400
       );
     }
