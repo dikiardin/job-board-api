@@ -20,6 +20,7 @@ export class GetJobRepository {
         OR: [
           { title: { contains: keyword, mode: "insensitive" } },
           { category: { contains: keyword, mode: "insensitive" } },
+          { tags: { has: keyword.toLowerCase() } },
           {
             company: {
               is: { name: { contains: keyword, mode: "insensitive" } },
