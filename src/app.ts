@@ -36,31 +36,38 @@ class App {
 
   private configure(): void {
     // Security headers
-    this.app.use(helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "https:"],
+    this.app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'"],
+            imgSrc: ["'self'", "data:", "https:"],
+          },
         },
-      },
-      crossOriginEmbedderPolicy: false
-    }));
+        crossOriginEmbedderPolicy: false,
+      })
+    );
 
     // Request logging (development only)
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
       this.app.use((req, res, next) => {
-        console.log(`[${req.method}] ${req.url} - Origin: ${req.headers.origin}` );
+        console.log(
+          `[${req.method}] ${req.url} - Origin: ${req.headers.origin}`
+        );
         next();
       });
     }
 
     // CORS configuration
     const devOrigins = new Set(
-      [process.env.FE_URL, "http://localhost:3000", "http://127.0.0.1:3000", "https://job-board-app-xi.vercel.app"].filter(
-        Boolean
-      ) as string[]
+      [
+        process.env.FE_URL,
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://job-board-app-xi.vercel.app",
+      ].filter(Boolean) as string[]
     );
 
     this.app.use(
@@ -70,7 +77,10 @@ class App {
           if (!origin) return callback(null, true);
 
           if (process.env.NODE_ENV === "production") {
-            const allowed = ["https://job-board-app-xi.vercel.app", process.env.FE_URL].filter(Boolean) as string[];
+            const allowed = [
+              "https://job-board-app-xi.vercel.app",
+              process.env.FE_URL,
+            ].filter(Boolean) as string[];
             return allowed.includes(origin)
               ? callback(null, true)
               : callback(new Error(`CORS blocked for origin: ${origin}`));
@@ -90,191 +100,40 @@ class App {
     );
 
     // Body parsing with limits
-    this.app.use(express.json({ limit: '10mb' }));
-    this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    this.app.use(express.json({ limit: "10mb" }));
+    this.app.use(express.urlencoded({ extended: true, limit: "10mb" }));
   }
 
   private route(): void {
+    // Health check endpoint
     this.app.get("/", (req: Request, res: Response) => {
-      res.status(200).send("<h1>Job Board API</h1>");
+      res.status(200).json({
+        success: true,
+        message: "Job Board API is running",
+        timestamp: new Date().toISOString(),
+        version: "1.0.0",
+      });
     });
 
-    this.app.get("/test-db", async (req: Request, res: Response) => {
+    // Health check endpoint for monitoring
+    this.app.get("/health", async (req: Request, res: Response) => {
       try {
-        const company = await prisma.company.findFirst();
-        res.status(200).json({ success: true, company });
-      } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message });
-      }
-    });
-
-    this.app.get("/test-jobs/:companyId", async (req: Request, res: Response) => {
-      try {
-        const companyId = Number(req.params.companyId);
-        const jobs = await prisma.job.findMany({ where: { companyId } });
-        const company = await prisma.company.findUnique({ where: { id: companyId } });
-        res.status(200).json({ success: true, company, jobs });
-      } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message });
-      }
-    });
-
-    this.app.post("/test-create-job", async (req: Request, res: Response) => {
-      try {
-        const job = await prisma.job.create({
-          data: {
-            companyId: 16,
-            title: "Senior Frontend Developer",
-            description: "We are looking for a senior frontend developer with React experience",
-            category: "Engineering",
-            city: "Jakarta",
-            salaryMin: 15000000,
-            salaryMax: 25000000,
-            tags: ["React", "TypeScript", "Node.js"],
-            isPublished: true,
-          }
-        });
-        res.status(200).json({ success: true, job });
-      } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message });
-      }
-    });
-
-    this.app.get("/test-job-service", async (req: Request, res: Response) => {
-      try {
-        const { JobService } = await import("./services/job/job.service");
-        const data = await JobService.listJobs({
-          companyId: 16 as any,
-          requesterId: 77,
-          requesterRole: "ADMIN" as any,
-          query: { limit: 5, offset: 0 }
-        });
-        res.status(200).json({ success: true, data });
-      } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message, stack: error.stack });
-      }
-    });
-
-    this.app.get("/test-job-controller", async (req: Request, res: Response) => {
-      try {
-        const { JobController } = await import("./controllers/job/job.controller");
-        const mockReq = {
-          params: { companyId: 16 },
-          query: { limit: "5", offset: "0" }
-        } as any;
-        const mockRes = {
-          status: (code: number) => ({
-            json: (data: any) => res.status(code).json(data)
-          }),
-          locals: { decrypt: { userId: 77, role: "ADMIN" } }
-        } as any;
-        const mockNext = (error: any) => {
-          if (error) {
-            res.status(500).json({ success: false, error: error.message, stack: error.stack });
-          }
-        };
-        
-        await JobController.list(mockReq, mockRes, mockNext);
-      } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message, stack: error.stack });
-      }
-    });
-
-    this.app.get("/test-simple-jobs", async (req: Request, res: Response) => {
-      try {
-        const jobs = await prisma.job.findMany({ 
-          where: { companyId: 16 },
-          include: {
-            _count: { select: { applications: true } }
-          }
-        });
-        res.status(200).json({ success: true, jobs });
-      } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message, stack: error.stack });
-      }
-    });
-
-    this.app.post("/test-create-certificate", async (req: Request, res: Response) => {
-      try {
-        // Create a test certificate with proper certificate code and PDF URL
-        const certificateCode = `CERT-TEST-${Date.now()}`;
-        const pdfUrl = `${process.env.BE_URL || 'http://localhost:4400'}/test-generate-pdf/${certificateCode}`;
-        
-        // Ensure test user exists
-        const testUser = await prisma.user.upsert({
-          where: { email: 'bob@example.com' },
-          update: {},
-          create: {
-            name: 'Bob Pratama',
-            email: 'bob@example.com',
-            role: 'USER'
-          }
-        });
-
-        // Ensure test assessment exists
-        const testAssessment = await prisma.skillAssessment.upsert({
-          where: { id: 1 },
-          update: {},
-          create: {
-            title: 'Quick Test Assessment',
-            description: '2-question assessment for testing purposes. Perfect for quick validation of the assessment system.',
-            category: 'Testing',
-            createdBy: testUser.id
-          }
-        });
-        
-        const certificate = await prisma.skillResult.create({
-          data: {
-            userId: testUser.id,
-            assessmentId: testAssessment.id,
-            score: 85,
-            isPassed: true,
-            certificateCode: certificateCode,
-            certificateUrl: pdfUrl, // Point to our PDF generation endpoint
-            startedAt: new Date(),
-            finishedAt: new Date(),
-          },
-          include: {
-            user: { select: { id: true, name: true, email: true } },
-            assessment: { select: { id: true, title: true, description: true, category: true } },
-          }
-        });
-        res.status(200).json({ 
-          success: true, 
-          certificate,
-          qrCodeUrl: `${process.env.FE_URL || 'https://job-board-app-xi.vercel.app'}/verify-certificate/${certificateCode}`,
-          pdfViewUrl: `${process.env.BE_URL || 'http://localhost:4400'}/skill-assessment/certificates/${certificateCode}/view`,
-          message: `Test certificate created. View PDF at: ${process.env.BE_URL || 'http://localhost:4400'}/skill-assessment/certificates/${certificateCode}/view`
+        // Test database connection
+        await prisma.$queryRaw`SELECT 1`;
+        res.status(200).json({
+          success: true,
+          status: "healthy",
+          database: "connected",
+          timestamp: new Date().toISOString(),
         });
       } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message, stack: error.stack });
-      }
-    });
-
-    this.app.get("/test-generate-pdf/:certificateCode", async (req: Request, res: Response) => {
-      try {
-        const { certificateCode } = req.params;
-        const { PDFLayoutService } = await import("./services/skillAssessment/pdfLayout.service");
-        
-        // Generate test PDF with QR code
-        const pdfBuffer = await PDFLayoutService.generateCertificatePDF({
-          userName: "John Doe",
-          userEmail: "john.doe@example.com",
-          assessmentTitle: "JavaScript Fundamentals",
-          assessmentDescription: "Basic JavaScript programming concepts",
-          score: 85,
-          totalQuestions: 25,
-          completedAt: new Date(),
-          userId: 1,
-          certificateCode: certificateCode || "CERT-TEST-DEFAULT",
-          badgeIcon: "🏆"
+        res.status(503).json({
+          success: false,
+          status: "unhealthy",
+          database: "disconnected",
+          error: error.message,
+          timestamp: new Date().toISOString(),
         });
-
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="certificate-${certificateCode}.pdf"`);
-        res.send(pdfBuffer);
-      } catch (error: any) {
-        res.status(500).json({ success: false, error: error.message, stack: error.stack });
       }
     });
 
@@ -288,7 +147,8 @@ class App {
     const profileRouter: ProfileRouter = new ProfileRouter();
     const companyRouter: CompanyRouter = new CompanyRouter();
     const companyReviewRouter: CompanyReviewRouter = new CompanyReviewRouter();
-    const skillAssessmentRouter: SkillAssessmentRouter = new SkillAssessmentRouter();
+    const skillAssessmentRouter: SkillAssessmentRouter =
+      new SkillAssessmentRouter();
     const shareRouter: JobShareRouter = new JobShareRouter();
     const saveRouter: SavedJobRouter = new SavedJobRouter();
     const contactRouter: ContactRouter = new ContactRouter();
@@ -316,7 +176,7 @@ class App {
         console.error("Global error handler:", error);
 
         // Don't leak error details in production
-        const isDevelopment = process.env.NODE_ENV === 'development';
+        const isDevelopment = process.env.NODE_ENV === "development";
 
         if (error.name === "JsonWebTokenError") {
           return res
@@ -334,14 +194,16 @@ class App {
           return res.status(400).json({
             success: false,
             message: "Validation error",
-            errors: error.details?.map((d: any) => d.message) || [error.message]
+            errors: error.details?.map((d: any) => d.message) || [
+              error.message,
+            ],
           });
         }
 
-        if (error.code === 'P2002') {
+        if (error.code === "P2002") {
           return res.status(409).json({
             success: false,
-            message: "Duplicate entry. This record already exists."
+            message: "Duplicate entry. This record already exists.",
           });
         }
 
@@ -349,14 +211,14 @@ class App {
           return res.status(error.status).json({
             success: false,
             message: error.message,
-            ...(isDevelopment && { stack: error.stack })
+            ...(isDevelopment && { stack: error.stack }),
           });
         }
 
         res.status(500).json({
           success: false,
           message: isDevelopment ? error.message : "Internal server error",
-          ...(isDevelopment && { stack: error.stack })
+          ...(isDevelopment && { stack: error.stack }),
         });
       }
     );
@@ -364,7 +226,7 @@ class App {
 
   public start(): void {
     this.app.listen(PORT, () => {
-      console.log(`API Running: http://localhost:${PORT}` );
+      console.log(`API Running: http://localhost:${PORT}`);
       startSubscriptionJobs();
       startInterviewJobs();
     });
