@@ -1,7 +1,7 @@
 import { CustomError } from "../../utils/customError";
 
 export class AssessmentExecutionValidationService {
-  private static readonly TIME_LIMIT_MINUTES = 3; // Changed from 30 to 3 minutes to match frontend
+  private static readonly TIME_LIMIT_MINUTES = 30; // 30 minutes per brief
 
   // Validate assessment submission
   public static validateSubmission(data: {
