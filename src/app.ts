@@ -58,7 +58,7 @@ class App {
 
     // CORS configuration
     const devOrigins = new Set(
-      [process.env.FE_URL, "http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"].filter(
+      [process.env.FE_URL, "http://localhost:3000", "http://127.0.0.1:3000", "https://job-board-app-xi.vercel.app"].filter(
         Boolean
       ) as string[]
     );
@@ -70,7 +70,7 @@ class App {
           if (!origin) return callback(null, true);
 
           if (process.env.NODE_ENV === "production") {
-            const allowed = ["https://yourdomain.com", process.env.FE_URL].filter(Boolean) as string[];
+            const allowed = ["https://job-board-app-xi.vercel.app", process.env.FE_URL].filter(Boolean) as string[];
             return allowed.includes(origin)
               ? callback(null, true)
               : callback(new Error(`CORS blocked for origin: ${origin}`));
@@ -242,7 +242,7 @@ class App {
         res.status(200).json({ 
           success: true, 
           certificate,
-          qrCodeUrl: `${process.env.FE_URL || 'http://localhost:3000'}/verify-certificate/${certificateCode}`,
+          qrCodeUrl: `${process.env.FE_URL || 'https://job-board-app-xi.vercel.app'}/verify-certificate/${certificateCode}`,
           pdfViewUrl: `${process.env.BE_URL || 'http://localhost:4400'}/skill-assessment/certificates/${certificateCode}/view`,
           message: `Test certificate created. View PDF at: ${process.env.BE_URL || 'http://localhost:4400'}/skill-assessment/certificates/${certificateCode}/view`
         });
