@@ -63,6 +63,15 @@ class SkillAssessmentRouter {
       AssessmentManagementController.getAssessments
     );
 
+    // Get single assessment by slug (developer)
+    this.route.get(
+      "/developer/assessments/slug/:slug",
+      verifyToken,
+      verifyRole([UserRole.DEVELOPER]),
+      SkillAssessmentValidator.validateAssessmentSlug,
+      AssessmentManagementController.getAssessmentBySlug
+    );
+
     // Developer routes (create and manage assessments)
     this.route.post(
       "/assessments",
@@ -123,6 +132,16 @@ class SkillAssessmentRouter {
     );
 
     // User routes (take assessments - subscription required)
+    // Place slug route BEFORE numeric ID route to avoid param collision
+    this.route.get(
+      "/assessments/slug/:slug/take",
+      verifyToken,
+      verifyRole([UserRole.USER]),
+      verifySubscription,
+      SkillAssessmentValidator.validateAssessmentSlug,
+      AssessmentTakingController.getAssessmentForUserBySlug
+    );
+
     this.route.get(
       "/assessments/:assessmentId/take",
       verifyToken,

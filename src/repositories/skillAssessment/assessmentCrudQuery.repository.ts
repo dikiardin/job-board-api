@@ -53,6 +53,27 @@ export class AssessmentCrudQueryRepository {
     });
   }
 
+  // Get assessment by slug
+  public static async getAssessmentBySlug(slug: string) {
+    return await prisma.skillAssessment.findUnique({
+      where: { slug },
+      include: {
+        questions: true,
+        creator: { select: { id: true, name: true } },
+        badgeTemplate: {
+          select: {
+            id: true,
+            name: true,
+            icon: true,
+            description: true,
+            category: true,
+          },
+        },
+        _count: { select: { results: true, questions: true } },
+      },
+    });
+  }
+
   // Get developer's assessments
   public static async getDeveloperAssessments(
     createdBy: number,

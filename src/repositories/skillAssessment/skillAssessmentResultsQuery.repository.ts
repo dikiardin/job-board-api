@@ -1,6 +1,28 @@
 import { prisma } from "../../config/prisma";
 
 export class SkillAssessmentResultsQueryRepository {
+  // Get result by slug
+  public static async getResultBySlug(slug: string) {
+    return await prisma.skillResult.findUnique({
+      where: { slug },
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        assessment: {
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            description: true,
+            passScore: true,
+            creator: { select: { id: true, name: true } },
+            badgeTemplate: {
+              select: { id: true, name: true, icon: true, category: true },
+            },
+          },
+        },
+      },
+    });
+  }
   // Get user's assessment result for specific assessment
   public static async getUserResult(userId: number, assessmentId: number) {
     return await prisma.skillResult.findFirst({

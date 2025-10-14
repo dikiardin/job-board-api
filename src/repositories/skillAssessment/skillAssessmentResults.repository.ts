@@ -37,6 +37,11 @@ export class SkillAssessmentResultsRepository {
     );
   }
 
+  // Get result by slug
+  public static async getResultBySlug(slug: string) {
+    return SkillAssessmentResultsQueryRepository.getResultBySlug(slug);
+  }
+
   // Get assessment results for developer
   public static async getAssessmentResults(
     assessmentId: number,

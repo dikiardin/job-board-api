@@ -31,6 +31,11 @@ export class AssessmentCrudRepository {
     return AssessmentCrudQueryRepository.getAssessmentById(assessmentId);
   }
 
+  // Get assessment by slug
+  public static async getAssessmentBySlug(slug: string) {
+    return AssessmentCrudQueryRepository.getAssessmentBySlug(slug);
+  }
+
   // Update assessment
   public static async updateAssessment(
     assessmentId: number,

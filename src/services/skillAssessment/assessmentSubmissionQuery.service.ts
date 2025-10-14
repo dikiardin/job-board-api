@@ -35,7 +35,6 @@ export class AssessmentSubmissionQueryService {
         await SkillAssessmentModularRepository.getAssessmentById(assessmentId);
       return !!assessment;
     } catch (error) {
-      console.error("Error checking assessment exists:", error);
       return false;
     }
   }
@@ -52,6 +51,7 @@ export class AssessmentSubmissionQueryService {
       // Return assessment without answers for security
       return {
         id: assessment.id,
+        slug: (assessment as any).slug,
         title: assessment.title,
         description: assessment.description,
         passScore: assessment.passScore,
@@ -66,7 +66,6 @@ export class AssessmentSubmissionQueryService {
         creator: assessment.creator,
       };
     } catch (error) {
-      console.error("Error getting assessment for taking:", error);
       throw error;
     }
   }
