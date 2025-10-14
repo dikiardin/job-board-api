@@ -4,6 +4,50 @@ import { AssessmentResultsService } from "../../services/skillAssessment/assessm
 import { ControllerHelper } from "../../utils/controllerHelper";
 
 export class AssessmentTakingController {
+  public static async getAssessmentForUserBySlug(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const userId = ControllerHelper.getUserId(res);
+      const slug = (req.params as any).slug as string;
+
+      const { SkillAssessmentModularRepository } = await import(
+        "../../repositories/skillAssessment/skillAssessmentModular.repository"
+      );
+
+      let assessment =
+        await SkillAssessmentModularRepository.getAssessmentBySlug(slug);
+      if (!assessment) {
+        const numericId = parseInt(slug as any, 10);
+        if (!isNaN(numericId)) {
+          assessment = await SkillAssessmentModularRepository.getAssessmentById(
+            numericId
+          );
+        }
+      }
+      if (!assessment) {
+        throw new Error(`Assessment with slug ${slug} not found`);
+      }
+
+      const assessmentId = (assessment as any).id as number;
+
+      const { AssessmentSubmissionService } = await import(
+        "../../services/skillAssessment/assessmentSubmission.service"
+      );
+      const assessmentForUser =
+        await AssessmentSubmissionService.getAssessmentForTaking(assessmentId);
+
+      res.status(200).json({
+        success: true,
+        message: "Assessment retrieved successfully",
+        data: assessmentForUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   public static async getAssessmentForUser(
     req: Request,
     res: Response,
@@ -134,7 +178,6 @@ export class AssessmentTakingController {
           userId,
           assessmentId
         );
-
 
       res.status(200).json({
         success: true,

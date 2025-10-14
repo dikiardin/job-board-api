@@ -337,6 +337,7 @@ model SkillResult {
   id              Int             @id @default(autoincrement())
   userId          Int
   assessmentId    Int
+  slug            String          @unique @default(cuid())
   score           Int
   isPassed        Boolean         @default(false)
   answers         Json?

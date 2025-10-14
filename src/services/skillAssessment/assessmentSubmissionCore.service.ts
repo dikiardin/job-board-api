@@ -66,6 +66,7 @@ export class AssessmentSubmissionCoreService {
     return {
       result: {
         id: result.id,
+        slug: (result as any).slug,
         score,
         correctAnswers,
         totalQuestions,

@@ -7,7 +7,8 @@ export class SkillAssessmentValidator {
     res: Response,
     next: NextFunction
   ) => {
-    const { error } = AssessmentValidationSchemas.createAssessmentSchema.validate(req.body);
+    const { error } =
+      AssessmentValidationSchemas.createAssessmentSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
         message: "Validation error",
@@ -22,7 +23,8 @@ export class SkillAssessmentValidator {
     res: Response,
     next: NextFunction
   ) => {
-    const { error } = AssessmentValidationSchemas.submitAssessmentSchema.validate(req.body);
+    const { error } =
+      AssessmentValidationSchemas.submitAssessmentSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
         message: "Validation error",
@@ -37,7 +39,8 @@ export class SkillAssessmentValidator {
     res: Response,
     next: NextFunction
   ) => {
-    const { error } = AssessmentValidationSchemas.updateAssessmentSchema.validate(req.body);
+    const { error } =
+      AssessmentValidationSchemas.updateAssessmentSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
         message: "Validation error",
@@ -52,7 +55,9 @@ export class SkillAssessmentValidator {
     res: Response,
     next: NextFunction
   ) => {
-    const { error } = AssessmentValidationSchemas.paginationSchema.validate(req.query);
+    const { error } = AssessmentValidationSchemas.paginationSchema.validate(
+      req.query
+    );
     if (error) {
       return res.status(400).json({
         message: "Validation error",
@@ -67,7 +72,9 @@ export class SkillAssessmentValidator {
     res: Response,
     next: NextFunction
   ) => {
-    const { error } = AssessmentValidationSchemas.saveQuestionSchema.validate(req.body);
+    const { error } = AssessmentValidationSchemas.saveQuestionSchema.validate(
+      req.body
+    );
     if (error) {
       return res.status(400).json({
         message: "Validation error",
@@ -87,6 +94,21 @@ export class SkillAssessmentValidator {
       return res.status(400).json({
         message: "Validation error",
         details: "Valid assessment ID is required",
+      });
+    }
+    next();
+  };
+
+  public static validateAssessmentSlug = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { slug } = req.params as any;
+    if (!slug || typeof slug !== "string" || slug.trim().length < 3) {
+      return res.status(400).json({
+        message: "Validation error",
+        details: "Valid assessment slug is required",
       });
     }
     next();
