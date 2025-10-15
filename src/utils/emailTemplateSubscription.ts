@@ -8,7 +8,7 @@ export const buildSubscriptionExpirationEmail = (
     month: "long",
     day: "numeric",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   });
 
   return `
@@ -32,7 +32,7 @@ export const buildSubscriptionExpirationEmail = (
               <td style="padding: 40px 50px;">
                 <h2 style="color: #222; margin-bottom: 16px;">Hi ${name},</h2>
                 <p style="color: #555; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-                  Your <strong>${planName}</strong> subscription will expire on <strong>${formattedDate}</strong> (in about 50 minutes).
+                  Your <strong>${planName}</strong> subscription will expire on <strong>${formattedDate}</strong> (in about 24 hours).
                 </p>
                 
                 <p style="color: #555; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
@@ -40,7 +40,9 @@ export const buildSubscriptionExpirationEmail = (
                 </p>
 
                 <div style="text-align: center; margin: 40px 0;">
-                  <a href="${process.env.FE_URL || 'http://localhost:3000'}/subscription/renew" target="_blank"
+                  <a href="${
+                    process.env.FE_URL || "http://localhost:3000"
+                  }/subscription/renew" target="_blank"
                     style="background: #24CFA7; 
                       color: #ffffff; text-decoration: none; 
                       padding: 14px 32px; border-radius: 8px; 

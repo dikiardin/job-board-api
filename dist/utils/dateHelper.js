@@ -12,8 +12,8 @@ class DateHelper {
     }
     static getSubscriptionEndDate(startDate) {
         const endDate = new Date(startDate);
-        // Set to 1 hour duration
-        endDate.setHours(endDate.getHours() + 1);
+        // Production: Set to 30 days duration
+        endDate.setDate(endDate.getDate() + 30);
         return endDate;
     }
     static getTomorrowDate() {

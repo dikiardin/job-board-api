@@ -54,13 +54,16 @@ export class SubscriptionRepo {
     expiresAt?: Date;
   }) {
     try {
-      console.log("SubscriptionRepo.createSubscription called with data:", data);
-      
+      console.log(
+        "SubscriptionRepo.createSubscription called with data:",
+        data
+      );
+
       const result = await prisma.subscription.create({
         data,
         include: { plan: true },
       });
-      
+
       console.log("SubscriptionRepo.createSubscription result:", result);
       return result;
     } catch (error) {
@@ -107,6 +110,28 @@ export class SubscriptionRepo {
     const now = new Date();
     const windowStart = new Date(now.getTime() + hours * 60 * 60 * 1000);
     const windowEnd = new Date(windowStart.getTime() + 60 * 60 * 1000);
+
+    return prisma.subscription.findMany({
+      where: {
+        status: SubscriptionStatus.ACTIVE,
+        expiresAt: { gte: windowStart, lt: windowEnd },
+      },
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        plan: true,
+      },
+    });
+  }
+
+  public static async getSubscriptionsExpiringInHoursWindow(
+    hours: number,
+    windowMinutes: number
+  ) {
+    const now = new Date();
+    const windowStart = new Date(now.getTime() + hours * 60 * 60 * 1000);
+    const windowEnd = new Date(
+      windowStart.getTime() + windowMinutes * 60 * 1000
+    );
 
     return prisma.subscription.findMany({
       where: {
