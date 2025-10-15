@@ -1,0 +1,149 @@
+export declare class AssessmentResultsService {
+    static getUserResults(userId: number, page?: number, limit?: number): Promise<{
+        results: ({
+            assessment: {
+                id: number;
+                description: string | null;
+                title: string;
+                badgeTemplate: {
+                    name: string;
+                    id: number;
+                    category: string | null;
+                    icon: string | null;
+                } | null;
+                passScore: number;
+                creator: {
+                    name: string | null;
+                    id: number;
+                };
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            id: number;
+            userId: number;
+            slug: string;
+            answers: import("../../generated/prisma/runtime/library").JsonValue | null;
+            score: number;
+            assessmentId: number;
+            isPassed: boolean;
+            startedAt: Date | null;
+            finishedAt: Date | null;
+            durationSeconds: number | null;
+            certificateUrl: string | null;
+            certificateCode: string | null;
+        })[];
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+        };
+    }>;
+    static getAssessmentResult(userId: number, assessmentId: number): Promise<{
+        user: {
+            email: string;
+            name: string | null;
+            id: number;
+        };
+        assessment: {
+            id: number;
+            description: string | null;
+            title: string;
+            passScore: number;
+        };
+    } & {
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+        userId: number;
+        slug: string;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
+        score: number;
+        assessmentId: number;
+        isPassed: boolean;
+        startedAt: Date | null;
+        finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
+    }>;
+    static getAssessmentStatistics(assessmentId: number, createdBy: number): Promise<({
+        user: {
+            email: string;
+            name: string | null;
+            id: number;
+        };
+    } & {
+        createdAt: Date;
+        updatedAt: Date;
+        id: number;
+        userId: number;
+        slug: string;
+        answers: import("../../generated/prisma/runtime/library").JsonValue | null;
+        score: number;
+        assessmentId: number;
+        isPassed: boolean;
+        startedAt: Date | null;
+        finishedAt: Date | null;
+        durationSeconds: number | null;
+        certificateUrl: string | null;
+        certificateCode: string | null;
+    })[] | null>;
+    static getAssessmentSummary(assessmentId: number, createdBy: number): Promise<{
+        totalAttempts: number;
+        averageScore: number;
+        passRate: number;
+    }>;
+    static resetAssessment(userId: number, assessmentId: number): Promise<{
+        message: string;
+    }>;
+    static canRetakeAssessment(userId: number, assessmentId: number): Promise<boolean>;
+    static getUserAssessmentHistory(userId: number): Promise<{
+        totalAssessments: number;
+        passedAssessments: number;
+        failedAssessments: number;
+        averageScore: number;
+        recentResults: never[];
+    }>;
+    static getPerformanceAnalytics(userId: number): Promise<{
+        totalAttempts: number;
+        passRate: number;
+        averageScore: number;
+        strongAreas: never[];
+        improvementAreas: never[];
+        monthlyProgress: never[];
+    }>;
+    static getCertificateInfo(userId: number, assessmentId: number): Promise<{
+        certificateCode: string | null;
+        certificateUrl: string | null;
+        issuedAt: Date;
+        score: number;
+    }>;
+    static getAssessmentFeedback(score: number, correctAnswers: number, totalQuestions: number, assessmentPassScore?: number): {
+        overall: string;
+        strengths: string[];
+        improvements: string[];
+        nextSteps: string[];
+    };
+    static calculateScoreBreakdown(answers: Array<{
+        questionId: number;
+        answer: string;
+        isCorrect: boolean;
+        topic?: string;
+    }>): {
+        overallScore: number;
+        correctAnswers: number;
+        totalQuestions: number;
+        accuracy: number;
+        topicBreakdown: {
+            topic: string;
+            correct: number;
+            total: number;
+            percentage: number;
+        }[];
+    };
+    static getPassingScore(assessmentPassScore?: number): number;
+    static isPassingScore(score: number, assessmentPassScore?: number): boolean;
+}
+//# sourceMappingURL=assessmentResults.service.d.ts.map

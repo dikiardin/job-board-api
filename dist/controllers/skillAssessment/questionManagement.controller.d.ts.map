@@ -1,0 +1,1 @@
+{"version":3,"file":"questionManagement.controller.d.ts","sourceRoot":"","sources":["../../../src/controllers/skillAssessment/questionManagement.controller.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,YAAY,EAAE,MAAM,SAAS,CAAC;AAI1D,qBAAa,4BAA4B;WACnB,YAAY,CAC9B,GAAG,EAAE,OAAO,EACZ,GAAG,EAAE,QAAQ,EACb,IAAI,EAAE,YAAY;IAqBpB,OAAO,CAAC,MAAM,CAAC,oBAAoB;CAmBpC"}

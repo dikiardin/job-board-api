@@ -205,12 +205,8 @@ class App {
   public start(): void {
     this.app.listen(PORT, () => {
       console.log(`API Running: http://localhost:${PORT}`);
-
-      // Only start background jobs in non-serverless environments
-      if (process.env.VERCEL !== "1" && process.env.NODE_ENV !== "production") {
-        startSubscriptionJobs();
-        startInterviewJobs();
-      }
+      startSubscriptionJobs();
+      startInterviewJobs();
     });
   }
 }

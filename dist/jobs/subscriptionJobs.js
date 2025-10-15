@@ -1,0 +1,41 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.startSubscriptionJobs = startSubscriptionJobs;
+const node_cron_1 = __importDefault(require("node-cron"));
+const subscription_repository_1 = require("../repositories/subscription/subscription.repository");
+const email_service_1 = require("../services/subscription/email.service");
+const prisma_1 = require("../generated/prisma");
+function startSubscriptionJobs() {
+    // Reminder 50 minutes before expiry (every 10 minutes)
+    node_cron_1.default.schedule("*/10 * * * *", async () => {
+        try {
+            const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInMinutes(50);
+            for (const subscription of expiring) {
+                if (subscription.expiresAt) {
+                    await email_service_1.EmailService.sendSubscriptionExpirationEmail(subscription.user.email, subscription.user.name ?? subscription.user.email, subscription.plan.name, subscription.expiresAt);
+                }
+            }
+        }
+        catch (error) {
+            console.error("[CRON] Failed to send expiration reminders:", error);
+        }
+    });
+    // Deactivate expired subscriptions (every 15 minutes)
+    node_cron_1.default.schedule("*/15 * * * *", async () => {
+        try {
+            const expired = await subscription_repository_1.SubscriptionRepo.getExpiredSubscriptions();
+            for (const subscription of expired) {
+                await subscription_repository_1.SubscriptionRepo.updateSubscription(subscription.id, {
+                    status: prisma_1.SubscriptionStatus.EXPIRED,
+                });
+            }
+        }
+        catch (error) {
+            console.error("[CRON] Failed to deactivate expired subscriptions:", error);
+        }
+    });
+}
+//# sourceMappingURL=subscriptionJobs.js.map
