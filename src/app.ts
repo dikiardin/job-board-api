@@ -60,7 +60,6 @@ class App {
       });
     }
 
-    // CORS configuration - SIMPLIFIED LIKE EVENT-MANAGEMENT-API
     this.app.use(
       cors({
         origin: [
