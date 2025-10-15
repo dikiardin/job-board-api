@@ -114,6 +114,20 @@ class App {
       }
     });
 
+    // Cron health info (last-run snapshot should be stored by your jobs in DB)
+    this.app.get("/health/cron", async (req: Request, res: Response) => {
+      try {
+        // Implementasi minimal: hanya return timestamp server
+        // Disarankan: baca last_run_at per job dari DB untuk observability
+        res.status(200).json({
+          success: true,
+          serverTime: new Date().toISOString(),
+        });
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
     const authRouter: AuthRouter = new AuthRouter();
     const subscriptionRouter: SubscriptionRouter = new SubscriptionRouter();
     const preselectionRouter: PreselectionRouter = new PreselectionRouter();
@@ -183,8 +197,11 @@ class App {
   public start(): void {
     this.app.listen(PORT, () => {
       console.log(`API Running: http://localhost:${PORT}`);
-      startSubscriptionJobs();
-      startInterviewJobs();
+      // Only start in-process cron jobs when not running on Vercel Serverless
+      if (process.env.VERCEL !== "1") {
+        startSubscriptionJobs();
+        startInterviewJobs();
+      }
     });
   }
 }

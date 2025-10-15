@@ -52,3 +52,45 @@ export function startSubscriptionJobs() {
     }
   });
 }
+
+// Run one cycle of subscription jobs (idempotent)
+export async function runSubscriptionCycle(): Promise<void> {
+  try {
+    const expiring =
+      await SubscriptionRepo.getSubscriptionsExpiringInHoursWindow(24, 10);
+    const now = Date.now();
+    for (const subscription of expiring) {
+      if (subscription.expiresAt) {
+        const lastSentAt = sentReminderCache.get(subscription.id);
+        if (!lastSentAt || now - lastSentAt > REMINDER_DEDUP_MS) {
+          await EmailService.sendSubscriptionExpirationEmail(
+            subscription.user.email,
+            subscription.user.name ?? subscription.user.email,
+            subscription.plan.name,
+            subscription.expiresAt
+          );
+          sentReminderCache.set(subscription.id, now);
+        }
+      }
+    }
+  } catch (error) {
+    console.error(
+      "[CRON] Failed to send expiration reminders (one-off):",
+      error
+    );
+  }
+
+  try {
+    const expired = await SubscriptionRepo.getExpiredSubscriptions();
+    for (const subscription of expired) {
+      await SubscriptionRepo.updateSubscription(subscription.id, {
+        status: SubscriptionStatus.EXPIRED,
+      });
+    }
+  } catch (error) {
+    console.error(
+      "[CRON] Failed to deactivate expired subscriptions (one-off):",
+      error
+    );
+  }
+}

@@ -10,14 +10,20 @@ export function startInterviewJobs() {
       const windowStart = new Date(now.getTime() + 24 * 60 * 60 * 1000); // +24h
       const windowEnd = new Date(now.getTime() + 25 * 60 * 60 * 1000); // +25h
 
-      const due = (await InterviewRepository.getDueReminders(windowStart, windowEnd)) as any[];
+      const due = (await InterviewRepository.getDueReminders(
+        windowStart,
+        windowEnd
+      )) as any[];
       for (const it of due) {
         const candidateEmail = (it as any).application.user.email as string;
         const candidateName = (it as any).application.user.name as string;
         const jobTitle = (it as any).application.job.title as string;
         const companyName = (it as any).application.job.company.name as string;
-        const adminEmail = ((it as any).application.job.company.owner?.email as string) || undefined;
-        const adminName = ((it as any).application.job.company.owner?.name as string) || null;
+        const adminEmail =
+          ((it as any).application.job.company.owner?.email as string) ||
+          undefined;
+        const adminName =
+          ((it as any).application.job.company.owner?.name as string) || null;
 
         await InterviewEmailService.sendCandidateEmail({
           type: "reminder",
@@ -40,16 +46,71 @@ export function startInterviewJobs() {
             jobTitle,
             companyName,
             scheduleDate: new Date((it as any).scheduleDate),
-            locationOrLink: ((it as any).locationOrLink as string | null) ?? null,
+            locationOrLink:
+              ((it as any).locationOrLink as string | null) ?? null,
             notes: ((it as any).notes as string | null) ?? null,
           });
         }
 
         await InterviewRepository.markReminderSent((it as any).id as number);
       }
-
     } catch (error) {
       console.error("[CRON] Interview reminder job failed:", error);
     }
   });
+}
+
+// Run one cycle of interview reminder job (idempotent)
+export async function runInterviewCycle(): Promise<void> {
+  try {
+    const now = new Date();
+    const windowStart = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const windowEnd = new Date(now.getTime() + 25 * 60 * 60 * 1000);
+
+    const due = (await InterviewRepository.getDueReminders(
+      windowStart,
+      windowEnd
+    )) as any[];
+    for (const it of due) {
+      const candidateEmail = (it as any).application.user.email as string;
+      const candidateName = (it as any).application.user.name as string;
+      const jobTitle = (it as any).application.job.title as string;
+      const companyName = (it as any).application.job.company.name as string;
+      const adminEmail =
+        ((it as any).application.job.company.owner?.email as string) ||
+        undefined;
+      const adminName =
+        ((it as any).application.job.company.owner?.name as string) || null;
+
+      await InterviewEmailService.sendCandidateEmail({
+        type: "reminder",
+        to: candidateEmail,
+        candidateName,
+        adminName,
+        jobTitle,
+        companyName,
+        scheduleDate: new Date((it as any).scheduleDate),
+        locationOrLink: ((it as any).locationOrLink as string | null) ?? null,
+        notes: ((it as any).notes as string | null) ?? null,
+      });
+
+      if (adminEmail) {
+        await InterviewEmailService.sendAdminEmail({
+          type: "reminder",
+          to: adminEmail,
+          adminName: adminName || "Admin",
+          candidateName,
+          jobTitle,
+          companyName,
+          scheduleDate: new Date((it as any).scheduleDate),
+          locationOrLink: ((it as any).locationOrLink as string | null) ?? null,
+          notes: ((it as any).notes as string | null) ?? null,
+        });
+      }
+
+      await InterviewRepository.markReminderSent((it as any).id as number);
+    }
+  } catch (error) {
+    console.error("[CRON] Interview reminder job failed (one-off):", error);
+  }
 }
