@@ -1,5 +1,6 @@
 import { UserRole } from "../../generated/prisma";
 export declare class PreselectionService {
+    private static dependencies;
     static createOrUpdateTest(params: {
         jobId: string | number;
         requesterId: number;
@@ -11,42 +12,14 @@ export declare class PreselectionService {
         }>;
         passingScore?: number;
         isActive?: boolean;
-    }): Promise<{
-        questions: {
-            id: number;
-            options: import("../../generated/prisma/runtime/library").JsonValue;
-            question: string;
-            answer: string;
-            orderIndex: number;
-            testId: number;
-        }[];
-    } & {
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
-        jobId: number;
-        passingScore: number | null;
-        questionCount: number;
-        timeLimitMinutes: number;
-    }>;
-    private static validateAdminAccess;
-    private static validateJobOwnership;
-    private static validateQuestions;
-    private static validateQuestion;
-    private static validatePassingScore;
+    }): Promise<any>;
     static getTestForJob(jobId: string | number, requesterRole?: UserRole): Promise<{
-        id: number;
-        jobId: number;
-        isActive: boolean;
-        passingScore: number | null;
-        createdAt: Date;
-        questions: {
-            answer?: string;
-            id: number;
-            question: string;
-            options: string[];
-        }[];
+        id: any;
+        jobId: any;
+        isActive: any;
+        passingScore: any;
+        createdAt: any;
+        questions: any;
     }>;
     static submitAnswers(params: {
         applicantId: number;
@@ -58,9 +31,9 @@ export declare class PreselectionService {
             selected: string;
         }>;
     }): Promise<{
-        resultId: number;
+        resultId: any;
         score: number;
-        totalQuestions: number;
+        totalQuestions: any;
         isPassed: boolean | undefined;
     }>;
     static getJobResults(params: {
@@ -72,18 +45,9 @@ export declare class PreselectionService {
         results: never[];
         testId?: never;
     } | {
-        jobId: number;
-        testId: number;
-        results: {
-            resultId: number;
-            user: {
-                id: number;
-                name: string | null;
-                email: string;
-            };
-            score: number;
-            submittedAt: Date;
-        }[];
+        jobId: any;
+        testId: any;
+        results: any;
     }>;
     static statusForUser(params: {
         jobId: string | number;
@@ -97,10 +61,10 @@ export declare class PreselectionService {
         isPassed?: never;
     } | {
         required: boolean;
-        testId: number;
+        testId: any;
         submitted: boolean;
-        score: number | null;
-        passingScore: number | null;
+        score: any;
+        passingScore: any;
         isPassed: boolean;
     }>;
 }

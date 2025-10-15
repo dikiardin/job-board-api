@@ -47,7 +47,7 @@ export declare class JobApplicantsService {
             expectedSalary: any;
             status: any;
             cvFile: any;
-            testScore: number | null;
+            score: number | null;
             preselectionPassed: boolean | null;
             isPriority: any;
             education: any;

@@ -157,7 +157,7 @@ export class JobApplicantsService {
           expectedSalary: a.expectedSalary ?? null,
           status: a.status,
           cvFile: a.cvUrl ?? null,
-          testScore: score,
+          score: score,
           preselectionPassed,
           isPriority: a.isPriority ?? false, // ← IMPORTANT: Include priority field
           education: a.user?.education ?? null,

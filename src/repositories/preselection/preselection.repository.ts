@@ -44,7 +44,7 @@ export class PreselectionRepository {
 
   static async upsertTest(jobId: string | number, questions: Array<{ question: string; options: string[]; answer: string }>, passingScore?: number, isActive: boolean = true) {
     const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
-    const existing = await this.getTestByJobId(jid);
+    const existing = await PreselectionRepository.getTestByJobId(jid);
     if (existing) {
       // Replace questions entirely
       await prisma.preselectionQuestion.deleteMany({ where: { testId: existing.id } });
@@ -60,7 +60,7 @@ export class PreselectionRepository {
         include: { questions: true },
       });
     }
-    return this.createTest(jid, questions, passingScore, isActive);
+    return PreselectionRepository.createTest(jid, questions, passingScore, isActive);
   }
 
   static async getResult(userId: number, testId: number) {
