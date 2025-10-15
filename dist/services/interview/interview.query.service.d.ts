@@ -1,5 +1,27 @@
 import { InterviewStatus, UserRole } from "../../generated/prisma";
 export declare class InterviewQueryService {
+    static getJobsWithApplicantCounts(params: {
+        companyId: string | number;
+        requesterId: number;
+        requesterRole: UserRole;
+    }): Promise<{
+        id: number;
+        title: string;
+        category: string;
+        city: string;
+        acceptedApplicantsCount: number;
+    }[]>;
+    static getEligibleApplicants(params: {
+        companyId: string | number;
+        jobId: string | number;
+        requesterId: number;
+        requesterRole: UserRole;
+    }): Promise<{
+        userId: number;
+        userName: string;
+        userEmail: string;
+        applicationId: number;
+    }[]>;
     static list(params: {
         companyId: string | number;
         requesterId: number;

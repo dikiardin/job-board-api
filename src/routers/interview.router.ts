@@ -13,6 +13,22 @@ class InterviewRouter {
   }
 
   private initializeRoutes(): void {
+    // Get jobs with applicant counts for dropdown
+    this.route.get(
+      "/companies/:companyId/jobs-with-applicants",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      InterviewController.getJobsWithApplicantCounts
+    );
+
+    // Get eligible applicants for a specific job
+    this.route.get(
+      "/companies/:companyId/jobs/:jobId/eligible-applicants",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      InterviewController.getEligibleApplicants
+    );
+
     // Create multiple schedules for a job's accepted applicants
     this.route.post(
       "/companies/:companyId/jobs/:jobId/interviews",

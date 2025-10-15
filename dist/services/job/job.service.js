@@ -29,8 +29,10 @@ class JobService {
             const d = new Date(payload.deadline);
             if (isNaN(d.getTime()))
                 errors.push("deadline must be a valid date");
-            else if (d.getTime() < Date.now())
+            // Only check past date for CREATE, not UPDATE
+            else if (!isUpdate && d.getTime() < Date.now()) {
                 errors.push("deadline cannot be in the past");
+            }
         }
         if (payload?.tags && !Array.isArray(payload.tags))
             errors.push("tags must be an array of strings");
@@ -63,8 +65,31 @@ class JobService {
             throw { status: 401, message: "Only company admin can update jobs" };
         await this.assertCompanyOwnership(companyId, requesterId);
         this.validateJobPayload(body, true);
-        const updateData = { ...body };
-        if (typeof body?.deadline !== "undefined")
+        // Build update data with only valid fields
+        const updateData = {};
+        if (body.title !== undefined)
+            updateData.title = body.title;
+        if (body.description !== undefined)
+            updateData.description = body.description;
+        if (body.category !== undefined)
+            updateData.category = body.category;
+        if (body.city !== undefined)
+            updateData.city = body.city;
+        if (body.employmentType !== undefined)
+            updateData.employmentType = body.employmentType;
+        if (body.experienceLevel !== undefined)
+            updateData.experienceLevel = body.experienceLevel;
+        if (body.salaryMin !== undefined)
+            updateData.salaryMin = body.salaryMin;
+        if (body.salaryMax !== undefined)
+            updateData.salaryMax = body.salaryMax;
+        if (body.tags !== undefined)
+            updateData.tags = body.tags;
+        if (body.banner !== undefined)
+            updateData.banner = body.banner;
+        if (body.isPublished !== undefined)
+            updateData.isPublished = body.isPublished;
+        if (body.deadline !== undefined)
             updateData.deadline = body.deadline ? new Date(body.deadline) : null;
         const job = await job_repository_1.JobRepository.updateJob(companyId, jobId, updateData);
         return job;
@@ -211,6 +236,8 @@ class JobService {
             banner: job.bannerUrl ?? null,
             category: job.category,
             city: job.city,
+            employmentType: job.employmentType ?? null,
+            experienceLevel: job.experienceLevel ?? null,
             salaryMin: job.salaryMin,
             salaryMax: job.salaryMax,
             tags: job.tags,

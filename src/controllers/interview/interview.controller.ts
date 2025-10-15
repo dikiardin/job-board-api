@@ -4,6 +4,42 @@ import { InterviewQueryService } from "../../services/interview/interview.query.
 import { InterviewStatus, UserRole } from "../../generated/prisma";
 
 export class InterviewController {
+  static async getJobsWithApplicantCounts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const companyId = req.params.companyId as string;
+      const requester = res.locals.decrypt as { userId: number; role: UserRole };
+
+      const data = await InterviewQueryService.getJobsWithApplicantCounts({
+        companyId,
+        requesterId: requester.userId,
+        requesterRole: requester.role,
+      });
+
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getEligibleApplicants(req: Request, res: Response, next: NextFunction) {
+    try {
+      const companyId = req.params.companyId as string;
+      const jobId = req.params.jobId as string;
+      const requester = res.locals.decrypt as { userId: number; role: UserRole };
+
+      const data = await InterviewQueryService.getEligibleApplicants({
+        companyId,
+        jobId,
+        requesterId: requester.userId,
+        requesterRole: requester.role,
+      });
+
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async createMany(req: Request, res: Response, next: NextFunction) {
     try {
       const companyId = req.params.companyId as string;

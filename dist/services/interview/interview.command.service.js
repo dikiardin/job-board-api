@@ -127,7 +127,7 @@ class InterviewCommandService {
             adminName,
             jobTitle,
             companyName,
-            scheduleDate: new Date(interview.scheduleDate),
+            scheduleDate: new Date(interview.startsAt),
             locationOrLink: interview.locationOrLink ?? null,
             notes: interview.notes ?? null,
         });
@@ -139,7 +139,7 @@ class InterviewCommandService {
                 candidateName,
                 jobTitle,
                 companyName,
-                scheduleDate: new Date(interview.scheduleDate),
+                scheduleDate: new Date(interview.startsAt),
                 locationOrLink: interview.locationOrLink ?? null,
                 notes: interview.notes ?? null,
             });
@@ -234,7 +234,7 @@ class InterviewCommandService {
                 adminName,
                 jobTitle,
                 companyName,
-                scheduleDate: new Date(interview.scheduleDate),
+                scheduleDate: new Date(interview.startsAt),
                 locationOrLink: interview.locationOrLink ?? null,
                 notes: interview.notes ?? null,
             });
@@ -246,7 +246,7 @@ class InterviewCommandService {
                     candidateName,
                     jobTitle,
                     companyName,
-                    scheduleDate: new Date(interview.scheduleDate),
+                    scheduleDate: new Date(interview.startsAt),
                     locationOrLink: interview.locationOrLink ?? null,
                     notes: interview.notes ?? null,
                 });
