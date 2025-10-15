@@ -117,8 +117,6 @@ class App {
     // Cron health info (last-run snapshot should be stored by your jobs in DB)
     this.app.get("/health/cron", async (req: Request, res: Response) => {
       try {
-        // Implementasi minimal: hanya return timestamp server
-        // Disarankan: baca last_run_at per job dari DB untuk observability
         res.status(200).json({
           success: true,
           serverTime: new Date().toISOString(),
