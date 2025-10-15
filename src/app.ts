@@ -29,35 +29,9 @@ class App {
 
   constructor() {
     this.app = express();
-    this.setupGlobalErrorHandlers();
     this.configure();
     this.route();
     this.errorHandling();
-  }
-
-  private setupGlobalErrorHandlers(): void {
-    // Catch unhandled promise rejections
-    process.on("unhandledRejection", (reason, promise) => {
-      console.error("🚨 Unhandled Rejection at:", promise, "reason:", reason);
-      // Don't exit the process, just log the error
-    });
-
-    // Catch uncaught exceptions
-    process.on("uncaughtException", (error) => {
-      console.error("🚨 Uncaught Exception:", error);
-      // Don't exit the process, just log the error
-    });
-
-    // Catch SIGTERM and SIGINT
-    process.on("SIGTERM", () => {
-      console.log("SIGTERM received, shutting down gracefully");
-      process.exit(0);
-    });
-
-    process.on("SIGINT", () => {
-      console.log("SIGINT received, shutting down gracefully");
-      process.exit(0);
-    });
   }
 
   private configure(): void {
@@ -175,94 +149,33 @@ class App {
   }
 
   private errorHandling(): void {
-    // 404 handler for undefined routes
-    this.app.use("*", (req: Request, res: Response) => {
-      res.status(404).json({
-        success: false,
-        message: `Route ${req.originalUrl} not found`,
-        timestamp: new Date().toISOString(),
-      });
-    });
-
-    // Global error handler
     this.app.use(
       (error: any, req: Request, res: Response, next: NextFunction) => {
-        console.error("🚨 Global error handler:", {
-          message: error.message,
-          stack: error.stack,
-          url: req.url,
-          method: req.method,
-          timestamp: new Date().toISOString(),
-        });
+        console.log("Global error handler:", error);
 
-        // Don't leak error details in production
-        const isDevelopment = process.env.NODE_ENV === "development";
-
-        // Handle specific error types
+        // Handle JWT errors
         if (error.name === "JsonWebTokenError") {
-          return res.status(401).json({
-            success: false,
-            message: "Invalid token format",
-            timestamp: new Date().toISOString(),
-          });
+          return res
+            .status(401)
+            .json({ success: false, message: "Invalid token format" });
         }
 
         if (error.name === "TokenExpiredError") {
-          return res.status(401).json({
-            success: false,
-            message: "Token has expired",
-            timestamp: new Date().toISOString(),
-          });
+          return res
+            .status(401)
+            .json({ success: false, message: "Token has expired" });
         }
 
-        if (error.name === "ValidationError") {
-          return res.status(400).json({
-            success: false,
-            message: "Validation error",
-            errors: error.details?.map((d: any) => d.message) || [
-              error.message,
-            ],
-            timestamp: new Date().toISOString(),
-          });
-        }
-
-        if (error.code === "P2002") {
-          return res.status(409).json({
-            success: false,
-            message: "Duplicate entry. This record already exists.",
-            timestamp: new Date().toISOString(),
-          });
-        }
-
-        // Handle Prisma errors
-        if (error.code && error.code.startsWith("P")) {
-          return res.status(400).json({
-            success: false,
-            message: "Database error occurred",
-            ...(isDevelopment && { details: error.message }),
-            timestamp: new Date().toISOString(),
-          });
-        }
-
-        // Handle custom status errors
         if (error.status) {
           return res.status(error.status).json({
             success: false,
             message: error.message,
-            ...(isDevelopment && { stack: error.stack }),
-            timestamp: new Date().toISOString(),
           });
         }
 
-        // Default 500 error - ALWAYS return a response
-        return res.status(500).json({
+        res.status(500).json({
           success: false,
-          message: isDevelopment ? error.message : "Internal server error",
-          ...(isDevelopment && {
-            stack: error.stack,
-            details: error.toString(),
-          }),
-          timestamp: new Date().toISOString(),
+          message: "Internal server error",
         });
       }
     );
@@ -271,18 +184,8 @@ class App {
   public start(): void {
     this.app.listen(PORT, () => {
       console.log(`API Running: http://localhost:${PORT}`);
-
-      // Start background jobs with error handling - DISABLED FOR TESTING
-      // try {
-      //   console.log("Starting background jobs...");
-      //   startSubscriptionJobs();
-      //   startInterviewJobs();
-      //   console.log("✅ Background jobs started successfully");
-      // } catch (error) {
-      //   console.error("❌ Failed to start background jobs:", error);
-      //   // Don't crash the app, just log the error
-      // }
-      console.log("⚠️ Background jobs disabled for testing");
+      startSubscriptionJobs();
+      startInterviewJobs();
     });
   }
 }
