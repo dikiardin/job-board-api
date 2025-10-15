@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startSubscriptionJobs = startSubscriptionJobs;
+exports.runSubscriptionCycle = runSubscriptionCycle;
 const node_cron_1 = __importDefault(require("node-cron"));
 const subscription_repository_1 = require("../repositories/subscription/subscription.repository");
 const email_service_1 = require("../services/subscription/email.service");
@@ -45,5 +46,35 @@ function startSubscriptionJobs() {
             console.error("[CRON] Failed to deactivate expired subscriptions:", error);
         }
     });
+}
+// Run one cycle of subscription jobs (idempotent)
+async function runSubscriptionCycle() {
+    try {
+        const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInHoursWindow(24, 10);
+        const now = Date.now();
+        for (const subscription of expiring) {
+            if (subscription.expiresAt) {
+                const lastSentAt = sentReminderCache.get(subscription.id);
+                if (!lastSentAt || now - lastSentAt > REMINDER_DEDUP_MS) {
+                    await email_service_1.EmailService.sendSubscriptionExpirationEmail(subscription.user.email, subscription.user.name ?? subscription.user.email, subscription.plan.name, subscription.expiresAt);
+                    sentReminderCache.set(subscription.id, now);
+                }
+            }
+        }
+    }
+    catch (error) {
+        console.error("[CRON] Failed to send expiration reminders (one-off):", error);
+    }
+    try {
+        const expired = await subscription_repository_1.SubscriptionRepo.getExpiredSubscriptions();
+        for (const subscription of expired) {
+            await subscription_repository_1.SubscriptionRepo.updateSubscription(subscription.id, {
+                status: prisma_1.SubscriptionStatus.EXPIRED,
+            });
+        }
+    }
+    catch (error) {
+        console.error("[CRON] Failed to deactivate expired subscriptions (one-off):", error);
+    }
 }
 //# sourceMappingURL=subscriptionJobs.js.map
