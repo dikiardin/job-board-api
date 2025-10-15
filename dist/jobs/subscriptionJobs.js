@@ -8,14 +8,22 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const subscription_repository_1 = require("../repositories/subscription/subscription.repository");
 const email_service_1 = require("../services/subscription/email.service");
 const prisma_1 = require("../generated/prisma");
+// Simple in-memory deduplication for reminder emails to avoid duplicates
+const sentReminderCache = new Map();
+const REMINDER_DEDUP_MS = 2 * 60 * 60 * 1000; // 2 hours window
 function startSubscriptionJobs() {
-    // Reminder 50 minutes before expiry (every 10 minutes)
+    // Reminder H-1 (every 10 minutes)
     node_cron_1.default.schedule("*/10 * * * *", async () => {
         try {
-            const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInMinutes(50);
+            const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInHoursWindow(24, 10);
             for (const subscription of expiring) {
                 if (subscription.expiresAt) {
-                    await email_service_1.EmailService.sendSubscriptionExpirationEmail(subscription.user.email, subscription.user.name ?? subscription.user.email, subscription.plan.name, subscription.expiresAt);
+                    const lastSentAt = sentReminderCache.get(subscription.id);
+                    const now = Date.now();
+                    if (!lastSentAt || now - lastSentAt > REMINDER_DEDUP_MS) {
+                        await email_service_1.EmailService.sendSubscriptionExpirationEmail(subscription.user.email, subscription.user.name ?? subscription.user.email, subscription.plan.name, subscription.expiresAt);
+                        sentReminderCache.set(subscription.id, now);
+                    }
                 }
             }
         }

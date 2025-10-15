@@ -6,32 +6,40 @@ import { cloudinaryUpload } from "../../config/cloudinary";
 
 export class BadgeTemplateMutationController {
   // Create badge template (Developer only)
-  public static async createBadgeTemplate(req: Request, res: Response, next: NextFunction) {
+  public static async createBadgeTemplate(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { userId, role } = res.locals.decrypt;
       BadgeTemplateHelper.validateDeveloperRole(role);
 
-      const { name, description, category, iconFile } = BadgeTemplateHelper.extractFormData(req);
+      const { name, description, category, iconFile } =
+        BadgeTemplateHelper.extractFormData(req);
       BadgeTemplateHelper.validateRequiredFields(name, iconFile);
-      
+
       if (iconFile) {
         BadgeTemplateHelper.validateImageFile(iconFile);
       }
 
       const existingTemplate = await BadgeTemplateRepository.findByName(name);
       if (existingTemplate) {
-        throw new CustomError("Badge template with this name already exists", 400);
+        throw new CustomError(
+          "Badge template with this name already exists",
+          400
+        );
       }
 
       if (!iconFile) {
         throw new CustomError("Badge icon image is required", 400);
       }
       const uploadResult = await cloudinaryUpload(iconFile);
-      
+
       const badgeTemplate = await BadgeTemplateRepository.createBadgeTemplate({
         name,
-        description: description || '',
-        category: category || 'General',
+        description: description || "",
+        category: category || "General",
         icon: uploadResult.secure_url,
         createdBy: userId,
       });
@@ -47,22 +55,34 @@ export class BadgeTemplateMutationController {
   }
 
   // Update badge template (Developer only)
-  public static async updateBadgeTemplate(req: Request, res: Response, next: NextFunction) {
+  public static async updateBadgeTemplate(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { userId, role } = res.locals.decrypt;
       BadgeTemplateHelper.validateDeveloperRole(role);
 
-      const templateId = BadgeTemplateHelper.validateTemplateId(req.params.id || '0');
-      const { name, description, category, iconFile } = BadgeTemplateHelper.extractFormData(req);
+      const templateId = BadgeTemplateHelper.validateTemplateId(
+        req.params.templateId || "0"
+      );
+      const { name, description, category, iconFile } =
+        BadgeTemplateHelper.extractFormData(req);
 
       if (name) {
-        const existingTemplate = await BadgeTemplateRepository.findByNameExcluding(name, templateId);
+        const existingTemplate =
+          await BadgeTemplateRepository.findByNameExcluding(name, templateId);
         if (existingTemplate) {
-          throw new CustomError("Badge template with this name already exists", 400);
+          throw new CustomError(
+            "Badge template with this name already exists",
+            400
+          );
         }
       }
 
-      const currentTemplate = await BadgeTemplateRepository.getBadgeTemplateById(templateId);
+      const currentTemplate =
+        await BadgeTemplateRepository.getBadgeTemplateById(templateId);
       if (!currentTemplate) {
         throw new CustomError("Badge template not found", 404);
       }
@@ -74,8 +94,17 @@ export class BadgeTemplateMutationController {
         iconUrl = uploadResult.secure_url;
       }
 
-      const updateData = BadgeTemplateHelper.buildUpdateData(name, description, category, iconUrl || undefined);
-      const result = await BadgeTemplateRepository.updateBadgeTemplate(templateId, userId, updateData);
+      const updateData = BadgeTemplateHelper.buildUpdateData(
+        name,
+        description,
+        category,
+        iconUrl || undefined
+      );
+      const result = await BadgeTemplateRepository.updateBadgeTemplate(
+        templateId,
+        userId,
+        updateData
+      );
 
       if (result.count === 0) {
         throw new CustomError("Badge template not found or no permission", 404);
@@ -91,13 +120,22 @@ export class BadgeTemplateMutationController {
   }
 
   // Delete badge template (Developer only)
-  public static async deleteBadgeTemplate(req: Request, res: Response, next: NextFunction) {
+  public static async deleteBadgeTemplate(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { userId, role } = res.locals.decrypt;
       BadgeTemplateHelper.validateDeveloperRole(role);
 
-      const templateId = BadgeTemplateHelper.validateTemplateId(req.params.templateId || '0');
-      const result = await BadgeTemplateRepository.deleteBadgeTemplate(templateId, userId);
+      const templateId = BadgeTemplateHelper.validateTemplateId(
+        req.params.templateId || "0"
+      );
+      const result = await BadgeTemplateRepository.deleteBadgeTemplate(
+        templateId,
+        userId
+      );
 
       if (result.count === 0) {
         throw new CustomError("Badge template not found or no permission", 404);

@@ -26,8 +26,8 @@ class BadgeTemplateMutationController {
             const uploadResult = await (0, cloudinary_1.cloudinaryUpload)(iconFile);
             const badgeTemplate = await badgeTemplate_repository_1.BadgeTemplateRepository.createBadgeTemplate({
                 name,
-                description: description || '',
-                category: category || 'General',
+                description: description || "",
+                category: category || "General",
                 icon: uploadResult.secure_url,
                 createdBy: userId,
             });
@@ -46,7 +46,7 @@ class BadgeTemplateMutationController {
         try {
             const { userId, role } = res.locals.decrypt;
             BadgeTemplateHelper_1.BadgeTemplateHelper.validateDeveloperRole(role);
-            const templateId = BadgeTemplateHelper_1.BadgeTemplateHelper.validateTemplateId(req.params.id || '0');
+            const templateId = BadgeTemplateHelper_1.BadgeTemplateHelper.validateTemplateId(req.params.templateId || "0");
             const { name, description, category, iconFile } = BadgeTemplateHelper_1.BadgeTemplateHelper.extractFormData(req);
             if (name) {
                 const existingTemplate = await badgeTemplate_repository_1.BadgeTemplateRepository.findByNameExcluding(name, templateId);
@@ -83,7 +83,7 @@ class BadgeTemplateMutationController {
         try {
             const { userId, role } = res.locals.decrypt;
             BadgeTemplateHelper_1.BadgeTemplateHelper.validateDeveloperRole(role);
-            const templateId = BadgeTemplateHelper_1.BadgeTemplateHelper.validateTemplateId(req.params.templateId || '0');
+            const templateId = BadgeTemplateHelper_1.BadgeTemplateHelper.validateTemplateId(req.params.templateId || "0");
             const result = await badgeTemplate_repository_1.BadgeTemplateRepository.deleteBadgeTemplate(templateId, userId);
             if (result.count === 0) {
                 throw new customError_1.CustomError("Badge template not found or no permission", 404);
