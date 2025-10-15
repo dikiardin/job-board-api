@@ -272,16 +272,17 @@ class App {
     this.app.listen(PORT, () => {
       console.log(`API Running: http://localhost:${PORT}`);
 
-      // Start background jobs with error handling
-      try {
-        console.log("Starting background jobs...");
-        startSubscriptionJobs();
-        startInterviewJobs();
-        console.log("✅ Background jobs started successfully");
-      } catch (error) {
-        console.error("❌ Failed to start background jobs:", error);
-        // Don't crash the app, just log the error
-      }
+      // Start background jobs with error handling - DISABLED FOR TESTING
+      // try {
+      //   console.log("Starting background jobs...");
+      //   startSubscriptionJobs();
+      //   startInterviewJobs();
+      //   console.log("✅ Background jobs started successfully");
+      // } catch (error) {
+      //   console.error("❌ Failed to start background jobs:", error);
+      //   // Don't crash the app, just log the error
+      // }
+      console.log("⚠️ Background jobs disabled for testing");
     });
   }
 }
