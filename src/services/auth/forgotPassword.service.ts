@@ -28,7 +28,9 @@ export class ForgotPasswordService {
         html: buildResetPasswordEmail(user.name || "User", token),
       });
     } catch (err) {
-      console.error("Nodemailer Error:", err);
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Nodemailer Error:", err);
+      }
       throw new CustomError("Failed to send reset password email", 500);
     }
 

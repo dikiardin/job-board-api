@@ -34,7 +34,9 @@ class ChangeEmailService {
             });
         }
         catch (err) {
-            console.error("Nodemailer Error:", err);
+            if (process.env.NODE_ENV !== "production") {
+                console.error("Nodemailer Error:", err);
+            }
             throw new customError_1.CustomError("Failed to send verification email", 500);
         }
         return { message: "Email updated! Please verify your new email." };

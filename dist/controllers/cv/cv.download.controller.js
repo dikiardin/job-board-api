@@ -48,7 +48,9 @@ class CVDownloadController {
             res.send(pdfBuffer);
         }
         catch (error) {
-            console.error("Download CV error:", error);
+            if (process.env.NODE_ENV !== "production") {
+                console.error("Download CV error:", error);
+            }
             res.status(500).json({
                 message: "Failed to download CV",
                 error: error instanceof Error ? error.message : "Unknown error",
@@ -78,7 +80,9 @@ class CVDownloadController {
             // Fetch PDF from Cloudinary
             const response = await fetch(cv.fileUrl);
             if (!response.ok) {
-                console.error("Failed to fetch PDF:", response.status, response.statusText);
+                if (process.env.NODE_ENV !== "production") {
+                    console.error("Failed to fetch PDF:", response.status, response.statusText);
+                }
                 return res.status(404).json({ message: "CV file not found" });
             }
             const buffer = await response.arrayBuffer();
@@ -92,7 +96,9 @@ class CVDownloadController {
             res.send(pdfBuffer);
         }
         catch (error) {
-            console.error("Public download CV error:", error);
+            if (process.env.NODE_ENV !== "production") {
+                console.error("Public download CV error:", error);
+            }
             res.status(500).json({
                 message: "Failed to download CV",
                 error: error instanceof Error ? error.message : "Unknown error",
@@ -119,7 +125,9 @@ class CVDownloadController {
             });
         }
         catch (error) {
-            console.error("Get templates error:", error);
+            if (process.env.NODE_ENV !== "production") {
+                console.error("Get templates error:", error);
+            }
             res.status(500).json({
                 message: "Failed to retrieve templates",
                 error: error instanceof Error ? error.message : "Unknown error",

@@ -46,16 +46,16 @@ class SubscriptionRepo {
     }
     static async createSubscription(data) {
         try {
-            console.log("SubscriptionRepo.createSubscription called with data:", data);
             const result = await prisma_1.prisma.subscription.create({
                 data,
                 include: { plan: true },
             });
-            console.log("SubscriptionRepo.createSubscription result:", result);
             return result;
         }
         catch (error) {
-            console.error("Error in SubscriptionRepo.createSubscription:", error);
+            if (process.env.NODE_ENV !== "production") {
+                console.error("Error in SubscriptionRepo.createSubscription:", error);
+            }
             throw error;
         }
     }

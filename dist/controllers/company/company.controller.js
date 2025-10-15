@@ -30,7 +30,9 @@ class CompanyController {
             res.status(200).json(company);
         }
         catch (error) {
-            console.error("Error in getCompanyByAdmin:", error);
+            if (process.env.NODE_ENV !== "production") {
+                console.error("Error in getCompanyByAdmin:", error);
+            }
             next(error);
         }
     }

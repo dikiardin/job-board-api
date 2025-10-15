@@ -26,34 +26,18 @@ export class AnalyticsService {
     if (ownerId !== requesterId) throw { status: 403, message: "You don't own this company" };
     return company;
   }
-
   static async demographics(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
-
     const appParams: any = { companyId };
     if (from) appParams.from = from;
     if (to) appParams.to = to;
     const applications = await AnalyticsRepository.getCompanyApplications(appParams);
-
-    // Age buckets
-    const ageBuckets = {
-      "18-24": 0,
-      "25-34": 0,
-      "35-44": 0,
-      "45-54": 0,
-      "55+": 0,
-      unknown: 0,
-    } as Record<string, number>;
-
-    const inc = (key: string) => {
-      ageBuckets[key] = (ageBuckets[key] ?? 0) + 1;
-    };
-
+    const ageBuckets = { "18-24": 0, "25-34": 0, "35-44": 0, "45-54": 0, "55+": 0, unknown: 0 } as Record<string, number>;
+    const inc = (key: string) => { ageBuckets[key] = (ageBuckets[key] ?? 0) + 1; };
     const genderCounts = new Map<string, number>();
     const locationCounts = new Map<string, number>();
-
     for (const a of applications) {
       const u = ((a as any).user ?? {}) as { gender?: string | null; dob?: Date | null; address?: string | null; name?: string };
       const age = calcAge(u?.dob ?? undefined);
@@ -63,15 +47,11 @@ export class AnalyticsService {
       else if (age < 45) inc("35-44");
       else if (age < 55) inc("45-54");
       else inc("55+");
-
       const g = (u?.gender || "Unknown").toString();
       genderCounts.set(g, (genderCounts.get(g) || 0) + 1);
-
-      // Use job city primarily for "location" of applications to company
       const city = (((a as any).job?.city) as string) || "Unknown";
       locationCounts.set(city, (locationCounts.get(city) || 0) + 1);
     }
-
     return {
       ageBuckets,
       gender: Array.from(genderCounts.entries()).map(([gender, count]) => ({ gender, count })),
@@ -79,123 +59,83 @@ export class AnalyticsService {
       totalApplicants: applications.length,
     };
   }
-
   static async salaryTrends(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
-
     const trendsParams: any = { companyId };
     if (from) trendsParams.from = from;
     if (to) trendsParams.to = to;
     const expectedByCityTitle = await AnalyticsRepository.expectedSalaryByCityAndTitle(trendsParams);
     const reviewStats = await AnalyticsRepository.companyReviewSalaryStats(companyId);
-
-    return {
-      expectedSalary: expectedByCityTitle, // [{ city, title, avgExpectedSalary, samples }]
-      reviewSalary: reviewStats, // { avgSalaryEstimate, samples }
-    };
+    return { expectedSalary: expectedByCityTitle, reviewSalary: reviewStats };
   }
-
   static async interests(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
-
     const catParams: any = { companyId };
     if (from) catParams.from = from;
     if (to) catParams.to = to;
     const byCategory = await AnalyticsRepository.applicationsByCategory(catParams);
     return { byCategory };
   }
-
   static async overview(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
-
-    // Totals
     const [usersTotal, jobsTotal, appsTotal] = await Promise.all([
       prisma.user.count(),
       prisma.job.count({ where: { companyId: (typeof companyId === 'string' ? Number(companyId) : companyId) } }),
       prisma.application.count({
         where: {
           job: { companyId: (typeof companyId === 'string' ? Number(companyId) : companyId) },
-          ...(from || to
-            ? {
-                createdAt: {
-                  ...(from ? { gte: from } : {}),
-                  ...(to ? { lte: to } : {}),
-                },
-              }
-            : {}),
+          ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         },
       }),
     ]);
-
     const statusParams: any = { companyId };
     if (from) statusParams.from = from;
     if (to) statusParams.to = to;
     const statusCounts = await AnalyticsRepository.applicationStatusCounts(statusParams);
-
     const topParams: any = { companyId };
     if (from) topParams.from = from;
     if (to) topParams.to = to;
     const topCities = await AnalyticsRepository.topCitiesByApplications(topParams);
-
     return {
       totals: { usersTotal, jobsTotal, applicationsTotal: appsTotal },
       applicationStatus: statusCounts.map((s) => ({ status: s.status, count: s._count.status })),
-      topCities, // [{ city, count }]
+      topCities,
     };
   }
-
   static async engagement(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
-
-    // Daily/Monthly Active Users
     const dau = await AnalyticsRepository.dailyActiveUsers({ companyId, ...(from && { from }), ...(to && { to }) });
     const mau = await AnalyticsRepository.monthlyActiveUsers({ companyId, ...(from && { from }), ...(to && { to }) });
-
-    // Session metrics
     const sessionMetrics = await AnalyticsRepository.sessionMetrics({ companyId, ...(from && { from }), ...(to && { to }) });
-
-    // Page views
     const pageViews = await AnalyticsRepository.pageViews({ companyId, ...(from && { from }), ...(to && { to }) });
-
-    return {
-      dau,
-      mau,
-      sessionMetrics,
-      pageViews,
-    };
+    return { dau, mau, sessionMetrics, pageViews };
   }
-
   static async conversionFunnel(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
-
     const funnelData = await AnalyticsRepository.conversionFunnelData({ companyId, ...(from && { from }), ...(to && { to }) });
     return funnelData;
   }
-
   static async retention(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
-
     const retentionData = await AnalyticsRepository.retentionData({ companyId, ...(from && { from }), ...(to && { to }) });
     return retentionData;
   }
-
   static async performance(params: { companyId: string | number; requesterId: number; requesterRole: UserRole; query: { from?: string; to?: string } }) {
     const { companyId, requesterId, requesterRole, query } = params;
     await this.assertCompanyOwnership(companyId, requesterId, requesterRole);
     const { from, to } = parseRange(query);
-
     const performanceData = await AnalyticsRepository.performanceData({ companyId, ...(from && { from }), ...(to && { to }) });
     return performanceData;
   }

@@ -1,6 +1,4 @@
 "use strict";
-// Modular repository that delegates to specialized repositories
-// This keeps the main repository under 200 lines while maintaining all functionality
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SkillAssessmentResultsRepository = exports.AssessmentCrudRepository = exports.SkillAssessmentModularRepository = void 0;
 const assessmentCrud_repository_1 = require("./assessmentCrud.repository");
@@ -8,8 +6,6 @@ Object.defineProperty(exports, "AssessmentCrudRepository", { enumerable: true, g
 const skillAssessmentResults_repository_1 = require("./skillAssessmentResults.repository");
 Object.defineProperty(exports, "SkillAssessmentResultsRepository", { enumerable: true, get: function () { return skillAssessmentResults_repository_1.SkillAssessmentResultsRepository; } });
 class SkillAssessmentModularRepository {
-    // ===== ASSESSMENT CRUD OPERATIONS =====
-    // Delegate to AssessmentCrudRepository
     static async createAssessment(data) {
         return await assessmentCrud_repository_1.AssessmentCrudRepository.createAssessment(data);
     }
@@ -46,8 +42,6 @@ class SkillAssessmentModularRepository {
     static async saveQuestion(data) {
         return await assessmentCrud_repository_1.AssessmentCrudRepository.saveQuestion(data);
     }
-    // ===== ASSESSMENT RESULTS OPERATIONS =====
-    // Delegate to SkillAssessmentResultsRepository
     static async saveAssessmentResult(data) {
         return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.saveAssessmentResult(data);
     }
@@ -78,35 +72,24 @@ class SkillAssessmentModularRepository {
     static async updateCertificateInfo(resultId, certificateUrl, certificateCode) {
         return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.updateCertificateInfo(resultId, certificateUrl, certificateCode);
     }
-    // ===== CONVENIENCE METHODS =====
-    // Combined methods that use both repositories
     static async getAssessmentWithResults(assessmentId, createdBy) {
         const [assessment, results, stats] = await Promise.all([
             this.getAssessmentById(assessmentId),
             this.getAssessmentResults(assessmentId, createdBy),
             this.getAssessmentStatistics(assessmentId),
         ]);
-        return {
-            assessment,
-            results,
-            statistics: stats,
-        };
+        return { assessment, results, statistics: stats };
     }
     static async getUserAssessmentSummary(userId) {
         const [results, certificates] = await Promise.all([
             this.getUserResults(userId),
             this.getUserCertificates(userId),
         ]);
-        return {
-            results: results.results,
-            certificates: certificates.certificates,
-        };
+        return { results: results.results, certificates: certificates.certificates };
     }
-    // Get user assessment attempts for a specific assessment
     static async getUserAssessmentAttempts(userId, assessmentId) {
         return await skillAssessmentResults_repository_1.SkillAssessmentResultsRepository.getUserAssessmentAttempts(userId, assessmentId);
     }
-    // Export specialized repositories for direct access if needed
     static get CrudRepository() {
         return assessmentCrud_repository_1.AssessmentCrudRepository;
     }
@@ -115,6 +98,5 @@ class SkillAssessmentModularRepository {
     }
 }
 exports.SkillAssessmentModularRepository = SkillAssessmentModularRepository;
-// For backward compatibility, also export as default
 exports.default = SkillAssessmentModularRepository;
 //# sourceMappingURL=skillAssessmentModular.repository.js.map

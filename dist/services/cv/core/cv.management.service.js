@@ -37,8 +37,10 @@ class CVManagementService {
             await (0, uploadBuffer_1.deleteFromCloudinary)(cv.fileUrl);
         }
         catch (error) {
-            console.error('Failed to delete from Cloudinary:', error);
             // Continue with database deletion even if Cloudinary deletion fails
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Failed to delete from Cloudinary:', error);
+            }
         }
         // Delete from database using repository
         await cv_repository_1.CVRepo.deleteByIdAndUserId(cvId, userId);

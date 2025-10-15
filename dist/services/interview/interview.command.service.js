@@ -69,16 +69,12 @@ class InterviewCommandService {
         return created;
     }
     static validateAdminAccess(requesterRole) {
-        if (requesterRole !== prisma_1.UserRole.ADMIN) {
+        if (requesterRole !== prisma_1.UserRole.ADMIN)
             throw { status: 401, message: "Only company admin can create schedules" };
-        }
     }
     static async getApplicationsForJob(jobId, items) {
         const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
-        return await prisma_2.prisma.application.findMany({
-            where: { jobId: jid, userId: { in: items.map((i) => i.applicantId) } },
-            include: { user: true },
-        });
+        return await prisma_2.prisma.application.findMany({ where: { jobId: jid, userId: { in: items.map((i) => i.applicantId) } }, include: { user: true } });
     }
     static async prepareInterviewSchedules(items, applications) {
         const appByUser = new Map(applications.map((a) => [a.userId, a]));
@@ -102,11 +98,6 @@ class InterviewCommandService {
     }
     static async updateApplicationStatuses(created) {
         // Don't automatically change status to INTERVIEW - keep the current status
-        // The status should remain ACCEPTED as set by the admin
-        // await prisma.application.updateMany({ 
-        //   where: { id: { in: created.map((c: any) => c.applicationId) } }, 
-        //   data: { status: "INTERVIEW" } as any 
-        // });
     }
     static async sendInterviewNotifications(created) {
         for (const it of created) {
@@ -121,27 +112,13 @@ class InterviewCommandService {
         const adminEmail = interview.application.job.company.owner?.email || undefined;
         const adminName = interview.application.job.company.owner?.name || null;
         await interviewEmail_service_1.InterviewEmailService.sendCandidateEmail({
-            type: "created",
-            to: candidateEmail,
-            candidateName,
-            adminName,
-            jobTitle,
-            companyName,
-            scheduleDate: new Date(interview.startsAt),
-            locationOrLink: interview.locationOrLink ?? null,
-            notes: interview.notes ?? null,
+            type: "created", to: candidateEmail, candidateName, adminName, jobTitle, companyName,
+            scheduleDate: new Date(interview.startsAt), locationOrLink: interview.locationOrLink ?? null, notes: interview.notes ?? null,
         });
         if (adminEmail) {
             await interviewEmail_service_1.InterviewEmailService.sendAdminEmail({
-                type: "created",
-                to: adminEmail,
-                adminName: adminName || "Admin",
-                candidateName,
-                jobTitle,
-                companyName,
-                scheduleDate: new Date(interview.startsAt),
-                locationOrLink: interview.locationOrLink ?? null,
-                notes: interview.notes ?? null,
+                type: "created", to: adminEmail, adminName: adminName || "Admin", candidateName, jobTitle, companyName,
+                scheduleDate: new Date(interview.startsAt), locationOrLink: interview.locationOrLink ?? null, notes: interview.notes ?? null,
             });
         }
     }
@@ -152,14 +129,12 @@ class InterviewCommandService {
         const interview = await assertCompanyOwnershipByInterview(id, requesterId);
         validatePayload(body, true);
         const updateData = {};
-        // Handle non-date fields
         if (typeof body.notes !== "undefined")
             updateData.notes = body.notes;
         if (typeof body.locationOrLink !== "undefined")
             updateData.locationOrLink = body.locationOrLink;
         if (typeof body.status !== "undefined")
             updateData.status = body.status;
-        // Handle date field separately
         if (typeof body.scheduleDate !== "undefined") {
             const d = new Date(body.scheduleDate);
             if (isNaN(d.getTime()))
@@ -174,7 +149,6 @@ class InterviewCommandService {
             updateData.status = prisma_1.InterviewStatus.SCHEDULED;
         }
         const updated = (await interview_repository_1.InterviewRepository.updateOne(id, updateData));
-        // Send email notifications
         try {
             const type = updateData.status === prisma_1.InterviewStatus.CANCELLED ? "cancelled" : "updated";
             const candidateEmail = updated.application.user.email;
@@ -184,33 +158,19 @@ class InterviewCommandService {
             const adminEmail = updated.application.job.company.owner?.email || undefined;
             const adminName = updated.application.job.company.owner?.name || null;
             await interviewEmail_service_1.InterviewEmailService.sendCandidateEmail({
-                type,
-                to: candidateEmail,
-                candidateName,
-                adminName,
-                jobTitle,
-                companyName,
-                scheduleDate: new Date(updated.startsAt),
-                locationOrLink: updated.locationOrLink ?? null,
-                notes: updated.notes ?? null,
+                type, to: candidateEmail, candidateName, adminName, jobTitle, companyName,
+                scheduleDate: new Date(updated.startsAt), locationOrLink: updated.locationOrLink ?? null, notes: updated.notes ?? null,
             });
             if (adminEmail) {
                 await interviewEmail_service_1.InterviewEmailService.sendAdminEmail({
-                    type,
-                    to: adminEmail,
-                    adminName: adminName || "Admin",
-                    candidateName,
-                    jobTitle,
-                    companyName,
-                    scheduleDate: new Date(updated.startsAt),
-                    locationOrLink: updated.locationOrLink ?? null,
-                    notes: updated.notes ?? null,
+                    type, to: adminEmail, adminName: adminName || "Admin", candidateName, jobTitle, companyName,
+                    scheduleDate: new Date(updated.startsAt), locationOrLink: updated.locationOrLink ?? null, notes: updated.notes ?? null,
                 });
             }
         }
         catch (emailError) {
-            console.error("Failed to send update emails:", emailError);
-            // Continue with update even if email fails
+            if (process.env.NODE_ENV !== "production")
+                console.error("Failed to send update emails:", emailError);
         }
         return updated;
     }
@@ -219,7 +179,6 @@ class InterviewCommandService {
         if (requesterRole !== prisma_1.UserRole.ADMIN)
             throw { status: 401, message: "Only company admin can delete schedule" };
         const interview = await assertCompanyOwnershipByInterview(id, requesterId);
-        // Try to send cancellation emails, but don't fail the delete operation if email fails
         try {
             const candidateEmail = interview.application.user.email;
             const candidateName = interview.application.user.name;
@@ -228,33 +187,19 @@ class InterviewCommandService {
             const adminEmail = interview.application.job.company.owner?.email;
             const adminName = interview.application.job.company.owner?.name || null;
             await interviewEmail_service_1.InterviewEmailService.sendCandidateEmail({
-                type: "cancelled",
-                to: candidateEmail,
-                candidateName,
-                adminName,
-                jobTitle,
-                companyName,
-                scheduleDate: new Date(interview.startsAt),
-                locationOrLink: interview.locationOrLink ?? null,
-                notes: interview.notes ?? null,
+                type: "cancelled", to: candidateEmail, candidateName, adminName, jobTitle, companyName,
+                scheduleDate: new Date(interview.startsAt), locationOrLink: interview.locationOrLink ?? null, notes: interview.notes ?? null,
             });
             if (adminEmail) {
                 await interviewEmail_service_1.InterviewEmailService.sendAdminEmail({
-                    type: "cancelled",
-                    to: adminEmail,
-                    adminName: adminName || "Admin",
-                    candidateName,
-                    jobTitle,
-                    companyName,
-                    scheduleDate: new Date(interview.startsAt),
-                    locationOrLink: interview.locationOrLink ?? null,
-                    notes: interview.notes ?? null,
+                    type: "cancelled", to: adminEmail, adminName: adminName || "Admin", candidateName, jobTitle, companyName,
+                    scheduleDate: new Date(interview.startsAt), locationOrLink: interview.locationOrLink ?? null, notes: interview.notes ?? null,
                 });
             }
         }
         catch (emailError) {
-            console.error("Failed to send cancellation emails:", emailError);
-            // Continue with deletion even if email fails
+            if (process.env.NODE_ENV !== "production")
+                console.error("Failed to send cancellation emails:", emailError);
         }
         await interview_repository_1.InterviewRepository.deleteOne(id);
         return { success: true };

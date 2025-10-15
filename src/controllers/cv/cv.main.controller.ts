@@ -24,7 +24,9 @@ export class CVMainController {
         data: cv,
       });
     } catch (error) {
-      console.error("Generate CV error:", error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Generate CV error:", error);
+      }
       res.status(500).json({
         message: "Failed to generate CV",
         error: error instanceof Error ? error.message : "Unknown error",
@@ -47,7 +49,9 @@ export class CVMainController {
         data: cvs,
       });
     } catch (error) {
-      console.error("Get user CVs error:", error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Get user CVs error:", error);
+      }
       res.status(500).json({
         message: "Failed to retrieve CVs",
         error: error instanceof Error ? error.message : "Unknown error",
@@ -80,7 +84,9 @@ export class CVMainController {
         data: cv,
       });
     } catch (error) {
-      console.error("Get CV by ID error:", error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Get CV by ID error:", error);
+      }
       res.status(500).json({
         message: "Failed to retrieve CV",
         error: error instanceof Error ? error.message : "Unknown error",
@@ -116,7 +122,9 @@ export class CVMainController {
         data: updatedCV,
       });
     } catch (error) {
-      console.error("Update CV error:", error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Update CV error:", error);
+      }
       res.status(500).json({
         message: "Failed to update CV",
         error: error instanceof Error ? error.message : "Unknown error",
@@ -144,7 +152,9 @@ export class CVMainController {
         message: "CV deleted successfully",
       });
     } catch (error) {
-      console.error("Delete CV error:", error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Delete CV error:", error);
+      }
       res.status(500).json({
         message: "Failed to delete CV",
         error: error instanceof Error ? error.message : "Unknown error",

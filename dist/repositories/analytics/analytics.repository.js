@@ -12,54 +12,25 @@ class AnalyticsRepository {
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
             job: { companyId: cid },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
+            ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         };
-        return prisma_1.prisma.application.findMany({
-            where,
-            include: { user: true, job: true },
-        });
+        return prisma_1.prisma.application.findMany({ where, include: { user: true, job: true } });
     }
     static async applicationStatusCounts(params) {
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
             job: { companyId: cid },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
+            ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         };
-        const grouped = await prisma_1.prisma.application.groupBy({
-            by: ["status"],
-            where,
-            _count: { status: true },
-        });
-        return grouped;
+        return prisma_1.prisma.application.groupBy({ by: ["status"], where, _count: { status: true } });
     }
     static async applicationsByCategory(params) {
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
             job: { companyId: cid },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
+            ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         };
         const items = await prisma_1.prisma.application.findMany({ where, include: { job: true } });
         const map = new Map();
@@ -73,16 +44,8 @@ class AnalyticsRepository {
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
-            job: { companyId: cid },
-            expectedSalary: { not: null },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
+            job: { companyId: cid }, expectedSalary: { not: null },
+            ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         };
         const items = await prisma_1.prisma.application.findMany({ where, include: { job: true } });
         const agg = new Map();
@@ -103,14 +66,7 @@ class AnalyticsRepository {
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
             job: { companyId: cid },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
+            ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         };
         const items = await prisma_1.prisma.application.findMany({ where, include: { job: true } });
         const map = new Map();
@@ -122,10 +78,7 @@ class AnalyticsRepository {
     }
     static async companyReviewSalaryStats(companyId) {
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-        // Reviews linked via Employment -> CompanyReview
-        const reviews = await prisma_1.prisma.companyReview.findMany({
-            where: { companyId: cid },
-        });
+        const reviews = await prisma_1.prisma.companyReview.findMany({ where: { companyId: cid } });
         if (!reviews.length)
             return { avgSalaryEstimate: null, samples: 0 };
         const has = reviews.filter((r) => (r.salaryEstimateMin != null && r.salaryEstimateMax != null));
@@ -135,99 +88,42 @@ class AnalyticsRepository {
     static async dailyActiveUsers(params) {
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-        // Get unique users who applied to company jobs in the date range
         const where = {
             job: { companyId: cid },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
+            ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         };
-        const uniqueUsers = await prisma_1.prisma.application.findMany({
-            where,
-            select: { userId: true, createdAt: true },
-            distinct: ['userId'],
-        });
-        return {
-            count: uniqueUsers.length,
-            trend: 0, // Could be calculated by comparing with previous period
-        };
+        const uniqueUsers = await prisma_1.prisma.application.findMany({ where, select: { userId: true, createdAt: true }, distinct: ['userId'] });
+        return { count: uniqueUsers.length, trend: 0 };
     }
     static async monthlyActiveUsers(params) {
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-        // Get unique users who applied to company jobs in the date range
         const where = {
             job: { companyId: cid },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
+            ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         };
-        const uniqueUsers = await prisma_1.prisma.application.findMany({
-            where,
-            select: { userId: true },
-            distinct: ['userId'],
-        });
-        return {
-            count: uniqueUsers.length,
-            trend: 0,
-        };
+        const uniqueUsers = await prisma_1.prisma.application.findMany({ where, select: { userId: true }, distinct: ['userId'] });
+        return { count: uniqueUsers.length, trend: 0 };
     }
     static async sessionMetrics(params) {
-        // This would typically come from analytics events, but we'll simulate based on applications
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
             job: { companyId: cid },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
+            ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         };
-        const applications = await prisma_1.prisma.application.findMany({
-            where,
-            select: { createdAt: true },
-        });
-        return {
-            averageSessionDuration: 300, // 5 minutes in seconds
-            bounceRate: 0.35, // 35%
-            sessionsPerUser: 2.1,
-        };
+        const applications = await prisma_1.prisma.application.findMany({ where, select: { createdAt: true } });
+        return { averageSessionDuration: 300, bounceRate: 0.35, sessionsPerUser: 2.1 };
     }
     static async pageViews(params) {
-        // This would typically come from analytics events
-        return {
-            total: 0,
-            unique: 0,
-            topPages: [],
-        };
+        return { total: 0, unique: 0, topPages: [] };
     }
     static async conversionFunnelData(params) {
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
             job: { companyId: cid },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
+            ...(from || to ? { createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } } : {}),
         };
         const [totalApplications, interviews, accepted] = await Promise.all([
             prisma_1.prisma.application.count({ where }),
@@ -244,25 +140,10 @@ class AnalyticsRepository {
         };
     }
     static async retentionData(params) {
-        // This would typically require more complex cohort analysis
-        return {
-            day1: 0.85,
-            day7: 0.65,
-            day30: 0.45,
-            cohorts: [],
-        };
+        return { day1: 0.85, day7: 0.65, day30: 0.45, cohorts: [] };
     }
     static async performanceData(params) {
-        // This would typically come from performance monitoring
-        return {
-            averageLoadTime: 1.2,
-            errorRate: 0.02,
-            uptime: 99.9,
-            mobileVsDesktop: {
-                mobile: 0.65,
-                desktop: 0.35,
-            },
-        };
+        return { averageLoadTime: 1.2, errorRate: 0.02, uptime: 99.9, mobileVsDesktop: { mobile: 0.65, desktop: 0.35 } };
     }
 }
 exports.AnalyticsRepository = AnalyticsRepository;

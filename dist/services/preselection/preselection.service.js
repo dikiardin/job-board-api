@@ -8,7 +8,6 @@ class PreselectionService {
         const { jobId, requesterId, requesterRole, questions, passingScore, isActive = true } = params;
         this.validateAdminAccess(requesterRole);
         await this.validateJobOwnership(jobId, requesterId);
-        // Allow disabling test without providing 25 questions
         if (isActive) {
             this.validateQuestions(questions);
             this.validatePassingScore(passingScore, questions.length);
@@ -59,16 +58,10 @@ class PreselectionService {
         const test = await preselection_repository_1.PreselectionRepository.getTestByJobId(jobId);
         if (!test)
             throw { status: 404, message: "Test not found" };
-        // Hide answers for non-admins
         const hideAnswers = requesterRole !== prisma_1.UserRole.ADMIN;
         return {
-            id: test.id,
-            jobId: test.jobId,
-            isActive: test.isActive,
-            passingScore: test.passingScore,
-            createdAt: test.createdAt,
+            id: test.id, jobId: test.jobId, isActive: test.isActive, passingScore: test.passingScore, createdAt: test.createdAt,
             questions: test.questions.map((q) => {
-                // Ensure options is always an array
                 let options = [];
                 if (Array.isArray(q.options)) {
                     options = q.options;
@@ -82,15 +75,9 @@ class PreselectionService {
                     }
                 }
                 else if (q.options && typeof q.options === 'object') {
-                    // Handle Prisma Json type
                     options = q.options;
                 }
-                return {
-                    id: q.id,
-                    question: q.question,
-                    options,
-                    ...(hideAnswers ? {} : { answer: q.answer }),
-                };
+                return { id: q.id, question: q.question, options, ...(hideAnswers ? {} : { answer: q.answer }) };
             }),
         };
     }
@@ -105,13 +92,11 @@ class PreselectionService {
             throw { status: 404, message: "Test not found" };
         if (!prismaTest.isActive)
             throw { status: 400, message: "Test is not active" };
-        // Prevent double submit
         const existing = await preselection_repository_1.PreselectionRepository.getResult(applicantId, testId);
         if (existing)
             throw { status: 400, message: "You have already submitted this test" };
         if (!Array.isArray(answers) || answers.length === 0)
             throw { status: 400, message: "Answers are required" };
-        // Map questions for quick lookup
         const qMap = new Map(prismaTest.questions.map((q) => [q.id, q]));
         let score = 0;
         const answerRecords = [];
@@ -119,7 +104,6 @@ class PreselectionService {
             const q = qMap.get(a.questionId);
             if (!q)
                 throw { status: 400, message: `Invalid questionId ${a.questionId}` };
-            // Ensure options is always an array
             let options = [];
             if (Array.isArray(q.options)) {
                 options = q.options;
@@ -133,7 +117,6 @@ class PreselectionService {
                 }
             }
             else if (q.options && typeof q.options === 'object') {
-                // Handle Prisma Json type
                 options = q.options;
             }
             if (!options.includes(a.selected))
@@ -143,16 +126,12 @@ class PreselectionService {
                 score += 1;
             answerRecords.push({ questionId: a.questionId, selected: a.selected, isCorrect });
         }
-        // Optional: validate that all questions were answered
         if (answers.length !== prismaTest.questions.length) {
-            // Allow partial submissions? We'll require complete submissions to avoid ambiguity
             throw { status: 400, message: "All questions must be answered" };
         }
         const result = await preselection_repository_1.PreselectionRepository.createResult(applicantId, testId, score, answerRecords);
         return {
-            resultId: result.id,
-            score,
-            totalQuestions: prismaTest.questions.length,
+            resultId: result.id, score, totalQuestions: prismaTest.questions.length,
             isPassed: prismaTest.passingScore != null ? score >= prismaTest.passingScore : undefined,
         };
     }
@@ -170,13 +149,9 @@ class PreselectionService {
         if (!data)
             return { jobId, results: [] };
         return {
-            jobId: data.jobId,
-            testId: data.id,
+            jobId: data.jobId, testId: data.id,
             results: data.results.map((r) => ({
-                resultId: r.id,
-                user: { id: r.userId, name: r.user?.name, email: r.user?.email },
-                score: r.score,
-                submittedAt: r.createdAt,
+                resultId: r.id, user: { id: r.userId, name: r.user?.name, email: r.user?.email }, score: r.score, submittedAt: r.createdAt,
             })),
         };
     }
@@ -191,14 +166,7 @@ class PreselectionService {
         const score = result?.score ?? null;
         const passingScore = test.passingScore ?? null;
         const isPassed = submitted ? (passingScore != null ? (score >= passingScore) : true) : false;
-        return {
-            required: true,
-            testId: test.id,
-            submitted,
-            score,
-            passingScore,
-            isPassed,
-        };
+        return { required: true, testId: test.id, submitted, score, passingScore, isPassed };
     }
 }
 exports.PreselectionService = PreselectionService;

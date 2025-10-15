@@ -26,7 +26,9 @@ class ForgotPasswordService {
             });
         }
         catch (err) {
-            console.error("Nodemailer Error:", err);
+            if (process.env.NODE_ENV !== "production") {
+                console.error("Nodemailer Error:", err);
+            }
             throw new customError_1.CustomError("Failed to send reset password email", 500);
         }
         return { message: "Password reset email sent. Please check your email." };

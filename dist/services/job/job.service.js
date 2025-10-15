@@ -29,10 +29,8 @@ class JobService {
             const d = new Date(payload.deadline);
             if (isNaN(d.getTime()))
                 errors.push("deadline must be a valid date");
-            // Only check past date for CREATE, not UPDATE
-            else if (!isUpdate && d.getTime() < Date.now()) {
+            else if (!isUpdate && d.getTime() < Date.now())
                 errors.push("deadline cannot be in the past");
-            }
         }
         if (payload?.tags && !Array.isArray(payload.tags))
             errors.push("tags must be an array of strings");
@@ -46,16 +44,9 @@ class JobService {
         await this.assertCompanyOwnership(companyId, requesterId);
         this.validateJobPayload(body);
         const job = await job_repository_1.JobRepository.createJob(companyId, {
-            title: body.title,
-            description: body.description,
-            banner: body.banner ?? null,
-            category: body.category,
-            city: body.city,
-            salaryMin: body.salaryMin ?? null,
-            salaryMax: body.salaryMax ?? null,
-            tags: body.tags ?? [],
-            deadline: body.deadline ? new Date(body.deadline) : null,
-            isPublished: body.isPublished ?? false,
+            title: body.title, description: body.description, banner: body.banner ?? null, category: body.category, city: body.city,
+            salaryMin: body.salaryMin ?? null, salaryMax: body.salaryMax ?? null, tags: body.tags ?? [],
+            deadline: body.deadline ? new Date(body.deadline) : null, isPublished: body.isPublished ?? false,
         });
         return job;
     }
@@ -65,7 +56,6 @@ class JobService {
             throw { status: 401, message: "Only company admin can update jobs" };
         await this.assertCompanyOwnership(companyId, requesterId);
         this.validateJobPayload(body, true);
-        // Build update data with only valid fields
         const updateData = {};
         if (body.title !== undefined)
             updateData.title = body.title;
@@ -123,9 +113,8 @@ class JobService {
         return this.formatJobListResponse(result);
     }
     static validateAdminAccess(requesterRole) {
-        if (requesterRole !== prisma_1.UserRole.ADMIN) {
+        if (requesterRole !== prisma_1.UserRole.ADMIN)
             throw { status: 401, message: "Only company admin can list their jobs" };
-        }
     }
     static buildQueryParams(companyId, query) {
         const repoQuery = { companyId };
@@ -145,18 +134,10 @@ class JobService {
     }
     static formatJobListResponse(result) {
         return {
-            total: result.total,
-            limit: result.limit,
-            offset: result.offset,
+            total: result.total, limit: result.limit, offset: result.offset,
             items: result.items.map((j) => ({
-                id: j.id,
-                title: j.title,
-                category: j.category,
-                city: j.city,
-                isPublished: j.isPublished,
-                deadline: j.deadline,
-                createdAt: j.createdAt,
-                applicantsCount: j._count?.applications ?? 0,
+                id: j.id, title: j.title, category: j.category, city: j.city, isPublished: j.isPublished,
+                deadline: j.deadline, createdAt: j.createdAt, applicantsCount: j._count?.applications ?? 0,
             })),
         };
     }
@@ -179,18 +160,10 @@ class JobService {
             repoQuery.offset = query.offset;
         const result = await job_repository_1.JobRepository.listPublishedJobs(repoQuery);
         return {
-            total: result.total,
-            limit: result.limit,
-            offset: result.offset,
+            total: result.total, limit: result.limit, offset: result.offset,
             items: result.items.map((j) => ({
-                id: j.id,
-                title: j.title,
-                category: j.category,
-                city: j.city,
-                deadline: j.deadline,
-                createdAt: j.createdAt,
-                companyId: j.companyId,
-                companyName: j.company?.name,
+                id: j.id, title: j.title, category: j.category, city: j.city, deadline: j.deadline,
+                createdAt: j.createdAt, companyId: j.companyId, companyName: j.company?.name,
             })),
         };
     }
@@ -208,44 +181,24 @@ class JobService {
             let preselectionPassed = undefined;
             if (test) {
                 const result = test.results.find((r) => r.userId === a.userId);
-                if (result) {
+                if (result)
                     preselectionPassed = passingScore != null ? result.score >= passingScore : true;
-                }
-                else {
+                else
                     preselectionPassed = false;
-                }
             }
             return {
-                applicationId: a.id,
-                userId: a.userId,
-                userName: a.user?.name,
-                userEmail: a.user?.email,
-                profilePicture: a.user?.profilePicture ?? null,
-                expectedSalary: a.expectedSalary ?? null,
-                cvFile: a.cvUrl ?? null,
+                applicationId: a.id, userId: a.userId, userName: a.user?.name, userEmail: a.user?.email,
+                profilePicture: a.user?.profilePicture ?? null, expectedSalary: a.expectedSalary ?? null, cvFile: a.cvUrl ?? null,
                 score: test ? test.results.find((r) => r.userId === a.userId)?.score ?? null : null,
-                preselectionPassed,
-                status: a.status,
-                appliedAt: a.createdAt,
+                preselectionPassed, status: a.status, appliedAt: a.createdAt,
             };
         });
         return {
-            id: job.id,
-            title: job.title,
-            description: job.description,
-            banner: job.bannerUrl ?? null,
-            category: job.category,
-            city: job.city,
-            employmentType: job.employmentType ?? null,
-            experienceLevel: job.experienceLevel ?? null,
-            salaryMin: job.salaryMin,
-            salaryMax: job.salaryMax,
-            tags: job.tags,
-            deadline: job.applyDeadline ?? null,
-            isPublished: job.isPublished,
-            createdAt: job.createdAt,
-            applicantsCount: job._count?.applications ?? (job.applications?.length ?? 0),
-            applicants,
+            id: job.id, title: job.title, description: job.description, banner: job.bannerUrl ?? null,
+            category: job.category, city: job.city, employmentType: job.employmentType ?? null, experienceLevel: job.experienceLevel ?? null,
+            salaryMin: job.salaryMin, salaryMax: job.salaryMax, tags: job.tags, deadline: job.applyDeadline ?? null,
+            isPublished: job.isPublished, createdAt: job.createdAt,
+            applicantsCount: job._count?.applications ?? (job.applications?.length ?? 0), applicants,
         };
     }
 }

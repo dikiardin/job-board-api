@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateCategory = exports.validateTemplateId = exports.validatePagination = exports.validateSearchBadgeTemplate = exports.validateUpdateBadgeTemplate = exports.validateCreateBadgeTemplate = void 0;
 const joi_1 = __importDefault(require("joi"));
-// Validation schemas
 const createBadgeTemplateSchema = joi_1.default.object({
     name: joi_1.default.string().min(3).max(50).required().messages({
         "string.min": "Badge name must be at least 3 characters long",
@@ -55,29 +54,18 @@ const paginationSchema = joi_1.default.object({
         "number.max": "Limit must not exceed 50",
     }),
 });
-// Validation middleware functions for form-data
 const validateCreateBadgeTemplate = (req, res, next) => {
-    // Debug: Log request body and file
-    console.log('Request body:', req.body);
-    console.log('Request file:', req.file);
-    // Manual validation for form-data fields - handle potential key spacing issues
     const bodyKeys = Object.keys(req.body);
-    console.log('Available body keys:', bodyKeys);
-    // Find name field (handle potential spacing issues)
     const nameKey = bodyKeys.find(key => key.trim() === 'name') || 'name';
     const descKey = bodyKeys.find(key => key.trim() === 'description') || 'description';
     const catKey = bodyKeys.find(key => key.trim() === 'category') || 'category';
     const name = req.body[nameKey];
     const description = req.body[descKey];
     const category = req.body[catKey];
-    console.log('Extracted values:', { name, description, category });
-    // Validate required fields
     if (!name || typeof name !== 'string' || name.trim().length < 3) {
-        console.log('Name validation failed:', { name, type: typeof name, nameKey });
         return res.status(400).json({
             success: false,
-            message: "Badge name is required and must be at least 3 characters long",
-            debug: { receivedName: name, nameType: typeof name, availableKeys: bodyKeys }
+            message: "Badge name is required and must be at least 3 characters long"
         });
     }
     if (name.trim().length > 50) {
@@ -86,21 +74,18 @@ const validateCreateBadgeTemplate = (req, res, next) => {
             message: "Badge name must not exceed 50 characters",
         });
     }
-    // Validate optional description
     if (description && (typeof description !== 'string' || description.length > 200)) {
         return res.status(400).json({
             success: false,
             message: "Description must not exceed 200 characters",
         });
     }
-    // Validate optional category
     if (category && (typeof category !== 'string' || category.length > 30)) {
         return res.status(400).json({
             success: false,
             message: "Category must not exceed 30 characters",
         });
     }
-    // Validate file upload
     if (!req.file) {
         return res.status(400).json({
             success: false,
@@ -111,30 +96,25 @@ const validateCreateBadgeTemplate = (req, res, next) => {
 };
 exports.validateCreateBadgeTemplate = validateCreateBadgeTemplate;
 const validateUpdateBadgeTemplate = (req, res, next) => {
-    // Manual validation for form-data fields
     const { name, description, category } = req.body;
-    // Check if at least one field is provided (name, description, category, or file)
     if (!name && !description && !category && !req.file) {
         return res.status(400).json({
             success: false,
             message: "At least one field (name, description, category, or icon) must be provided for update",
         });
     }
-    // Validate name if provided
     if (name && (typeof name !== 'string' || name.trim().length < 3 || name.trim().length > 50)) {
         return res.status(400).json({
             success: false,
             message: "Badge name must be between 3 and 50 characters long",
         });
     }
-    // Validate description if provided
     if (description && (typeof description !== 'string' || description.length > 200)) {
         return res.status(400).json({
             success: false,
             message: "Description must not exceed 200 characters",
         });
     }
-    // Validate category if provided
     if (category && (typeof category !== 'string' || category.length > 30)) {
         return res.status(400).json({
             success: false,

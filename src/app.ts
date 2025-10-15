@@ -151,7 +151,9 @@ class App {
   private errorHandling(): void {
     this.app.use(
       (error: any, req: Request, res: Response, next: NextFunction) => {
-        console.log("Global error handler:", error);
+        if (process.env.NODE_ENV !== "production") {
+          console.log("Global error handler:", error);
+        }
 
         // Handle JWT errors
         if (error.name === "JsonWebTokenError") {

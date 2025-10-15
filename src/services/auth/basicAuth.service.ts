@@ -51,7 +51,9 @@ export class BasicAuthService {
         html: buildVerificationEmail(name, token),
       });
     } catch (err) {
-      console.error("Nodemailer Error:", err);
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Nodemailer Error:", err);
+      }
       throw new CustomError("Failed to send verification email", 500);
     }
 
