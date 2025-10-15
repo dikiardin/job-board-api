@@ -35,20 +35,20 @@ class App {
   }
 
   private configure(): void {
-    // Security headers
-    this.app.use(
-      helmet({
-        contentSecurityPolicy: {
-          directives: {
-            defaultSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            scriptSrc: ["'self'"],
-            imgSrc: ["'self'", "data:", "https:"],
-          },
-        },
-        crossOriginEmbedderPolicy: false,
-      })
-    );
+    // Security headers - DISABLED FOR TESTING
+    // this.app.use(
+    //   helmet({
+    //     contentSecurityPolicy: {
+    //       directives: {
+    //         defaultSrc: ["'self'"],
+    //         styleSrc: ["'self'", "'unsafe-inline'"],
+    //         scriptSrc: ["'self'"],
+    //         imgSrc: ["'self'", "data:", "https:"],
+    //       },
+    //     },
+    //     crossOriginEmbedderPolicy: false,
+    //   })
+    // );
 
     // Request logging (development only)
     if (process.env.NODE_ENV !== "production") {
@@ -60,43 +60,21 @@ class App {
       });
     }
 
-    // CORS configuration
-    const devOrigins = new Set(
-      [
-        process.env.FE_URL,
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://job-board-app-xi.vercel.app",
-      ].filter(Boolean) as string[]
-    );
-
+    // CORS configuration - SIMPLIFIED LIKE EVENT-MANAGEMENT-API
     this.app.use(
       cors({
-        origin: (origin, callback) => {
-          // Allow server-to-server or tools with no origin
-          if (!origin) return callback(null, true);
-
-          if (process.env.NODE_ENV === "production") {
-            const allowed = [
-              "https://job-board-app-xi.vercel.app",
-              process.env.FE_URL,
-            ].filter(Boolean) as string[];
-            return allowed.includes(origin)
-              ? callback(null, true)
-              : callback(new Error(`CORS blocked for origin: ${origin}`));
-          }
-
-          // Development: optionally allow file:// (Origin: null) and common localhost variants
-          if (origin === "null") return callback(null, true);
-          return devOrigins.has(origin)
-            ? callback(null, true)
-            : callback(new Error(`CORS blocked for origin: ${origin}`));
-        },
+        origin: [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "https://job-board-app-xi.vercel.app",
+          ...(process.env.FE_URL ? [process.env.FE_URL] : []),
+        ],
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         credentials: true,
-        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-        optionsSuccessStatus: 204,
-      } as CorsOptions)
+        allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+        exposedHeaders: ["Content-Type", "Authorization"],
+        optionsSuccessStatus: 200,
+      })
     );
 
     // Body parsing with limits
