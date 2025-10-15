@@ -180,6 +180,8 @@ export declare class JobService {
         banner: any;
         category: string;
         city: string;
+        employmentType: string | null;
+        experienceLevel: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
         tags: string[];

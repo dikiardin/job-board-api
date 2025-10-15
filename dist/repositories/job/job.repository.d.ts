@@ -58,6 +58,8 @@ export declare class JobRepository {
         banner?: string | null;
         category: string;
         city: string;
+        employmentType?: string | null;
+        experienceLevel?: string | null;
         salaryMin?: number | null;
         salaryMax?: number | null;
         tags: string[];

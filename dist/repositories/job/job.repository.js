@@ -27,15 +27,35 @@ class JobRepository {
     }
     static async updateJob(companyId, jobId, data) {
         const jid = typeof jobId === "string" ? Number(jobId) : jobId;
+        // Build update data with whitelisted fields only
+        const updateData = {};
+        if (data.title !== undefined)
+            updateData.title = data.title;
+        if (data.description !== undefined)
+            updateData.description = data.description;
+        if (data.category !== undefined)
+            updateData.category = data.category;
+        if (data.city !== undefined)
+            updateData.city = data.city;
+        if (data.employmentType !== undefined)
+            updateData.employmentType = data.employmentType;
+        if (data.experienceLevel !== undefined)
+            updateData.experienceLevel = data.experienceLevel;
+        if (data.salaryMin !== undefined)
+            updateData.salaryMin = data.salaryMin;
+        if (data.salaryMax !== undefined)
+            updateData.salaryMax = data.salaryMax;
+        if (data.tags !== undefined)
+            updateData.tags = data.tags;
+        if (data.isPublished !== undefined)
+            updateData.isPublished = data.isPublished;
+        if (data.banner !== undefined)
+            updateData.bannerUrl = data.banner;
+        if (data.deadline !== undefined)
+            updateData.applyDeadline = data.deadline;
         return prisma_1.prisma.job.update({
             where: { id: jid },
-            data: {
-                ...data,
-                ...(data.banner !== undefined ? { bannerUrl: data.banner } : {}),
-                ...(data.deadline !== undefined
-                    ? { applyDeadline: data.deadline }
-                    : {}),
-            },
+            data: updateData,
         });
     }
     static async getJobById(companyId, jobId) {

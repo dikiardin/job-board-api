@@ -4,6 +4,38 @@ exports.InterviewController = void 0;
 const interview_command_service_1 = require("../../services/interview/interview.command.service");
 const interview_query_service_1 = require("../../services/interview/interview.query.service");
 class InterviewController {
+    static async getJobsWithApplicantCounts(req, res, next) {
+        try {
+            const companyId = req.params.companyId;
+            const requester = res.locals.decrypt;
+            const data = await interview_query_service_1.InterviewQueryService.getJobsWithApplicantCounts({
+                companyId,
+                requesterId: requester.userId,
+                requesterRole: requester.role,
+            });
+            res.status(200).json({ success: true, data });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    static async getEligibleApplicants(req, res, next) {
+        try {
+            const companyId = req.params.companyId;
+            const jobId = req.params.jobId;
+            const requester = res.locals.decrypt;
+            const data = await interview_query_service_1.InterviewQueryService.getEligibleApplicants({
+                companyId,
+                jobId,
+                requesterId: requester.userId,
+                requesterRole: requester.role,
+            });
+            res.status(200).json({ success: true, data });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
     static async createMany(req, res, next) {
         try {
             const companyId = req.params.companyId;

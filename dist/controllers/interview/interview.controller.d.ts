@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 export declare class InterviewController {
+    static getJobsWithApplicantCounts(req: Request, res: Response, next: NextFunction): Promise<void>;
+    static getEligibleApplicants(req: Request, res: Response, next: NextFunction): Promise<void>;
     static createMany(req: Request, res: Response, next: NextFunction): Promise<void>;
     static list(req: Request, res: Response, next: NextFunction): Promise<void>;
     static detail(req: Request, res: Response, next: NextFunction): Promise<void>;

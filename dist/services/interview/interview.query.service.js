@@ -28,6 +28,63 @@ async function assertCompanyOwnershipByInterview(interviewId, requesterId) {
     return interview;
 }
 class InterviewQueryService {
+    static async getJobsWithApplicantCounts(params) {
+        const { companyId, requesterId, requesterRole } = params;
+        await assertCompanyOwnershipByCompanyId(companyId, requesterId, requesterRole);
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+        const jobs = await prisma_2.prisma.job.findMany({
+            where: { companyId: cid },
+            include: {
+                applications: {
+                    where: { status: 'ACCEPTED' },
+                    select: { id: true }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+        return jobs.map(job => ({
+            id: job.id,
+            title: job.title,
+            category: job.category,
+            city: job.city,
+            acceptedApplicantsCount: job.applications.length
+        }));
+    }
+    static async getEligibleApplicants(params) {
+        const { companyId, jobId, requesterId, requesterRole } = params;
+        await assertCompanyOwnershipByCompanyId(companyId, requesterId, requesterRole);
+        const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
+        const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+        // Verify job exists and belongs to the company
+        const job = await prisma_2.prisma.job.findFirst({
+            where: { id: jid, companyId: cid }
+        });
+        if (!job) {
+            throw { status: 404, message: "Job not found" };
+        }
+        const applications = await prisma_2.prisma.application.findMany({
+            where: {
+                jobId: jid,
+                status: 'ACCEPTED'
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+        return applications.map(app => ({
+            userId: app.userId,
+            userName: app.user.name || 'Unknown',
+            userEmail: app.user.email,
+            applicationId: app.id
+        }));
+    }
     static async list(params) {
         const { companyId, requesterId, requesterRole, query } = params;
         await assertCompanyOwnershipByCompanyId(companyId, requesterId, requesterRole);
@@ -57,7 +114,7 @@ class InterviewQueryService {
             items: result.items.map((it) => ({
                 id: it.id,
                 applicationId: it.applicationId,
-                scheduleDate: it.scheduleDate,
+                scheduleDate: it.startsAt,
                 locationOrLink: it.locationOrLink ?? null,
                 notes: it.notes ?? null,
                 status: it.status,

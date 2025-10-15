@@ -115,7 +115,7 @@ export class InterviewRepository {
       ...(status ? { status } : {}),
       ...(dateFrom || dateTo
         ? {
-            scheduleDate: {
+            startsAt: {
               ...(dateFrom ? { gte: dateFrom } : {}),
               ...(dateTo ? { lte: dateTo } : {}),
             },
