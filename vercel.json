@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.ts": { "runtime": "nodejs20.x" },
-    "api/cron/subscription.ts": { "runtime": "nodejs20.x" },
-    "api/cron/interview.ts": { "runtime": "nodejs20.x" }
-  },
-  "crons": [
-    { "path": "/api/cron/subscription", "schedule": "*/15 * * * *" },
-    { "path": "/api/cron/interview", "schedule": "0 */6 * * *" }
-  ]
+  "builds": [
+    {
+      "src": "api/index.ts",  // Only build the main entry point
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/api/index" }  // Route everything to the main function
+  ]
 }
