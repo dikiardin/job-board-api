@@ -40,7 +40,7 @@ export class CertificateService {
   public static generateQRCodeData(certificateCode: string): string {
     // Return verification URL for QR code
     return `${
-      process.env.FRONTEND_URL || "http://localhost:3000"
+      process.env.FE_URL || "http://localhost:3000"
     }/verify-certificate/${certificateCode}`;
   }
 
