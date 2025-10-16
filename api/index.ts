@@ -1,5 +1,6 @@
 import App from "../src/app";
 
-const app = new App().app;
+const appInstance = new App();
+const app = appInstance.app;
 
 export default app;
