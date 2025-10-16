@@ -70,4 +70,3 @@ SubscriptionValidator.validatePlanUpdate = (req, res, next) => {
     }
     next();
 };
-//# sourceMappingURL=subscription.validator.js.map

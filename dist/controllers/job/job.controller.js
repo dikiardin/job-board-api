@@ -248,4 +248,3 @@ class JobController {
     }
 }
 exports.JobController = JobController;
-//# sourceMappingURL=job.controller.js.map

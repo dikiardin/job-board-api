@@ -59,4 +59,3 @@ function buildResetPasswordEmail(name, token) {
   </body>
   `;
 }
-//# sourceMappingURL=emailTemplateResetPass.js.map

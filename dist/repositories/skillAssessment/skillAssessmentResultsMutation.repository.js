@@ -38,4 +38,3 @@ class SkillAssessmentResultsMutationRepository {
     }
 }
 exports.SkillAssessmentResultsMutationRepository = SkillAssessmentResultsMutationRepository;
-//# sourceMappingURL=skillAssessmentResultsMutation.repository.js.map

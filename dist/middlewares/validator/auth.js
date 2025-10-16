@@ -55,4 +55,3 @@ exports.loginValidation = [
         .withMessage("Invalid email format."),
     (0, express_validator_1.body)("password").notEmpty().withMessage("Password is required."),
 ];
-//# sourceMappingURL=auth.js.map

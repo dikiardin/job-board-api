@@ -19,4 +19,3 @@ class JobShareRouter {
     }
 }
 exports.default = JobShareRouter;
-//# sourceMappingURL=share.router.js.map

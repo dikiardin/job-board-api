@@ -40,4 +40,3 @@ async function recordApplicantAnswers({ prisma, resultId, testId, correctCount, 
     });
     await prisma.applicantAnswer.createMany({ data });
 }
-//# sourceMappingURL=questionUtils.js.map

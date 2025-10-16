@@ -29,4 +29,3 @@ class ForgotPasswordController {
     }
 }
 exports.ForgotPasswordController = ForgotPasswordController;
-//# sourceMappingURL=forgotPassword.controller.js.map

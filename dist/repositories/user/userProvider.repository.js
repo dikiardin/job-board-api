@@ -36,4 +36,3 @@ class UserProviderRepo {
     }
 }
 exports.UserProviderRepo = UserProviderRepo;
-//# sourceMappingURL=userProvider.repository.js.map

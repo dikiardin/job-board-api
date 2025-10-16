@@ -60,4 +60,3 @@ class PDFTemplateService {
 }
 exports.PDFTemplateService = PDFTemplateService;
 exports.pdfTemplateService = new PDFTemplateService();
-//# sourceMappingURL=pdf.template.service.js.map

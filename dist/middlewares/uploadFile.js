@@ -25,4 +25,3 @@ const uploadFile = (0, multer_1.default)({
 });
 const uploadSingleFile = (fieldName) => uploadFile.single(fieldName);
 exports.uploadSingleFile = uploadSingleFile;
-//# sourceMappingURL=uploadFile.js.map

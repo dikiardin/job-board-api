@@ -36,4 +36,3 @@ class CompanyReviewRouter {
     }
 }
 exports.default = CompanyReviewRouter;
-//# sourceMappingURL=companyReview.router.js.map

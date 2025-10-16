@@ -45,4 +45,3 @@ async function deleteFromCloudinary(fileUrl) {
     const publicId = match[1];
     return (0, cloudinary_1.deleteCloudinaryAsset)(publicId, "raw");
 }
-//# sourceMappingURL=uploadBuffer.js.map

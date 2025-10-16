@@ -33,4 +33,3 @@ class JobShareRepo {
     }
 }
 exports.JobShareRepo = JobShareRepo;
-//# sourceMappingURL=shareJob.repository.js.map

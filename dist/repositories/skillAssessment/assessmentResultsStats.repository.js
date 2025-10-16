@@ -44,4 +44,3 @@ class AssessmentResultsStatsRepository {
     }
 }
 exports.AssessmentResultsStatsRepository = AssessmentResultsStatsRepository;
-//# sourceMappingURL=assessmentResultsStats.repository.js.map

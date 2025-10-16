@@ -65,4 +65,3 @@ class PDFWorkService {
 }
 exports.PDFWorkService = PDFWorkService;
 exports.pdfWorkService = new PDFWorkService();
-//# sourceMappingURL=pdf.work.service.js.map

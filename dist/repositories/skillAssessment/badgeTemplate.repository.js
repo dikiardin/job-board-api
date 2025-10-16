@@ -68,4 +68,3 @@ class BadgeTemplateRepository {
     }
 }
 exports.BadgeTemplateRepository = BadgeTemplateRepository;
-//# sourceMappingURL=badgeTemplate.repository.js.map

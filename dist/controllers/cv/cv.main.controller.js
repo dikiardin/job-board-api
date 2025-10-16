@@ -127,4 +127,3 @@ class CVMainController {
 }
 exports.CVMainController = CVMainController;
 exports.cvMainController = new CVMainController();
-//# sourceMappingURL=cv.main.controller.js.map

@@ -71,4 +71,3 @@ class PreselectionResultService {
     }
 }
 exports.PreselectionResultService = PreselectionResultService;
-//# sourceMappingURL=result.service.js.map

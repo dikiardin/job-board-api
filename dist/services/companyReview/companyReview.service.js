@@ -47,4 +47,3 @@ class CompanyReviewService {
     }
 }
 exports.CompanyReviewService = CompanyReviewService;
-//# sourceMappingURL=companyReview.service.js.map

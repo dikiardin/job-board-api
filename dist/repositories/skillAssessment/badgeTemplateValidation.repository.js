@@ -22,4 +22,3 @@ class BadgeTemplateValidationRepository {
     }
 }
 exports.BadgeTemplateValidationRepository = BadgeTemplateValidationRepository;
-//# sourceMappingURL=badgeTemplateValidation.repository.js.map

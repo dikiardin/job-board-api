@@ -18,4 +18,3 @@ class ContactController {
     }
 }
 exports.ContactController = ContactController;
-//# sourceMappingURL=contact.controller.js.map

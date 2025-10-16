@@ -19,4 +19,3 @@ class ChangePasswordController {
     }
 }
 exports.ChangePasswordController = ChangePasswordController;
-//# sourceMappingURL=changePassword.controller.js.map

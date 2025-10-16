@@ -51,4 +51,3 @@ class ForgotPasswordService {
     }
 }
 exports.ForgotPasswordService = ForgotPasswordService;
-//# sourceMappingURL=forgotPassword.service.js.map

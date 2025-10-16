@@ -48,4 +48,3 @@ class ScoringCalculationService {
 }
 exports.ScoringCalculationService = ScoringCalculationService;
 ScoringCalculationService.DEFAULT_PASSING_SCORE = 75;
-//# sourceMappingURL=scoringCalculation.service.js.map

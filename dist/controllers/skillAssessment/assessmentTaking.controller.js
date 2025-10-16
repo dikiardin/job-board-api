@@ -160,4 +160,3 @@ class AssessmentTakingController {
     }
 }
 exports.AssessmentTakingController = AssessmentTakingController;
-//# sourceMappingURL=assessmentTaking.controller.js.map

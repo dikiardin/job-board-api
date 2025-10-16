@@ -61,4 +61,3 @@ class PaymentQueryRepo {
     }
 }
 exports.PaymentQueryRepo = PaymentQueryRepo;
-//# sourceMappingURL=paymentQuery.repository.js.map

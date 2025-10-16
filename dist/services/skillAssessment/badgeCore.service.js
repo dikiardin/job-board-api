@@ -70,4 +70,3 @@ class BadgeCoreService {
     }
 }
 exports.BadgeCoreService = BadgeCoreService;
-//# sourceMappingURL=badgeCore.service.js.map

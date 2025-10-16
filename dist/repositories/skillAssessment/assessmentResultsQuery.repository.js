@@ -99,4 +99,3 @@ class AssessmentResultsQueryRepository {
     }
 }
 exports.AssessmentResultsQueryRepository = AssessmentResultsQueryRepository;
-//# sourceMappingURL=assessmentResultsQuery.repository.js.map

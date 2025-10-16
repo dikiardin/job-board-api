@@ -99,4 +99,3 @@ class BadgeTemplateMutationController {
     }
 }
 exports.BadgeTemplateMutationController = BadgeTemplateMutationController;
-//# sourceMappingURL=BadgeTemplateMutationController.js.map

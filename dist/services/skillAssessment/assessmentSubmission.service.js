@@ -32,4 +32,3 @@ class AssessmentSubmissionService {
     }
 }
 exports.AssessmentSubmissionService = AssessmentSubmissionService;
-//# sourceMappingURL=assessmentSubmission.service.js.map

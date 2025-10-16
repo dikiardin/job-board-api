@@ -129,4 +129,3 @@ class CVDownloadController {
 }
 exports.CVDownloadController = CVDownloadController;
 exports.cvDownloadController = new CVDownloadController();
-//# sourceMappingURL=cv.download.controller.js.map

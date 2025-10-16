@@ -29,4 +29,3 @@ class ProfileController {
     }
 }
 exports.ProfileController = ProfileController;
-//# sourceMappingURL=profile.controller.js.map

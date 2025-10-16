@@ -7,4 +7,3 @@ const hashPassword = async (password) => {
     return await (0, bcrypt_1.hash)(password, salt);
 };
 exports.hashPassword = hashPassword;
-//# sourceMappingURL=hashPassword.js.map

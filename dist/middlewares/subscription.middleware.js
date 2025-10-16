@@ -110,4 +110,3 @@ const checkTemplateAccess = (req, res, next) => {
     next();
 };
 exports.checkTemplateAccess = checkTemplateAccess;
-//# sourceMappingURL=subscription.middleware.js.map

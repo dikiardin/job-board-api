@@ -54,4 +54,3 @@ function validateUpdateApplicantStatus(req, res, next) {
     req.body = value;
     next();
 }
-//# sourceMappingURL=job.validator.js.map

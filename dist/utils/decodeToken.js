@@ -13,4 +13,3 @@ const decodeToken = (token) => {
     }
 };
 exports.decodeToken = decodeToken;
-//# sourceMappingURL=decodeToken.js.map

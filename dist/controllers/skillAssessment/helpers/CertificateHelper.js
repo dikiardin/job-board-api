@@ -29,4 +29,3 @@ class CertificateHelper {
     }
 }
 exports.CertificateHelper = CertificateHelper;
-//# sourceMappingURL=CertificateHelper.js.map

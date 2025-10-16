@@ -20,4 +20,3 @@ class ApplicationRouter {
     }
 }
 exports.default = ApplicationRouter;
-//# sourceMappingURL=application.router.js.map

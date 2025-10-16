@@ -95,4 +95,3 @@ SkillAssessmentValidator.validateResultId = (req, res, next) => {
     }
     next();
 };
-//# sourceMappingURL=skillAssessment.validator.js.map

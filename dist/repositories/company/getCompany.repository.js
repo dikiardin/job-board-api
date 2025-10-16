@@ -98,4 +98,3 @@ class GetCompanyRepository {
     }
 }
 exports.GetCompanyRepository = GetCompanyRepository;
-//# sourceMappingURL=getCompany.repository.js.map

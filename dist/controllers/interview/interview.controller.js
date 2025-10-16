@@ -117,4 +117,3 @@ class InterviewController {
     }
 }
 exports.InterviewController = InterviewController;
-//# sourceMappingURL=interview.controller.js.map

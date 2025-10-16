@@ -178,4 +178,3 @@ async function seedApplications({ prisma, now, addDays, users, companies, }) {
     });
     return { applications: applications };
 }
-//# sourceMappingURL=applications.js.map

@@ -14,4 +14,3 @@ class SavedJobService {
     }
 }
 exports.SavedJobService = SavedJobService;
-//# sourceMappingURL=saveJob.service.js.map

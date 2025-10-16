@@ -44,4 +44,3 @@ class GetCompanyController {
     }
 }
 exports.GetCompanyController = GetCompanyController;
-//# sourceMappingURL=getCompany.controller.js.map

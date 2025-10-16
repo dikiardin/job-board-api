@@ -22,4 +22,3 @@ class SubscriptionMutationRepo {
     }
 }
 exports.SubscriptionMutationRepo = SubscriptionMutationRepo;
-//# sourceMappingURL=subscriptionMutation.repository.js.map

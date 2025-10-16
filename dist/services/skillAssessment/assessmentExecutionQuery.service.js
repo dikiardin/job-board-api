@@ -102,4 +102,3 @@ class AssessmentExecutionQueryService {
 }
 exports.AssessmentExecutionQueryService = AssessmentExecutionQueryService;
 AssessmentExecutionQueryService.TIME_LIMIT_MINUTES = 3; // Changed from 30 to 3 minutes to match frontend
-//# sourceMappingURL=assessmentExecutionQuery.service.js.map

@@ -140,4 +140,3 @@ class ReviewStatsQueryRepository {
     }
 }
 exports.ReviewStatsQueryRepository = ReviewStatsQueryRepository;
-//# sourceMappingURL=ReviewStatsQuery.repository.js.map

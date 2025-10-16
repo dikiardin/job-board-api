@@ -58,4 +58,3 @@ class BasicAuthController {
     }
 }
 exports.BasicAuthController = BasicAuthController;
-//# sourceMappingURL=basicAuth.controller.js.map

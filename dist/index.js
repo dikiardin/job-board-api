@@ -9,4 +9,3 @@ const main = () => {
     server.start();
 };
 main();
-//# sourceMappingURL=index.js.map

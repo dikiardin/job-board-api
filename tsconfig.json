@@ -12,9 +12,9 @@
     "moduleResolution": "node",
 
     /* Other Outputs */
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+    "sourceMap": false,
+    "declaration": false,
+    "declarationMap": false,
 
     /* Type Checking */
     "strict": true,

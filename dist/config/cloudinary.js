@@ -129,4 +129,3 @@ const deleteCloudinaryAsset = async (publicId, resourceType = "raw") => {
     return data;
 };
 exports.deleteCloudinaryAsset = deleteCloudinaryAsset;
-//# sourceMappingURL=cloudinary.js.map

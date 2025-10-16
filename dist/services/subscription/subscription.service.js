@@ -36,4 +36,3 @@ class SubscriptionService {
     }
 }
 exports.SubscriptionService = SubscriptionService;
-//# sourceMappingURL=subscription.service.js.map

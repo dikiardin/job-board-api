@@ -49,4 +49,3 @@ class GetJobController {
     }
 }
 exports.GetJobController = GetJobController;
-//# sourceMappingURL=job.get.controller.js.map

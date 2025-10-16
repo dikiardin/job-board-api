@@ -93,4 +93,3 @@ class BadgeTemplateQueryController {
     }
 }
 exports.BadgeTemplateQueryController = BadgeTemplateQueryController;
-//# sourceMappingURL=BadgeTemplateQueryController.js.map

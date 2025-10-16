@@ -49,4 +49,3 @@ class JobShareController {
     }
 }
 exports.JobShareController = JobShareController;
-//# sourceMappingURL=jobShare.controller.js.map

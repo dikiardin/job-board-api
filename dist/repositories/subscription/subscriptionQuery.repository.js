@@ -58,4 +58,3 @@ class SubscriptionQueryRepo {
     }
 }
 exports.SubscriptionQueryRepo = SubscriptionQueryRepo;
-//# sourceMappingURL=subscriptionQuery.repository.js.map

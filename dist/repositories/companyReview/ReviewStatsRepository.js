@@ -18,4 +18,3 @@ class ReviewStatsRepository {
     }
 }
 exports.ReviewStatsRepository = ReviewStatsRepository;
-//# sourceMappingURL=ReviewStatsRepository.js.map

@@ -30,4 +30,3 @@ const resolveIsProfileComplete = (user) => {
     return isUserDetailsComplete(user);
 };
 exports.resolveIsProfileComplete = resolveIsProfileComplete;
-//# sourceMappingURL=profileCompletion.js.map

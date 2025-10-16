@@ -60,4 +60,3 @@ class BadgeTemplateHelper {
     }
 }
 exports.BadgeTemplateHelper = BadgeTemplateHelper;
-//# sourceMappingURL=BadgeTemplateHelper.js.map

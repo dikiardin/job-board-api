@@ -100,4 +100,3 @@ class CVAnalyticsRepo {
     }
 }
 exports.CVAnalyticsRepo = CVAnalyticsRepo;
-//# sourceMappingURL=cv.analytics.repository.js.map

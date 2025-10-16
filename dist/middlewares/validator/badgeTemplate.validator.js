@@ -190,4 +190,3 @@ const validateCategory = (req, res, next) => {
     next();
 };
 exports.validateCategory = validateCategory;
-//# sourceMappingURL=badgeTemplate.validator.js.map

@@ -46,4 +46,3 @@ const uploadPaymentProofSingle = (fieldName) => {
     };
 };
 exports.uploadPaymentProofSingle = uploadPaymentProofSingle;
-//# sourceMappingURL=paymentProofFileFilter.js.map

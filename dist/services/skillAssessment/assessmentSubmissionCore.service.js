@@ -78,4 +78,3 @@ class AssessmentSubmissionCoreService {
     }
 }
 exports.AssessmentSubmissionCoreService = AssessmentSubmissionCoreService;
-//# sourceMappingURL=assessmentSubmissionCore.service.js.map

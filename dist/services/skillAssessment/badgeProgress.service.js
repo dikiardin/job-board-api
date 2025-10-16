@@ -70,4 +70,3 @@ class BadgeProgressService {
     }
 }
 exports.BadgeProgressService = BadgeProgressService;
-//# sourceMappingURL=badgeProgress.service.js.map

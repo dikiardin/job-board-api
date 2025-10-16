@@ -68,4 +68,3 @@ class SkillAssessmentResultsCertificateRepository {
     }
 }
 exports.SkillAssessmentResultsCertificateRepository = SkillAssessmentResultsCertificateRepository;
-//# sourceMappingURL=skillAssessmentResultsCertificate.repository.js.map

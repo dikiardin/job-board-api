@@ -78,4 +78,3 @@ async function seedCompaniesAndJobs({ prisma, now, addDays, users, }) {
     const tests = Object.fromEntries(testEntries);
     return { companies, jobs, tests };
 }
-//# sourceMappingURL=companies.js.map

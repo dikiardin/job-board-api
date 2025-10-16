@@ -135,4 +135,3 @@ class CompanyReviewController {
     }
 }
 exports.CompanyReviewController = CompanyReviewController;
-//# sourceMappingURL=companyReview.controller.js.map

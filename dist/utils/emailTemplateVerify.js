@@ -61,4 +61,3 @@ const buildVerificationEmail = (name, token) => {
   `;
 };
 exports.buildVerificationEmail = buildVerificationEmail;
-//# sourceMappingURL=emailTemplateVerify.js.map

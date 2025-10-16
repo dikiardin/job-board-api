@@ -20,4 +20,3 @@ class SocialAuthController {
     }
 }
 exports.SocialAuthController = SocialAuthController;
-//# sourceMappingURL=socialAuth.controller.js.map

@@ -1,1 +1,0 @@
-{"version":3,"file":"contact.router.d.ts","sourceRoot":"","sources":["../../src/routers/contact.router.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAGjC,cAAM,aAAa;IACjB,OAAO,CAAC,KAAK,CAAS;IACtB,OAAO,CAAC,iBAAiB,CAA2B;;IAQpD,OAAO,CAAC,gBAAgB;IAIjB,SAAS,IAAI,MAAM;CAG3B;AAED,eAAe,aAAa,CAAC"}
