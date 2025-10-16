@@ -5,12 +5,15 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import AuthRouter from "./routers/auth.router";
 import SubscriptionRouter from "./routers/subscription.router";
-import { startSubscriptionJobs } from "./jobs/subscriptionJobs";
+import {
+  startSubscriptionJobs,
+  runSubscriptionCycle,
+} from "./jobs/subscriptionJobs";
 import PreselectionRouter from "./routers/preselection.router";
 import ApplicationRouter from "./routers/application.router";
 import JobRouter from "./routers/job.router";
 import InterviewRouter from "./routers/interview.router";
-import { startInterviewJobs } from "./jobs/interviewJobs";
+import { startInterviewJobs, runInterviewCycle } from "./jobs/interviewJobs";
 import AnalyticsRouter from "./routers/analytics.router";
 import ProfileRouter from "./routers/profile.router";
 import CompanyRouter from "./routers/company.router";
@@ -108,6 +111,28 @@ class App {
         });
       } catch (error: any) {
         res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
+    // Cron job endpoints
+    this.app.get(
+      "/api/cron/subscription",
+      async (req: Request, res: Response) => {
+        try {
+          await runSubscriptionCycle();
+          res.status(200).json({ ok: true });
+        } catch (e: any) {
+          res.status(500).json({ ok: false, error: e?.message || String(e) });
+        }
+      }
+    );
+
+    this.app.get("/api/cron/interview", async (req: Request, res: Response) => {
+      try {
+        await runInterviewCycle();
+        res.status(200).json({ ok: true });
+      } catch (e: any) {
+        res.status(500).json({ ok: false, error: e?.message || String(e) });
       }
     });
 
