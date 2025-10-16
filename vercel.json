@@ -2,11 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/index.ts",  // Only build the main entry point
+      "src": "api/index.ts",  
       "use": "@vercel/node"
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/api/index" }  // Route everything to the main function
+    { "src": "/(.*)", "dest": "/api/index" }  
   ]
 }
