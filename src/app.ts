@@ -149,7 +149,7 @@ class App {
       (error: any, req: Request, res: Response, next: NextFunction) => {
         console.log("Global error handler:", error);
 
-        // Handle JWT errors
+        // Handle JWT errors code
         if (error.name === "JsonWebTokenError") {
           return res
             .status(401)
