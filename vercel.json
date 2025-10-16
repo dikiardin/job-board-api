@@ -1,5 +1,17 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "./src/index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/src/index.ts"
+    }
+  ],
   "crons": [
     { "path": "/api/cron/subscription", "schedule": "0 1 * * *" },
     { "path": "/api/cron/interview", "schedule": "0 7 * * *" }
