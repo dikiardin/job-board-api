@@ -60,4 +60,3 @@ class SavedJobController {
     }
 }
 exports.SavedJobController = SavedJobController;
-//# sourceMappingURL=saveJob.controller.js.map

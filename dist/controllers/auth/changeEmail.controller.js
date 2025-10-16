@@ -18,4 +18,3 @@ class ChangeEmailController {
     }
 }
 exports.ChangeEmailController = ChangeEmailController;
-//# sourceMappingURL=changeEmail.controller.js.map

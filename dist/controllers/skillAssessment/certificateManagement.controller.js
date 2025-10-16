@@ -105,4 +105,3 @@ class CertificateManagementController {
     }
 }
 exports.CertificateManagementController = CertificateManagementController;
-//# sourceMappingURL=certificateManagement.controller.js.map

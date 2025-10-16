@@ -60,4 +60,3 @@ class JobApplicantsRepository {
     }
 }
 exports.JobApplicantsRepository = JobApplicantsRepository;
-//# sourceMappingURL=jobApplicants.repository.js.map

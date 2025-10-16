@@ -26,4 +26,3 @@ class CreateCompanyService {
     }
 }
 exports.CreateCompanyService = CreateCompanyService;
-//# sourceMappingURL=createCompany.service.js.map

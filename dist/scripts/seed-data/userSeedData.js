@@ -161,4 +161,3 @@ exports.seekerSeeds = [
         linkedin: "https://linkedin.com/in/standard-tester",
     },
 ];
-//# sourceMappingURL=userSeedData.js.map

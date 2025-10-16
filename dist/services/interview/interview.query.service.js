@@ -130,4 +130,3 @@ class InterviewQueryService {
     }
 }
 exports.InterviewQueryService = InterviewQueryService;
-//# sourceMappingURL=interview.query.service.js.map

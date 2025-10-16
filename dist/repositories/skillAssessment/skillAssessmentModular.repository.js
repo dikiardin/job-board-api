@@ -117,4 +117,3 @@ class SkillAssessmentModularRepository {
 exports.SkillAssessmentModularRepository = SkillAssessmentModularRepository;
 // For backward compatibility, also export as default
 exports.default = SkillAssessmentModularRepository;
-//# sourceMappingURL=skillAssessmentModular.repository.js.map

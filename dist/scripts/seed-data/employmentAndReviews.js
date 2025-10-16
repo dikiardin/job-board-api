@@ -406,4 +406,3 @@ async function seedEmploymentAndReviews({ prisma, now, users, companies, }) {
         ],
     });
 }
-//# sourceMappingURL=employmentAndReviews.js.map

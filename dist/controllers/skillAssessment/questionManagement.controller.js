@@ -31,4 +31,3 @@ class QuestionManagementController {
     }
 }
 exports.QuestionManagementController = QuestionManagementController;
-//# sourceMappingURL=questionManagement.controller.js.map

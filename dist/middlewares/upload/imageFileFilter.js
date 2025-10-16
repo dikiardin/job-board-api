@@ -50,4 +50,3 @@ const uploadMultiple = (fieldName, maxCount = 5) => exports.upload.array(fieldNa
 exports.uploadMultiple = uploadMultiple;
 const uploadFields = (fields) => exports.upload.fields(fields);
 exports.uploadFields = uploadFields;
-//# sourceMappingURL=imageFileFilter.js.map

@@ -1,1 +1,0 @@
-{"version":3,"file":"paymentProofFileFilter.d.ts","sourceRoot":"","sources":["../../../src/middlewares/upload/paymentProofFileFilter.ts"],"names":[],"mappings":"AAAA,OAAO,MAAM,MAAM,QAAQ,CAAC;AA8B5B,eAAO,MAAM,kBAAkB,eAM7B,CAAC;AAGH,eAAO,MAAM,wBAAwB,GAAI,WAAW,MAAM,MAChD,KAAK,GAAG,EAAE,KAAK,GAAG,EAAE,MAAM,GAAG,SAYtC,CAAC"}

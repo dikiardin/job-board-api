@@ -120,4 +120,3 @@ class JobApplicantsService {
     }
 }
 exports.JobApplicantsService = JobApplicantsService;
-//# sourceMappingURL=job.applicants.service.js.map

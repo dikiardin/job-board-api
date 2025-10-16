@@ -20,4 +20,3 @@ class EditProfileRepository {
     }
 }
 exports.EditProfileRepository = EditProfileRepository;
-//# sourceMappingURL=editProfile.repository.js.map

@@ -21,4 +21,3 @@ const verifyGoogleToken = async (tokenId) => {
     };
 };
 exports.verifyGoogleToken = verifyGoogleToken;
-//# sourceMappingURL=google.js.map

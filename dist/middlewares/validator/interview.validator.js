@@ -34,4 +34,3 @@ function validateUpdateInterview(req, res, next) {
     req.body = value;
     next();
 }
-//# sourceMappingURL=interview.validator.js.map

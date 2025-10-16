@@ -57,4 +57,3 @@ class AssessmentResultsCertificateRepository {
     }
 }
 exports.AssessmentResultsCertificateRepository = AssessmentResultsCertificateRepository;
-//# sourceMappingURL=assessmentResultsCertificate.repository.js.map

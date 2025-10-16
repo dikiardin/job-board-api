@@ -34,20 +34,6 @@ class App {
         this.errorHandling();
     }
     configure() {
-        // Security headers - DISABLED FOR TESTING
-        // this.app.use(
-        //   helmet({
-        //     contentSecurityPolicy: {
-        //       directives: {
-        //         defaultSrc: ["'self'"],
-        //         styleSrc: ["'self'", "'unsafe-inline'"],
-        //         scriptSrc: ["'self'"],
-        //         imgSrc: ["'self'", "data:", "https:"],
-        //       },
-        //     },
-        //     crossOriginEmbedderPolicy: false,
-        //   })
-        // );
         // Request logging (development only)
         if (process.env.NODE_ENV !== "production") {
             this.app.use((req, res, next) => {
@@ -184,4 +170,3 @@ class App {
     }
 }
 exports.default = App;
-//# sourceMappingURL=app.js.map

@@ -69,4 +69,3 @@ async function seedBadgesAndCvs({ prisma, now, users, assessments, }) {
         },
     });
 }
-//# sourceMappingURL=badgesAndCvs.js.map

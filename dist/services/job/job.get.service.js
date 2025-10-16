@@ -36,4 +36,3 @@ class GetJobService {
     }
 }
 exports.GetJobService = GetJobService;
-//# sourceMappingURL=job.get.service.js.map

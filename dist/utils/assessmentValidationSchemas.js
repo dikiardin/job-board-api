@@ -103,4 +103,3 @@ AssessmentValidationSchemas.saveQuestionSchema = joi_1.default.object({
     options: joi_1.default.array().items(joi_1.default.string().min(1).required()).length(4).required(),
     answer: joi_1.default.string().min(1).required(),
 });
-//# sourceMappingURL=assessmentValidationSchemas.js.map

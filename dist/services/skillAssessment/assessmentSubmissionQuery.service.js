@@ -114,4 +114,3 @@ class AssessmentSubmissionQueryService {
     }
 }
 exports.AssessmentSubmissionQueryService = AssessmentSubmissionQueryService;
-//# sourceMappingURL=assessmentSubmissionQuery.service.js.map

@@ -67,4 +67,3 @@ const validateCVGeneration = (req, res, next) => {
     next();
 };
 exports.validateCVGeneration = validateCVGeneration;
-//# sourceMappingURL=cv.validator.js.map

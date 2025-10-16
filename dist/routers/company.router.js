@@ -20,4 +20,3 @@ class CompanyRouter {
     }
 }
 exports.default = CompanyRouter;
-//# sourceMappingURL=company.router.js.map

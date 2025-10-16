@@ -50,4 +50,3 @@ class PaymentUploadController {
     }
 }
 exports.PaymentUploadController = PaymentUploadController;
-//# sourceMappingURL=paymentUpload.controller.js.map

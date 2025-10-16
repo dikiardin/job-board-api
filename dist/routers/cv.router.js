@@ -29,4 +29,3 @@ router.patch("/:id", cv_validator_1.validateCVGeneration, subscription_middlewar
 // Delete CV
 router.delete("/:id", cv_main_controller_1.cvMainController.deleteCV);
 exports.default = router;
-//# sourceMappingURL=cv.router.js.map

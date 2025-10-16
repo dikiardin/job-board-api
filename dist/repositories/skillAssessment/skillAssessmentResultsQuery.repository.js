@@ -130,4 +130,3 @@ class SkillAssessmentResultsQueryRepository {
     }
 }
 exports.SkillAssessmentResultsQueryRepository = SkillAssessmentResultsQueryRepository;
-//# sourceMappingURL=skillAssessmentResultsQuery.repository.js.map

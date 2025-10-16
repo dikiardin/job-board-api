@@ -85,4 +85,3 @@ class BadgeVerificationService {
     }
 }
 exports.BadgeVerificationService = BadgeVerificationService;
-//# sourceMappingURL=badgeVerification.service.js.map

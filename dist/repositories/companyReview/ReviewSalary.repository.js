@@ -28,4 +28,3 @@ class ReviewSalaryRepository {
     }
 }
 exports.ReviewSalaryRepository = ReviewSalaryRepository;
-//# sourceMappingURL=ReviewSalary.repository.js.map

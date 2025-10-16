@@ -36,4 +36,3 @@ class AuthRouter {
     }
 }
 exports.default = AuthRouter;
-//# sourceMappingURL=auth.router.js.map

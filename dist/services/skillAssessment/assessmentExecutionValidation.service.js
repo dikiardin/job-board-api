@@ -33,4 +33,3 @@ class AssessmentExecutionValidationService {
 }
 exports.AssessmentExecutionValidationService = AssessmentExecutionValidationService;
 AssessmentExecutionValidationService.TIME_LIMIT_MINUTES = 30; // 30 minutes per brief
-//# sourceMappingURL=assessmentExecutionValidation.service.js.map

@@ -37,4 +37,3 @@ class PaymentController {
     }
 }
 exports.PaymentController = PaymentController;
-//# sourceMappingURL=payment.controller.js.map

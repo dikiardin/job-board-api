@@ -11,4 +11,3 @@ class GetCompanyService {
     }
 }
 exports.GetCompanyService = GetCompanyService;
-//# sourceMappingURL=getCompany.service.js.map

@@ -7,4 +7,3 @@ Object.defineProperty(exports, "uploadSingle", { enumerable: true, get: function
 Object.defineProperty(exports, "uploadMultiple", { enumerable: true, get: function () { return uploadConfig_1.uploadMultiple; } });
 Object.defineProperty(exports, "uploadFields", { enumerable: true, get: function () { return uploadConfig_1.uploadFields; } });
 Object.defineProperty(exports, "uploadPaymentProofSingle", { enumerable: true, get: function () { return uploadConfig_1.uploadPaymentProofSingle; } });
-//# sourceMappingURL=uploadImage.js.map

@@ -42,4 +42,3 @@ class CertificateDownloadService {
     }
 }
 exports.CertificateDownloadService = CertificateDownloadService;
-//# sourceMappingURL=certificateDownload.service.js.map

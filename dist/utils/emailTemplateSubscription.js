@@ -77,4 +77,3 @@ const buildSubscriptionExpirationEmail = (name, planName, expirationDate) => {
   `;
 };
 exports.buildSubscriptionExpirationEmail = buildSubscriptionExpirationEmail;
-//# sourceMappingURL=emailTemplateSubscription.js.map

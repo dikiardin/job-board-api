@@ -66,4 +66,3 @@ class PlanController {
     }
 }
 exports.PlanController = PlanController;
-//# sourceMappingURL=plan.controller.js.map

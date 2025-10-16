@@ -36,4 +36,3 @@ class CompanyController {
     }
 }
 exports.CompanyController = CompanyController;
-//# sourceMappingURL=company.controller.js.map

@@ -146,4 +146,3 @@ const validateGetReviews = (req, res, next) => {
     next();
 };
 exports.validateGetReviews = validateGetReviews;
-//# sourceMappingURL=companyReview.validator.js.map

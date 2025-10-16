@@ -166,4 +166,3 @@ async function seedUsers({ prisma, now, passwords, }) {
     });
     return { developer, mentor, admins, seekers };
 }
-//# sourceMappingURL=users.js.map

@@ -44,4 +44,3 @@ class ControllerHelper {
     }
 }
 exports.ControllerHelper = ControllerHelper;
-//# sourceMappingURL=controllerHelper.js.map

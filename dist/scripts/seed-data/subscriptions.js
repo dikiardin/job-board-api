@@ -211,4 +211,3 @@ async function seedSubscriptions({ prisma, now, addDays, users, }) {
         testStandardSubscription
     };
 }
-//# sourceMappingURL=subscriptions.js.map

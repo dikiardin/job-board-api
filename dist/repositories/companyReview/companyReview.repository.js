@@ -54,4 +54,3 @@ class CompanyReviewRepository {
     }
 }
 exports.CompanyReviewRepository = CompanyReviewRepository;
-//# sourceMappingURL=companyReview.repository.js.map

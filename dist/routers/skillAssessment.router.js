@@ -68,4 +68,3 @@ class SkillAssessmentRouter {
     }
 }
 exports.default = SkillAssessmentRouter;
-//# sourceMappingURL=skillAssessment.router.js.map

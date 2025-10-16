@@ -30,4 +30,3 @@ class ProfileRouter {
     }
 }
 exports.default = ProfileRouter;
-//# sourceMappingURL=profile.router.js.map

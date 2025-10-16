@@ -68,4 +68,3 @@ class SavedJobRepo {
     }
 }
 exports.SavedJobRepo = SavedJobRepo;
-//# sourceMappingURL=saveJob.repository.js.map

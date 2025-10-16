@@ -120,4 +120,3 @@ class PDFCoreService {
 }
 exports.PDFCoreService = PDFCoreService;
 exports.pdfCoreService = new PDFCoreService();
-//# sourceMappingURL=pdf.core.service.js.map

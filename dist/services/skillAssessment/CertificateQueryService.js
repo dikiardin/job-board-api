@@ -34,4 +34,3 @@ class CertificateQueryService {
     }
 }
 exports.CertificateQueryService = CertificateQueryService;
-//# sourceMappingURL=CertificateQueryService.js.map

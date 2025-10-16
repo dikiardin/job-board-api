@@ -50,4 +50,3 @@ class BadgeTemplateController {
     }
 }
 exports.BadgeTemplateController = BadgeTemplateController;
-//# sourceMappingURL=badgeTemplate.controller.js.map

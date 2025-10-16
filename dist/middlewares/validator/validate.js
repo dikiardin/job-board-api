@@ -15,4 +15,3 @@ const validateRequest = (req, res, next) => {
     next();
 };
 exports.validateRequest = validateRequest;
-//# sourceMappingURL=validate.js.map

@@ -43,4 +43,3 @@ class EditProfileController {
     }
 }
 exports.EditProfileController = EditProfileController;
-//# sourceMappingURL=editProfile.controller.js.map

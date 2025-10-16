@@ -139,4 +139,3 @@ class BadgeTemplateQueryRepository {
     }
 }
 exports.BadgeTemplateQueryRepository = BadgeTemplateQueryRepository;
-//# sourceMappingURL=badgeTemplateQuery.repository.js.map

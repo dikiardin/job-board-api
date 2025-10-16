@@ -97,4 +97,3 @@ class SubscriptionController {
     }
 }
 exports.SubscriptionController = SubscriptionController;
-//# sourceMappingURL=subscription.controller.js.map

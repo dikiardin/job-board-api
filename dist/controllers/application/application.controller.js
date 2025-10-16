@@ -51,4 +51,3 @@ class ApplicationController {
     }
 }
 exports.ApplicationController = ApplicationController;
-//# sourceMappingURL=application.controller.js.map

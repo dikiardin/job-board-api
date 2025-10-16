@@ -79,4 +79,3 @@ async function seedSocialAndAnalytics({ prisma, users, companies, subscriptions,
         ],
     });
 }
-//# sourceMappingURL=socialAndAnalytics.js.map

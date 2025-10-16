@@ -14,4 +14,3 @@ exports.uploadConfig = {
     allowedDocumentTypes: ['pdf'],
     allowedPaymentProofTypes: ['jpeg', 'jpg', 'png', 'gif', 'webp', 'pdf']
 };
-//# sourceMappingURL=uploadConfig.js.map

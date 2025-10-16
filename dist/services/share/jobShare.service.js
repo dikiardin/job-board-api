@@ -11,4 +11,3 @@ class JobShareService {
     }
 }
 exports.JobShareService = JobShareService;
-//# sourceMappingURL=jobShare.service.js.map

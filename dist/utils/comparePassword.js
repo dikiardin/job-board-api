@@ -6,4 +6,3 @@ const comparePassword = async (plainPassword, hashedPassword) => {
     return await (0, bcryptjs_1.compare)(plainPassword, hashedPassword);
 };
 exports.comparePassword = comparePassword;
-//# sourceMappingURL=comparePassword.js.map

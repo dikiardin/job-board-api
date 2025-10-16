@@ -11,4 +11,3 @@ class CreateCompanyRepo {
     }
 }
 exports.CreateCompanyRepo = CreateCompanyRepo;
-//# sourceMappingURL=createCompany.repository.js.map

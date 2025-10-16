@@ -27,4 +27,3 @@ class CompanyRepo {
     }
 }
 exports.CompanyRepo = CompanyRepo;
-//# sourceMappingURL=company.repository.js.map

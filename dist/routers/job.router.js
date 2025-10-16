@@ -34,4 +34,3 @@ class JobRouter {
     }
 }
 exports.default = JobRouter;
-//# sourceMappingURL=job.router.js.map

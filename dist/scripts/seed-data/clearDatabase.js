@@ -33,4 +33,3 @@ async function clearDatabase(prisma) {
     await prisma.locationCache.deleteMany();
     await prisma.user.deleteMany();
 }
-//# sourceMappingURL=clearDatabase.js.map

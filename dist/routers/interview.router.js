@@ -29,4 +29,3 @@ class InterviewRouter {
     }
 }
 exports.default = InterviewRouter;
-//# sourceMappingURL=interview.router.js.map
