@@ -17,7 +17,7 @@ export class JobShareRepo {
     sharedUrl?: string,
     customMessage?: string
   ) {
-    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const jid = typeof jobId === "string" ? Number(jobId) : jobId;
     return prisma.jobShare.create({
       data: {
         userId,
@@ -30,7 +30,7 @@ export class JobShareRepo {
   }
 
   public static async findSharesByJob(jobId: string | number) {
-    const jid = typeof jobId === 'string' ? Number(jobId) : jobId;
+    const jid = typeof jobId === "string" ? Number(jobId) : jobId;
     return prisma.jobShare.findMany({
       where: { jobId: jid },
       include: {

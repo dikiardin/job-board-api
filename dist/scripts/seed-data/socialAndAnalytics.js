@@ -42,7 +42,10 @@ async function seedSocialAndAnalytics({ prisma, users, companies, subscriptions,
             {
                 type: "job_view",
                 userId: seekers.alice.id,
-                payload: { jobId: jobs.frontend.id, source: "landing_page" },
+                payload: {
+                    jobId: jobs.frontend.id,
+                    source: "landing_page",
+                },
                 city: "Bandung",
                 province: "Jawa Barat",
                 gender: "Female",

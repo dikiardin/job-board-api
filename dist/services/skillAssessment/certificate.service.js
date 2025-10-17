@@ -23,7 +23,7 @@ class CertificateService {
     }
     static generateQRCodeData(certificateCode) {
         // Return verification URL for QR code
-        return `${process.env.FRONTEND_URL || "http://localhost:3000"}/verify-certificate/${certificateCode}`;
+        return `${process.env.FE_URL || "http://localhost:3000"}/verify-certificate/${certificateCode}`;
     }
     static async verifyCertificate(certificateCode) {
         // This will be called by the repository
