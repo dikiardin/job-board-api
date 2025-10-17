@@ -337,7 +337,6 @@ model SkillResult {
   id              Int             @id @default(autoincrement())
   userId          Int
   assessmentId    Int
-  slug            String          @unique @default(cuid())
   score           Int
   isPassed        Boolean         @default(false)
   answers         Json?
@@ -348,6 +347,7 @@ model SkillResult {
   certificateCode String?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @default(now()) @updatedAt
+  slug            String          @unique @default(cuid())
   certificate     Certificate?
   assessment      SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -602,7 +602,6 @@ enum UserRole {
   USER
   ADMIN
   DEVELOPER
-  MENTOR
 }
 
 enum ApplicationStatus {

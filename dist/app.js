@@ -102,6 +102,25 @@ class App {
                 res.status(500).json({ success: false, error: error.message });
             }
         });
+        // Cron job endpoints
+        this.app.get("/api/cron/subscription", async (req, res) => {
+            try {
+                await (0, subscriptionJobs_1.runSubscriptionCycle)();
+                res.status(200).json({ ok: true });
+            }
+            catch (e) {
+                res.status(500).json({ ok: false, error: e?.message || String(e) });
+            }
+        });
+        this.app.get("/api/cron/interview", async (req, res) => {
+            try {
+                await (0, interviewJobs_1.runInterviewCycle)();
+                res.status(200).json({ ok: true });
+            }
+            catch (e) {
+                res.status(500).json({ ok: false, error: e?.message || String(e) });
+            }
+        });
         const authRouter = new auth_router_1.default();
         const subscriptionRouter = new subscription_router_1.default();
         const preselectionRouter = new preselection_router_1.default();
@@ -135,7 +154,7 @@ class App {
     errorHandling() {
         this.app.use((error, req, res, next) => {
             console.log("Global error handler:", error);
-            // Handle JWT errors
+            // Handle JWT errors code
             if (error.name === "JsonWebTokenError") {
                 return res
                     .status(401)

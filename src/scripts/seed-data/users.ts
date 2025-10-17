@@ -17,8 +17,8 @@ interface SeedUsersOptions {
   };
 }
 
-type AdminKey = typeof adminSeeds[number]["key"];
-type SeekerKey = typeof seekerSeeds[number]["key"];
+type AdminKey = (typeof adminSeeds)[number]["key"];
+type SeekerKey = (typeof seekerSeeds)[number]["key"];
 
 type AdminRecord = Record<AdminKey, User>;
 type SeekerRecord = Record<SeekerKey, User>;
@@ -38,7 +38,7 @@ export async function seedUsers({
   const developer = await prisma.user.create({
     data: {
       role: UserRole.DEVELOPER,
-      email: "dev@jobboard.id",
+      email: "workoo.dev@gmail.com",
       passwordHash: passwords.developer,
       name: "Workoo Developer",
       phone: "+628566677788",
@@ -56,7 +56,8 @@ export async function seedUsers({
           gender: "Female",
           city: "Bandung",
           province: "Jawa Barat",
-          summary: "Developer maintaining assessments and subscription offerings.",
+          summary:
+            "Developer maintaining assessments and subscription offerings.",
           linkedinUrl: "https://linkedin.com/in/workoo-developer",
         },
       },
@@ -65,7 +66,7 @@ export async function seedUsers({
 
   const mentor = await prisma.user.create({
     data: {
-      role: UserRole.MENTOR,
+      role: UserRole.ADMIN,
       email: "mentor@jobboard.id",
       passwordHash: passwords.mentor,
       name: "Mentor Insight",
@@ -124,7 +125,9 @@ export async function seedUsers({
   const seekerEntries = await Promise.all(
     seekerSeeds.map(async (seeker) => {
       const portfolioUrl =
-        "portfolio" in seeker ? (seeker as { portfolio: string }).portfolio : null;
+        "portfolio" in seeker
+          ? (seeker as { portfolio: string }).portfolio
+          : null;
 
       const user = await prisma.user.create({
         data: {
@@ -201,8 +204,8 @@ export async function seedUsers({
       },
       {
         userId: seekers.bob.id,
-        provider: ProviderType.FACEBOOK,
-        providerId: "bob-facebook",
+        provider: ProviderType.GOOGLE,
+        providerId: "bob-google",
       },
       {
         userId: seekers.gina.id,
@@ -214,6 +217,3 @@ export async function seedUsers({
 
   return { developer, mentor, admins, seekers };
 }
-
-
-

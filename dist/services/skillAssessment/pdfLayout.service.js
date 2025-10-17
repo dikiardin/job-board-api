@@ -35,10 +35,11 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PDFLayoutService = void 0;
 const PDFKit = __importStar(require("pdfkit"));
-const path = __importStar(require("path"));
-const fs = __importStar(require("fs"));
-const QRCode = __importStar(require("qrcode"));
 const PDFLayoutHelper_1 = require("./helpers/PDFLayoutHelper");
+const QRCodeHelper_1 = require("./helpers/QRCodeHelper");
+const PositionCalculator_1 = require("./helpers/PositionCalculator");
+const LogoHelper_1 = require("./helpers/LogoHelper");
+const pdfConstants_1 = require("./constants/pdfConstants");
 class PDFLayoutService {
     static async generateCertificatePDF(data) {
         const doc = new PDFKit.default({
@@ -50,175 +51,112 @@ class PDFLayoutService {
         const pageHeight = doc.page.height;
         const centerX = pageWidth / 2;
         this.setupDocumentLayout(doc, pageWidth, pageHeight);
-        this.addLogo(doc, pageWidth);
+        LogoHelper_1.LogoHelper.addLogo(doc, pageWidth);
         this.addHeader(doc, centerX);
         this.addUserInfo(doc, centerX, data);
         this.addScoreInfo(doc, centerX, data);
         this.addDateAndSignature(doc, centerX, data.completedAt, data);
         await this.addQRCode(doc, centerX, data.certificateCode, data);
-        return this.generateBuffer(doc);
+        return QRCodeHelper_1.QRCodeHelper.generateBuffer(doc);
     }
     static setupDocumentLayout(doc, pageWidth, pageHeight) {
         PDFLayoutHelper_1.PDFLayoutHelper.addBorders(doc, pageWidth, pageHeight);
         PDFLayoutHelper_1.PDFLayoutHelper.addBackgroundPattern(doc);
     }
-    static addLogo(doc, pageWidth) {
-        try {
-            const logoPath = path.join(__dirname, "../../logo-pdf/nobg_logo.png");
-            if (fs.existsSync(logoPath)) {
-                doc.image(logoPath, pageWidth - 140, 50, {
-                    fit: [70, 40],
-                    align: "center",
-                    valign: "center",
-                });
-            }
-        }
-        catch (error) {
-            // Logo not found, continuing without logo
-        }
-    }
     static addHeader(doc, centerX) {
-        const primaryColor = "#467EC7";
-        const secondaryColor = "#24CFA7";
+        this.addCertificateTitle(doc, centerX);
+        this.addSubtitle(doc, centerX);
+        this.addDividerLine(doc, centerX);
+    }
+    static addCertificateTitle(doc, centerX) {
         doc
-            .fontSize(36)
-            .fillColor(primaryColor)
+            .fontSize(pdfConstants_1.PDF_FONTS.TITLE)
+            .fillColor(pdfConstants_1.PDF_COLORS.PRIMARY)
             .font("Helvetica-Bold")
-            .text("CERTIFICATE", centerX - 120, 80, { width: 240, align: "center" });
-        doc
-            .fontSize(24)
-            .fillColor(secondaryColor)
-            .text("OF ACHIEVEMENT", centerX - 120, 120, {
-            width: 240,
+            .text("CERTIFICATE", centerX - 120, pdfConstants_1.PDF_LAYOUT.HEADER_Y, {
+            width: pdfConstants_1.PDF_LAYOUT.TEXT_WIDTH_NARROW,
             align: "center",
         });
-        const goldColor = "#FFD700";
+    }
+    static addSubtitle(doc, centerX) {
         doc
-            .moveTo(centerX - 150, 160)
-            .lineTo(centerX + 150, 160)
-            .lineWidth(2)
-            .stroke(goldColor);
+            .fontSize(pdfConstants_1.PDF_FONTS.SUBTITLE)
+            .fillColor(pdfConstants_1.PDF_COLORS.SECONDARY)
+            .text("OF ACHIEVEMENT", centerX - 120, pdfConstants_1.PDF_LAYOUT.SUBTITLE_Y, {
+            width: pdfConstants_1.PDF_LAYOUT.TEXT_WIDTH_NARROW,
+            align: "center",
+        });
+    }
+    static addDividerLine(doc, centerX) {
+        const halfWidth = pdfConstants_1.PDF_LAYOUT.DIVIDER_WIDTH / 2;
+        doc
+            .moveTo(centerX - halfWidth, pdfConstants_1.PDF_LAYOUT.DIVIDER_Y)
+            .lineTo(centerX + halfWidth, pdfConstants_1.PDF_LAYOUT.DIVIDER_Y)
+            .lineWidth(pdfConstants_1.PDF_LAYOUT.BORDER_WIDTH)
+            .stroke(pdfConstants_1.PDF_COLORS.GOLD);
     }
     static addUserInfo(doc, centerX, data) {
         PDFLayoutHelper_1.PDFLayoutHelper.addCertificationText(doc, centerX);
         PDFLayoutHelper_1.PDFLayoutHelper.addUserName(doc, centerX, data.userName);
         PDFLayoutHelper_1.PDFLayoutHelper.addAssessmentTitle(doc, centerX, data.assessmentTitle);
-        // Add badge info if badge name exists
         if (data.badgeName) {
             PDFLayoutHelper_1.PDFLayoutHelper.addBadgeInfo(doc, centerX, data.badgeName);
         }
     }
     static addScoreInfo(doc, centerX, data) {
-        const primaryColor = "#467EC7";
         const scorePercentage = Math.round(data.score);
-        // Adjust position based on whether badge info is present
-        const scoreY = data.badgeName ? 395 : 390;
+        const scoreY = PositionCalculator_1.PositionCalculator.getScoreY(!!data.badgeName);
         doc
-            .fontSize(18)
-            .fillColor(primaryColor)
+            .fontSize(pdfConstants_1.PDF_FONTS.LARGE)
+            .fillColor(pdfConstants_1.PDF_COLORS.PRIMARY)
             .font("Helvetica-Bold")
-            .text(`Score: ${scorePercentage}/100 (${scorePercentage}%)`, centerX - 200, scoreY, { width: 400, align: "center" });
+            .text(`Score: ${scorePercentage}/100 (${scorePercentage}%)`, centerX - 200, scoreY, { width: pdfConstants_1.PDF_LAYOUT.TEXT_WIDTH_STANDARD, align: "center" });
     }
     static addDateAndSignature(doc, centerX, completedAt, data) {
-        const lightGray = "#718096";
         const formattedDate = completedAt.toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",
         });
-        // Adjust position based on whether badge info is present
-        const dateY = data.badgeName ? 425 : 420;
+        const dateY = PositionCalculator_1.PositionCalculator.getDateY(!!data.badgeName);
         doc
-            .fontSize(14)
-            .fillColor(lightGray)
+            .fontSize(pdfConstants_1.PDF_FONTS.MEDIUM)
+            .fillColor(pdfConstants_1.PDF_COLORS.LIGHT_GRAY)
             .font("Helvetica")
             .text(`Completed on: ${formattedDate}`, centerX - 200, dateY, {
-            width: 400,
+            width: pdfConstants_1.PDF_LAYOUT.TEXT_WIDTH_STANDARD,
             align: "center",
         });
     }
     static async addQRCode(doc, centerX, certificateCode, data) {
-        const primaryColor = "#467EC7";
-        const lightGray = "#718096";
-        // Adjust position based on whether badge info is present
-        const codeY = data.badgeName ? 450 : 445;
+        this.addCertificateCode(doc, centerX, certificateCode, data);
+        const verificationUrl = QRCodeHelper_1.QRCodeHelper.getVerificationUrl(certificateCode);
+        await this.renderQRCodeSection(doc, centerX, verificationUrl, data);
+        QRCodeHelper_1.QRCodeHelper.addFooter(doc);
+    }
+    static addCertificateCode(doc, centerX, certificateCode, data) {
+        const codeY = PositionCalculator_1.PositionCalculator.getCodeY(!!data.badgeName);
         doc
-            .fontSize(14)
-            .fillColor(lightGray)
+            .fontSize(pdfConstants_1.PDF_FONTS.MEDIUM)
+            .fillColor(pdfConstants_1.PDF_COLORS.LIGHT_GRAY)
             .font("Helvetica")
             .text(`Certificate Code: ${certificateCode}`, centerX - 200, codeY, {
-            width: 400,
+            width: pdfConstants_1.PDF_LAYOUT.TEXT_WIDTH_STANDARD,
             align: "center",
         });
-        const verificationUrl = `${process.env.FE_URL || "http://localhost:3000"}/verify-certificate/${certificateCode}`;
+    }
+    static async renderQRCodeSection(doc, centerX, verificationUrl, data) {
+        const qrY = PositionCalculator_1.PositionCalculator.getQRY(!!data.badgeName);
         try {
-            const qrCodeBuffer = await QRCode.toBuffer(verificationUrl, {
-                type: "png",
-                width: 50,
-                margin: 1,
-                color: {
-                    dark: "#2D3748",
-                    light: "#FFFFFF",
-                },
-            });
-            const qrX = centerX - 25;
-            const qrY = data.badgeName ? 470 : 465;
-            doc.image(qrCodeBuffer, qrX, qrY, { width: 50, height: 50 });
-            // Make QR area clickable
-            doc.link(qrX, qrY, 50, 50, verificationUrl);
-            doc
-                .fontSize(6)
-                .fillColor(primaryColor)
-                .font("Helvetica-Bold")
-                .text("Scan to Verify", qrX, qrY + 53, { width: 50, align: "center" });
-            doc
-                .fontSize(5)
-                .fillColor(lightGray)
-                .font("Helvetica")
-                .text(verificationUrl, centerX - 60, qrY + 62, {
-                width: 120,
-                align: "center",
-            });
-            // Add clickable link over the URL text area
-            doc.link(centerX - 60, qrY + 62, 120, 8, verificationUrl);
-            // Footer with branding positioned at bottom left
-            doc
-                .fontSize(9)
-                .fillColor(primaryColor)
-                .font("Helvetica-Bold")
-                .text("WORKOO JOB BOARD", 50, doc.page.height - 60);
+            const qrCodeBuffer = await QRCodeHelper_1.QRCodeHelper.generateQRCodeBuffer(verificationUrl);
+            QRCodeHelper_1.QRCodeHelper.renderQRCode(doc, qrCodeBuffer, centerX, qrY);
+            QRCodeHelper_1.QRCodeHelper.addQRLink(doc, centerX, qrY, verificationUrl);
+            QRCodeHelper_1.QRCodeHelper.addScanText(doc, centerX, qrY);
+            QRCodeHelper_1.QRCodeHelper.addVerificationUrl(doc, centerX, qrY, verificationUrl);
         }
         catch (error) {
-            const qrX = centerX - 25;
-            const qrY = data.badgeName ? 470 : 465;
-            doc.rect(qrX, qrY, 50, 50).lineWidth(1).stroke(lightGray);
-            doc
-                .fontSize(6)
-                .fillColor(lightGray)
-                .text("Verify at:", qrX, qrY + 53, { width: 50, align: "center" });
-            doc
-                .fontSize(5)
-                .text(verificationUrl, centerX - 60, qrY + 62, {
-                width: 120,
-                align: "center",
-            });
-            doc.link(centerX - 60, qrY + 62, 120, 8, verificationUrl);
-            // Footer with branding positioned at bottom left
-            doc
-                .fontSize(9)
-                .fillColor(primaryColor)
-                .font("Helvetica-Bold")
-                .text("WORKOO JOB BOARD", 50, doc.page.height - 60);
+            QRCodeHelper_1.QRCodeHelper.renderQRCodeFallback(doc, centerX, qrY, verificationUrl);
         }
-    }
-    static generateBuffer(doc) {
-        doc.end();
-        const chunks = [];
-        return new Promise((resolve, reject) => {
-            doc.on("data", (chunk) => chunks.push(chunk));
-            doc.on("end", () => resolve(Buffer.concat(chunks)));
-            doc.on("error", reject);
-        });
     }
 }
 exports.PDFLayoutService = PDFLayoutService;

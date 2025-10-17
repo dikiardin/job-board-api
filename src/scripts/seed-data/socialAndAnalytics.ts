@@ -63,7 +63,10 @@ export async function seedSocialAndAnalytics({
       {
         type: "job_view",
         userId: seekers.alice.id,
-        payload: { jobId: jobs.frontend.id, source: "landing_page" } as Prisma.JsonObject,
+        payload: {
+          jobId: jobs.frontend.id,
+          source: "landing_page",
+        } as Prisma.JsonObject,
         city: "Bandung",
         province: "Jawa Barat",
         gender: "Female",
@@ -100,4 +103,3 @@ export async function seedSocialAndAnalytics({
     ],
   });
 }
-

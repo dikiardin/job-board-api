@@ -7,7 +7,7 @@ async function seedUsers({ prisma, now, passwords, }) {
     const developer = await prisma.user.create({
         data: {
             role: prisma_1.UserRole.DEVELOPER,
-            email: "dev@jobboard.id",
+            email: "workoo.dev@gmail.com",
             passwordHash: passwords.developer,
             name: "Workoo Developer",
             phone: "+628566677788",
@@ -33,7 +33,7 @@ async function seedUsers({ prisma, now, passwords, }) {
     });
     const mentor = await prisma.user.create({
         data: {
-            role: prisma_1.UserRole.MENTOR,
+            role: prisma_1.UserRole.ADMIN,
             email: "mentor@jobboard.id",
             passwordHash: passwords.mentor,
             name: "Mentor Insight",
@@ -84,7 +84,9 @@ async function seedUsers({ prisma, now, passwords, }) {
     }));
     const admins = Object.fromEntries(adminEntries);
     const seekerEntries = await Promise.all(userSeedData_1.seekerSeeds.map(async (seeker) => {
-        const portfolioUrl = "portfolio" in seeker ? seeker.portfolio : null;
+        const portfolioUrl = "portfolio" in seeker
+            ? seeker.portfolio
+            : null;
         const user = await prisma.user.create({
             data: {
                 role: prisma_1.UserRole.USER,
@@ -154,8 +156,8 @@ async function seedUsers({ prisma, now, passwords, }) {
             },
             {
                 userId: seekers.bob.id,
-                provider: prisma_1.ProviderType.FACEBOOK,
-                providerId: "bob-facebook",
+                provider: prisma_1.ProviderType.GOOGLE,
+                providerId: "bob-google",
             },
             {
                 userId: seekers.gina.id,
