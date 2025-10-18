@@ -53,7 +53,7 @@ class App {
         origin: [
           "http://localhost:3000",
           "http://127.0.0.1:3000",
-          "https://job-board-app-xi.vercel.app",
+          "https://workoo.vercel.app",
           ...(process.env.FE_URL ? [process.env.FE_URL] : []),
         ],
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
