@@ -24,11 +24,10 @@ async function seed() {
   const now = new Date();
   const addDays = (days: number) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
 
-  const [adminPassword, userPassword, developerPassword, mentorPassword] = await Promise.all([
+  const [adminPassword, userPassword, developerPassword] = await Promise.all([
     hashPassword("admin123"),
     hashPassword("user12345"),
     hashPassword("work00dev"),
-    hashPassword("mentor123"),
   ]);
 
   const users = await seedUsers({
@@ -38,7 +37,6 @@ async function seed() {
       admin: adminPassword,
       user: userPassword,
       developer: developerPassword,
-      mentor: mentorPassword,
     },
   });
 
