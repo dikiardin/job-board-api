@@ -13,7 +13,6 @@ interface SeedUsersOptions {
     admin: string;
     user: string;
     developer: string;
-    mentor: string;
   };
 }
 
@@ -25,7 +24,6 @@ type SeekerRecord = Record<SeekerKey, User>;
 
 export interface SeedUsersResult {
   developer: User;
-  mentor: User;
   admins: AdminRecord;
   seekers: SeekerRecord;
 }
@@ -59,26 +57,6 @@ export async function seedUsers({
           summary:
             "Developer maintaining assessments and subscription offerings.",
           linkedinUrl: "https://linkedin.com/in/workoo-developer",
-        },
-      },
-    },
-  });
-
-  const mentor = await prisma.user.create({
-    data: {
-      role: UserRole.ADMIN,
-      email: "mentor@jobboard.id",
-      passwordHash: passwords.mentor,
-      name: "Mentor Insight",
-      gender: "Female",
-      city: "Jakarta",
-      emailVerifiedAt: now,
-      profilePicture: "https://placehold.co/128x128?text=MENTOR",
-      profile: {
-        create: {
-          fullName: "Mentor Insight",
-          city: "Jakarta",
-          summary: "Provides guidance on interview readiness and assessments.",
         },
       },
     },
@@ -215,5 +193,5 @@ export async function seedUsers({
     ],
   });
 
-  return { developer, mentor, admins, seekers };
+  return { developer, admins, seekers };
 }
