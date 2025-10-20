@@ -12,9 +12,9 @@ class RenewalDateService {
     }
     static isWithinGracePeriod(expiryDate) {
         const now = new Date();
-        const gracePeriodHours = 2; // Allow renewal within 2 hours after expiry
+        const gracePeriodHours = 24; // Allow renewal within 24 hours after expiry (for testing)
         const gracePeriodMs = gracePeriodHours * 60 * 60 * 1000;
-        return (now.getTime() - expiryDate.getTime()) <= gracePeriodMs;
+        return now.getTime() - expiryDate.getTime() <= gracePeriodMs;
     }
 }
 exports.RenewalDateService = RenewalDateService;

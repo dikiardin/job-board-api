@@ -33,7 +33,8 @@ export async function seedSubscriptions({
       data: {
         code: SubscriptionPlanCode.STANDARD,
         name: "Standard",
-        description: "Standard plan unlocking CV generator and 2 assessments per month.",
+        description:
+          "Standard plan unlocking CV generator and 2 assessments per month.",
         priceIdr: 25_000,
         perks: [
           "ATS CV Generator",
@@ -53,11 +54,11 @@ export async function seedSubscriptions({
           "ATS CV Generator",
           "Unlimited skill assessments",
           "Priority review when applying for jobs",
-          "Advanced CV templates", 
+          "Advanced CV templates",
           "Priority customer support",
           "Detailed analytics and insights",
           "Premium badge showcase",
-          "Enhanced profile visibility"
+          "Enhanced profile visibility",
         ],
         monthlyAssessmentQuota: null,
       },
@@ -88,7 +89,8 @@ export async function seedSubscriptions({
           amount: new Prisma.Decimal(100_000),
           paymentMethod: PaymentMethod.TRANSFER,
           status: PaymentStatus.APPROVED,
-          paymentProof: "https://res.cloudinary.com/demo/payments/alice-transfer.jpg",
+          paymentProof:
+            "https://res.cloudinary.com/demo/payments/alice-transfer.jpg",
           paidAt: now,
           approvedAt: now,
           approvedById: developer.id,
@@ -100,18 +102,24 @@ export async function seedSubscriptions({
   await prisma.subscription.create({
     data: {
       userId: seekers.bob.id,
-      planId: standardPlan.id,
-      status: SubscriptionStatus.PENDING,
+      planId: professionalPlan.id,
+      status: SubscriptionStatus.ACTIVE,
+      startDate: now,
+      paidAt: now,
+      expiresAt: thirtyDaysLater,
+      approvedByDeveloperId: developer.id,
       paymentMethod: PaymentMethod.TRANSFER,
-      proofUrl: "https://res.cloudinary.com/demo/payments/bob-proof.jpg",
       payments: {
         create: {
-          amount: new Prisma.Decimal(25_000),
+          amount: new Prisma.Decimal(100_000),
           paymentMethod: PaymentMethod.TRANSFER,
-          status: PaymentStatus.PENDING,
-          paymentProof: "https://res.cloudinary.com/demo/payments/bob-proof.jpg",
-          expiresAt: addDays(1),
-          referenceCode: "STD-INV-BOB-001",
+          status: PaymentStatus.APPROVED,
+          paymentProof:
+            "https://res.cloudinary.com/demo/payments/bob-professional.jpg",
+          paidAt: now,
+          approvedAt: now,
+          approvedById: developer.id,
+          referenceCode: "PRO-INV-BOB-001",
         },
       },
     },
@@ -198,7 +206,8 @@ export async function seedSubscriptions({
           amount: new Prisma.Decimal(100_000),
           paymentMethod: PaymentMethod.TRANSFER,
           status: PaymentStatus.APPROVED,
-          paymentProof: "https://res.cloudinary.com/demo/payments/test-professional.jpg",
+          paymentProof:
+            "https://res.cloudinary.com/demo/payments/test-professional.jpg",
           paidAt: now,
           approvedAt: now,
           approvedById: developer.id,
@@ -222,7 +231,8 @@ export async function seedSubscriptions({
           amount: new Prisma.Decimal(25_000),
           paymentMethod: PaymentMethod.TRANSFER,
           status: PaymentStatus.APPROVED,
-          paymentProof: "https://res.cloudinary.com/demo/payments/test-standard.jpg",
+          paymentProof:
+            "https://res.cloudinary.com/demo/payments/test-standard.jpg",
           paidAt: now,
           approvedAt: now,
           approvedById: developer.id,
@@ -232,14 +242,11 @@ export async function seedSubscriptions({
     },
   });
 
-  return { 
-    standardPlan, 
-    professionalPlan, 
+  return {
+    standardPlan,
+    professionalPlan,
     ginaProfessional,
     testProfessionalSubscription,
-    testStandardSubscription
+    testStandardSubscription,
   };
 }
-
-
-
