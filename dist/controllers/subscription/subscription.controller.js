@@ -50,7 +50,7 @@ class SubscriptionController {
             const { planId } = req.body;
             controllerHelper_1.ControllerHelper.validateRequired({ planId }, "Plan ID is required");
             // Ensure planId is integer
-            const parsedPlanId = typeof planId === 'string' ? parseInt(planId) : planId;
+            const parsedPlanId = typeof planId === "string" ? parseInt(planId) : planId;
             if (isNaN(parsedPlanId)) {
                 throw new Error("Invalid plan ID format");
             }
@@ -65,7 +65,9 @@ class SubscriptionController {
         try {
             const id = controllerHelper_1.ControllerHelper.parseId(req.params.id);
             const updateData = controllerHelper_1.ControllerHelper.buildUpdateData(req.body, [
-                'isActive', 'startDate', 'endDate'
+                "isActive",
+                "startDate",
+                "endDate",
             ]);
             const subscription = await subscription_service_1.SubscriptionService.updateSubscription(id, updateData);
             res.status(200).json(subscription);
@@ -76,22 +78,32 @@ class SubscriptionController {
     }
     static async renewSubscription(req, res, next) {
         try {
+            console.log("=== CONTROLLER: RENEW SUBSCRIPTION ===");
             const userId = controllerHelper_1.ControllerHelper.getUserId(res);
-            const planId = req.body.planId ? controllerHelper_1.ControllerHelper.parseId(req.body.planId) : undefined;
+            const planId = req.body.planId
+                ? controllerHelper_1.ControllerHelper.parseId(req.body.planId)
+                : undefined;
+            console.log("Controller - User ID:", userId);
+            console.log("Controller - Plan ID:", planId);
             const result = await subscriptionRenewal_service_1.SubscriptionRenewalService.renewSubscription(userId, planId);
             res.status(200).json(result);
         }
         catch (error) {
+            console.error("Controller error:", error);
             next(error);
         }
     }
     static async getRenewalInfo(req, res, next) {
         try {
+            console.log("=== CONTROLLER: GET RENEWAL INFO ===");
             const userId = controllerHelper_1.ControllerHelper.getUserId(res);
+            console.log("Controller - User ID:", userId);
             const renewalInfo = await subscriptionRenewal_service_1.SubscriptionRenewalService.getRenewalInfo(userId);
+            console.log("Controller - Renewal info retrieved");
             res.status(200).json(renewalInfo);
         }
         catch (error) {
+            console.error("Controller error:", error);
             next(error);
         }
     }

@@ -9,22 +9,52 @@ const renewalPayment_service_1 = require("./renewalPayment.service");
 const renewalDate_service_1 = require("./renewalDate.service");
 class SubscriptionRenewalService {
     static async renewSubscription(userId, planId) {
-        const currentSubscription = await this.getCurrentSubscription(userId);
-        const targetPlanId = planId || currentSubscription.planId;
-        const plan = await renewalValidation_service_1.RenewalValidationService.validatePlan(targetPlanId);
-        const renewalDates = renewalDate_service_1.RenewalDateService.calculateRenewalDates(currentSubscription);
-        const newSubscription = await this.createRenewalSubscription(userId, targetPlanId, renewalDates);
-        const payment = await renewalPayment_service_1.RenewalPaymentService.createPayment(newSubscription.id, plan.priceIdr);
-        return this.buildRenewalResponse(newSubscription, payment, plan);
+        console.log("=== RENEW SUBSCRIPTION START ===");
+        console.log("User ID:", userId);
+        console.log("Plan ID:", planId);
+        try {
+            const currentSubscription = await this.getCurrentSubscription(userId);
+            console.log("Current subscription:", JSON.stringify(currentSubscription, null, 2));
+            const targetPlanId = planId || currentSubscription.planId;
+            console.log("Target plan ID:", targetPlanId);
+            const plan = await renewalValidation_service_1.RenewalValidationService.validatePlan(targetPlanId);
+            console.log("Plan validated:", plan.name);
+            const renewalDates = renewalDate_service_1.RenewalDateService.calculateRenewalDates(currentSubscription);
+            console.log("Renewal dates:", renewalDates);
+            const newSubscription = await this.createRenewalSubscription(userId, targetPlanId, renewalDates);
+            console.log("New subscription created:", newSubscription.id);
+            const payment = await renewalPayment_service_1.RenewalPaymentService.createPayment(newSubscription.id, plan.priceIdr);
+            console.log("Payment created:", payment.id);
+            console.log("=== RENEW SUBSCRIPTION SUCCESS ===");
+            return this.buildRenewalResponse(newSubscription, payment, plan);
+        }
+        catch (error) {
+            console.error("=== RENEW SUBSCRIPTION ERROR ===");
+            console.error("Error:", error);
+            throw error;
+        }
     }
     static async getRenewalInfo(userId) {
         try {
+            console.log("=== RENEWAL INFO START ===");
+            console.log("User ID:", userId);
             const currentSubscription = await this.getCurrentSubscription(userId);
+            console.log("Current subscription found:", currentSubscription ? "YES" : "NO");
+            console.log("Subscription details:", JSON.stringify(currentSubscription, null, 2));
             const plan = await renewalValidation_service_1.RenewalValidationService.validatePlan(currentSubscription.planId);
+            console.log("Plan found:", plan ? "YES" : "NO");
             const pendingPayment = await this.getPendingRenewalPayment(userId);
-            return this.buildRenewalInfoResponse(currentSubscription, plan, pendingPayment);
+            console.log("Pending payment found:", pendingPayment ? "YES" : "NO");
+            const response = this.buildRenewalInfoResponse(currentSubscription, plan, pendingPayment);
+            console.log("=== RENEWAL INFO SUCCESS ===");
+            return response;
         }
         catch (error) {
+            console.error("=== RENEWAL INFO ERROR ===");
+            console.error("Error type:", error instanceof Error ? error.constructor.name : typeof error);
+            console.error("Error message:", error instanceof Error ? error.message : String(error));
+            console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
+            console.error("User ID:", userId);
             return this.buildErrorResponse();
         }
     }
@@ -40,7 +70,7 @@ class SubscriptionRenewalService {
     }
     static async getRecentExpiredSubscription(userId) {
         const subscriptions = await subscription_repository_1.SubscriptionRepo.getUserSubscriptions(userId);
-        return subscriptions.find(sub => sub.status === prisma_1.SubscriptionStatus.EXPIRED &&
+        return subscriptions.find((sub) => sub.status === prisma_1.SubscriptionStatus.EXPIRED &&
             sub.expiresAt &&
             renewalDate_service_1.RenewalDateService.isWithinGracePeriod(new Date(sub.expiresAt)));
     }
@@ -50,12 +80,12 @@ class SubscriptionRenewalService {
             planId,
             status: prisma_1.SubscriptionStatus.PENDING,
             startDate: dates.startDate,
-            expiresAt: dates.expiresAt
+            expiresAt: dates.expiresAt,
         });
     }
     static async getPendingRenewalPayment(userId) {
         const userSubscriptions = await subscription_repository_1.SubscriptionRepo.getUserSubscriptions(userId);
-        const subscriptionIds = userSubscriptions.map(sub => sub.id);
+        const subscriptionIds = userSubscriptions.map((sub) => sub.id);
         return await renewalPayment_service_1.RenewalPaymentService.getPendingPayment(userId, subscriptionIds);
     }
     static buildRenewalResponse(subscription, payment, plan) {
@@ -63,7 +93,7 @@ class SubscriptionRenewalService {
             subscription,
             payment,
             plan,
-            message: "Renewal request created. Please upload payment proof to complete."
+            message: "Renewal request created. Please upload payment proof to complete.",
         };
     }
     static buildRenewalInfoResponse(subscription, plan, pendingPayment) {
@@ -72,7 +102,7 @@ class SubscriptionRenewalService {
             plan,
             canRenew: !pendingPayment,
             renewalPrice: plan?.priceIdr || 0,
-            pendingPayment
+            pendingPayment,
         };
     }
     static buildErrorResponse() {
@@ -81,7 +111,7 @@ class SubscriptionRenewalService {
             plan: null,
             canRenew: false,
             renewalPrice: 0,
-            message: "No active or recent subscription found"
+            message: "No active or recent subscription found",
         };
     }
 }

@@ -9,15 +9,20 @@ class RenewalPaymentService {
             subscriptionId,
             paymentMethod: "TRANSFER",
             amount,
-            expiresAt: dateHelper_1.DateHelper.getPaymentExpiration()
+            expiresAt: dateHelper_1.DateHelper.getPaymentExpiration(),
         });
     }
     static async getPendingPayment(userId, subscriptionIds) {
         if (subscriptionIds.length === 0)
             return null;
-        const payments = await payment_repository_1.PaymentRepo.getPendingPayments();
-        return payments.find(payment => subscriptionIds.includes(payment.subscriptionId) &&
-            payment.subscription.userId === userId) || null;
+        console.log("Getting pending payment for user:", userId);
+        console.log("Subscription IDs:", subscriptionIds);
+        // Use more efficient query
+        const payments = await payment_repository_1.PaymentRepo.getPendingPaymentsByUserId(userId);
+        console.log("Found pending payments:", payments.length);
+        const payment = payments.find((payment) => subscriptionIds.includes(payment.subscriptionId)) || null;
+        console.log("Matching payment found:", payment ? "YES" : "NO");
+        return payment;
     }
 }
 exports.RenewalPaymentService = RenewalPaymentService;

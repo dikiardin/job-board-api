@@ -9,6 +9,10 @@ class PaymentRepo {
     static async getPendingPayments() {
         return paymentQuery_repository_1.PaymentQueryRepo.getPendingPayments();
     }
+    // Get pending payments by user ID
+    static async getPendingPaymentsByUserId(userId) {
+        return paymentQuery_repository_1.PaymentQueryRepo.getPendingPaymentsByUserId(userId);
+    }
     // Get payment by ID
     static async getPaymentById(id) {
         return paymentQuery_repository_1.PaymentQueryRepo.getPaymentById(id);
