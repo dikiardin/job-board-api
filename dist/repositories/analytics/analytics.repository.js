@@ -1,7 +1,41 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsRepository = void 0;
 const prisma_1 = require("../../config/prisma");
+const Platform = __importStar(require("./analytics.platform.repository"));
 class AnalyticsRepository {
     static async getCompany(companyId) {
         const id = typeof companyId === 'string' ? Number(companyId) : companyId;
@@ -9,260 +43,51 @@ class AnalyticsRepository {
     }
     // Platform-wide methods
     static async getAllUsers(params) {
-        const { from, to } = params;
-        const where = {
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
-        };
-        return prisma_1.prisma.user.findMany({
-            where,
-            select: {
-                id: true,
-                gender: true,
-                dob: true,
-                city: true,
-                createdAt: true,
-                profile: {
-                    select: {
-                        gender: true,
-                        dob: true,
-                        city: true,
-                    },
-                },
-            },
-        });
+        return Platform.getAllUsers(params);
     }
     static async getAllApplications(params) {
-        const { from, to } = params;
-        const where = {
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
-        };
-        return prisma_1.prisma.application.findMany({
-            where,
-            include: { user: true, job: true },
-        });
+        return Platform.getAllApplications(params);
     }
     static async getAllCompanies() {
-        return prisma_1.prisma.company.count();
+        return Platform.getAllCompanies();
     }
     static async platformSalaryTrends(params) {
-        const { from, to } = params;
-        const where = {
-            expectedSalary: { not: null },
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
-        };
-        const items = await prisma_1.prisma.application.findMany({ where, include: { job: true } });
-        const agg = new Map();
-        for (const a of items) {
-            const city = a.job.city || "Unknown";
-            const title = a.job.title || "Unknown";
-            const key = `${city}|${title}`;
-            const expected = a.expectedSalary || 0;
-            const cur = agg.get(key) || { city, title, sum: 0, n: 0 };
-            cur.sum += expected;
-            cur.n += 1;
-            agg.set(key, cur);
-        }
-        const result = Array.from(agg.values()).map((v) => ({ city: v.city, title: v.title, avgExpectedSalary: v.n ? Math.round(v.sum / v.n) : 0, samples: v.n }));
-        return result;
+        return Platform.platformSalaryTrends(params);
     }
     static async platformReviewSalaryStats() {
-        const reviews = await prisma_1.prisma.companyReview.findMany({
-            where: {
-                salaryEstimateMin: { not: null },
-                salaryEstimateMax: { not: null },
-            },
-        });
-        if (!reviews.length)
-            return { avgSalaryEstimate: null, samples: 0 };
-        const has = reviews.filter((r) => (r.salaryEstimateMin != null && r.salaryEstimateMax != null));
-        const avg = has.length ? Math.round(has.reduce((s, r) => s + Math.round((r.salaryEstimateMin + r.salaryEstimateMax) / 2), 0) / has.length) : null;
-        return { avgSalaryEstimate: avg, samples: has.length };
+        return Platform.platformReviewSalaryStats();
     }
     static async platformJobCategories(params) {
-        const { from, to } = params;
-        const where = {
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
-        };
-        const items = await prisma_1.prisma.application.findMany({ where, include: { job: true } });
-        // Process job categories data
-        const map = new Map();
-        for (const a of items) {
-            const cat = a.job.category;
-            map.set(cat, (map.get(cat) || 0) + 1);
-        }
-        const result = Array.from(map.entries()).map(([category, count]) => ({ category, count }));
-        return result;
+        return Platform.platformJobCategories(params);
     }
     static async platformApplicationStatusCounts(params) {
-        const { from, to } = params;
-        const where = {
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
-        };
-        const grouped = await prisma_1.prisma.application.groupBy({
-            by: ["status"],
-            where,
-            _count: { status: true },
-        });
-        return grouped;
+        return Platform.platformApplicationStatusCounts(params);
     }
     static async platformTopCities(params) {
-        const { from, to } = params;
-        const where = {
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
-        };
-        const items = await prisma_1.prisma.application.findMany({ where, include: { job: true } });
-        const map = new Map();
-        for (const a of items) {
-            const city = a.job.city || "Unknown";
-            map.set(city, (map.get(city) || 0) + 1);
-        }
-        return Array.from(map.entries()).map(([city, count]) => ({ city, count })).sort((a, b) => b.count - a.count);
+        return Platform.platformTopCities(params);
     }
     static async platformDailyActiveUsers(params) {
-        const { from, to } = params;
-        const where = {
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
-        };
-        const uniqueUsers = await prisma_1.prisma.application.findMany({
-            where,
-            select: { userId: true, createdAt: true },
-            distinct: ['userId'],
-        });
-        return {
-            count: uniqueUsers.length,
-            trend: 0,
-        };
+        return Platform.platformDailyActiveUsers(params);
     }
     static async platformMonthlyActiveUsers(params) {
-        const { from, to } = params;
-        const where = {
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
-        };
-        const uniqueUsers = await prisma_1.prisma.application.findMany({
-            where,
-            select: { userId: true },
-            distinct: ['userId'],
-        });
-        return {
-            count: uniqueUsers.length,
-            trend: 0,
-        };
+        return Platform.platformMonthlyActiveUsers(params);
     }
     static async platformSessionMetrics(params) {
-        return {
-            averageSessionDuration: 300,
-            bounceRate: 0.35,
-            sessionsPerUser: 2.1,
-        };
+        return Platform.platformSessionMetrics(params);
     }
     static async platformPageViews(params) {
-        return {
-            total: 0,
-            unique: 0,
-            topPages: [],
-        };
+        return Platform.platformPageViews(params);
     }
     static async platformConversionFunnelData(params) {
-        const { from, to } = params;
-        const where = {
-            ...(from || to
-                ? {
-                    createdAt: {
-                        ...(from ? { gte: from } : {}),
-                        ...(to ? { lte: to } : {}),
-                    },
-                }
-                : {}),
-        };
-        const [totalApplications, interviews, accepted] = await Promise.all([
-            prisma_1.prisma.application.count({ where }),
-            prisma_1.prisma.application.count({ where: { ...where, status: 'INTERVIEW' } }),
-            prisma_1.prisma.application.count({ where: { ...where, status: 'ACCEPTED' } }),
-        ]);
-        return {
-            steps: [
-                { name: 'Job Views', count: totalApplications * 10, percentage: 100 },
-                { name: 'Applications', count: totalApplications, percentage: Math.round((totalApplications / (totalApplications * 10)) * 100) },
-                { name: 'Interviews', count: interviews, percentage: Math.round((interviews / totalApplications) * 100) },
-                { name: 'Hired', count: accepted, percentage: Math.round((accepted / totalApplications) * 100) },
-            ],
-        };
+        return Platform.platformConversionFunnelData(params);
     }
     static async platformRetentionData(params) {
-        return {
-            day1: 0.85,
-            day7: 0.65,
-            day30: 0.45,
-            cohorts: [],
-        };
+        return Platform.platformRetentionData(params);
     }
     static async platformPerformanceData(params) {
-        return {
-            averageLoadTime: 1.2,
-            errorRate: 0.02,
-            uptime: 99.9,
-            mobileVsDesktop: {
-                mobile: 0.65,
-                desktop: 0.35,
-            },
-        };
+        return Platform.platformPerformanceData(params);
     }
+    // Company-scoped methods remain inline
     static async getCompanyApplications(params) {
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
@@ -378,10 +203,7 @@ class AnalyticsRepository {
     }
     static async companyReviewSalaryStats(companyId) {
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-        // Reviews linked via Employment -> CompanyReview
-        const reviews = await prisma_1.prisma.companyReview.findMany({
-            where: { companyId: cid },
-        });
+        const reviews = await prisma_1.prisma.companyReview.findMany({ where: { companyId: cid } });
         if (!reviews.length)
             return { avgSalaryEstimate: null, samples: 0 };
         const has = reviews.filter((r) => (r.salaryEstimateMin != null && r.salaryEstimateMax != null));
@@ -391,7 +213,6 @@ class AnalyticsRepository {
     static async dailyActiveUsers(params) {
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-        // Get unique users who applied to company jobs in the date range
         const where = {
             job: { companyId: cid },
             ...(from || to
@@ -403,20 +224,12 @@ class AnalyticsRepository {
                 }
                 : {}),
         };
-        const uniqueUsers = await prisma_1.prisma.application.findMany({
-            where,
-            select: { userId: true, createdAt: true },
-            distinct: ['userId'],
-        });
-        return {
-            count: uniqueUsers.length,
-            trend: 0, // Could be calculated by comparing with previous period
-        };
+        const uniqueUsers = await prisma_1.prisma.application.findMany({ where, select: { userId: true, createdAt: true }, distinct: ['userId'] });
+        return { count: uniqueUsers.length, trend: 0 };
     }
     static async monthlyActiveUsers(params) {
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
-        // Get unique users who applied to company jobs in the date range
         const where = {
             job: { companyId: cid },
             ...(from || to
@@ -428,18 +241,10 @@ class AnalyticsRepository {
                 }
                 : {}),
         };
-        const uniqueUsers = await prisma_1.prisma.application.findMany({
-            where,
-            select: { userId: true },
-            distinct: ['userId'],
-        });
-        return {
-            count: uniqueUsers.length,
-            trend: 0,
-        };
+        const uniqueUsers = await prisma_1.prisma.application.findMany({ where, select: { userId: true }, distinct: ['userId'] });
+        return { count: uniqueUsers.length, trend: 0 };
     }
     static async sessionMetrics(params) {
-        // This would typically come from analytics events, but we'll simulate based on applications
         const { companyId, from, to } = params;
         const cid = typeof companyId === 'string' ? Number(companyId) : companyId;
         const where = {
@@ -453,23 +258,11 @@ class AnalyticsRepository {
                 }
                 : {}),
         };
-        const applications = await prisma_1.prisma.application.findMany({
-            where,
-            select: { createdAt: true },
-        });
-        return {
-            averageSessionDuration: 300, // 5 minutes in seconds
-            bounceRate: 0.35, // 35%
-            sessionsPerUser: 2.1,
-        };
+        await prisma_1.prisma.application.findMany({ where, select: { createdAt: true } });
+        return { averageSessionDuration: 300, bounceRate: 0.35, sessionsPerUser: 2.1 };
     }
     static async pageViews(params) {
-        // This would typically come from analytics events
-        return {
-            total: 0,
-            unique: 0,
-            topPages: [],
-        };
+        return { total: 0, unique: 0, topPages: [] };
     }
     static async conversionFunnelData(params) {
         const { companyId, from, to } = params;
@@ -500,25 +293,10 @@ class AnalyticsRepository {
         };
     }
     static async retentionData(params) {
-        // This would typically require more complex cohort analysis
-        return {
-            day1: 0.85,
-            day7: 0.65,
-            day30: 0.45,
-            cohorts: [],
-        };
+        return { day1: 0.85, day7: 0.65, day30: 0.45, cohorts: [] };
     }
     static async performanceData(params) {
-        // This would typically come from performance monitoring
-        return {
-            averageLoadTime: 1.2,
-            errorRate: 0.02,
-            uptime: 99.9,
-            mobileVsDesktop: {
-                mobile: 0.65,
-                desktop: 0.35,
-            },
-        };
+        return { averageLoadTime: 1.2, errorRate: 0.02, uptime: 99.9, mobileVsDesktop: { mobile: 0.65, desktop: 0.35 } };
     }
 }
 exports.AnalyticsRepository = AnalyticsRepository;

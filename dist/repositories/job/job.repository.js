@@ -1,288 +1,74 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JobRepository = void 0;
-const prisma_1 = require("../../config/prisma");
+const Q = __importStar(require("./job.query.repository"));
+const M = __importStar(require("./job.mutation.repository"));
 class JobRepository {
     static async getCompany(companyId) {
-        const id = typeof companyId === "string" ? Number(companyId) : companyId;
-        return prisma_1.prisma.company.findUnique({ where: { id } });
+        return Q.getCompany(companyId);
     }
     static async createJob(companyId, data) {
-        const cid = typeof companyId === "string" ? Number(companyId) : companyId;
-        return prisma_1.prisma.job.create({
-            data: {
-                companyId: cid,
-                title: data.title,
-                description: data.description,
-                bannerUrl: data.banner ?? null,
-                category: data.category,
-                city: data.city,
-                salaryMin: data.salaryMin ?? null,
-                salaryMax: data.salaryMax ?? null,
-                tags: data.tags,
-                applyDeadline: data.deadline ?? null,
-                isPublished: data.isPublished ?? false,
-            },
-        });
+        return M.createJob(companyId, data);
     }
     static async updateJob(companyId, jobId, data) {
-        const jid = typeof jobId === "string" ? Number(jobId) : jobId;
-        // Build update data with whitelisted fields only
-        const updateData = {};
-        if (data.title !== undefined)
-            updateData.title = data.title;
-        if (data.description !== undefined)
-            updateData.description = data.description;
-        if (data.category !== undefined)
-            updateData.category = data.category;
-        if (data.city !== undefined)
-            updateData.city = data.city;
-        if (data.employmentType !== undefined)
-            updateData.employmentType = data.employmentType;
-        if (data.experienceLevel !== undefined)
-            updateData.experienceLevel = data.experienceLevel;
-        if (data.salaryMin !== undefined)
-            updateData.salaryMin = data.salaryMin;
-        if (data.salaryMax !== undefined)
-            updateData.salaryMax = data.salaryMax;
-        if (data.tags !== undefined)
-            updateData.tags = data.tags;
-        if (data.isPublished !== undefined)
-            updateData.isPublished = data.isPublished;
-        if (data.banner !== undefined)
-            updateData.bannerUrl = data.banner;
-        if (data.deadline !== undefined)
-            updateData.applyDeadline = data.deadline;
-        return prisma_1.prisma.job.update({
-            where: { id: jid },
-            data: updateData,
-        });
+        return M.updateJob(companyId, jobId, data);
     }
     static async getJobById(companyId, jobId) {
-        const cid = typeof companyId === "string" ? Number(companyId) : companyId;
-        const jid = typeof jobId === "string" ? Number(jobId) : jobId;
-        return prisma_1.prisma.job.findFirst({
-            where: { id: jid, companyId: cid },
-            include: {
-                _count: { select: { applications: true } },
-                applications: {
-                    include: {
-                        user: true,
-                    },
-                    orderBy: { createdAt: "asc" },
-                },
-                preselectionTest: {
-                    include: {
-                        results: true,
-                    },
-                },
-            },
-        });
+        return Q.getJobById(companyId, jobId);
     }
     static async getJobBySlug(jobSlug) {
-        const now = new Date();
-        return prisma_1.prisma.job.findFirst({
-            where: {
-                slug: jobSlug,
-                isPublished: true,
-                OR: [{ applyDeadline: null }, { applyDeadline: { gte: now } }],
-            },
-            select: {
-                id: true,
-                title: true,
-                companyId: true,
-                applyDeadline: true,
-                isPublished: true,
-            },
-        });
+        return Q.getJobBySlug(jobSlug);
     }
     static async togglePublish(jobId, isPublished) {
-        const jid = typeof jobId === "string" ? Number(jobId) : jobId;
-        return prisma_1.prisma.job.update({ where: { id: jid }, data: { isPublished } });
+        return M.togglePublish(jobId, isPublished);
     }
     static async deleteJob(companyId, jobId) {
-        const jid = typeof jobId === "string" ? Number(jobId) : jobId;
-        return prisma_1.prisma.job.delete({ where: { id: jid } });
+        return M.deleteJob(companyId, jobId);
     }
     static async listJobs(params) {
-        const { companyId, title, category, sortBy = "createdAt", sortOrder = "desc", limit = 10, offset = 0, } = params;
-        const cid = typeof companyId === "string" ? Number(companyId) : companyId;
-        const where = {
-            companyId: cid,
-            ...(title ? { title: { contains: title, mode: "insensitive" } } : {}),
-            ...(category ? { category: { equals: category } } : {}),
-        };
-        const [items, total] = await Promise.all([
-            prisma_1.prisma.job.findMany({
-                where,
-                orderBy: sortBy === "deadline"
-                    ? { applyDeadline: sortOrder }
-                    : { createdAt: sortOrder },
-                skip: offset,
-                take: limit,
-                include: {
-                    _count: { select: { applications: true } },
-                },
-            }),
-            prisma_1.prisma.job.count({ where }),
-        ]);
-        return { items, total, limit, offset };
+        return Q.listJobs(params);
     }
     static async listPublishedJobs(params) {
-        const { title, category, city, sortBy = "createdAt", sortOrder = "desc", limit = 10, offset = 0, } = params;
-        const now = new Date();
-        const where = {
-            isPublished: true,
-            ...(title ? { title: { contains: title, mode: "insensitive" } } : {}),
-            ...(category ? { category: { equals: category } } : {}),
-            ...(city ? { city: { contains: city, mode: "insensitive" } } : {}),
-            // Optional: exclude expired by deadline if provided
-            OR: [{ applyDeadline: null }, { applyDeadline: { gte: now } }],
-        };
-        const [items, total] = await Promise.all([
-            prisma_1.prisma.job.findMany({
-                where,
-                orderBy: sortBy === "deadline"
-                    ? { applyDeadline: sortOrder }
-                    : { createdAt: sortOrder },
-                skip: offset,
-                take: limit,
-            }),
-            prisma_1.prisma.job.count({ where }),
-        ]);
-        return { items, total, limit, offset };
+        return Q.listPublishedJobs(params);
     }
     static async getJobPublic(jobId) {
-        const now = new Date();
-        const jid = typeof jobId === "string" ? Number(jobId) : jobId;
-        return prisma_1.prisma.job.findFirst({
-            where: {
-                id: jid,
-                isPublished: true,
-                OR: [{ applyDeadline: null }, { applyDeadline: { gte: now } }],
-            },
-            select: {
-                id: true,
-                title: true,
-                companyId: true,
-                applyDeadline: true,
-                isPublished: true,
-            },
-        });
+        return Q.getJobPublic(jobId);
     }
     static async listApplicantsForJob(params) {
-        const { companyId, jobId, name, education, ageMin, ageMax, expectedSalaryMin, expectedSalaryMax, sortBy = "appliedAt", sortOrder = "asc", limit = 10, offset = 0, } = params;
-        const cid = typeof companyId === "string" ? Number(companyId) : companyId;
-        const jid = typeof jobId === "string" ? Number(jobId) : jobId;
-        // Build user where for name/education/age with input sanitization
-        const userWhere = {};
-        if (typeof name === "string" && name.trim() !== "") {
-            const sanitizedName = name.trim().substring(0, 100); // Limit length
-            userWhere.name = { contains: sanitizedName, mode: "insensitive" };
-        }
-        if (typeof education === "string" && education.trim() !== "") {
-            const sanitizedEducation = education.trim().substring(0, 100); // Limit length
-            userWhere.education = {
-                contains: sanitizedEducation,
-                mode: "insensitive",
-            };
-        }
-        // Age filter using dob between date ranges
-        if (typeof ageMin === "number" || typeof ageMax === "number") {
-            const now = new Date();
-            let dobGte; // older than ageMax => dob earlier than now - ageMax years
-            let dobLte; // younger than ageMin => dob later than now - ageMin years
-            if (typeof ageMax === "number") {
-                dobLte = new Date(now);
-                dobLte.setFullYear(now.getFullYear() - ageMin); // placeholder, adjust below
-            }
-            if (typeof ageMin === "number") {
-                dobGte = new Date(now);
-                dobGte.setFullYear(now.getFullYear() - ageMax); // placeholder, adjust below
-            }
-            // Correct calculation
-            const calcDobFromAge = (age) => {
-                const d = new Date();
-                d.setFullYear(d.getFullYear() - age);
-                return d;
-            };
-            const whereDob = {};
-            if (typeof ageMax === "number")
-                whereDob.gte = calcDobFromAge(ageMax + 1); // >= dob of (ageMax+1) to be age <= ageMax
-            if (typeof ageMin === "number")
-                whereDob.lte = calcDobFromAge(ageMin); // <= dob of ageMin to be age >= ageMin
-            userWhere.dob = whereDob;
-        }
-        // Salary filter on application
-        const appWhere = {
-            jobId: jid,
-            job: { companyId: cid },
-            ...(expectedSalaryMin != null
-                ? { expectedSalary: { gte: expectedSalaryMin } }
-                : {}),
-            ...(expectedSalaryMax != null
-                ? {
-                    expectedSalary: {
-                        lte: expectedSalaryMax,
-                        ...(expectedSalaryMin != null ? { gte: expectedSalaryMin } : {}),
-                    },
-                }
-                : {}),
-        };
-        const orderBy = sortBy === "expectedSalary"
-            ? { expectedSalary: sortOrder }
-            : sortBy === "age"
-                ? { user: { dob: sortOrder === "asc" ? "desc" : "asc" } } // age asc => dob desc (younger later dob)
-                : { createdAt: sortOrder }; // appliedAt
-        const [items, total] = await Promise.all([
-            prisma_1.prisma.application.findMany({
-                where: {
-                    ...appWhere,
-                    ...(Object.keys(userWhere).length ? { user: { is: userWhere } } : {}),
-                },
-                select: {
-                    id: true,
-                    userId: true,
-                    jobId: true,
-                    cvUrl: true,
-                    cvFileName: true,
-                    cvFileSize: true,
-                    expectedSalary: true,
-                    expectedSalaryCurrency: true,
-                    status: true,
-                    reviewNote: true,
-                    reviewUpdatedAt: true,
-                    referralSource: true,
-                    createdAt: true,
-                    updatedAt: true,
-                    isPriority: true, // ← IMPORTANT: Include priority field
-                    user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            email: true,
-                            phone: true,
-                            profilePicture: true,
-                            education: true,
-                            dob: true,
-                        },
-                    },
-                },
-                orderBy: [
-                    { isPriority: "desc" }, // ← IMPORTANT: Priority sorting first
-                    orderBy, // Then original sorting
-                ],
-                skip: offset,
-                take: limit,
-            }),
-            prisma_1.prisma.application.count({
-                where: {
-                    ...appWhere,
-                    ...(Object.keys(userWhere).length ? { user: { is: userWhere } } : {}),
-                },
-            }),
-        ]);
-        return { items, total, limit, offset };
+        return Q.listApplicantsForJob(params);
     }
 }
 exports.JobRepository = JobRepository;
