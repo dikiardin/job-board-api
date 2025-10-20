@@ -32,7 +32,7 @@ async function seedSubscriptions({ prisma, now, addDays, users, }) {
                     "Priority customer support",
                     "Detailed analytics and insights",
                     "Premium badge showcase",
-                    "Enhanced profile visibility"
+                    "Enhanced profile visibility",
                 ],
                 monthlyAssessmentQuota: null,
             },
@@ -74,18 +74,23 @@ async function seedSubscriptions({ prisma, now, addDays, users, }) {
     await prisma.subscription.create({
         data: {
             userId: seekers.bob.id,
-            planId: standardPlan.id,
-            status: prisma_1.SubscriptionStatus.PENDING,
+            planId: professionalPlan.id,
+            status: prisma_1.SubscriptionStatus.ACTIVE,
+            startDate: now,
+            paidAt: now,
+            expiresAt: thirtyDaysLater,
+            approvedByDeveloperId: developer.id,
             paymentMethod: prisma_1.PaymentMethod.TRANSFER,
-            proofUrl: "https://res.cloudinary.com/demo/payments/bob-proof.jpg",
             payments: {
                 create: {
-                    amount: new prisma_1.Prisma.Decimal(25000),
+                    amount: new prisma_1.Prisma.Decimal(100000),
                     paymentMethod: prisma_1.PaymentMethod.TRANSFER,
-                    status: prisma_1.PaymentStatus.PENDING,
-                    paymentProof: "https://res.cloudinary.com/demo/payments/bob-proof.jpg",
-                    expiresAt: addDays(1),
-                    referenceCode: "STD-INV-BOB-001",
+                    status: prisma_1.PaymentStatus.APPROVED,
+                    paymentProof: "https://res.cloudinary.com/demo/payments/bob-professional.jpg",
+                    paidAt: now,
+                    approvedAt: now,
+                    approvedById: developer.id,
+                    referenceCode: "PRO-INV-BOB-001",
                 },
             },
         },
@@ -208,6 +213,6 @@ async function seedSubscriptions({ prisma, now, addDays, users, }) {
         professionalPlan,
         ginaProfessional,
         testProfessionalSubscription,
-        testStandardSubscription
+        testStandardSubscription,
     };
 }
