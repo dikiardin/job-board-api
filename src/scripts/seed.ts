@@ -15,7 +15,13 @@ import { seedEmploymentAndReviews } from "./seed-data/employmentAndReviews";
 import { seedSocialAndAnalytics } from "./seed-data/socialAndAnalytics";
 import { seedLocationCache } from "./seed-data/locationCache";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DIRECT_URL || process.env.DATABASE_URL!,
+    },
+  },
+});
 
 async function seed() {
   console.log("Seeding database...");
@@ -25,8 +31,8 @@ async function seed() {
   const addDays = (days: number) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
 
   const [adminPassword, userPassword, developerPassword] = await Promise.all([
-    hashPassword("admin123"),
-    hashPassword("user12345"),
+    hashPassword("Admin123"),
+    hashPassword("User12345"),
     hashPassword("work00dev"),
   ]);
 
