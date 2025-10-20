@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AssessmentCreationService } from "../../services/skillAssessment/assessmentCreation.service";
 import { ControllerHelper } from "../../utils/controllerHelper";
+import { validateQuestionsArray } from "./assessmentManagement.helpers";
 
 export class AssessmentManagementController {
   public static async createAssessment(
@@ -34,29 +35,9 @@ export class AssessmentManagementController {
           .json({ message: "At least one question is required" });
       }
 
-      // Validate each question
-      for (let i = 0; i < questions.length; i++) {
-        const q = questions[i];
-        if (!q.question || !q.question.trim()) {
-          return res
-            .status(400)
-            .json({ message: `Question ${i + 1}: Question text is required` });
-        }
-        if (!Array.isArray(q.options) || q.options.length !== 4) {
-          return res.status(400).json({
-            message: `Question ${i + 1}: Must have exactly 4 options`,
-          });
-        }
-        if (!q.answer || !q.answer.trim()) {
-          return res
-            .status(400)
-            .json({ message: `Question ${i + 1}: Answer is required` });
-        }
-        if (!q.options.includes(q.answer)) {
-          return res.status(400).json({
-            message: `Question ${i + 1}: Answer must be one of the options`,
-          });
-        }
+      const validation = validateQuestionsArray(questions);
+      if (!validation.valid) {
+        return res.status(400).json({ message: validation.error });
       }
 
       const assessment = await AssessmentCreationService.createAssessment({
@@ -207,7 +188,6 @@ export class AssessmentManagementController {
     next: NextFunction
   ) {
     try {
-      const { userId, role } = res.locals.decrypt;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 

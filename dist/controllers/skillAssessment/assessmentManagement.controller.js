@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssessmentManagementController = void 0;
 const assessmentCreation_service_1 = require("../../services/skillAssessment/assessmentCreation.service");
 const controllerHelper_1 = require("../../utils/controllerHelper");
+const assessmentManagement_helpers_1 = require("./assessmentManagement.helpers");
 class AssessmentManagementController {
     static async createAssessment(req, res, next) {
         try {
@@ -17,29 +18,9 @@ class AssessmentManagementController {
                     .status(400)
                     .json({ message: "At least one question is required" });
             }
-            // Validate each question
-            for (let i = 0; i < questions.length; i++) {
-                const q = questions[i];
-                if (!q.question || !q.question.trim()) {
-                    return res
-                        .status(400)
-                        .json({ message: `Question ${i + 1}: Question text is required` });
-                }
-                if (!Array.isArray(q.options) || q.options.length !== 4) {
-                    return res.status(400).json({
-                        message: `Question ${i + 1}: Must have exactly 4 options`,
-                    });
-                }
-                if (!q.answer || !q.answer.trim()) {
-                    return res
-                        .status(400)
-                        .json({ message: `Question ${i + 1}: Answer is required` });
-                }
-                if (!q.options.includes(q.answer)) {
-                    return res.status(400).json({
-                        message: `Question ${i + 1}: Answer must be one of the options`,
-                    });
-                }
+            const validation = (0, assessmentManagement_helpers_1.validateQuestionsArray)(questions);
+            if (!validation.valid) {
+                return res.status(400).json({ message: validation.error });
             }
             const assessment = await assessmentCreation_service_1.AssessmentCreationService.createAssessment({
                 title,
@@ -131,7 +112,6 @@ class AssessmentManagementController {
     }
     static async getDeveloperAssessments(req, res, next) {
         try {
-            const { userId, role } = res.locals.decrypt;
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
             const assessments = await assessmentCreation_service_1.AssessmentCreationService.getAssessments(page, limit);

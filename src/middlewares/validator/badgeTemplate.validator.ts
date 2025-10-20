@@ -1,5 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
+import {
+  validateBadgeName,
+  validateBadgeDescription,
+  validateBadgeCategory,
+  validateBadgeFile,
+  validateBadgeNameForUpdate,
+  extractFormDataFields,
+} from "./badgeTemplate.validation.helpers";
 
 // Validation schemas
 const createBadgeTemplateSchema = Joi.object({
@@ -33,9 +41,11 @@ const updateBadgeTemplateSchema = Joi.object({
   category: Joi.string().max(30).optional().allow("").messages({
     "string.max": "Category must not exceed 30 characters",
   }),
-}).min(1).messages({
-  "object.min": "At least one field must be provided for update",
-});
+})
+  .min(1)
+  .messages({
+    "object.min": "At least one field must be provided for update",
+  });
 
 const searchBadgeTemplateSchema = Joi.object({
   q: Joi.string().min(2).max(50).required().messages({
@@ -61,63 +71,37 @@ export const validateCreateBadgeTemplate = (
   res: Response,
   next: NextFunction
 ) => {
-  // Debug: Log request body and file
-  console.log('Request body:', req.body);
-  console.log('Request file:', req.file);
-  
-  // Manual validation for form-data fields - handle potential key spacing issues
-  const bodyKeys = Object.keys(req.body);
-  console.log('Available body keys:', bodyKeys);
-  
-  // Find name field (handle potential spacing issues)
-  const nameKey = bodyKeys.find(key => key.trim() === 'name') || 'name';
-  const descKey = bodyKeys.find(key => key.trim() === 'description') || 'description';
-  const catKey = bodyKeys.find(key => key.trim() === 'category') || 'category';
-  
-  const name = req.body[nameKey];
-  const description = req.body[descKey];
-  const category = req.body[catKey];
+  const { name, description, category } = extractFormDataFields(req.body);
 
-  console.log('Extracted values:', { name, description, category });
-
-  // Validate required fields
-  if (!name || typeof name !== 'string' || name.trim().length < 3) {
-    console.log('Name validation failed:', { name, type: typeof name, nameKey });
+  const nameValidation = validateBadgeName(name);
+  if (!nameValidation.valid) {
     return res.status(400).json({
       success: false,
-      message: "Badge name is required and must be at least 3 characters long",
-      debug: { receivedName: name, nameType: typeof name, availableKeys: bodyKeys }
+      message: nameValidation.error,
     });
   }
 
-  if (name.trim().length > 50) {
+  const descValidation = validateBadgeDescription(description);
+  if (!descValidation.valid) {
     return res.status(400).json({
       success: false,
-      message: "Badge name must not exceed 50 characters",
+      message: descValidation.error,
     });
   }
 
-  // Validate optional description
-  if (description && (typeof description !== 'string' || description.length > 200)) {
+  const catValidation = validateBadgeCategory(category);
+  if (!catValidation.valid) {
     return res.status(400).json({
       success: false,
-      message: "Description must not exceed 200 characters",
+      message: catValidation.error,
     });
   }
 
-  // Validate optional category
-  if (category && (typeof category !== 'string' || category.length > 30)) {
+  const fileValidation = validateBadgeFile(req.file);
+  if (!fileValidation.valid) {
     return res.status(400).json({
       success: false,
-      message: "Category must not exceed 30 characters",
-    });
-  }
-
-  // Validate file upload
-  if (!req.file) {
-    return res.status(400).json({
-      success: false,
-      message: "Badge icon image is required",
+      message: fileValidation.error,
     });
   }
 
@@ -129,38 +113,37 @@ export const validateUpdateBadgeTemplate = (
   res: Response,
   next: NextFunction
 ) => {
-  // Manual validation for form-data fields
   const { name, description, category } = req.body;
 
-  // Check if at least one field is provided (name, description, category, or file)
   if (!name && !description && !category && !req.file) {
     return res.status(400).json({
       success: false,
-      message: "At least one field (name, description, category, or icon) must be provided for update",
+      message:
+        "At least one field (name, description, category, or icon) must be provided for update",
     });
   }
 
-  // Validate name if provided
-  if (name && (typeof name !== 'string' || name.trim().length < 3 || name.trim().length > 50)) {
+  const nameValidation = validateBadgeNameForUpdate(name);
+  if (!nameValidation.valid) {
     return res.status(400).json({
       success: false,
-      message: "Badge name must be between 3 and 50 characters long",
+      message: nameValidation.error,
     });
   }
 
-  // Validate description if provided
-  if (description && (typeof description !== 'string' || description.length > 200)) {
+  const descValidation = validateBadgeDescription(description);
+  if (!descValidation.valid) {
     return res.status(400).json({
       success: false,
-      message: "Description must not exceed 200 characters",
+      message: descValidation.error,
     });
   }
 
-  // Validate category if provided
-  if (category && (typeof category !== 'string' || category.length > 30)) {
+  const catValidation = validateBadgeCategory(category);
+  if (!catValidation.valid) {
     return res.status(400).json({
       success: false,
-      message: "Category must not exceed 30 characters",
+      message: catValidation.error,
     });
   }
 
@@ -204,7 +187,7 @@ export const validateTemplateId = (
   res: Response,
   next: NextFunction
 ) => {
-  const templateId = parseInt(req.params.templateId || '0');
+  const templateId = parseInt(req.params.templateId || "0");
   if (isNaN(templateId) || templateId <= 0) {
     return res.status(400).json({
       success: false,
