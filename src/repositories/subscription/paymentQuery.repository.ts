@@ -60,4 +60,25 @@ export class PaymentQueryRepo {
       orderBy: { createdAt: "desc" },
     });
   }
+
+  // Get pending payments by user ID (more efficient)
+  public static async getPendingPaymentsByUserId(userId: number) {
+    return prisma.payment.findMany({
+      where: {
+        status: "PENDING",
+        subscription: { userId },
+      },
+      include: {
+        subscription: {
+          include: {
+            user: {
+              select: { id: true, name: true, email: true },
+            },
+            plan: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
 }

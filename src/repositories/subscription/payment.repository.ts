@@ -8,6 +8,11 @@ export class PaymentRepo {
     return PaymentQueryRepo.getPendingPayments();
   }
 
+  // Get pending payments by user ID
+  public static async getPendingPaymentsByUserId(userId: number) {
+    return PaymentQueryRepo.getPendingPaymentsByUserId(userId);
+  }
+
   // Get payment by ID
   public static async getPaymentById(id: number) {
     return PaymentQueryRepo.getPaymentById(id);

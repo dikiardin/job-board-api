@@ -38,7 +38,9 @@ export class SubscriptionController {
   ) {
     try {
       const userId = ControllerHelper.getUserId(res);
-      const subscriptions = await SubscriptionService.getUserSubscriptions(userId);
+      const subscriptions = await SubscriptionService.getUserSubscriptions(
+        userId
+      );
       res.status(200).json(subscriptions);
     } catch (error) {
       next(error);
@@ -52,7 +54,9 @@ export class SubscriptionController {
   ) {
     try {
       const userId = ControllerHelper.getUserId(res);
-      const subscription = await SubscriptionService.getUserActiveSubscription(userId);
+      const subscription = await SubscriptionService.getUserActiveSubscription(
+        userId
+      );
       res.status(200).json(subscription);
     } catch (error) {
       next(error);
@@ -69,13 +73,14 @@ export class SubscriptionController {
       const { planId } = req.body;
 
       ControllerHelper.validateRequired({ planId }, "Plan ID is required");
-      
+
       // Ensure planId is integer
-      const parsedPlanId = typeof planId === 'string' ? parseInt(planId) : planId;
+      const parsedPlanId =
+        typeof planId === "string" ? parseInt(planId) : planId;
       if (isNaN(parsedPlanId)) {
         throw new Error("Invalid plan ID format");
       }
-      
+
       const result = await SubscriptionService.subscribeUser(
         userId,
         parsedPlanId
@@ -95,10 +100,15 @@ export class SubscriptionController {
     try {
       const id = ControllerHelper.parseId(req.params.id);
       const updateData = ControllerHelper.buildUpdateData(req.body, [
-        'isActive', 'startDate', 'endDate'
+        "isActive",
+        "startDate",
+        "endDate",
       ]);
 
-      const subscription = await SubscriptionService.updateSubscription(id, updateData);
+      const subscription = await SubscriptionService.updateSubscription(
+        id,
+        updateData
+      );
       res.status(200).json(subscription);
     } catch (error) {
       next(error);
@@ -111,12 +121,22 @@ export class SubscriptionController {
     next: NextFunction
   ) {
     try {
+      console.log("=== CONTROLLER: RENEW SUBSCRIPTION ===");
       const userId = ControllerHelper.getUserId(res);
-      const planId = req.body.planId ? ControllerHelper.parseId(req.body.planId) : undefined;
+      const planId = req.body.planId
+        ? ControllerHelper.parseId(req.body.planId)
+        : undefined;
 
-      const result = await SubscriptionRenewalService.renewSubscription(userId, planId);
+      console.log("Controller - User ID:", userId);
+      console.log("Controller - Plan ID:", planId);
+
+      const result = await SubscriptionRenewalService.renewSubscription(
+        userId,
+        planId
+      );
       res.status(200).json(result);
     } catch (error) {
+      console.error("Controller error:", error);
       next(error);
     }
   }
@@ -127,10 +147,17 @@ export class SubscriptionController {
     next: NextFunction
   ) {
     try {
+      console.log("=== CONTROLLER: GET RENEWAL INFO ===");
       const userId = ControllerHelper.getUserId(res);
-      const renewalInfo = await SubscriptionRenewalService.getRenewalInfo(userId);
+      console.log("Controller - User ID:", userId);
+
+      const renewalInfo = await SubscriptionRenewalService.getRenewalInfo(
+        userId
+      );
+      console.log("Controller - Renewal info retrieved");
       res.status(200).json(renewalInfo);
     } catch (error) {
+      console.error("Controller error:", error);
       next(error);
     }
   }
