@@ -13,7 +13,34 @@ class AnalyticsRouter {
   }
 
   private initializeRoutes(): void {
-    // All analytics endpoints are admin-only
+    // Platform-wide analytics endpoints (admin-only) - temporarily without auth for testing
+    this.route.get(
+      "/platform/demographics",
+      AnalyticsController.platformDemographics
+    );
+
+    this.route.get(
+      "/platform/salary-trends",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      AnalyticsController.platformSalaryTrends
+    );
+
+    this.route.get(
+      "/platform/interests",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      AnalyticsController.platformInterests
+    );
+
+    this.route.get(
+      "/platform/overview",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      AnalyticsController.platformOverview
+    );
+
+    // Legacy company-specific endpoints (for backward compatibility)
     this.route.get(
       "/companies/:companyId/analytics/demographics",
       verifyToken,

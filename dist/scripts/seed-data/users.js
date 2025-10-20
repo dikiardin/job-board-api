@@ -31,25 +31,6 @@ async function seedUsers({ prisma, now, passwords, }) {
             },
         },
     });
-    const mentor = await prisma.user.create({
-        data: {
-            role: prisma_1.UserRole.ADMIN,
-            email: "mentor@jobboard.id",
-            passwordHash: passwords.mentor,
-            name: "Mentor Insight",
-            gender: "Female",
-            city: "Jakarta",
-            emailVerifiedAt: now,
-            profilePicture: "https://placehold.co/128x128?text=MENTOR",
-            profile: {
-                create: {
-                    fullName: "Mentor Insight",
-                    city: "Jakarta",
-                    summary: "Provides guidance on interview readiness and assessments.",
-                },
-            },
-        },
-    });
     const adminEntries = await Promise.all(userSeedData_1.adminSeeds.map(async (admin) => {
         const user = await prisma.user.create({
             data: {
@@ -166,5 +147,5 @@ async function seedUsers({ prisma, now, passwords, }) {
             },
         ],
     });
-    return { developer, mentor, admins, seekers };
+    return { developer, admins, seekers };
 }
