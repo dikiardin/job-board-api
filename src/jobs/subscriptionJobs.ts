@@ -8,11 +8,11 @@ const sentReminderCache = new Map<number, number>();
 const REMINDER_DEDUP_MS = 2 * 60 * 60 * 1000; // 2 hours window
 
 export function startSubscriptionJobs() {
-  // Reminder H-1 (every 10 minutes)
-  cron.schedule("*/10 * * * *", async () => {
+  // TESTING: Reminder 1 minute before expiry (runs every 1 minute)
+  cron.schedule("* * * * *", async () => {
     try {
       const expiring =
-        await SubscriptionRepo.getSubscriptionsExpiringInHoursWindow(24, 10);
+        await SubscriptionRepo.getSubscriptionsExpiringInMinutesWindow(1, 60);
 
       for (const subscription of expiring) {
         if (subscription.expiresAt) {
@@ -34,8 +34,8 @@ export function startSubscriptionJobs() {
     }
   });
 
-  // Deactivate expired subscriptions (every 15 minutes)
-  cron.schedule("*/15 * * * *", async () => {
+  // TESTING: Deactivate expired subscriptions (runs every 1 minute)
+  cron.schedule("* * * * *", async () => {
     try {
       const expired = await SubscriptionRepo.getExpiredSubscriptions();
 
@@ -56,8 +56,9 @@ export function startSubscriptionJobs() {
 // Run one cycle of subscription jobs (idempotent)
 export async function runSubscriptionCycle(): Promise<void> {
   try {
+    // TESTING: Check for subscriptions expiring in 1 minute
     const expiring =
-      await SubscriptionRepo.getSubscriptionsExpiringInHoursWindow(24, 10);
+      await SubscriptionRepo.getSubscriptionsExpiringInMinutesWindow(1, 60);
     const now = Date.now();
     for (const subscription of expiring) {
       if (subscription.expiresAt) {
