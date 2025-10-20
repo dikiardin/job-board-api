@@ -30,21 +30,25 @@ class SkillAssessmentRouter {
   }
 
   private initializeRoutes(): void {
-    // Public routes
+    this.initializePublicRoutes();
+    this.initializeDeveloperRoutes();
+    this.initializeUserRoutes();
+    this.initializeBadgeTemplateRoutes();
+  }
+
+  private initializePublicRoutes(): void {
     this.route.get(
       "/verify/:certificateCode",
       SkillAssessmentValidator.validateCertificateCode,
       CertificateManagementController.verifyCertificate
     );
 
-    // Certificate view (public - inline PDF view)
     this.route.get(
       "/certificates/:certificateCode/view",
       SkillAssessmentValidator.validateCertificateCode,
       CertificateManagementController.viewCertificate
     );
 
-    // Certificate download (authenticated)
     this.route.get(
       "/certificates/:resultId/download",
       verifyToken,
@@ -53,7 +57,6 @@ class SkillAssessmentRouter {
       CertificateManagementController.downloadCertificate
     );
 
-    // Assessment discovery (subscription required)
     this.route.get(
       "/assessments",
       verifyToken,
@@ -62,8 +65,9 @@ class SkillAssessmentRouter {
       SkillAssessmentValidator.validatePagination,
       AssessmentManagementController.getAssessments
     );
+  }
 
-    // Get single assessment by slug (developer)
+  private initializeDeveloperRoutes(): void {
     this.route.get(
       "/developer/assessments/slug/:slug",
       verifyToken,
@@ -71,8 +75,6 @@ class SkillAssessmentRouter {
       SkillAssessmentValidator.validateAssessmentSlug,
       AssessmentManagementController.getAssessmentBySlug
     );
-
-    // Developer routes (create and manage assessments)
     this.route.post(
       "/assessments",
       verifyToken,
@@ -81,7 +83,6 @@ class SkillAssessmentRouter {
       AssessmentManagementController.createAssessment
     );
 
-    // Get single assessment by ID (for editing) - MUST BE BEFORE general list
     this.route.get(
       "/developer/assessments/:assessmentId",
       verifyToken,
@@ -114,7 +115,6 @@ class SkillAssessmentRouter {
       AssessmentManagementController.deleteAssessment
     );
 
-    // Save individual question
     this.route.post(
       "/assessments/questions",
       verifyToken,
@@ -130,9 +130,9 @@ class SkillAssessmentRouter {
       SkillAssessmentValidator.validateAssessmentId,
       AssessmentTakingController.getAssessmentResults
     );
+  }
 
-    // User routes (take assessments - subscription required)
-    // Place slug route BEFORE numeric ID route to avoid param collision
+  private initializeUserRoutes(): void {
     this.route.get(
       "/assessments/slug/:slug/take",
       verifyToken,
@@ -195,8 +195,9 @@ class SkillAssessmentRouter {
       verifySubscription,
       CertificateManagementController.getUserBadges
     );
+  }
 
-    // Badge Template Management Routes (Developer only)
+  private initializeBadgeTemplateRoutes(): void {
     this.route.post(
       "/badge-templates",
       verifyToken,

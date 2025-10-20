@@ -11,10 +11,8 @@ class DateHelper {
         return new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
     }
     static getSubscriptionEndDate(startDate) {
-        const endDate = new Date(startDate);
-        // Production: Set to 30 days duration
-        endDate.setDate(endDate.getDate() + 30);
-        return endDate;
+        // TESTING: Set to 3 minutes duration (change back to 30 days after testing)
+        return new Date(startDate.getTime() + 3 * 60 * 1000);
     }
     static getTomorrowDate() {
         const tomorrow = new Date();

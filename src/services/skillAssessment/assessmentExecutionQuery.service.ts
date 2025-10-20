@@ -38,20 +38,33 @@ export class AssessmentExecutionQueryService {
       throw new CustomError("Assessment not found", 404);
     }
 
-    // Mock questions for taking (since we don't have real questions structure)
-    const questionsForTaking = Array.from({ length: 25 }, (_, index) => ({
-      id: index + 1,
-      question: `Sample question ${index + 1} for ${assessment.title}`,
-      options: ["Option A", "Option B", "Option C", "Option D"],
-    }));
+    // Query real questions from database
+    const questions = await prisma.skillQuestion.findMany({
+      where: { assessmentId },
+      select: {
+        id: true,
+        question: true,
+        options: true,
+        // DON'T select 'answer' - keep it secret for users
+      },
+      orderBy: { orderIndex: "asc" },
+    });
+
+    if (!questions || questions.length === 0) {
+      throw new CustomError("No questions found for this assessment", 404);
+    }
 
     return {
       id: assessment.id,
       title: assessment.title,
       description: assessment.description || "",
-      questions: questionsForTaking,
+      questions: questions.map((q) => ({
+        id: q.id,
+        question: q.question,
+        options: q.options as string[],
+      })),
       timeLimit: this.TIME_LIMIT_MINUTES,
-      totalQuestions: questionsForTaking.length,
+      totalQuestions: questions.length,
       passingScore: assessment.passScore,
     };
   }
@@ -81,9 +94,30 @@ export class AssessmentExecutionQueryService {
     assessmentId: number,
     limit: number = 10
   ) {
-    // Mock implementation
+    const topResults = await prisma.skillResult.findMany({
+      where: {
+        assessmentId,
+        isPassed: true,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: [{ score: "desc" }, { finishedAt: "asc" }],
+      take: limit,
+    });
+
     return {
-      leaderboard: [],
+      leaderboard: topResults.map((result, index) => ({
+        rank: index + 1,
+        userName: result.user.name,
+        score: result.score,
+        completedAt: result.finishedAt,
+      })),
       assessmentId,
       limit,
     };
@@ -91,11 +125,30 @@ export class AssessmentExecutionQueryService {
 
   // Get assessment statistics for users
   public static async getAssessmentStats(assessmentId: number) {
-    // Mock implementation to avoid repository dependency
+    const results = await prisma.skillResult.findMany({
+      where: { assessmentId },
+      select: {
+        score: true,
+        isPassed: true,
+      },
+    });
+
+    if (results.length === 0) {
+      return {
+        totalAttempts: 0,
+        averageScore: 0,
+        passRate: 0,
+      };
+    }
+
+    const totalAttempts = results.length;
+    const passedCount = results.filter((r) => r.isPassed).length;
+    const totalScore = results.reduce((sum, r) => sum + r.score, 0);
+
     return {
-      totalAttempts: 0,
-      averageScore: 0,
-      passRate: 0,
+      totalAttempts,
+      averageScore: Math.round(totalScore / totalAttempts),
+      passRate: Math.round((passedCount / totalAttempts) * 100),
     };
   }
 

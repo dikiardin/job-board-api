@@ -17,15 +17,21 @@ const badgesAndCvs_1 = require("./seed-data/badgesAndCvs");
 const employmentAndReviews_1 = require("./seed-data/employmentAndReviews");
 const socialAndAnalytics_1 = require("./seed-data/socialAndAnalytics");
 const locationCache_1 = require("./seed-data/locationCache");
-const prisma = new prisma_1.PrismaClient();
+const prisma = new prisma_1.PrismaClient({
+    datasources: {
+        db: {
+            url: process.env.DIRECT_URL || process.env.DATABASE_URL,
+        },
+    },
+});
 async function seed() {
     console.log("Seeding database...");
     await (0, clearDatabase_1.clearDatabase)(prisma);
     const now = new Date();
     const addDays = (days) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
     const [adminPassword, userPassword, developerPassword] = await Promise.all([
-        (0, hashPassword_1.hashPassword)("admin123"),
-        (0, hashPassword_1.hashPassword)("user12345"),
+        (0, hashPassword_1.hashPassword)("Admin123"),
+        (0, hashPassword_1.hashPassword)("User12345"),
         (0, hashPassword_1.hashPassword)("work00dev"),
     ]);
     const users = await (0, users_1.seedUsers)({

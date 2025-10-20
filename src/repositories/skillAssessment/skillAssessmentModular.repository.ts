@@ -193,37 +193,9 @@ export class SkillAssessmentModularRepository {
 
   // ===== CONVENIENCE METHODS =====
 
-  // Combined methods that use both repositories
-  public static async getAssessmentWithResults(
-    assessmentId: number,
-    createdBy: number
-  ) {
-    const [assessment, results, stats] = await Promise.all([
-      this.getAssessmentById(assessmentId),
-      this.getAssessmentResults(assessmentId, createdBy),
-      this.getAssessmentStatistics(assessmentId),
-    ]);
-
-    return {
-      assessment,
-      results,
-      statistics: stats,
-    };
-  }
-
-  public static async getUserAssessmentSummary(userId: number) {
-    const [results, certificates] = await Promise.all([
-      this.getUserResults(userId),
-      this.getUserCertificates(userId),
-    ]);
-
-    return {
-      results: results.results,
-      certificates: certificates.certificates,
-    };
-  }
-
-  // Get user assessment attempts for a specific assessment
+  /**
+   * Get user assessment attempts for a specific assessment
+   */
   public static async getUserAssessmentAttempts(
     userId: number,
     assessmentId: number
@@ -232,15 +204,6 @@ export class SkillAssessmentModularRepository {
       userId,
       assessmentId
     );
-  }
-
-  // Export specialized repositories for direct access if needed
-  public static get CrudRepository() {
-    return AssessmentCrudRepository;
-  }
-
-  public static get ResultsRepository() {
-    return SkillAssessmentResultsRepository;
   }
 }
 

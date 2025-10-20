@@ -14,18 +14,28 @@ export class CertificateDataService {
         completedAt: result.createdAt,
         issuedAt: result.createdAt,
       },
-      verificationUrl: CertificateService.generateQRCodeData(result.certificateCode),
+      verificationUrl: CertificateService.generateQRCodeData(
+        result.certificateCode
+      ),
     };
   }
 
-  public static buildDownloadResponse(certificateCode: string) {
+  public static buildDownloadResponse(
+    certificateCode: string,
+    pdfUrl?: string | null
+  ) {
     return {
-      certificateUrl: `https://example.com/certificates/${certificateCode}.pdf`,
+      certificateUrl:
+        pdfUrl || `https://example.com/certificates/${certificateCode}.pdf`,
       fileName: `certificate-${certificateCode}.pdf`,
     };
   }
 
-  public static buildPaginationResponse(page: number, limit: number, total: number) {
+  public static buildPaginationResponse(
+    page: number,
+    limit: number,
+    total: number
+  ) {
     return {
       page,
       limit,
@@ -34,12 +44,15 @@ export class CertificateDataService {
     };
   }
 
-  public static buildBulkVerificationResult(certificateCodes: string[], results: any[]) {
+  public static buildBulkVerificationResult(
+    certificateCodes: string[],
+    results: any[]
+  ) {
     return results.map((result, index) => ({
       certificateCode: certificateCodes[index],
-      isValid: result.status === 'fulfilled',
-      data: result.status === 'fulfilled' ? result.value : null,
-      error: result.status === 'rejected' ? result.reason.message : null,
+      isValid: result.status === "fulfilled",
+      data: result.status === "fulfilled" ? result.value : null,
+      error: result.status === "rejected" ? result.reason.message : null,
     }));
   }
 }

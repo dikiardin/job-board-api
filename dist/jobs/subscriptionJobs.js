@@ -13,10 +13,10 @@ const prisma_1 = require("../generated/prisma");
 const sentReminderCache = new Map();
 const REMINDER_DEDUP_MS = 2 * 60 * 60 * 1000; // 2 hours window
 function startSubscriptionJobs() {
-    // Reminder H-1 (every 10 minutes)
-    node_cron_1.default.schedule("*/10 * * * *", async () => {
+    // TESTING: Reminder 1 minute before expiry (runs every 1 minute)
+    node_cron_1.default.schedule("* * * * *", async () => {
         try {
-            const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInHoursWindow(24, 10);
+            const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInMinutesWindow(1, 60);
             for (const subscription of expiring) {
                 if (subscription.expiresAt) {
                     const lastSentAt = sentReminderCache.get(subscription.id);
@@ -32,8 +32,8 @@ function startSubscriptionJobs() {
             console.error("[CRON] Failed to send expiration reminders:", error);
         }
     });
-    // Deactivate expired subscriptions (every 15 minutes)
-    node_cron_1.default.schedule("*/15 * * * *", async () => {
+    // TESTING: Deactivate expired subscriptions (runs every 1 minute)
+    node_cron_1.default.schedule("* * * * *", async () => {
         try {
             const expired = await subscription_repository_1.SubscriptionRepo.getExpiredSubscriptions();
             for (const subscription of expired) {
@@ -50,7 +50,8 @@ function startSubscriptionJobs() {
 // Run one cycle of subscription jobs (idempotent)
 async function runSubscriptionCycle() {
     try {
-        const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInHoursWindow(24, 10);
+        // TESTING: Check for subscriptions expiring in 1 minute
+        const expiring = await subscription_repository_1.SubscriptionRepo.getSubscriptionsExpiringInMinutesWindow(1, 60);
         const now = Date.now();
         for (const subscription of expiring) {
             if (subscription.expiresAt) {

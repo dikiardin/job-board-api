@@ -19,9 +19,9 @@ class CertificateDataService {
             verificationUrl: certificate_service_1.CertificateService.generateQRCodeData(result.certificateCode),
         };
     }
-    static buildDownloadResponse(certificateCode) {
+    static buildDownloadResponse(certificateCode, pdfUrl) {
         return {
-            certificateUrl: `https://example.com/certificates/${certificateCode}.pdf`,
+            certificateUrl: pdfUrl || `https://example.com/certificates/${certificateCode}.pdf`,
             fileName: `certificate-${certificateCode}.pdf`,
         };
     }
@@ -36,9 +36,9 @@ class CertificateDataService {
     static buildBulkVerificationResult(certificateCodes, results) {
         return results.map((result, index) => ({
             certificateCode: certificateCodes[index],
-            isValid: result.status === 'fulfilled',
-            data: result.status === 'fulfilled' ? result.value : null,
-            error: result.status === 'rejected' ? result.reason.message : null,
+            isValid: result.status === "fulfilled",
+            data: result.status === "fulfilled" ? result.value : null,
+            error: result.status === "rejected" ? result.reason.message : null,
         }));
     }
 }

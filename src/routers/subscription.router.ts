@@ -4,7 +4,10 @@ import { SubscriptionController } from "../controllers/subscription/subscription
 import { PaymentController } from "../controllers/subscription/payment.controller";
 import { verifyToken } from "../middlewares/verifyToken";
 import { verifyRole } from "../middlewares/verifyRole";
-import { uploadSingle, uploadPaymentProofSingle } from "../middlewares/uploadImage";
+import {
+  uploadSingle,
+  uploadPaymentProofSingle,
+} from "../middlewares/uploadImage";
 import { SubscriptionValidator } from "../middlewares/validator/subscription.validator";
 import { UserRole } from "../generated/prisma";
 
@@ -23,13 +26,16 @@ class SubscriptionRouter {
   }
 
   private initializeRoutes(): void {
-    // Get all plans (Developer + User)
+    this.initializePlanRoutes();
+    this.initializeSubscriptionRoutes();
+    this.initializePaymentRoutes();
+  }
+
+  private initializePlanRoutes(): void {
     this.route.get("/plans", this.planController.getAllPlans);
 
-    // Get plan by ID (Developer + User)
     this.route.get("/plans/:id", this.planController.getPlanById);
 
-    // Create plan (Developer only)
     this.route.post(
       "/plans",
       verifyToken,
@@ -37,7 +43,6 @@ class SubscriptionRouter {
       this.planController.createPlan
     );
 
-    // Update plan (Developer only)
     this.route.patch(
       "/plans/:id",
       verifyToken,
@@ -45,15 +50,15 @@ class SubscriptionRouter {
       this.planController.updatePlan
     );
 
-    // Delete plan (Developer only)
     this.route.delete(
       "/plans/:id",
       verifyToken,
       verifyRole([UserRole.DEVELOPER]),
       this.planController.deletePlan
     );
+  }
 
-    // Get all subscriptions (Developer only)
+  private initializeSubscriptionRoutes(): void {
     this.route.get(
       "/subscriptions",
       verifyToken,
@@ -91,7 +96,6 @@ class SubscriptionRouter {
       this.subscriptionController.subscribe
     );
 
-    // Update subscription (Developer only)
     this.route.patch(
       "/subscriptions/:id",
       verifyToken,
@@ -99,7 +103,19 @@ class SubscriptionRouter {
       this.subscriptionController.updateSubscription
     );
 
-    // Get all pending payments (Developer only)
+    this.route.get(
+      "/renewal-info",
+      verifyToken,
+      this.subscriptionController.getRenewalInfo
+    );
+    this.route.post(
+      "/renew",
+      verifyToken,
+      this.subscriptionController.renewSubscription
+    );
+  }
+
+  private initializePaymentRoutes(): void {
     this.route.get(
       "/pending-payments",
       verifyToken,
@@ -107,7 +123,6 @@ class SubscriptionRouter {
       this.paymentController.getPendingPayments
     );
 
-    // Get payment by ID (Developer only)
     this.route.get(
       "/payments/:id",
       verifyToken,
@@ -115,7 +130,6 @@ class SubscriptionRouter {
       this.paymentController.getPaymentById
     );
 
-    // Get payment by slug (Developer only) - More secure
     this.route.get(
       "/payments/slug/:slug",
       verifyToken,
@@ -123,7 +137,6 @@ class SubscriptionRouter {
       this.paymentController.getPaymentBySlug
     );
 
-    // Upload payment proof (Developer + User)
     this.route.post(
       "/payments/:paymentId/upload-proof",
       verifyToken,
@@ -131,7 +144,6 @@ class SubscriptionRouter {
       this.paymentController.uploadPaymentProof
     );
 
-    // Upload payment proof by slug (Developer + User) - More secure
     this.route.post(
       "/payments/slug/:slug/upload-proof",
       verifyToken,
@@ -139,7 +151,6 @@ class SubscriptionRouter {
       this.paymentController.uploadPaymentProofBySlug
     );
 
-    // Approve payment (Developer only)
     this.route.patch(
       "/payments/:id/approve",
       verifyToken,
@@ -147,7 +158,6 @@ class SubscriptionRouter {
       this.paymentController.approvePayment
     );
 
-    // Approve payment by slug (Developer only) - More secure
     this.route.patch(
       "/payments/slug/:slug/approve",
       verifyToken,
@@ -155,7 +165,6 @@ class SubscriptionRouter {
       this.paymentController.approvePaymentBySlug
     );
 
-    // Reject payment (Developer only)
     this.route.patch(
       "/payments/:id/reject",
       verifyToken,
@@ -163,7 +172,6 @@ class SubscriptionRouter {
       this.paymentController.rejectPayment
     );
 
-    // Reject payment by slug (Developer only) - More secure
     this.route.patch(
       "/payments/slug/:slug/reject",
       verifyToken,
@@ -171,25 +179,10 @@ class SubscriptionRouter {
       this.paymentController.rejectPaymentBySlug
     );
 
-    // Get payments by subscription ID (Developer + User)
     this.route.get(
       "/subscriptions/:subscriptionId/payments",
       verifyToken,
       this.paymentController.getPaymentsBySubscriptionId
-    );
-
-    // Get renewal info (Developer + User)
-    this.route.get(
-      "/renewal-info",
-      verifyToken,
-      this.subscriptionController.getRenewalInfo
-    );
-
-    // Renew subscription (Developer + User)
-    this.route.post(
-      "/renew",
-      verifyToken,
-      this.subscriptionController.renewSubscription
     );
   }
 
