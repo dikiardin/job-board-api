@@ -23,11 +23,10 @@ async function seed() {
     await (0, clearDatabase_1.clearDatabase)(prisma);
     const now = new Date();
     const addDays = (days) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
-    const [adminPassword, userPassword, developerPassword, mentorPassword] = await Promise.all([
+    const [adminPassword, userPassword, developerPassword] = await Promise.all([
         (0, hashPassword_1.hashPassword)("admin123"),
         (0, hashPassword_1.hashPassword)("user12345"),
         (0, hashPassword_1.hashPassword)("work00dev"),
-        (0, hashPassword_1.hashPassword)("mentor123"),
     ]);
     const users = await (0, users_1.seedUsers)({
         prisma,
@@ -36,7 +35,6 @@ async function seed() {
             admin: adminPassword,
             user: userPassword,
             developer: developerPassword,
-            mentor: mentorPassword,
         },
     });
     const subscriptions = await (0, subscriptions_1.seedSubscriptions)({ prisma, now, addDays, users });
