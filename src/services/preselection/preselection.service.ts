@@ -90,4 +90,18 @@ export class PreselectionService {
 
     return PreselectionTestService.statusForUser(params, testDeps);
   }
+
+  static async deleteTestByJobId(params: {
+    jobId: string | number;
+    requesterId: number;
+    requesterRole: UserRole;
+  }) {
+    const validationDeps = {
+      validateAdminAccess: this.dependencies.validateAdminAccess,
+      validateJobOwnership: (jobId: string | number, requesterId: number) => 
+        PreselectionValidationService.validateJobOwnership(jobId, requesterId, this.dependencies.getJob),
+    };
+
+    return PreselectionTestService.deleteTestByJobId(params, validationDeps);
+  }
 }

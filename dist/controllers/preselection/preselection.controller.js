@@ -22,6 +22,21 @@ class PreselectionController {
             next(error);
         }
     }
+    static async deleteTest(req, res, next) {
+        try {
+            const jobId = req.params.jobId;
+            const requester = res.locals.decrypt;
+            await preselection_service_1.PreselectionService.deleteTestByJobId({
+                jobId,
+                requesterId: requester.userId,
+                requesterRole: requester.role,
+            });
+            res.status(200).json({ success: true, message: "Preselection test deleted successfully" });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
     static async getTest(req, res, next) {
         try {
             const jobId = req.params.jobId;

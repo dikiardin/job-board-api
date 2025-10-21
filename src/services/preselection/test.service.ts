@@ -93,4 +93,24 @@ export class PreselectionTestService {
       isPassed,
     };
   }
+
+  static async deleteTestByJobId(params: {
+    jobId: string | number;
+    requesterId: number;
+    requesterRole: UserRole;
+  }, dependencies: {
+    validateAdminAccess: (role: UserRole) => void;
+    validateJobOwnership: (jobId: string | number, requesterId: number) => Promise<void>;
+  }) {
+    const { jobId, requesterId, requesterRole } = params;
+
+    dependencies.validateAdminAccess(requesterRole);
+    await dependencies.validateJobOwnership(jobId, requesterId);
+
+    // Import PreselectionRepository here to avoid circular dependency
+    const { PreselectionRepository } = await import("../../repositories/preselection/preselection.repository");
+    
+    await PreselectionRepository.deleteTestByJobId(jobId);
+    return { success: true };
+  }
 }

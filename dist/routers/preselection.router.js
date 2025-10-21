@@ -14,6 +14,8 @@ class PreselectionRouter {
     initializeRoutes() {
         // Create or replace a preselection test for a job (Company admin)
         this.route.post("/jobs/:jobId/tests", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), preselection_controller_1.PreselectionController.createTest);
+        // Delete a preselection test for a job (Company admin)
+        this.route.delete("/jobs/:jobId/tests", verifyToken_1.verifyToken, (0, verifyRole_1.verifyRole)([prisma_1.UserRole.ADMIN]), preselection_controller_1.PreselectionController.deleteTest);
         // Get test for a job (public/applicant; answers are hidden unless ADMIN)
         this.route.get("/jobs/:jobId/tests", tryVerifyToken_1.tryVerifyToken, preselection_controller_1.PreselectionController.getTest);
         // Applicant submits answers

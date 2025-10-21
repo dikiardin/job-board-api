@@ -22,6 +22,14 @@ class PreselectionRouter {
       PreselectionController.createTest
     );
 
+    // Delete a preselection test for a job (Company admin)
+    this.route.delete(
+      "/jobs/:jobId/tests",
+      verifyToken,
+      verifyRole([UserRole.ADMIN]),
+      PreselectionController.deleteTest
+    );
+
     // Get test for a job (public/applicant; answers are hidden unless ADMIN)
     this.route.get(
       "/jobs/:jobId/tests",
