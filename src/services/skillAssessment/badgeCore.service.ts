@@ -2,9 +2,6 @@ import { prisma } from "../../config/prisma";
 import { CustomError } from "../../utils/customError";
 
 export class BadgeCoreService {
-  /**
-   * Get all badges earned by user
-   */
   public static async getUserBadges(userId: number) {
     const badges = await prisma.userBadge.findMany({
       where: {
@@ -67,9 +64,6 @@ export class BadgeCoreService {
     };
   }
 
-  /**
-   * Get badge details by ID
-   */
   public static async getBadgeDetails(badgeId: number) {
     const badge = await prisma.userBadge.findUnique({
       where: { id: badgeId },
@@ -148,9 +142,6 @@ export class BadgeCoreService {
     return newBadge;
   }
 
-  /**
-   * Check if user already has this badge
-   */
   private static async checkExistingBadge(
     userId: number,
     badgeTemplateId: number
@@ -163,9 +154,6 @@ export class BadgeCoreService {
     });
   }
 
-  /**
-   * Get user badge statistics
-   */
   public static async getUserBadgeStats(userId: number) {
     const badges = await this.getUserBadges(userId);
 
@@ -183,9 +171,6 @@ export class BadgeCoreService {
     };
   }
 
-  /**
-   * Group badges by month
-   */
   private static getBadgesByMonth(badges: any[]) {
     const grouped = badges.reduce((acc, badge) => {
       const month = new Date(badge.earnedAt).toISOString().substring(0, 7);
