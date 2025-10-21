@@ -4,9 +4,6 @@ exports.BadgeCoreService = void 0;
 const prisma_1 = require("../../config/prisma");
 const customError_1 = require("../../utils/customError");
 class BadgeCoreService {
-    /**
-     * Get all badges earned by user
-     */
     static async getUserBadges(userId) {
         const badges = await prisma_1.prisma.userBadge.findMany({
             where: {
@@ -63,9 +60,6 @@ class BadgeCoreService {
             totalBadges: badgesWithScores.length,
         };
     }
-    /**
-     * Get badge details by ID
-     */
     static async getBadgeDetails(badgeId) {
         const badge = await prisma_1.prisma.userBadge.findUnique({
             where: { id: badgeId },
@@ -128,9 +122,6 @@ class BadgeCoreService {
         });
         return newBadge;
     }
-    /**
-     * Check if user already has this badge
-     */
     static async checkExistingBadge(userId, badgeTemplateId) {
         return await prisma_1.prisma.userBadge.findFirst({
             where: {
@@ -139,9 +130,6 @@ class BadgeCoreService {
             },
         });
     }
-    /**
-     * Get user badge statistics
-     */
     static async getUserBadgeStats(userId) {
         const badges = await this.getUserBadges(userId);
         const avgScore = badges.badges.length > 0
@@ -155,9 +143,6 @@ class BadgeCoreService {
             badgesByMonth: this.getBadgesByMonth(badges.badges),
         };
     }
-    /**
-     * Group badges by month
-     */
     static getBadgesByMonth(badges) {
         const grouped = badges.reduce((acc, badge) => {
             const month = new Date(badge.earnedAt).toISOString().substring(0, 7);
