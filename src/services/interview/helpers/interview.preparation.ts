@@ -13,11 +13,16 @@ export async function getApplicationsForJob(jobId: string | number, items: any[]
 export async function prepareInterviewSchedules(items: any[], applications: any[]) {
   const appByUser = new Map(applications.map((a) => [a.userId, a]));
   const toCreate: Array<{ applicationId: number; startsAt: Date; locationOrLink?: string | null; notes?: string | null }> = [];
+  const eligibleStatuses: ApplicationStatus[] = [ApplicationStatus.INTERVIEW];
   
   for (const it of items) {
     const app = appByUser.get(it.applicantId);
     if (!app) throw { status: 400, message: `Applicant ${it.applicantId} has no application for this job` };
-    if (app.status !== ApplicationStatus.ACCEPTED) throw { status: 400, message: `Applicant ${it.applicantId} is not in ACCEPTED status` };
+    if (!eligibleStatuses.includes(app.status))
+      throw {
+        status: 400,
+        message: `Applicant ${it.applicantId} must be in INTERVIEW status before scheduling`,
+      };
     
     const scheduleDate = new Date(it.scheduleDate);
     const conflict = await InterviewRepository.findConflicts(app.id, new Date(scheduleDate.getTime()), new Date(scheduleDate.getTime()));

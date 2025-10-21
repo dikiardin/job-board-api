@@ -15,9 +15,15 @@ class InterviewCommandService {
         const applications = await (0, interview_preparation_1.getApplicationsForJob)(jobId, body.items);
         const toCreate = await (0, interview_preparation_1.prepareInterviewSchedules)(body.items, applications);
         const created = await interview_repository_1.InterviewRepository.createMany(toCreate);
-        // Send email notifications
+        // Send email notifications, but don't fail the request if email delivery breaks
         for (const it of created) {
-            await (0, interview_notification_1.sendInterviewEmails)(it, "created");
+            try {
+                await (0, interview_notification_1.sendInterviewEmails)(it, "created");
+            }
+            catch (emailError) {
+                console.error("Failed to send interview creation emails:", emailError);
+                // continue without interrupting schedule creation
+            }
         }
         return created;
     }
@@ -50,14 +56,20 @@ class InterviewCommandService {
             updateData.status = prisma_1.InterviewStatus.SCHEDULED;
         }
         const updated = (await interview_repository_1.InterviewRepository.updateOne(id, updateData));
-        // Send email notifications
-        try {
-            const type = updateData.status === prisma_1.InterviewStatus.CANCELLED ? "cancelled" : "updated";
-            await (0, interview_notification_1.sendInterviewEmails)(updated, type);
-        }
-        catch (emailError) {
-            console.error("Failed to send update emails:", emailError);
-            // Continue with update even if email fails
+        const scheduleChanged = updateData.startsAt instanceof Date ||
+            typeof updateData.locationOrLink !== "undefined" ||
+            typeof updateData.notes !== "undefined";
+        const isCancellation = updateData.status === prisma_1.InterviewStatus.CANCELLED;
+        const isCompletion = updateData.status === prisma_1.InterviewStatus.COMPLETED;
+        if ((scheduleChanged || isCancellation) && !isCompletion) {
+            try {
+                const type = isCancellation ? "cancelled" : "updated";
+                await (0, interview_notification_1.sendInterviewEmails)(updated, type);
+            }
+            catch (emailError) {
+                console.error("Failed to send update emails:", emailError);
+                // Continue with update even if email fails
+            }
         }
         return updated;
     }
@@ -66,14 +78,6 @@ class InterviewCommandService {
         if (requesterRole !== prisma_1.UserRole.ADMIN)
             throw { status: 401, message: "Only company admin can delete schedule" };
         const interview = await (0, interview_validation_1.assertCompanyOwnershipByInterview)(id, requesterId);
-        // Try to send cancellation emails, but don't fail the delete operation if email fails
-        try {
-            await (0, interview_notification_1.sendInterviewEmails)(interview, "cancelled");
-        }
-        catch (emailError) {
-            console.error("Failed to send cancellation emails:", emailError);
-            // Continue with deletion even if email fails
-        }
         await interview_repository_1.InterviewRepository.deleteOne(id);
         return { success: true };
     }

@@ -111,6 +111,22 @@ class SubscriptionRepo {
             },
         });
     }
+    // TESTING: Method for minute-based expiration checking
+    static async getSubscriptionsExpiringInMinutesWindow(minutes, windowSeconds) {
+        const now = new Date();
+        const windowStart = new Date(now.getTime() + minutes * 60 * 1000);
+        const windowEnd = new Date(windowStart.getTime() + windowSeconds * 1000);
+        return prisma_1.prisma.subscription.findMany({
+            where: {
+                status: prisma_2.SubscriptionStatus.ACTIVE,
+                expiresAt: { gte: windowStart, lt: windowEnd },
+            },
+            include: {
+                user: { select: { id: true, name: true, email: true } },
+                plan: true,
+            },
+        });
+    }
     static async getExpiredSubscriptions() {
         return prisma_1.prisma.subscription.findMany({
             where: {

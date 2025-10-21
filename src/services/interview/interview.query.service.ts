@@ -1,6 +1,10 @@
-import { InterviewStatus, UserRole } from "../../generated/prisma";
+import { InterviewStatus, UserRole, ApplicationStatus } from "../../generated/prisma";
 import { prisma } from "../../config/prisma";
 import { InterviewRepository } from "../../repositories/interview/interview.repository";
+
+const ELIGIBLE_APPLICATION_STATUSES: ApplicationStatus[] = [
+  ApplicationStatus.INTERVIEW,
+];
 
 async function assertCompanyOwnershipByCompanyId(companyId: string | number, requesterId: number, requesterRole: UserRole) {
   if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can view schedules" };
@@ -37,7 +41,7 @@ export class InterviewQueryService {
       where: { companyId: cid },
       include: {
         applications: {
-          where: { status: 'ACCEPTED' },
+          where: { status: { in: ELIGIBLE_APPLICATION_STATUSES } },
           select: { id: true }
         }
       },
@@ -49,7 +53,7 @@ export class InterviewQueryService {
       title: job.title,
       category: job.category,
       city: job.city,
-      acceptedApplicantsCount: job.applications.length
+      eligibleApplicantsCount: job.applications.length
     }));
   }
 
@@ -73,10 +77,11 @@ export class InterviewQueryService {
       throw { status: 404, message: "Job not found" };
     }
 
+    // Get applications that are eligible for interview scheduling
     const applications = await prisma.application.findMany({
       where: { 
         jobId: jid,
-        status: 'ACCEPTED'
+        status: { in: ELIGIBLE_APPLICATION_STATUSES }
       },
       include: {
         user: {

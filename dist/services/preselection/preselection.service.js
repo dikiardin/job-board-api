@@ -49,6 +49,13 @@ class PreselectionService {
         };
         return test_service_1.PreselectionTestService.statusForUser(params, testDeps);
     }
+    static async deleteTestByJobId(params) {
+        const validationDeps = {
+            validateAdminAccess: this.dependencies.validateAdminAccess,
+            validateJobOwnership: (jobId, requesterId) => validation_service_1.PreselectionValidationService.validateJobOwnership(jobId, requesterId, this.dependencies.getJob),
+        };
+        return test_service_1.PreselectionTestService.deleteTestByJobId(params, validationDeps);
+    }
 }
 exports.PreselectionService = PreselectionService;
 PreselectionService.dependencies = {

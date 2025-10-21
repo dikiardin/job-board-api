@@ -1,7 +1,6 @@
 import { InterviewStatus, UserRole, ApplicationStatus } from "../../generated/prisma";
 import { prisma } from "../../config/prisma";
 import { InterviewRepository } from "../../repositories/interview/interview.repository";
-import { InterviewEmailService } from "./interviewEmail.service";
 import { assertCompanyOwnershipByJob, assertCompanyOwnershipByInterview, validatePayload, validateAdminAccess } from "./helpers/interview.validation";
 import { getApplicationsForJob, prepareInterviewSchedules } from "./helpers/interview.preparation";
 import { sendInterviewEmails } from "./helpers/interview.notification";
@@ -23,9 +22,14 @@ export class InterviewCommandService {
     const toCreate = await prepareInterviewSchedules(body.items, applications);
     const created = await InterviewRepository.createMany(toCreate);
     
-    // Send email notifications
+    // Send email notifications, but don't fail the request if email delivery breaks
     for (const it of created as any[]) {
-      await sendInterviewEmails(it, "created");
+      try {
+        await sendInterviewEmails(it, "created");
+      } catch (emailError) {
+        console.error("Failed to send interview creation emails:", emailError);
+        // continue without interrupting schedule creation
+      }
     }
     
     return created;
@@ -64,13 +68,21 @@ export class InterviewCommandService {
     
     const updated = (await InterviewRepository.updateOne(id, updateData)) as any;
     
-    // Send email notifications
-    try {
-      const type = updateData.status === InterviewStatus.CANCELLED ? "cancelled" : "updated";
-      await sendInterviewEmails(updated, type);
-    } catch (emailError) {
-      console.error("Failed to send update emails:", emailError);
-      // Continue with update even if email fails
+    const scheduleChanged =
+      updateData.startsAt instanceof Date ||
+      typeof updateData.locationOrLink !== "undefined" ||
+      typeof updateData.notes !== "undefined";
+    const isCancellation = updateData.status === InterviewStatus.CANCELLED;
+    const isCompletion = updateData.status === InterviewStatus.COMPLETED;
+
+    if ((scheduleChanged || isCancellation) && !isCompletion) {
+      try {
+        const type = isCancellation ? "cancelled" : "updated";
+        await sendInterviewEmails(updated, type);
+      } catch (emailError) {
+        console.error("Failed to send update emails:", emailError);
+        // Continue with update even if email fails
+      }
     }
     
     return updated;
@@ -79,14 +91,6 @@ export class InterviewCommandService {
     const { id, requesterId, requesterRole } = params;
     if (requesterRole !== UserRole.ADMIN) throw { status: 401, message: "Only company admin can delete schedule" };
     const interview = await assertCompanyOwnershipByInterview(id, requesterId);
-    
-    // Try to send cancellation emails, but don't fail the delete operation if email fails
-    try {
-      await sendInterviewEmails(interview, "cancelled");
-    } catch (emailError) {
-      console.error("Failed to send cancellation emails:", emailError);
-      // Continue with deletion even if email fails
-    }
     
     await InterviewRepository.deleteOne(id);
     return { success: true };
