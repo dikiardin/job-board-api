@@ -4,6 +4,7 @@ import { CustomError } from "../../utils/customError";
 import { RenewalValidationService } from "./renewalValidation.service";
 import { RenewalPaymentService } from "./renewalPayment.service";
 import { RenewalDateService } from "./renewalDate.service";
+import { prisma } from "../../config/prisma";
 
 export class SubscriptionRenewalService {
   public static async renewSubscription(userId: number, planId?: number) {
@@ -12,40 +13,84 @@ export class SubscriptionRenewalService {
     console.log("Plan ID:", planId);
 
     try {
+      // Step 1: Test database connection
+      console.log("[STEP 1] Testing database connection...");
+      await prisma.$queryRaw`SELECT 1`;
+      console.log("[STEP 1] ✓ Database connection OK");
+
+      // Step 2: Get current subscription
+      console.log("[STEP 2] Getting current subscription for user:", userId);
       const currentSubscription = await this.getCurrentSubscription(userId);
+      console.log("[STEP 2] ✓ Current subscription found");
       console.log(
-        "Current subscription:",
+        "Subscription details:",
         JSON.stringify(currentSubscription, null, 2)
       );
 
+      // Step 3: Determine target plan
+      console.log("[STEP 3] Determining target plan...");
       const targetPlanId = planId || currentSubscription.planId;
-      console.log("Target plan ID:", targetPlanId);
+      console.log("[STEP 3] Target plan ID:", targetPlanId);
 
+      // Step 4: Validate plan
+      console.log("[STEP 4] Validating plan...");
       const plan = await RenewalValidationService.validatePlan(targetPlanId);
-      console.log("Plan validated:", plan.name);
+      console.log("[STEP 4] ✓ Plan validated:", plan.name);
+      console.log("Plan details:", JSON.stringify(plan, null, 2));
 
+      // Step 5: Calculate renewal dates
+      console.log("[STEP 5] Calculating renewal dates...");
       const renewalDates =
         RenewalDateService.calculateRenewalDates(currentSubscription);
-      console.log("Renewal dates:", renewalDates);
+      console.log("[STEP 5] ✓ Renewal dates calculated:", renewalDates);
 
+      // Step 6: Create renewal subscription
+      console.log("[STEP 6] Creating renewal subscription...");
+      console.log("Create data:", {
+        userId,
+        planId: targetPlanId,
+        status: "PENDING",
+        startDate: renewalDates.startDate,
+        expiresAt: renewalDates.expiresAt,
+      });
       const newSubscription = await this.createRenewalSubscription(
         userId,
         targetPlanId,
         renewalDates
       );
-      console.log("New subscription created:", newSubscription.id);
+      console.log("[STEP 6] ✓ New subscription created:", newSubscription.id);
 
+      // Step 7: Create payment
+      console.log("[STEP 7] Creating payment...");
+      console.log("Payment data:", {
+        subscriptionId: newSubscription.id,
+        amount: plan.priceIdr,
+      });
       const payment = await RenewalPaymentService.createPayment(
         newSubscription.id,
         plan.priceIdr
       );
-      console.log("Payment created:", payment.id);
+      console.log("[STEP 7] ✓ Payment created:", payment.id);
 
       console.log("=== RENEW SUBSCRIPTION SUCCESS ===");
       return this.buildRenewalResponse(newSubscription, payment, plan);
     } catch (error) {
       console.error("=== RENEW SUBSCRIPTION ERROR ===");
-      console.error("Error:", error);
+      console.error(
+        "Error type:",
+        error instanceof Error ? error.constructor.name : typeof error
+      );
+      console.error(
+        "Error message:",
+        error instanceof Error ? error.message : String(error)
+      );
+      console.error(
+        "Error stack:",
+        error instanceof Error ? error.stack : "No stack trace"
+      );
+      console.error("User ID:", userId);
+      console.error("Plan ID:", planId);
+      console.error("Full error object:", error);
       throw error;
     }
   }
@@ -100,13 +145,26 @@ export class SubscriptionRenewalService {
   }
 
   private static async getCurrentSubscription(userId: number) {
+    console.log("Getting active subscription for user:", userId);
     const subscription = await SubscriptionRepo.getUserActiveSubscription(
       userId
     );
+    console.log("Active subscription result:", subscription ? "FOUND" : "NOT FOUND");
 
     if (!subscription) {
+      console.log("Checking for recent expired subscription...");
       const expiredSub = await this.getRecentExpiredSubscription(userId);
-      if (expiredSub) return expiredSub;
+      console.log(
+        "Expired subscription result:",
+        expiredSub ? "FOUND" : "NOT FOUND"
+      );
+
+      if (expiredSub) {
+        console.log("Using expired subscription within grace period");
+        return expiredSub;
+      }
+
+      console.error("No valid subscription found for renewal");
       throw new CustomError("No subscription found for renewal", 404);
     }
 
