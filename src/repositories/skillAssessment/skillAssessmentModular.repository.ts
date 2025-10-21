@@ -206,9 +206,9 @@ export class SkillAssessmentModularRepository {
     );
   }
 }
-
 // For backward compatibility, also export as default
 export default SkillAssessmentModularRepository;
 
 // Re-export specialized repositories
 export { AssessmentCrudRepository, SkillAssessmentResultsRepository };
+
