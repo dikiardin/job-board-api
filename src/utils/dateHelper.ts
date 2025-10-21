@@ -10,8 +10,8 @@ export class DateHelper {
   }
 
   public static getSubscriptionEndDate(startDate: Date): Date {
-    // TESTING: Set to 3 minutes duration (change back to 30 days after testing)
-    return new Date(startDate.getTime() + 3 * 60 * 1000);
+    // PRODUCTION: Set to 30 days duration
+    return new Date(startDate.getTime() + 30 * 24 * 60 * 60 * 1000);
   }
 
   public static getTomorrowDate(): Date {
