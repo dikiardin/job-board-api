@@ -40,7 +40,7 @@ export async function seedUsers({
       passwordHash: passwords.developer,
       name: "Workoo Developer",
       phone: "+628566677788",
-      gender: "Female",
+      gender: "Male",
       dob: new Date("1994-04-14"),
       education: "Bachelor of Computer Engineering",
       address: "Jl. Asia Afrika No. 7, Bandung",
@@ -51,7 +51,7 @@ export async function seedUsers({
         create: {
           fullName: "Workoo Developer",
           phone: "+628566677788",
-          gender: "Female",
+          gender: "Male",
           city: "Bandung",
           province: "Jawa Barat",
           summary:

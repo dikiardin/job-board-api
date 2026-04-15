@@ -47,11 +47,8 @@ async function comprehensiveSeed() {
   const addHours = (hours: number) => new Date(now.getTime() + hours * 60 * 60 * 1000);
 
   // Hash passwords
-  const [adminPass, userPass, devPass] = await Promise.all([
-    hashPassword("admin123"),
-    hashPassword("user123"),
-    hashPassword("dev123"),
-  ]);
+  const sharedPass = await hashPassword("Password123");
+  const [adminPass, userPass, devPass] = [sharedPass, sharedPass, sharedPass];
 
   console.log("👥 Creating users...");
   

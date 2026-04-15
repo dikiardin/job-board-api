@@ -30,19 +30,16 @@ async function seed() {
   const now = new Date();
   const addDays = (days: number) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
 
-  const [adminPassword, userPassword, developerPassword] = await Promise.all([
-    hashPassword("Admin123"),
-    hashPassword("User12345"),
-    hashPassword("work00dev"),
-  ]);
+  // All users share the same password: "Password123"
+  const sharedPassword = await hashPassword("Password123");
 
   const users = await seedUsers({
     prisma,
     now,
     passwords: {
-      admin: adminPassword,
-      user: userPassword,
-      developer: developerPassword,
+      admin: sharedPassword,
+      user: sharedPassword,
+      developer: sharedPassword,
     },
   });
 
@@ -57,6 +54,22 @@ async function seed() {
   await seedLocationCache(prisma);
 
   console.log("Seed complete");
+  console.log("");
+  console.log("=== Login Credentials (all users) ===");
+  console.log("Password: password123");
+  console.log("");
+  console.log("DEVELOPER:     developer@workoo.com");
+  console.log("ADMIN (Tech):  andre.pratama@techcorp.id");
+  console.log("ADMIN (Design):maya.siregar@creativestudio.id");
+  console.log("ADMIN (Fin):   surya.wijaya@fintechlabs.id");
+  console.log("SEEKER:        alice.hartono@gmail.com");
+  console.log("SEEKER:        bob.pratama@gmail.com");
+  console.log("SEEKER:        charlie.wijaya@gmail.com");
+  console.log("SEEKER:        diana.sari@gmail.com");
+  console.log("SEEKER:        eko.santoso@gmail.com");
+  console.log("SEEKER:        gina.putri@gmail.com");
+  console.log("SEEKER:        hadi.susanto@gmail.com");
+  console.log("SEEKER:        indah.lestari@gmail.com");
 }
 
 seed()

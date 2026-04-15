@@ -18,31 +18,369 @@ interface SeedCompaniesOptions {
 type AdminKey = keyof SeedUsersResult["admins"];
 
 const companySeeds = [
-  { key: "techCorp" as const, ownerKey: "tech" as AdminKey, name: "TechCorp Indonesia", email: "contact@techcorp.id", phone: "+622112345678", description: "<h3>About TechCorp Indonesia</h3><p>TechCorp Indonesia is a <strong>leading enterprise technology provider</strong> specializing in cloud-native solutions and digital transformation services. Founded in 2015, we have successfully delivered innovative technology solutions to over <strong>200+ clients</strong> across Indonesia, including Fortune 500 companies, government agencies, and growing startups.</p><h4>Our Expertise</h4><ul><li>Cloud migration and infrastructure optimization</li><li>Microservices architecture design and implementation</li><li>DevOps and CI/CD pipeline development</li><li>Enterprise application development and modernization</li><li>Digital transformation consulting</li></ul><h4>Why Choose Us</h4><ul><li><strong>Commitment to Excellence:</strong> We pride ourselves on delivering high-quality solutions</li><li><strong>Cutting-edge Technology:</strong> Always adopting the latest industry standards</li><li><strong>Long-term Partnerships:</strong> Building lasting relationships with our clients</li><li><strong>Expert Team:</strong> 150+ skilled professionals including certified cloud architects, full-stack developers, DevOps engineers, and solution architects</li></ul><p>Our team is passionate about delivering <strong>scalable, secure, and high-performance solutions</strong> that drive business growth and operational efficiency.</p>", logoUrl: "https://placehold.co/120x120?text=TechCorp", bannerUrl: "https://placehold.co/1200x400?text=TechCorp", website: "https://techcorp.id", locationCity: "Jakarta", locationProvince: "DKI Jakarta", address: "Jl. Gatot Subroto No. 1, Jakarta", socials: { linkedin: "https://linkedin.com/company/techcorp", instagram: "https://instagram.com/techcorp" } as Prisma.JsonObject },
-  { key: "creativeStudio" as const, ownerKey: "creative" as AdminKey, name: "Creative Studio", email: "hello@creativestudio.id", phone: "+622276543210", description: "<h3>About Creative Studio</h3><p>Creative Studio is a <strong>premier design agency</strong> that has been delivering exceptional user experiences and creative solutions since 2018. Based in Bandung, we specialize in comprehensive design services for clients ranging from innovative startups to established multinational corporations.</p><h4>Our Services</h4><ul><li><strong>UI/UX Design:</strong> User-centered design solutions</li><li><strong>Brand Identity Development:</strong> Complete brand strategy and visual identity</li><li><strong>Digital Marketing:</strong> Creative marketing campaigns and strategies</li><li><strong>Creative Strategy:</strong> Strategic creative consulting</li></ul><h4>Industry Expertise</h4><p>Our portfolio includes <strong>award-winning projects</strong> for clients in:</p><ul><li>E-commerce platforms</li><li>Fintech applications</li><li>Healthcare solutions</li><li>Education technology</li></ul><h4>Our Team</h4><p>Our multidisciplinary team of <strong>40+ creative professionals</strong> includes:</p><ul><li>UX researchers and strategists</li><li>Visual designers and illustrators</li><li>Motion graphics artists</li><li>Copywriters and content creators</li><li>Digital strategists and marketers</li></ul><p>We believe in the power of design to solve complex problems and create meaningful connections between brands and their audiences. We are committed to staying at the forefront of design trends while maintaining timeless principles of good design and user-centered thinking.</p>", logoUrl: "https://placehold.co/120x120?text=Creative", bannerUrl: "https://placehold.co/1200x400?text=Creative", website: "https://creativestudio.id", locationCity: "Bandung", locationProvince: "Jawa Barat", address: "Jl. Riau No. 5, Bandung", socials: { linkedin: "https://linkedin.com/company/creativestudio", instagram: "https://instagram.com/creativestudio", facebook: "https://facebook.com/creativestudio" } as Prisma.JsonObject },
-  { key: "fintechLabs" as const, ownerKey: "fintech" as AdminKey, name: "Fintech Labs", email: "info@fintechlabs.id", phone: "+623187654321", description: "<h3>About Fintech Labs</h3><p>Fintech Labs is a <strong>pioneering digital financial services company</strong> that has been revolutionizing the financial landscape in Indonesia since 2017. We specialize in providing comprehensive fintech solutions to empower small and medium enterprises (SMEs) across the archipelago.</p><h4>Our Solutions</h4><ul><li><strong>Digital Payments:</strong> Secure and fast payment processing</li><li><strong>Peer-to-Peer Lending:</strong> Alternative financing solutions</li><li><strong>Financial Analytics:</strong> Data-driven business insights</li><li><strong>Blockchain Services:</strong> Cryptocurrency and smart contracts</li></ul><h4>Our Impact</h4><p>Our platform has successfully processed:</p><ul><li><strong>Over 2 million transactions</strong></li><li><strong>Worth more than IDR 500 billion</strong></li><li><strong>50,000+ active merchants</strong></li><li><strong>200,000+ individual users</strong></li></ul><h4>Technology Stack</h4><p>Our cutting-edge technology includes:</p><ul><li>Advanced fraud detection systems</li><li>Real-time payment processing</li><li>Machine learning algorithms for credit scoring</li><li>Secure blockchain infrastructure</li></ul><h4>Our Mission</h4><p>We are committed to <strong>financial inclusion</strong> and democratizing access to financial services for underserved communities. With a team of <strong>80+ fintech experts</strong> including software engineers, data scientists, compliance specialists, and financial analysts, we continue to innovate and expand our services to meet the evolving needs of Indonesia's digital economy while maintaining the highest standards of security, compliance, and customer satisfaction.</p>", logoUrl: "https://placehold.co/120x120?text=Fintech", bannerUrl: "https://placehold.co/1200x400?text=Fintech", website: "https://fintechlabs.id", locationCity: "Surabaya", locationProvince: "Jawa Timur", address: "Jl. Tunjungan No. 20, Surabaya", socials: { linkedin: "https://linkedin.com/company/fintechlabs", twitter: "https://twitter.com/fintechlabs", instagram: "https://instagram.com/fintechlabs", facebook: "https://facebook.com/fintechlabs" } as Prisma.JsonObject },
+  {
+    key: "techCorp" as const,
+    ownerKey: "tech" as AdminKey,
+    name: "TechCorp Indonesia",
+    email: "contact@techcorp.id",
+    phone: "+622112345678",
+    description:
+      '<h3>About TechCorp Indonesia</h3><p>TechCorp Indonesia is a <strong>leading enterprise technology provider</strong> specializing in cloud-native solutions and digital transformation services. Founded in 2015, we have successfully delivered innovative technology solutions to over <strong>200+ clients</strong> across Indonesia, including Fortune 500 companies, government agencies, and growing startups.</p><h4>Our Expertise</h4><ul><li>Cloud migration and infrastructure optimization</li><li>Microservices architecture design and implementation</li><li>DevOps and CI/CD pipeline development</li><li>Enterprise application development and modernization</li><li>Digital transformation consulting</li></ul><h4>Why Choose Us</h4><ul><li><strong>Commitment to Excellence:</strong> We pride ourselves on delivering high-quality solutions</li><li><strong>Cutting-edge Technology:</strong> Always adopting the latest industry standards</li><li><strong>Long-term Partnerships:</strong> Building lasting relationships with our clients</li><li><strong>Expert Team:</strong> 150+ skilled professionals including certified cloud architects, full-stack developers, DevOps engineers, and solution architects</li></ul><p>Our team is passionate about delivering <strong>scalable, secure, and high-performance solutions</strong> that drive business growth and operational efficiency.</p>',
+    logoUrl: "https://placehold.co/120x120?text=TechCorp",
+    bannerUrl: "https://placehold.co/1200x400?text=TechCorp",
+    website: "https://techcorp.id",
+    locationCity: "Jakarta",
+    locationProvince: "DKI Jakarta",
+    address: "Jl. Gatot Subroto No. 1, Jakarta Selatan",
+    socials: {
+      linkedin: "https://linkedin.com/company/techcorp",
+      instagram: "https://instagram.com/techcorp",
+    } as Prisma.JsonObject,
+  },
+  {
+    key: "creativeStudio" as const,
+    ownerKey: "creative" as AdminKey,
+    name: "Creative Studio Bandung",
+    email: "hello@creativestudio.id",
+    phone: "+622276543210",
+    description:
+      '<h3>About Creative Studio Bandung</h3><p>Creative Studio is a <strong>premier design agency</strong> that has been delivering exceptional user experiences and creative solutions since 2018. Based in Bandung, we specialize in comprehensive design services for clients ranging from innovative startups to established multinational corporations.</p><h4>Our Services</h4><ul><li><strong>UI/UX Design:</strong> User-centered design solutions</li><li><strong>Brand Identity Development:</strong> Complete brand strategy and visual identity</li><li><strong>Digital Marketing:</strong> Creative marketing campaigns and strategies</li><li><strong>Creative Strategy:</strong> Strategic creative consulting</li></ul><h4>Our Team</h4><p>Our multidisciplinary team of <strong>40+ creative professionals</strong> includes UX researchers, visual designers, motion graphics artists, copywriters, and digital strategists.</p><p>We believe in the power of design to solve complex problems and create meaningful connections between brands and their audiences.</p>',
+    logoUrl: "https://placehold.co/120x120?text=Creative",
+    bannerUrl: "https://placehold.co/1200x400?text=Creative+Studio",
+    website: "https://creativestudio.id",
+    locationCity: "Bandung",
+    locationProvince: "Jawa Barat",
+    address: "Jl. Riau No. 5-7, Bandung",
+    socials: {
+      linkedin: "https://linkedin.com/company/creativestudio",
+      instagram: "https://instagram.com/creativestudio.bdg",
+      facebook: "https://facebook.com/creativestudio",
+    } as Prisma.JsonObject,
+  },
+  {
+    key: "fintechLabs" as const,
+    ownerKey: "fintech" as AdminKey,
+    name: "Fintech Labs Indonesia",
+    email: "info@fintechlabs.id",
+    phone: "+623187654321",
+    description:
+      '<h3>About Fintech Labs Indonesia</h3><p>Fintech Labs is a <strong>pioneering digital financial services company</strong> that has been revolutionizing the financial landscape in Indonesia since 2017. We specialize in providing comprehensive fintech solutions to empower small and medium enterprises (SMEs) across the archipelago.</p><h4>Our Solutions</h4><ul><li><strong>Digital Payments:</strong> Secure and fast payment processing</li><li><strong>Peer-to-Peer Lending:</strong> Alternative financing solutions</li><li><strong>Financial Analytics:</strong> Data-driven business insights</li><li><strong>Blockchain Services:</strong> Cryptocurrency and smart contracts</li></ul><h4>Our Impact</h4><ul><li><strong>Over 2 million transactions</strong> processed</li><li><strong>50,000+ active merchants</strong></li><li><strong>200,000+ individual users</strong></li></ul><p>We are committed to <strong>financial inclusion</strong> and democratizing access to financial services. Our team of <strong>80+ fintech experts</strong> continues to innovate and expand our services.</p>',
+    logoUrl: "https://placehold.co/120x120?text=Fintech",
+    bannerUrl: "https://placehold.co/1200x400?text=Fintech+Labs",
+    website: "https://fintechlabs.id",
+    locationCity: "Surabaya",
+    locationProvince: "Jawa Timur",
+    address: "Jl. Tunjungan No. 20-22, Surabaya",
+    socials: {
+      linkedin: "https://linkedin.com/company/fintechlabs",
+      twitter: "https://twitter.com/fintechlabs",
+      instagram: "https://instagram.com/fintechlabs",
+    } as Prisma.JsonObject,
+  },
 ] as const;
 
+// ─── Jobs with FIXED deadlines across 2026, 2027, 2028, 2029 ───────────────
+
 const jobSeeds = [
-  { key: "frontend" as const, companyKey: "techCorp" as const, title: "Senior Frontend Engineer", description: "<h3>About the Role</h3><p>We are seeking a <strong>Senior Frontend Engineer</strong> to lead our frontend development team and drive the technical direction of our client-facing applications. In this role, you will architect scalable, performant, and accessible web applications using modern technologies including React, TypeScript, and Next.js.</p><h4>Key Responsibilities</h4><ul><li>Architect scalable and performant web applications</li><li>Mentor junior developers and conduct code reviews</li><li>Implement best practices for performance optimization</li><li>Ensure cross-browser compatibility and accessibility</li><li>Collaborate with product managers, designers, and backend engineers</li><li>Deliver exceptional user experiences</li></ul><h4>Required Qualifications</h4><ul><li><strong>5+ years</strong> of frontend development experience</li><li>Strong expertise in <strong>React ecosystem</strong></li><li>Experience with state management libraries (Redux/Zustand)</li><li>Passion for creating intuitive user interfaces</li><li>Experience with testing frameworks (Jest, React Testing Library)</li><li>Knowledge of CI/CD pipelines and modern build tools</li></ul><h4>What We Offer</h4><p>This is an excellent opportunity to work on <strong>cutting-edge projects</strong> for enterprise clients while contributing to our technical standards and development processes.</p>", category: "Engineering", employmentType: "Full-time", experienceLevel: "Senior", city: "Jakarta", province: "DKI Jakarta", salaryMin: 25_000_000, salaryMax: 35_000_000, tags: ["react", "typescript", "ui"], bannerUrl: "https://placehold.co/960x360?text=Frontend", applyDeadlineOffsetDays: 30, isPublished: true },
-  { key: "dataScientist" as const, companyKey: "techCorp" as const, title: "Data Scientist", description: "<h3>About the Role</h3><p>Join our data science team as a <strong>Data Scientist</strong> where you will play a crucial role in building predictive analytics solutions and machine learning models for our enterprise clients. You will work with large datasets to extract meaningful insights, develop statistical models, and create data-driven recommendations that drive business decisions.</p><h4>Key Responsibilities</h4><ul><li>Data collection and preprocessing</li><li>Exploratory data analysis and visualization</li><li>Feature engineering and model development</li><li>Model validation and performance optimization</li><li>Presenting findings to stakeholders</li><li>Collaborating with product teams on analytics solutions</li></ul><h4>Required Skills</h4><ul><li><strong>Programming:</strong> Python and R proficiency</li><li><strong>Machine Learning:</strong> scikit-learn, TensorFlow, PyTorch</li><li><strong>Database:</strong> SQL and database management</li><li><strong>Analytics:</strong> Pandas, NumPy, Matplotlib, Seaborn</li><li><strong>Communication:</strong> Translate complex insights into actionable recommendations</li></ul><h4>Qualifications</h4><ul><li><strong>3+ years</strong> of experience in data science or analytics</li><li>Degree in Statistics, Mathematics, Computer Science, or related field</li><li>Excellent communication and presentation skills</li></ul>", category: "Data", employmentType: "Full-time", experienceLevel: "Mid", city: "Jakarta", province: "DKI Jakarta", salaryMin: 20_000_000, salaryMax: 28_000_000, tags: ["python", "machine-learning", "sql"], bannerUrl: "https://placehold.co/960x360?text=Data+Scientist", applyDeadlineOffsetDays: 15, isPublished: true },
-  { key: "uxDesigner" as const, companyKey: "creativeStudio" as const, title: "UX Designer", description: "<h3>About the Role</h3><p>We are looking for a talented <strong>UX Designer</strong> to join our creative team and lead user experience design projects for our diverse portfolio of clients. You will work on projects spanning various industries including e-commerce, fintech, healthcare, and education, ensuring that every design decision is backed by user insights and business objectives.</p><h4>Key Responsibilities</h4><ul><li>Conduct user research and usability testing</li><li>Create user personas and journey maps</li><li>Design wireframes and interactive prototypes</li><li>Develop information architecture and interaction designs</li><li>Create design systems and style guides</li><li>Present design solutions to clients and stakeholders</li><li>Collaborate with UI designers and developers</li></ul><h4>Required Skills</h4><ul><li><strong>Design Tools:</strong> Figma, Sketch, Adobe Creative Suite</li><li><strong>Research Methods:</strong> User interviews, usability testing, surveys</li><li><strong>Portfolio:</strong> Strong demonstration of user-centered design thinking</li><li><strong>Experience:</strong> 2-3 years of UX design experience</li></ul><h4>Nice to Have</h4><ul><li>Knowledge of frontend development principles</li><li>Experience working in agile environments</li><li>Understanding of accessibility guidelines</li></ul>", category: "Design", employmentType: "Contract", experienceLevel: "Intermediate", city: "Bandung", province: "Jawa Barat", salaryMin: 12_000_000, salaryMax: 18_000_000, tags: ["ux", "research", "figma"], bannerUrl: "https://placehold.co/960x360?text=UX+Designer", applyDeadlineOffsetDays: 21, isPublished: true },
-  { key: "productManager" as const, companyKey: "fintechLabs" as const, title: "Product Manager", description: "<h3>About the Role</h3><p>We are seeking an experienced <strong>Product Manager</strong> to lead our lending product portfolio and drive innovation in digital financial services. In this strategic role, you will be responsible for defining product vision, developing roadmaps, and managing the entire product lifecycle from conception to launch.</p><h4>Key Responsibilities</h4><ul><li>Define product vision and strategic roadmaps</li><li>Conduct market research and competitive analysis</li><li>Define product requirements and user stories</li><li>Manage product backlogs and sprint planning</li><li>Coordinate with engineering, design, and compliance teams</li><li>Analyze product metrics and drive continuous improvement</li><li>Ensure regulatory compliance in financial products</li></ul><h4>Required Qualifications</h4><ul><li><strong>5+ years</strong> of product management experience</li><li>Preferably in <strong>fintech or financial services</strong></li><li>Strong analytical and problem-solving skills</li><li>Experience with agile development methodologies</li><li>Excellent communication and leadership abilities</li><li>Bachelor's degree in Business, Engineering, or related field</li></ul><h4>Preferred Skills</h4><ul><li>Knowledge of financial regulations</li><li>Understanding of lending processes</li><li>Experience with digital payment systems</li></ul>", category: "Product", employmentType: "Full-time", experienceLevel: "Senior", city: "Surabaya", province: "Jawa Timur", salaryMin: 28_000_000, salaryMax: 36_000_000, tags: ["product", "strategy", "agile"], bannerUrl: "https://placehold.co/960x360?text=Product+Manager", applyDeadlineOffsetDays: 30, isPublished: true },
-  { key: "marketingSpecialist" as const, companyKey: "creativeStudio" as const, title: "Marketing Specialist", description: "<h3>About the Role</h3><p>Join our marketing team as a <strong>Marketing Specialist</strong> where you will develop and execute comprehensive marketing strategies for our creative agency and client projects. This role offers the opportunity to work with diverse clients across multiple industries while developing your skills in digital marketing, content creation, and brand management.</p><h4>Key Responsibilities</h4><ul><li>Develop marketing campaigns and content strategies</li><li>Manage social media accounts and community engagement</li><li>Create blog posts, case studies, and marketing materials</li><li>Conduct market research and competitor analysis</li><li>Coordinate with designers and developers on marketing assets</li><li>Track and report on marketing metrics and ROI</li><li>Support business development efforts</li></ul><h4>Required Skills</h4><ul><li><strong>Experience:</strong> 2+ years of digital marketing experience</li><li><strong>Writing:</strong> Strong writing and communication skills</li><li><strong>Tools:</strong> Social media management and analytics platforms</li><li><strong>Technical:</strong> Content management systems knowledge</li><li><strong>SEO/SEM:</strong> Search engine optimization and marketing best practices</li></ul><h4>Preferred Experience</h4><ul><li>Creative industry or agency environment</li><li>Client-facing project management</li><li>Brand strategy development</li></ul>", category: "Marketing", employmentType: "Full-time", experienceLevel: "Mid", city: "Bandung", province: "Jawa Barat", salaryMin: 10_000_000, salaryMax: 16_000_000, tags: ["seo", "content", "analytics"], bannerUrl: "https://placehold.co/960x360?text=Marketing", applyDeadlineOffsetDays: 18, isPublished: true },
-  { key: "customerSuccess" as const, companyKey: "techCorp" as const, title: "Customer Success Lead", description: "<h3>About the Role</h3><p>We are looking for a <strong>Customer Success Lead</strong> to build and manage our customer success team, ensuring exceptional client satisfaction and long-term partnerships. In this leadership role, you will develop customer success strategies, manage key client relationships, and drive customer retention and growth.</p><h4>Key Responsibilities</h4><ul><li>Develop and implement customer success processes and best practices</li><li>Manage a team of customer success managers</li><li>Conduct regular business reviews with key clients</li><li>Identify upsell and cross-sell opportunities</li><li>Analyze customer health metrics and satisfaction scores</li><li>Collaborate with product teams to communicate customer feedback</li><li>Deliver value to enterprise clients and identify expansion opportunities</li></ul><h4>Required Qualifications</h4><ul><li><strong>5+ years</strong> of customer success or account management experience</li><li>Experience in <strong>B2B technology services</strong></li><li>Strong leadership and team management skills</li><li>Excellent relationship-building abilities</li><li>Experience with CRM systems and customer success platforms</li><li>Track record of driving customer retention and growth</li></ul><h4>Preferred Experience</h4><ul><li>Cloud services or enterprise software</li><li>Large enterprise client management</li><li>Customer success platform implementation</li></ul>", category: "Operations", employmentType: "Hybrid", experienceLevel: "Senior", city: "Medan", province: "Sumatera Utara", salaryMin: 18_000_000, salaryMax: 24_000_000, tags: ["saas", "customer-success", "leadership"], bannerUrl: "https://placehold.co/960x360?text=Customer+Success", applyDeadlineOffsetDays: null, isPublished: false },
-  { key: "backendEngineer" as const, companyKey: "techCorp" as const, title: "Backend Engineer", description: "<h3>About the Role</h3><p>We are seeking a skilled <strong>Backend Engineer</strong> to join our development team and contribute to building robust, scalable microservices and APIs that power our enterprise solutions. You will design and implement server-side applications using Node.js, TypeScript, and PostgreSQL, ensuring high performance, security, and maintainability.</p><h4>Key Responsibilities</h4><ul><li>Design and develop RESTful APIs and GraphQL endpoints</li><li>Implement database schemas and optimize query performance</li><li>Build microservices architecture with proper service communication</li><li>Write comprehensive unit and integration tests</li><li>Implement security best practices and authentication mechanisms</li><li>Participate in code reviews and technical discussions</li><li>Collaborate with frontend developers, DevOps engineers, and product managers</li></ul><h4>Required Skills</h4><ul><li><strong>Experience:</strong> 3+ years of backend development</li><li><strong>Languages:</strong> Node.js and TypeScript proficiency</li><li><strong>Database:</strong> PostgreSQL or similar relational databases</li><li><strong>Architecture:</strong> Microservices patterns and containerization (Docker)</li><li><strong>Cloud:</strong> Familiarity with AWS, Azure, or GCP</li></ul><h4>Preferred Skills</h4><ul><li>Testing frameworks and API documentation tools</li><li>CI/CD pipelines experience</li><li>Performance optimization techniques</li></ul>", category: "Engineering", employmentType: "Full-time", experienceLevel: "Mid", city: "Jakarta", province: "DKI Jakarta", salaryMin: 22_000_000, salaryMax: 30_000_000, tags: ["nodejs", "postgresql", "microservices"], bannerUrl: "https://placehold.co/960x360?text=Backend", applyDeadlineOffsetDays: 25, isPublished: true },
-  { key: "devopsEngineer" as const, companyKey: "techCorp" as const, title: "DevOps Engineer", description: "<h3>About the Role</h3><p>Join our DevOps team as a <strong>DevOps Engineer</strong> where you will play a critical role in managing our cloud infrastructure, implementing CI/CD pipelines, and ensuring high availability and performance of our systems. You will work with cutting-edge technologies including AWS, Docker, Kubernetes, and Terraform to build and maintain scalable, secure, and efficient infrastructure solutions.</p><h4>Key Responsibilities</h4><ul><li>Design and implement cloud infrastructure using Infrastructure as Code (IaC)</li><li>Manage containerized applications with Docker and Kubernetes</li><li>Build and maintain CI/CD pipelines for automated deployments</li><li>Implement monitoring, logging, and alerting solutions</li><li>Ensure security compliance and implement best practices</li><li>Collaborate with development teams to optimize application performance</li><li>Work on complex distributed systems and infrastructure automation</li></ul><h4>Required Skills</h4><ul><li><strong>Experience:</strong> 4+ years of DevOps or infrastructure experience</li><li><strong>Cloud:</strong> Strong expertise in AWS cloud services</li><li><strong>Containers:</strong> Docker and Kubernetes proficiency</li><li><strong>IaC:</strong> Terraform, CloudFormation experience</li><li><strong>CI/CD:</strong> Jenkins, GitLab CI, GitHub Actions</li><li><strong>Scripting:</strong> Python, Bash, or similar languages</li></ul><h4>Preferred Skills</h4><ul><li>Monitoring tools (Prometheus, Grafana, ELK stack)</li><li>Security compliance and best practices</li><li>Performance optimization and scaling</li></ul>", category: "Engineering", employmentType: "Full-time", experienceLevel: "Senior", city: "Jakarta", province: "DKI Jakarta", salaryMin: 26_000_000, salaryMax: 34_000_000, tags: ["aws", "docker", "kubernetes"], bannerUrl: "https://placehold.co/960x360?text=DevOps", applyDeadlineOffsetDays: 20, isPublished: true },
-  { key: "uiDesigner" as const, companyKey: "creativeStudio" as const, title: "UI Designer", description: "<h3>About the Role</h3><p>We are looking for a talented <strong>UI Designer</strong> to join our creative team and create beautiful, functional interfaces for web and mobile applications across various client projects. You will translate UX research and wireframes into polished, pixel-perfect designs that deliver exceptional user experiences while maintaining brand consistency and design standards.</p><h4>Key Responsibilities</h4><ul><li>Create high-fidelity mockups and prototypes using Figma and Sketch</li><li>Develop comprehensive design systems and component libraries</li><li>Design responsive layouts for web and mobile platforms</li><li>Create interactive prototypes to demonstrate user flows</li><li>Collaborate with developers to ensure accurate design implementation</li><li>Present design concepts to clients and stakeholders</li><li>Maintain brand consistency across all design deliverables</li></ul><h4>Required Skills</h4><ul><li><strong>Experience:</strong> 2-3 years of UI design experience</li><li><strong>Tools:</strong> Figma, Sketch, Adobe Creative Suite</li><li><strong>Design:</strong> Strong understanding of design principles, typography, and color theory</li><li><strong>Responsive:</strong> Experience with responsive design and mobile-first approaches</li><li><strong>Accessibility:</strong> Knowledge of accessibility guidelines and best practices</li><li><strong>Portfolio:</strong> Strong portfolio showcasing clean, modern interface designs</li></ul><h4>Nice to Have</h4><ul><li>Animation tools (Principle, After Effects)</li><li>Frontend development knowledge</li><li>Design system creation experience</li></ul>", category: "Design", employmentType: "Full-time", experienceLevel: "Mid", city: "Bandung", province: "Jawa Barat", salaryMin: 11_000_000, salaryMax: 17_000_000, tags: ["ui", "figma", "sketch"], bannerUrl: "https://placehold.co/960x360?text=UI+Designer", applyDeadlineOffsetDays: 22, isPublished: true },
-  { key: "contentWriter" as const, companyKey: "creativeStudio" as const, title: "Content Writer", description: "<h3>About the Role</h3><p>Join our creative team as a <strong>Content Writer</strong> where you will craft compelling copy for marketing campaigns, brand communications, and digital content across various client projects. You will develop engaging content that resonates with target audiences while maintaining brand voice and messaging consistency.</p><h4>Key Responsibilities</h4><ul><li>Write clear, engaging copy for various marketing channels and platforms</li><li>Develop content strategies and editorial calendars</li><li>Conduct research to understand target audiences and industry trends</li><li>Collaborate with designers and marketers to create cohesive campaigns</li><li>Optimize content for SEO and search visibility</li><li>Maintain brand voice guidelines across all content</li><li>Create diverse content including website copy, social media, email campaigns, and blog posts</li></ul><h4>Required Skills</h4><ul><li><strong>Experience:</strong> 1-2 years of content writing or copywriting</li><li><strong>Writing:</strong> Excellent writing and editing skills with attention to detail</li><li><strong>Research:</strong> Strong research and analytical abilities</li><li><strong>SEO:</strong> Knowledge of SEO best practices and content optimization</li><li><strong>Tools:</strong> Experience with content management systems and social media platforms</li><li><strong>Adaptability:</strong> Ability to adapt writing style for different brands and audiences</li></ul><h4>Education</h4><p>Degree in <strong>Communications, Marketing, English, or related field</strong> is preferred.</p>", category: "Marketing", employmentType: "Part-time", experienceLevel: "Junior", city: "Bandung", province: "Jawa Barat", salaryMin: 6_000_000, salaryMax: 10_000_000, tags: ["copywriting", "content", "seo"], bannerUrl: "https://placehold.co/960x360?text=Content+Writer", applyDeadlineOffsetDays: 14, isPublished: true },
-  { key: "qaEngineer" as const, companyKey: "fintechLabs" as const, title: "QA Engineer", description: "<h3>About the Role</h3><p>We are seeking a detail-oriented <strong>QA Engineer</strong> to join our quality assurance team and ensure the reliability and performance of our fintech applications and services. You will work on critical financial applications where accuracy and security are paramount, making this role essential to our product success and customer trust.</p><h4>Key Responsibilities</h4><ul><li>Develop and execute test plans, test cases, and test scripts for web and mobile applications</li><li>Perform manual testing including functional, integration, and user acceptance testing</li><li>Implement automated testing frameworks using tools like Selenium, Cypress, or similar</li><li>Conduct security testing and vulnerability assessments</li><li>Collaborate with developers to reproduce and resolve issues</li><li>Maintain test documentation and report test results to stakeholders</li><li>Ensure compliance with financial regulations and security standards</li></ul><h4>Required Skills</h4><ul><li><strong>Experience:</strong> 2-3 years of QA testing experience</li><li><strong>Industry:</strong> Preferably in fintech or financial services</li><li><strong>Methodologies:</strong> Strong knowledge of testing methodologies and best practices</li><li><strong>Automation:</strong> Experience with automated testing tools and frameworks</li><li><strong>Tools:</strong> Familiarity with bug tracking systems (Jira, Bugzilla)</li><li><strong>API Testing:</strong> Knowledge of API testing tools (Postman, Insomnia)</li><li><strong>Skills:</strong> Excellent analytical and problem-solving skills</li></ul><h4>Preferred Experience</h4><ul><li>Performance testing</li><li>Knowledge of financial regulations</li><li>Security testing methodologies</li></ul>", category: "Engineering", employmentType: "Full-time", experienceLevel: "Mid", city: "Surabaya", province: "Jawa Timur", salaryMin: 15_000_000, salaryMax: 22_000_000, tags: ["testing", "automation", "selenium"], bannerUrl: "https://placehold.co/960x360?text=QA+Engineer", applyDeadlineOffsetDays: 28, isPublished: true },
-  { key: "businessAnalyst" as const, companyKey: "fintechLabs" as const, title: "Business Analyst", description: "<h3>About the Role</h3><p>We are seeking a <strong>Business Analyst</strong> to join our product team and play a crucial role in analyzing business requirements and translating them into technical specifications. You will work closely with stakeholders, product managers, and development teams to ensure successful project delivery and business alignment.</p><h4>Key Responsibilities</h4><ul><li>Analyze and document business requirements</li><li>Translate business needs into technical specifications</li><li>Facilitate communication between business stakeholders and technical teams</li><li>Create detailed documentation and process flows</li><li>Conduct stakeholder interviews and requirements gathering sessions</li><li>Validate solutions against business objectives</li><li>Support project planning and implementation</li></ul><h4>Required Skills</h4><ul><li><strong>Analysis:</strong> Strong analytical and problem-solving skills</li><li><strong>Documentation:</strong> Excellent documentation and communication skills</li><li><strong>Requirements:</strong> Experience with requirements gathering and analysis</li><li><strong>Process:</strong> Understanding of business process modeling</li><li><strong>Tools:</strong> Proficiency with analysis and documentation tools</li></ul><h4>Preferred Experience</h4><ul><li>Fintech or financial services industry</li><li>Agile development methodologies</li><li>Data analysis and reporting</li></ul>", category: "Business", employmentType: "Full-time", experienceLevel: "Mid", city: "Surabaya", province: "Jawa Timur", salaryMin: 16_000_000, salaryMax: 24_000_000, tags: ["analysis", "requirements", "documentation"], bannerUrl: "https://placehold.co/960x360?text=Business+Analyst", applyDeadlineOffsetDays: 35, isPublished: true },
-  { key: "mobileDeveloper" as const, companyKey: "techCorp" as const, title: "Mobile Developer", description: "<h3>About the Role</h3><p>We are seeking a <strong>Mobile Developer</strong> to join our development team and create cross-platform mobile applications using React Native and Flutter. You will work on innovative mobile solutions for our enterprise clients, ensuring high performance, user experience, and platform compatibility.</p><h4>Key Responsibilities</h4><ul><li>Develop cross-platform mobile applications using React Native and Flutter</li><li>Implement responsive and intuitive user interfaces</li><li>Integrate with backend APIs and third-party services</li><li>Optimize app performance and user experience</li><li>Collaborate with designers and backend developers</li><li>Test applications across different devices and platforms</li><li>Maintain and update existing mobile applications</li></ul><h4>Required Skills</h4><ul><li><strong>Frameworks:</strong> React Native and Flutter proficiency</li><li><strong>Languages:</strong> JavaScript, TypeScript, Dart</li><li><strong>Mobile:</strong> iOS and Android development experience</li><li><strong>APIs:</strong> RESTful API integration</li><li><strong>Testing:</strong> Mobile app testing methodologies</li><li><strong>Tools:</strong> Mobile development tools and IDEs</li></ul><h4>Nice to Have</h4><ul><li>Native iOS (Swift) or Android (Kotlin) development</li><li>Mobile app store deployment experience</li><li>Push notifications and offline functionality</li></ul>", category: "Engineering", employmentType: "Full-time", experienceLevel: "Mid", city: "Jakarta", province: "DKI Jakarta", salaryMin: 20_000_000, salaryMax: 28_000_000, tags: ["react-native", "flutter", "mobile"], bannerUrl: "https://placehold.co/960x360?text=Mobile+Developer", applyDeadlineOffsetDays: 40, isPublished: true },
-  { key: "hrSpecialist" as const, companyKey: "creativeStudio" as const, title: "HR Specialist", description: "<h3>About the Role</h3><p>We are looking for an <strong>HR Specialist</strong> to join our human resources team and manage recruitment, employee relations, and organizational development initiatives. You will play a key role in fostering a positive work environment and supporting our growing team of creative professionals.</p><h4>Key Responsibilities</h4><ul><li>Manage end-to-end recruitment processes</li><li>Conduct interviews and candidate assessments</li><li>Handle employee relations and conflict resolution</li><li>Develop and implement HR policies and procedures</li><li>Coordinate employee onboarding and offboarding</li><li>Organize training and development programs</li><li>Manage performance evaluation processes</li><li>Ensure compliance with labor laws and regulations</li></ul><h4>Required Skills</h4><ul><li><strong>Recruitment:</strong> Experience in talent acquisition and sourcing</li><li><strong>HR:</strong> Strong knowledge of HR practices and procedures</li><li><strong>Relations:</strong> Excellent interpersonal and communication skills</li><li><strong>Compliance:</strong> Understanding of labor laws and regulations</li><li><strong>Tools:</strong> Proficiency with HRIS and recruitment platforms</li><li><strong>Organization:</strong> Strong organizational and time management skills</li></ul><h4>Preferred Experience</h4><ul><li>Creative industry or agency environment</li><li>Employee engagement and culture building</li><li>Learning and development programs</li></ul>", category: "Human Resources", employmentType: "Full-time", experienceLevel: "Mid", city: "Bandung", province: "Jawa Barat", salaryMin: 12_000_000, salaryMax: 18_000_000, tags: ["recruitment", "hr", "employee-relations"], bannerUrl: "https://placehold.co/960x360?text=HR+Specialist", applyDeadlineOffsetDays: null, isPublished: false },
+  // ── 2026 Deadlines ───────────────────────────────────────────────────────
+  {
+    key: "frontend" as const,
+    companyKey: "techCorp" as const,
+    title: "Senior Frontend Engineer",
+    description:
+      '<h3>About the Role</h3><p>We are seeking a <strong>Senior Frontend Engineer</strong> to lead our frontend development team and drive the technical direction of our client-facing applications. You will architect scalable, performant, and accessible web applications using React, TypeScript, and Next.js.</p><h4>Key Responsibilities</h4><ul><li>Architect scalable and performant web applications</li><li>Mentor junior developers and conduct code reviews</li><li>Implement best practices for performance optimization</li><li>Ensure cross-browser compatibility and accessibility</li><li>Collaborate with product managers, designers, and backend engineers</li></ul><h4>Required Qualifications</h4><ul><li><strong>5+ years</strong> of frontend development experience</li><li>Strong expertise in <strong>React ecosystem</strong> (React, Next.js, Zustand/Redux)</li><li>Advanced <strong>TypeScript</strong> skills</li><li>Experience with testing frameworks (Jest, Playwright)</li><li>Knowledge of CI/CD and modern build tools (Vite, Webpack)</li></ul><h4>What We Offer</h4><ul><li>Competitive salary with performance bonuses</li><li>Remote-friendly work environment</li><li>Annual learning budget of IDR 10,000,000</li><li>Health insurance for employee and family</li></ul>',
+    category: "Engineering",
+    employmentType: "Full-time",
+    experienceLevel: "Senior",
+    city: "Jakarta",
+    province: "DKI Jakarta",
+    salaryMin: 25_000_000,
+    salaryMax: 35_000_000,
+    tags: ["react", "typescript", "next.js", "frontend", "javascript"],
+    bannerUrl: "https://placehold.co/960x360/24CFA7/ffffff?text=Senior+Frontend+Engineer",
+    applyDeadline: "2026-09-30",
+    isPublished: true,
+  },
+  {
+    key: "dataScientist" as const,
+    companyKey: "techCorp" as const,
+    title: "Data Scientist",
+    description:
+      '<h3>About the Role</h3><p>Join our data science team as a <strong>Data Scientist</strong> to build predictive analytics and machine learning models for enterprise clients. You will work with large datasets to extract insights and create data-driven recommendations.</p><h4>Key Responsibilities</h4><ul><li>Data collection, cleaning, and preprocessing</li><li>Exploratory data analysis and visualization</li><li>Feature engineering and ML model development</li><li>Model validation and performance tuning</li><li>Present findings to non-technical stakeholders</li></ul><h4>Required Skills</h4><ul><li><strong>Programming:</strong> Python, R, SQL</li><li><strong>ML Frameworks:</strong> scikit-learn, TensorFlow, PyTorch</li><li><strong>Analytics:</strong> Pandas, NumPy, Matplotlib, Seaborn</li><li><strong>3+ years</strong> in data science or analytics</li><li>Degree in Statistics, Mathematics, or Computer Science</li></ul>',
+    category: "Data",
+    employmentType: "Full-time",
+    experienceLevel: "Mid",
+    city: "Jakarta",
+    province: "DKI Jakarta",
+    salaryMin: 20_000_000,
+    salaryMax: 28_000_000,
+    tags: ["python", "machine-learning", "sql", "data-science", "tensorflow"],
+    bannerUrl: "https://placehold.co/960x360/467EC7/ffffff?text=Data+Scientist",
+    applyDeadline: "2026-12-15",
+    isPublished: true,
+  },
+  {
+    key: "uxDesigner" as const,
+    companyKey: "creativeStudio" as const,
+    title: "UX Designer",
+    description:
+      '<h3>About the Role</h3><p>We are looking for a talented <strong>UX Designer</strong> to lead user experience design projects across our diverse client portfolio including e-commerce, fintech, healthcare, and education technology.</p><h4>Key Responsibilities</h4><ul><li>Conduct user research and usability testing</li><li>Create user personas, journey maps, and empathy maps</li><li>Design wireframes and interactive prototypes in Figma</li><li>Develop information architecture and interaction flows</li><li>Create and maintain design systems</li><li>Present design solutions to clients and stakeholders</li></ul><h4>Required Skills</h4><ul><li><strong>Design Tools:</strong> Figma, Sketch, Adobe XD</li><li><strong>Research:</strong> User interviews, usability testing, A/B testing</li><li><strong>Portfolio:</strong> Strong demonstration of user-centered design thinking</li><li><strong>2-3 years</strong> of UX design experience</li></ul>',
+    category: "Design",
+    employmentType: "Contract",
+    experienceLevel: "Intermediate",
+    city: "Bandung",
+    province: "Jawa Barat",
+    salaryMin: 12_000_000,
+    salaryMax: 18_000_000,
+    tags: ["ux", "figma", "user-research", "design-thinking", "wireframing"],
+    bannerUrl: "https://placehold.co/960x360/FF6B6B/ffffff?text=UX+Designer",
+    applyDeadline: "2026-08-31",
+    isPublished: true,
+  },
+
+  // ── 2027 Deadlines ───────────────────────────────────────────────────────
+  {
+    key: "productManager" as const,
+    companyKey: "fintechLabs" as const,
+    title: "Product Manager — Digital Lending",
+    description:
+      '<h3>About the Role</h3><p>We are seeking an experienced <strong>Product Manager</strong> to lead our lending product portfolio and drive innovation in digital financial services. You will define product vision, develop roadmaps, and manage the product lifecycle from ideation to launch.</p><h4>Key Responsibilities</h4><ul><li>Define product vision, strategy, and roadmaps</li><li>Conduct market research and competitive analysis</li><li>Write product requirements and user stories</li><li>Manage sprint planning and product backlog</li><li>Coordinate with engineering, design, and compliance teams</li><li>Analyze product metrics (NPS, retention, funnel conversion)</li></ul><h4>Required Qualifications</h4><ul><li><strong>5+ years</strong> of product management experience</li><li>Fintech or financial services background preferred</li><li>Strong analytical and problem-solving abilities</li><li>Agile/Scrum certification is a plus</li></ul>',
+    category: "Product",
+    employmentType: "Full-time",
+    experienceLevel: "Senior",
+    city: "Surabaya",
+    province: "Jawa Timur",
+    salaryMin: 28_000_000,
+    salaryMax: 40_000_000,
+    tags: ["product-management", "fintech", "agile", "scrum", "lending"],
+    bannerUrl: "https://placehold.co/960x360/4ECDC4/ffffff?text=Product+Manager",
+    applyDeadline: "2027-03-31",
+    isPublished: true,
+  },
+  {
+    key: "marketingSpecialist" as const,
+    companyKey: "creativeStudio" as const,
+    title: "Digital Marketing Specialist",
+    description:
+      '<h3>About the Role</h3><p>Join our marketing team as a <strong>Digital Marketing Specialist</strong> to develop and execute data-driven marketing strategies for our creative agency and client projects across multiple industries.</p><h4>Key Responsibilities</h4><ul><li>Plan and execute multi-channel digital marketing campaigns</li><li>Manage social media accounts and community engagement</li><li>Create and optimize Google Ads and Meta Ads campaigns</li><li>Develop content calendars and SEO strategies</li><li>Track KPIs and produce performance reports</li><li>Coordinate with designers for marketing assets</li></ul><h4>Required Skills</h4><ul><li><strong>2+ years</strong> digital marketing experience</li><li>Google Analytics and Google Ads certified</li><li>Experience with SEO/SEM, email marketing, and social media</li><li>Data-driven mindset with strong copywriting skills</li></ul>',
+    category: "Marketing",
+    employmentType: "Full-time",
+    experienceLevel: "Mid",
+    city: "Bandung",
+    province: "Jawa Barat",
+    salaryMin: 10_000_000,
+    salaryMax: 16_000_000,
+    tags: ["digital-marketing", "seo", "google-ads", "social-media", "content-marketing"],
+    bannerUrl: "https://placehold.co/960x360/F7B731/ffffff?text=Digital+Marketing",
+    applyDeadline: "2027-06-30",
+    isPublished: true,
+  },
+  {
+    key: "backendEngineer" as const,
+    companyKey: "techCorp" as const,
+    title: "Backend Engineer — Microservices",
+    description:
+      '<h3>About the Role</h3><p>We are seeking a skilled <strong>Backend Engineer</strong> to build robust, scalable microservices and APIs that power our enterprise client solutions. You will work with Node.js, TypeScript, PostgreSQL, and cloud infrastructure.</p><h4>Key Responsibilities</h4><ul><li>Design and develop RESTful APIs and GraphQL endpoints</li><li>Implement database schemas and optimize query performance</li><li>Build microservices with proper service communication patterns</li><li>Write comprehensive unit and integration tests</li><li>Implement authentication, authorization, and security best practices</li><li>Collaborate with frontend developers and DevOps team</li></ul><h4>Required Skills</h4><ul><li><strong>3+ years</strong> backend development experience</li><li>Proficiency in Node.js and TypeScript</li><li>PostgreSQL or similar relational databases</li><li>Docker and containerization experience</li><li>Familiarity with AWS, Azure, or GCP</li></ul>',
+    category: "Engineering",
+    employmentType: "Full-time",
+    experienceLevel: "Mid",
+    city: "Jakarta",
+    province: "DKI Jakarta",
+    salaryMin: 22_000_000,
+    salaryMax: 30_000_000,
+    tags: ["nodejs", "typescript", "postgresql", "microservices", "docker"],
+    bannerUrl: "https://placehold.co/960x360/5F27CD/ffffff?text=Backend+Engineer",
+    applyDeadline: "2027-09-15",
+    isPublished: true,
+  },
+
+  // ── 2028 Deadlines ───────────────────────────────────────────────────────
+  {
+    key: "customerSuccess" as const,
+    companyKey: "techCorp" as const,
+    title: "Customer Success Lead",
+    description:
+      '<h3>About the Role</h3><p>We are looking for a <strong>Customer Success Lead</strong> to build and manage our customer success team, ensuring exceptional client satisfaction and long-term enterprise partnerships.</p><h4>Key Responsibilities</h4><ul><li>Develop customer success strategies and onboarding playbooks</li><li>Manage a team of customer success managers</li><li>Conduct regular business reviews with enterprise clients</li><li>Identify upsell, cross-sell, and expansion opportunities</li><li>Analyze customer health scores and satisfaction metrics</li><li>Collaborate with product teams on customer feedback loop</li></ul><h4>Required Qualifications</h4><ul><li><strong>5+ years</strong> of customer success or account management</li><li>Experience in B2B technology or SaaS</li><li>Strong leadership and team-building skills</li><li>CRM platform experience (Salesforce, HubSpot)</li></ul>',
+    category: "Operations",
+    employmentType: "Hybrid",
+    experienceLevel: "Senior",
+    city: "Jakarta",
+    province: "DKI Jakarta",
+    salaryMin: 18_000_000,
+    salaryMax: 26_000_000,
+    tags: ["customer-success", "saas", "leadership", "account-management", "crm"],
+    bannerUrl: "https://placehold.co/960x360/1ABC9C/ffffff?text=Customer+Success+Lead",
+    applyDeadline: "2028-02-28",
+    isPublished: true,
+  },
+  {
+    key: "devopsEngineer" as const,
+    companyKey: "techCorp" as const,
+    title: "DevOps Engineer",
+    description:
+      '<h3>About the Role</h3><p>Join our DevOps team as a <strong>DevOps Engineer</strong> to manage cloud infrastructure, implement CI/CD pipelines, and ensure high availability of our systems using AWS, Docker, and Kubernetes.</p><h4>Key Responsibilities</h4><ul><li>Design cloud infrastructure using Infrastructure as Code (Terraform)</li><li>Manage Kubernetes clusters and Docker containers</li><li>Build and maintain CI/CD pipelines (GitHub Actions, Jenkins)</li><li>Implement monitoring, logging, and alerting (Prometheus, Grafana)</li><li>Ensure security compliance and cost optimization</li><li>Collaborate with developers on performance and scaling</li></ul><h4>Required Skills</h4><ul><li><strong>4+ years</strong> DevOps or infrastructure experience</li><li>Strong AWS expertise (EC2, ECS, RDS, S3, Lambda)</li><li>Docker and Kubernetes proficiency</li><li>Terraform and IaC experience</li><li>Scripting with Python or Bash</li></ul>',
+    category: "Engineering",
+    employmentType: "Full-time",
+    experienceLevel: "Senior",
+    city: "Jakarta",
+    province: "DKI Jakarta",
+    salaryMin: 26_000_000,
+    salaryMax: 36_000_000,
+    tags: ["aws", "docker", "kubernetes", "terraform", "ci-cd"],
+    bannerUrl: "https://placehold.co/960x360/E74C3C/ffffff?text=DevOps+Engineer",
+    applyDeadline: "2028-06-30",
+    isPublished: true,
+  },
+  {
+    key: "uiDesigner" as const,
+    companyKey: "creativeStudio" as const,
+    title: "UI Designer",
+    description:
+      '<h3>About the Role</h3><p>We are looking for a talented <strong>UI Designer</strong> to create beautiful, functional interfaces for web and mobile applications. You will translate wireframes into pixel-perfect designs that delight users.</p><h4>Key Responsibilities</h4><ul><li>Create high-fidelity mockups and prototypes in Figma</li><li>Develop comprehensive design systems and component libraries</li><li>Design responsive layouts for web and mobile</li><li>Collaborate with developers for accurate implementation</li><li>Present design concepts to clients and stakeholders</li></ul><h4>Required Skills</h4><ul><li><strong>2-3 years</strong> UI design experience</li><li>Figma, Sketch, Adobe Creative Suite</li><li>Strong understanding of typography, color theory, and spacing</li><li>Responsive design and mobile-first approach</li><li>Portfolio showcasing clean, modern interface designs</li></ul>',
+    category: "Design",
+    employmentType: "Full-time",
+    experienceLevel: "Mid",
+    city: "Bandung",
+    province: "Jawa Barat",
+    salaryMin: 11_000_000,
+    salaryMax: 17_000_000,
+    tags: ["ui", "figma", "sketch", "design-systems", "responsive"],
+    bannerUrl: "https://placehold.co/960x360/9B59B6/ffffff?text=UI+Designer",
+    applyDeadline: "2028-09-30",
+    isPublished: true,
+  },
+
+  // ── 2029 Deadlines ───────────────────────────────────────────────────────
+  {
+    key: "contentWriter" as const,
+    companyKey: "creativeStudio" as const,
+    title: "Content Writer & SEO Specialist",
+    description:
+      '<h3>About the Role</h3><p>Join our creative team as a <strong>Content Writer & SEO Specialist</strong> to craft compelling copy for marketing campaigns, brand communications, and digital content that drives organic growth.</p><h4>Key Responsibilities</h4><ul><li>Write engaging copy for websites, blogs, and social media</li><li>Develop content strategies and editorial calendars</li><li>Conduct keyword research and implement SEO best practices</li><li>Collaborate with designers on cohesive marketing campaigns</li><li>Optimize existing content for search visibility</li></ul><h4>Required Skills</h4><ul><li><strong>1-2 years</strong> content writing or copywriting</li><li>Excellent writing, editing, and proofreading skills</li><li>SEO tools experience (Ahrefs, SEMrush, Google Search Console)</li><li>Content management systems knowledge (WordPress, Ghost)</li></ul>',
+    category: "Marketing",
+    employmentType: "Part-time",
+    experienceLevel: "Junior",
+    city: "Bandung",
+    province: "Jawa Barat",
+    salaryMin: 6_000_000,
+    salaryMax: 10_000_000,
+    tags: ["copywriting", "seo", "content-strategy", "blogging", "wordpress"],
+    bannerUrl: "https://placehold.co/960x360/F39C12/ffffff?text=Content+Writer",
+    applyDeadline: "2029-03-31",
+    isPublished: true,
+  },
+  {
+    key: "qaEngineer" as const,
+    companyKey: "fintechLabs" as const,
+    title: "QA Engineer — Fintech",
+    description:
+      '<h3>About the Role</h3><p>We are seeking a detail-oriented <strong>QA Engineer</strong> to ensure the reliability, security, and performance of our fintech applications where accuracy and compliance are paramount.</p><h4>Key Responsibilities</h4><ul><li>Develop and execute test plans, cases, and scripts</li><li>Implement automated testing with Cypress & Playwright</li><li>Conduct security testing and vulnerability assessments</li><li>Perform API testing using Postman and Insomnia</li><li>Ensure compliance with financial regulations (OJK standards)</li><li>Collaborate with developers on defect resolution</li></ul><h4>Required Skills</h4><ul><li><strong>2-3 years</strong> QA testing experience</li><li>Automated testing tools (Cypress, Selenium, Playwright)</li><li>API testing and performance testing methodologies</li><li>Bug tracking systems (Jira, Linear)</li><li>Fintech or financial services experience preferred</li></ul>',
+    category: "Engineering",
+    employmentType: "Full-time",
+    experienceLevel: "Mid",
+    city: "Surabaya",
+    province: "Jawa Timur",
+    salaryMin: 15_000_000,
+    salaryMax: 22_000_000,
+    tags: ["testing", "automation", "cypress", "playwright", "qa"],
+    bannerUrl: "https://placehold.co/960x360/2ECC71/ffffff?text=QA+Engineer",
+    applyDeadline: "2029-06-30",
+    isPublished: true,
+  },
+  {
+    key: "businessAnalyst" as const,
+    companyKey: "fintechLabs" as const,
+    title: "Business Analyst — Financial Products",
+    description:
+      '<h3>About the Role</h3><p>We are seeking a <strong>Business Analyst</strong> to bridge business stakeholders and technical teams, ensuring successful delivery of fintech product features and improvements.</p><h4>Key Responsibilities</h4><ul><li>Gather and document business requirements</li><li>Translate business needs into technical specifications</li><li>Create process flow diagrams and data models</li><li>Facilitate stakeholder workshops and interviews</li><li>Validate solutions against business objectives</li><li>Support UAT and go-live activities</li></ul><h4>Required Skills</h4><ul><li>Strong analytical and problem-solving skills</li><li>Excellent documentation and communication</li><li>Requirements gathering and business process modeling</li><li>Jira, Confluence, or similar tools</li><li>Fintech or financial services experience preferred</li></ul>',
+    category: "Business",
+    employmentType: "Full-time",
+    experienceLevel: "Mid",
+    city: "Surabaya",
+    province: "Jawa Timur",
+    salaryMin: 16_000_000,
+    salaryMax: 24_000_000,
+    tags: ["business-analysis", "requirements", "fintech", "documentation", "agile"],
+    bannerUrl: "https://placehold.co/960x360/3498DB/ffffff?text=Business+Analyst",
+    applyDeadline: "2029-09-30",
+    isPublished: true,
+  },
+  {
+    key: "mobileDeveloper" as const,
+    companyKey: "techCorp" as const,
+    title: "Mobile Developer — React Native & Flutter",
+    description:
+      '<h3>About the Role</h3><p>We are seeking a <strong>Mobile Developer</strong> to create cross-platform mobile applications using React Native and Flutter for our enterprise clients.</p><h4>Key Responsibilities</h4><ul><li>Develop cross-platform mobile apps (React Native, Flutter)</li><li>Implement responsive and intuitive mobile UIs</li><li>Integrate with backend APIs and third-party SDKs</li><li>Optimize app performance and reduce bundle size</li><li>Publish and maintain apps on App Store and Google Play</li><li>Test across multiple devices and OS versions</li></ul><h4>Required Skills</h4><ul><li>React Native and Flutter proficiency</li><li>JavaScript, TypeScript, Dart</li><li>iOS and Android platform knowledge</li><li>RESTful API integration and state management</li><li>Mobile app testing methodologies</li></ul>',
+    category: "Engineering",
+    employmentType: "Full-time",
+    experienceLevel: "Mid",
+    city: "Jakarta",
+    province: "DKI Jakarta",
+    salaryMin: 20_000_000,
+    salaryMax: 28_000_000,
+    tags: ["react-native", "flutter", "mobile", "dart", "cross-platform"],
+    bannerUrl: "https://placehold.co/960x360/8E44AD/ffffff?text=Mobile+Developer",
+    applyDeadline: "2029-12-31",
+    isPublished: true,
+  },
+
+  // ── Unpublished / Draft Jobs (no deadline) ─────────────────────────────
+  {
+    key: "hrSpecialist" as const,
+    companyKey: "creativeStudio" as const,
+    title: "HR & Talent Acquisition Specialist",
+    description:
+      '<h3>About the Role</h3><p>We are looking for an <strong>HR & Talent Acquisition Specialist</strong> to manage recruitment, employee relations, and organizational development for our growing creative team.</p><h4>Key Responsibilities</h4><ul><li>Manage end-to-end recruitment for design and marketing roles</li><li>Conduct interviews and candidate assessments</li><li>Develop onboarding and offboarding processes</li><li>Handle employee relations and conflict resolution</li><li>Organize training and team-building programs</li></ul><h4>Required Skills</h4><ul><li>Talent acquisition and sourcing experience</li><li>Strong knowledge of HR practices and labor laws</li><li>Excellent interpersonal and communication skills</li><li>HRIS platform experience (BambooHR, Workday)</li></ul>',
+    category: "Human Resources",
+    employmentType: "Full-time",
+    experienceLevel: "Mid",
+    city: "Bandung",
+    province: "Jawa Barat",
+    salaryMin: 12_000_000,
+    salaryMax: 18_000_000,
+    tags: ["recruitment", "hr", "employee-relations", "talent-acquisition", "onboarding"],
+    bannerUrl: "https://placehold.co/960x360/E67E22/ffffff?text=HR+Specialist",
+    applyDeadline: null as string | null,
+    isPublished: false,
+  },
 ] as const;
 
 const testSeeds = [
-  { key: "frontend" as const, jobKey: "frontend" as const, prefix: "Frontend", passingScore: 18, answer: "A" },
-  { key: "dataScientist" as const, jobKey: "dataScientist" as const, prefix: "Data", passingScore: 17, answer: "B" },
+  {
+    key: "frontend" as const,
+    jobKey: "frontend" as const,
+    prefix: "Frontend",
+    passingScore: 18,
+    answer: "A",
+  },
+  {
+    key: "dataScientist" as const,
+    jobKey: "dataScientist" as const,
+    prefix: "Data",
+    passingScore: 17,
+    answer: "B",
+  },
+  {
+    key: "backendEngineer" as const,
+    jobKey: "backendEngineer" as const,
+    prefix: "Backend",
+    passingScore: 17,
+    answer: "A",
+  },
+  {
+    key: "devopsEngineer" as const,
+    jobKey: "devopsEngineer" as const,
+    prefix: "DevOps",
+    passingScore: 18,
+    answer: "C",
+  },
+  {
+    key: "mobileDeveloper" as const,
+    jobKey: "mobileDeveloper" as const,
+    prefix: "Mobile",
+    passingScore: 16,
+    answer: "D",
+  },
 ] as const;
 
 type CompanySeed = (typeof companySeeds)[number];
@@ -92,10 +430,7 @@ export async function seedCompaniesAndJobs({
 
   const jobEntries = await Promise.all(
     jobSeeds.map(async (seed) => {
-      const applyDeadline =
-        seed.applyDeadlineOffsetDays !== null && seed.applyDeadlineOffsetDays !== undefined
-          ? addDays(seed.applyDeadlineOffsetDays)
-          : null;
+      const applyDeadline = seed.applyDeadline ? new Date(seed.applyDeadline) : null;
 
       const job = await prisma.job.create({
         data: {
@@ -139,4 +474,3 @@ export async function seedCompaniesAndJobs({
 
   return { companies, jobs, tests };
 }
-
