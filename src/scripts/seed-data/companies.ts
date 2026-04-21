@@ -26,7 +26,7 @@ const companySeeds = [
     phone: "+622150960800",
     description:
       '<h3>About Gojek</h3><p>Gojek is <strong>Indonesia\'s first decacorn</strong> and Southeast Asia\'s leading on-demand multi-service platform. Founded in 2010 by Nadiem Makarim, Gojek started as a motorcycle ride-hailing call centre and has evolved into a <strong>super app</strong> providing over 20+ services including transportation, food delivery, logistics, payments, and entertainment.</p><h4>Our Products</h4><ul><li><strong>GoRide &amp; GoCar:</strong> On-demand transportation</li><li><strong>GoFood:</strong> Southeast Asia\'s largest food delivery service</li><li><strong>GoPay &amp; GoPayLater:</strong> Digital payments and financial services</li><li><strong>GoSend:</strong> Instant courier and logistics</li></ul><h4>Engineering Culture</h4><ul><li><strong>Scale:</strong> Serving millions of daily transactions across Southeast Asia</li><li><strong>Innovation:</strong> Building distributed systems, ML platforms, and real-time mapping</li><li><strong>Impact:</strong> Empowering 2 million+ driver-partners and 900,000+ merchant partners</li><li><strong>Team:</strong> 5,000+ employees across Jakarta, Bangalore, Singapore, and Bangkok</li></ul><p>Join our world-class engineering team and build technology that moves Southeast Asia forward.</p>',
-    logoUrl: "https://logo.clearbit.com/gojek.com",
+    logoUrl: "https://cdn.brandfetch.io/id8Ij7QgJl/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1770035693484",
     bannerUrl: "https://placehold.co/1200x400/00AA13/ffffff?text=Gojek",
     website: "https://www.gojek.com",
     locationCity: "Jakarta",
@@ -46,7 +46,7 @@ const companySeeds = [
     phone: "+622129103300",
     description:
       '<h3>About Traveloka</h3><p>Traveloka is <strong>Southeast Asia\'s leading travel and lifestyle platform</strong>, founded in 2012 by Ferry Unardi, Derianto Kusuma, and Albert Zhang. What started as a flight search engine has grown into a comprehensive platform serving over <strong>100 million downloads</strong> across the region.</p><h4>Our Services</h4><ul><li><strong>Flights &amp; Hotels:</strong> Comprehensive booking for domestic and international travel</li><li><strong>Xperience:</strong> Activities, attractions, and local experiences</li><li><strong>Eats:</strong> Restaurant discovery and reservations</li><li><strong>Financial Services:</strong> PayLater, insurance, and travel financing</li></ul><h4>Design &amp; Product Excellence</h4><p>Traveloka is renowned for its <strong>award-winning user experience</strong> and design-driven product culture:</p><ul><li>Winner of multiple <strong>Google Play Best App</strong> awards</li><li>World-class design team of <strong>100+ designers</strong> across UX research, product design, brand, and content</li><li>Data-driven design decisions backed by A/B testing and user research</li><li>Collaborative culture between design, engineering, and product teams</li></ul><p>Join us in crafting seamless travel experiences for millions of users across Southeast Asia.</p>',
-    logoUrl: "https://logo.clearbit.com/traveloka.com",
+    logoUrl: "https://cdn.brandfetch.io/idN9w9iZUZ/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1701100241234",
     bannerUrl: "https://placehold.co/1200x400/0064D2/ffffff?text=Traveloka",
     website: "https://www.traveloka.com",
     locationCity: "Jakarta",
@@ -66,7 +66,7 @@ const companySeeds = [
     phone: "+622150818888",
     description:
       '<h3>About Dana Indonesia</h3><p>DANA is <strong>Indonesia\'s leading digital wallet</strong> and financial services platform, launched in 2018. Licensed and regulated by <strong>Bank Indonesia</strong>, DANA provides secure, fast, and accessible digital payment solutions for individuals and businesses across Indonesia.</p><h4>Our Services</h4><ul><li><strong>Digital Wallet:</strong> Peer-to-peer transfers, bill payments, and top-ups</li><li><strong>QRIS Payments:</strong> QR code-based merchant payments nationwide</li><li><strong>Dana Bisnis:</strong> Business payment solutions for merchants and enterprises</li><li><strong>Dana Cicil:</strong> Buy Now Pay Later and micro-lending services</li></ul><h4>Our Impact</h4><ul><li><strong>150+ million registered users</strong> across Indonesia</li><li><strong>10+ million merchant partners</strong> accepting DANA payments</li><li>Processing <strong>billions of transactions</strong> annually</li><li>Strategic partnerships with Lazada, Bukalapak, and major retailers</li></ul><h4>Technology &amp; Innovation</h4><p>Our engineering team builds <strong>high-performance, secure fintech infrastructure</strong> handling millions of concurrent transactions with 99.99% uptime. We leverage machine learning for fraud detection, real-time risk scoring, and personalized financial recommendations.</p>',
-    logoUrl: "https://logo.clearbit.com/dana.id",
+    logoUrl: "https://i.pinimg.com/736x/f5/8c/a3/f58ca3528b238877e9855fcac1daa328.jpg",
     bannerUrl: "https://placehold.co/1200x400/108EE9/ffffff?text=Dana+Indonesia",
     website: "https://www.dana.id",
     locationCity: "Jakarta",
