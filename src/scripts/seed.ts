@@ -56,12 +56,12 @@ async function seed() {
   console.log("Seed complete");
   console.log("");
   console.log("=== Login Credentials (all users) ===");
-  console.log("Password: password123");
+  console.log("Password: Password123");
   console.log("");
-  console.log("DEVELOPER:     developer@workoo.com");
-  console.log("ADMIN (Tech):  andre.pratama@techcorp.id");
-  console.log("ADMIN (Design):maya.siregar@creativestudio.id");
-  console.log("ADMIN (Fin):   surya.wijaya@fintechlabs.id");
+  console.log("DEVELOPER:       developer@workoo.com");
+  console.log("ADMIN (Gojek):   andre.pratama@gojek.com");
+  console.log("ADMIN (Traveloka):maya.siregar@traveloka.com");
+  console.log("ADMIN (Dana):    surya.wijaya@dana.id");
   console.log("SEEKER:        alice.hartono@gmail.com");
   console.log("SEEKER:        bob.pratama@gmail.com");
   console.log("SEEKER:        charlie.wijaya@gmail.com");
