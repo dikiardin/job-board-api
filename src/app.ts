@@ -136,6 +136,23 @@ class App {
       }
     });
 
+    this.app.get("/api/ping", async (req: Request, res: Response) => {
+      try {
+        await prisma.$queryRaw`SELECT 1`;
+        res.status(200).json({
+          success: true,
+          message: "pong",
+          timestamp: new Date().toISOString(),
+        });
+      } catch (error: any) {
+        res.status(500).json({
+          success: false,
+          error: error.message,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    });
+
     const authRouter: AuthRouter = new AuthRouter();
     const subscriptionRouter: SubscriptionRouter = new SubscriptionRouter();
     const preselectionRouter: PreselectionRouter = new PreselectionRouter();

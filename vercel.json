@@ -14,6 +14,7 @@
   ],
   "crons": [
     { "path": "/api/cron/subscription", "schedule": "0 1 * * *" },
-    { "path": "/api/cron/interview", "schedule": "0 7 * * *" }
+    { "path": "/api/cron/interview", "schedule": "0 7 * * *" },
+    { "path": "/api/ping", "schedule": "0 0 */3 * *" }
   ]
 }
