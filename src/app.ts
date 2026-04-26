@@ -114,14 +114,26 @@ class App {
       }
     });
 
-    // Cron job endpoints
     this.app.get(
       "/api/cron/subscription",
       async (req: Request, res: Response) => {
         try {
           await runSubscriptionCycle();
+          await (prisma as any).cronLog.create({
+            data: {
+              path: "/api/cron/subscription",
+              status: "SUCCESS",
+            },
+          });
           res.status(200).json({ ok: true });
         } catch (e: any) {
+          await (prisma as any).cronLog.create({
+            data: {
+              path: "/api/cron/subscription",
+              status: "FAILURE",
+              message: e?.message || String(e),
+            },
+          });
           res.status(500).json({ ok: false, error: e?.message || String(e) });
         }
       }
@@ -130,8 +142,21 @@ class App {
     this.app.get("/api/cron/interview", async (req: Request, res: Response) => {
       try {
         await runInterviewCycle();
+        await (prisma as any).cronLog.create({
+          data: {
+            path: "/api/cron/interview",
+            status: "SUCCESS",
+          },
+        });
         res.status(200).json({ ok: true });
       } catch (e: any) {
+        await (prisma as any).cronLog.create({
+          data: {
+            path: "/api/cron/interview",
+            status: "FAILURE",
+            message: e?.message || String(e),
+          },
+        });
         res.status(500).json({ ok: false, error: e?.message || String(e) });
       }
     });
@@ -139,17 +164,48 @@ class App {
     this.app.get("/api/ping", async (req: Request, res: Response) => {
       try {
         await prisma.$queryRaw`SELECT 1`;
+        await (prisma as any).cronLog.create({
+          data: {
+            path: "/api/ping",
+            status: "SUCCESS",
+            message: "Database ping successful",
+          },
+        });
         res.status(200).json({
           success: true,
           message: "pong",
           timestamp: new Date().toISOString(),
         });
       } catch (error: any) {
+        try {
+          await (prisma as any).cronLog.create({
+            data: {
+              path: "/api/ping",
+              status: "FAILURE",
+              message: error.message,
+            },
+          });
+        } catch (logError) {
+          console.error("Failed to log cron failure:", logError);
+        }
         res.status(500).json({
           success: false,
           error: error.message,
           timestamp: new Date().toISOString(),
         });
+      }
+    });
+
+    // Endpoint to check recent cron logs
+    this.app.get("/api/cron/logs", async (req: Request, res: Response) => {
+      try {
+        const logs = await (prisma as any).cronLog.findMany({
+          orderBy: { createdAt: "desc" },
+          take: 50,
+        });
+        res.status(200).json({ success: true, logs });
+      } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
       }
     });
 

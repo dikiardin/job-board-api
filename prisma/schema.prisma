@@ -598,6 +598,14 @@ model LocationCache {
   @@unique([city, province])
 }
 
+model CronLog {
+  id        Int      @id @default(autoincrement())
+  path      String
+  status    String
+  message   String?
+  createdAt DateTime @default(now())
+}
+
 enum UserRole {
   USER
   ADMIN
