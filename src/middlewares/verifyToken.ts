@@ -19,6 +19,10 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 
     const decoded = decodeToken(token) as JwtPayload;
 
+    if (!decoded) {
+      throw new CustomError("Invalid or expired token", 401);
+    }
+
     res.locals.decrypt = decoded;
     next();
   } catch (error: any) {

@@ -8,6 +8,13 @@ export class KeepLoginController {
     next: NextFunction
   ) {
     try {
+      if (!res.locals.decrypt) {
+        return res.status(401).json({ 
+          success: false, 
+          message: "Authentication data missing" 
+        });
+      }
+
       const userId = parseInt(res.locals.decrypt.userId);
       
       if (!userId || isNaN(userId)) {
